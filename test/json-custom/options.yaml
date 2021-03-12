@@ -1,0 +1,3 @@
+verbose: true
+output: output.json
+sortFile: customSort.json

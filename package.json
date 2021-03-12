@@ -1,0 +1,35 @@
+{
+    "name": "openapi-format",
+    "version": "1.0.0",
+    "description": "Format the fields of OpenAPI fields by ordering them in a hierarchical order.",
+    "bin": {
+        "openapi-format": "bin/cli.js"
+    },
+    "main": "bin/cli.js",
+    "dependencies": {
+        "commander": "^7.1.0",
+        "js-yaml": "^4.0.0"
+    },
+    "devDependencies": {
+        "mocha": "^8.0.1"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/thim81/openapi-format.git"
+    },
+    "homepage": "https://github.com/thim81/openapi-format#readme",
+    "keywords": [
+        "openapi",
+        "openapi3",
+        "swagger",
+        "format",
+        "sort",
+        "order",
+        "cli"
+    ],
+    "scripts": {
+        "test": "npx mocha",
+        "openapi-format": "./bin/openapi-format"
+    }
+}
