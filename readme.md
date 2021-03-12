@@ -22,14 +22,14 @@ output the file with clean indenting, to either JSON or YAML.
 While possible to install globally, we recommend that you, if possible, add the converter to the `node_modules` of your test project using:
 
 ```shell
-$ npm install -D postman-to-k6
+$ npm install --save openapi-format
 
 # or using yarn...
 
-$ yarn add postman-to-k6
+$ yarn add openapi-format
 ```
 
-Note that this will require you to run the converter with `npx postman-to-k6 your-postman-file` or, if you are using an older versions of npm, `./node_modules/.bin/postman-to-k6 your-postman-file`.
+Note that this will require you to run the converter with `npx openapi-format your-openapi-file.yaml` or, if you are using an older versions of npm, `./node_modules/.bin/openapi-format your-openapi-file.yaml`.
 
 ### Global Installation
 
@@ -101,5 +101,5 @@ $ openapi-format openapi.json openapi.yaml --no-sort
 
 This package is inspired by
 the [@microsoft.azure/format-spec](https://www.npmjs.com/package/@microsoft.azure/format-spec) from @fearthecowboy. The
-original code was not available on Github and the last update was 3 years ago, so to improve support and extend it we
+original code was not available on Github, with the last update was 3 years ago, so to improve support and extend it we
 tried to reproduce the original functionality.
