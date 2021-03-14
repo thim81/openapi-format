@@ -2,29 +2,51 @@ openapi: 3.0.2
 servers:
   - url: /v3
 info:
-  description: |-
-    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
-    Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
-    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+  description: >-
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.
+    You can find out more about
+
+    Swagger at [http://swagger.io](http://swagger.io). In the third iteration of
+    the pet store, we've switched to the design first approach!
+
+    You can now help us improve the API whether it's by making changes to the
+    definition itself or to the code.
+
+    That way, with time, we can improve the API in general, and expose some of
+    the new features in OAS3.
+
 
     Some useful links:
-    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+
+    - [The Pet Store
+    repository](https://github.com/swagger-api/swagger-petstore)
+
+    - [The source API definition for the Pet
+    Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6-SNAPSHOT
   title: Swagger Petstore - OpenAPI 3.0
-  termsOfService: 'http://swagger.io/terms/'
+  termsOfService: http://swagger.io/terms/
   contact:
     email: apiteam@swagger.io
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
 tags:
   - name: pet
     description: Everything about your Pets
     externalDocs:
       description: Find out more
-      url: 'http://swagger.io'
+      url: http://swagger.io
+  - name: user
+    description: Everything about your users
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: store
+    description: Everything about your store
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
 paths:
   /pet:
     post:
@@ -48,8 +70,8 @@ paths:
           description: Invalid input
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       requestBody:
         description: Create a new pet in the store
         required: true
@@ -70,8 +92,6 @@ paths:
       description: Update an existing pet by Id
       operationId: updatePet
       responses:
-        '400':
-          description: Invalid ID supplied
         '200':
           description: Successful operation
           content:
@@ -81,14 +101,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
+        '400':
+          description: Invalid ID supplied
         '404':
           description: Pet not found
         '405':
           description: Validation exception
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       requestBody:
         description: Update an existent pet in the store
         required: true
@@ -109,6 +131,7 @@ paths:
       summary: Finds Pets by status
       description: Multiple status values can be provided with comma separated strings
       operationId: findPetsByStatus
+      x-visibility: true
       parameters:
         - name: status
           in: query
@@ -140,8 +163,8 @@ paths:
           description: Invalid status value
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
   /pet/findByTags:
     get:
       tags:
@@ -179,9 +202,9 @@ paths:
           description: Invalid tag value
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
-  '/pet/{petId}':
+            - write:pets
+            - read:pets
+  /pet/{petId}:
     get:
       tags:
         - pet
@@ -213,8 +236,8 @@ paths:
       security:
         - api_key: []
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
     post:
       tags:
         - pet
@@ -244,8 +267,8 @@ paths:
           description: Invalid input
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
     delete:
       tags:
         - pet
@@ -271,9 +294,9 @@ paths:
           description: Invalid pet value
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
-  '/pet/{petId}/uploadImage':
+            - write:pets
+            - read:pets
+  /pet/{petId}/uploadImage:
     post:
       tags:
         - pet
@@ -303,8 +326,8 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       requestBody:
         content:
           application/octet-stream:
@@ -333,8 +356,8 @@ paths:
         - api_key: []
   /store/order:
     post:
-      tags:
-        - store
+#      tags:
+#        - store
       summary: Place an order for a pet
       description: Place a new order in the store
       operationId: placeOrder
@@ -359,7 +382,7 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Order'
-  '/store/order/{orderId}':
+  /store/order/{orderId}:
     get:
       tags:
         - store
@@ -447,7 +470,7 @@ paths:
       tags:
         - user
       summary: Creates list of users with given input array
-      description: 'Creates list of users with given input array'
+      description: Creates list of users with given input array
       x-swagger-router-controller: UserController
       operationId: createUsersWithListInput
       responses:
@@ -523,7 +546,7 @@ paths:
       responses:
         default:
           description: successful operation
-  '/user/{username}':
+  /user/{username}:
     get:
       tags:
         - user
@@ -600,7 +623,7 @@ paths:
           description: User not found
 externalDocs:
   description: Find out more about Swagger
-  url: 'http://swagger.io'
+  url: http://swagger.io
 components:
   schemas:
     Order:
@@ -803,10 +826,10 @@ components:
       type: oauth2
       flows:
         implicit:
-          authorizationUrl: 'https://petstore.swagger.io/oauth/authorize'
+          authorizationUrl: https://petstore.swagger.io/oauth/authorize
           scopes:
-            'write:pets': modify pets in your account
-            'read:pets': read your pets
+            write:pets: modify pets in your account
+            read:pets: read your pets
     api_key:
       type: apiKey
       name: api_key

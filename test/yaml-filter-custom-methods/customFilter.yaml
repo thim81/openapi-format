@@ -1,0 +1,10 @@
+methods:
+  - get
+#flags:
+#  - x-visibility
+#flagValues: []
+#tags: []
+#operationIds:
+#  - addPet
+#  - findPetsByStatus
+

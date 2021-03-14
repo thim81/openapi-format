@@ -11,6 +11,10 @@ const tests = fs.readdirSync(__dirname).filter(file => {
     return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_') || doPrivate);
 });
 
+// SELECTIVE TESTING DEBUG
+// const tests = ['json-no-sort']
+// console.log('tests',tests);
+
 describe('openapi-format tests', () => {
     tests.forEach((test) => {
         describe(test, () => {
@@ -20,6 +24,8 @@ describe('openapi-format tests', () => {
                 let configFileOptions = {};
                 let sortOptions = {sortPrio: {}};
                 let sortFile = null;
+                let filterFile = null;
+                let filterOptions = {filterSet: {}}
                 let inputFilename = null;
                 let input = null;
 
@@ -27,6 +33,7 @@ describe('openapi-format tests', () => {
                     // Load options.yaml
                     configFile = path.join(__dirname, test, 'options.yaml');
                     configFileOptions = jy.load(fs.readFileSync(configFile, 'utf8'));
+                    configFileOptions.sort = !(configFileOptions['no-sort'])
                     options = Object.assign({}, options, configFileOptions);
                 } catch (ex) {
                     // console.error('ERROR Load options.yaml', ex)
@@ -34,6 +41,9 @@ describe('openapi-format tests', () => {
                         // Fallback to options.json
                         configFile = path.join(__dirname, test, 'options.json');
                         configFileOptions = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+                        if (configFileOptions['no-sort']) {
+                            configFileOptions.sort = !!(configFileOptions['no-sort'])
+                        }
                         options = Object.assign({}, options, configFileOptions);
                     } catch (ex) {
                         // No options found. options = {} will be used
@@ -60,8 +70,24 @@ describe('openapi-format tests', () => {
                     }
                 }
 
-                // DEBUG
-                // console.log('options', options)
+                try {
+                    // Load customFilter.yaml
+                    filterFile = path.join(__dirname, test, 'customFilter.yaml');
+                    filterOptions.filterSet = jy.load(fs.readFileSync(filterFile, 'utf8'));
+                    options = Object.assign({}, options, filterOptions);
+                } catch (ex) {
+                    // console.error('ERROR Load customSort.yaml', ex)
+                    try {
+                        // Fallback to customFilter.json
+                        filterFile = path.join(__dirname, test, 'customFilter.json');
+                        filterOptions.filterSet = jy.load(fs.readFileSync(filterFile, 'utf8'));
+                        options = Object.assign({}, options, filterOptions);
+                    } catch (ex) {
+                        // No options found. defaultSort.json will be used
+                        // console.error('ERROR Load customSort.json', ex)
+                        options.filterSet = require('../defaultFilter.json')
+                    }
+                }
 
                 try {
                     // Load input.yaml
@@ -75,6 +101,10 @@ describe('openapi-format tests', () => {
                     input = jy.load(fs.readFileSync(inputFilename, 'utf8'));
                 }
 
+                // DEBUG
+                // console.log('options', options)
+                // console.log('inputFilename', inputFilename)
+
                 const outputFilename = path.join(__dirname, test, options.output);
                 let readOutput = false;
                 let output = {};
@@ -85,7 +115,11 @@ describe('openapi-format tests', () => {
                     // No options found. output = {} will be used
                 }
 
-                const result = openapiFormat.openapiSort(input, options);
+                let result = openapiFormat.openapiSort(input, options);
+                if (options.filterSet) {
+                    result = openapiFormat.openapiFilter(result, options);
+                }
+
                 if (!readOutput) {
                     if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
                         output = JSON.stringify(result, null, 2);

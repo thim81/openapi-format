@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const jy = require('js-yaml');
-const yaml = require('yaml');
 const openapiFormat = require('../openapi-format')
 const program = require('commander');
 
@@ -18,6 +17,7 @@ program
     .description('Format & order the OpenAPI document')
     .option('-o, --output <output>', 'Write the formatted OpenAPI to an output file path. Default stdout.')
     .option('--sortFile <sortFile>', 'The file with the sort priority options.', 'defaultSort.json')
+    .option('--filterFile <filterFile>', 'The file with the filter options.')
     .option('-c, --configFile <configFile>', 'The file with the OpenAPI-format CLI options.')
     .option('--json', 'Print the file to stdout as JSON')
     .option('--yaml', 'Print the file to stdout as YAML')
@@ -81,11 +81,32 @@ async function run(oaFile, options) {
         }
     }
 
+    // apply filtering by filter file if present
+    if (options && options.filterFile) {
+        info('Filter File: ' + options.filterFile)
+        try {
+            let filterOptions = {filterSet: {}}
+            filterOptions.filterSet = jy.load(fs.readFileSync(options.filterFile, 'utf8'));
+            options = Object.assign({}, options, filterOptions);
+        } catch (err) {
+            console.error('\x1b[31m', 'Filter file error - no such file or directory "' + options.filterFile + '"')
+            if (options.verbose >= 1) {
+                console.error(err)
+            }
+        }
+    }
+
     info('Input file: ' + oaFile)
 
     // Get
     let res = jy.load(fs.readFileSync(oaFile, 'utf8'));
     let o = {};
+
+    // Filter OpenAPI document
+    if (options.filterSet) {
+        console.log('filterSet', options.filterSet)
+        res = await openapiFormat.openapiFilter(res, options);
+    }
 
     // Format & Order
     if (options.sort === true) {
@@ -95,7 +116,7 @@ async function run(oaFile, options) {
     if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
         o = JSON.stringify(res, null, 2);
     } else {
-        o = jy.dump(res);
+        o = jy.dump(res,{lineWidth:100});
     }
 
     if (options.output) {

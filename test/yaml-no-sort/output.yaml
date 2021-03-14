@@ -45,6 +45,7 @@ paths:
       summary: Add a new pet to the store
       description: Add a new pet to the store
       operationId: addPet
+      x-visibility: true
       responses:
         '200':
           description: Successful operation
