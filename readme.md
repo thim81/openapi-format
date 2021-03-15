@@ -5,31 +5,22 @@ Format an OpenAPI document by ordering and filtering fields.
 The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, and can
 output the file with clean indenting, to either JSON or YAML.
 
-- [openapi-format](#openapi-format)
-    * [Use-cases](#use-cases)
-    * [Features](#features)
-    * [Installation](#installation)
-        + [Local Installation (recommended)](#local-installation--recommended-)
-        + [Global Installation](#global-installation)
-        + [NPX usage](#npx-usage)
-    * [Command Line Interface](#command-line-interface)
-        + [OpenAPI format options](#openapi-format-options)
-        + [OpenAPI sort configuration options](#openapi-sort-configuration-options)
-        + [OpenAPI filter options](#openapi-filter-options)
-        + [CLI sort usage](#cli-sort-usage)
-            - [Format a spec with the default sorting and saves it as a new JSON file](#format-a-spec-with-the-default-sorting-and-saves-it-as-a-new-json-file)
-            - [Format a OpenAPI document with the default sorting and saves it as a new YAML file](#format-a-openapi-document-with-the-default-sorting-and-saves-it-as-a-new-yaml-file)
-            - [Format a OpenAPI document with the default sorting and output it as JSON to STDOUT](#format-a-openapi-document-with-the-default-sorting-and-output-it-as-json-to-stdout)
-            - [Format a OpenAPI document with the default sorting and output it as YAML to STDOUT](#format-a-openapi-document-with-the-default-sorting-and-output-it-as-yaml-to-stdout)
-            - [Format a OpenAPI document with the default sorting and output it as YAML to STDOUT](#format-a-openapi-document-with-the-default-sorting-and-output-it-as-yaml-to-stdout-1)
-            - [Format a OpenAPI document but skip the sorting and saves it as a new JSON file](#format-a-openapi-document-but-skip-the-sorting-and-saves-it-as-a-new-json-file)
-        + [OpenAPI options](#openapi-options)
-        + [CLI filter usage](#cli-filter-usage)
-            - [Format a OpenAPI document by filtering fields, default sorting and saves it as a new file](#format-a-openapi-document-by-filtering-fields--default-sorting-and-saves-it-as-a-new-file)
-        + [CLI rename usage](#cli-rename-usage)
-            - [Format a OpenAPI document by changing the title and saves it as a new JSON file](#format-a-openapi-document-by-changing-the-title-and-saves-it-as-a-new-json-file)
-        + [CLI configuration usage](#cli-configuration-usage)
-    * [Credits](#credits)
+## Table of content
+* [Use-cases](#use-cases)
+* [Features](#features)
+* [Installation](#installation)
+    + [Local Installation (recommended)](#local-installation--recommended-)
+    + [Global Installation](#global-installation)
+    + [NPX usage](#npx-usage)
+* [Command Line Interface](#command-line-interface)
+* [OpenAPI format options](#openapi-format-options)
+* [OpenAPI sort configuration options](#openapi-sort-configuration-options)
+* [OpenAPI filter options](#openapi-filter-options)
+* [CLI sort usage](#cli-sort-usage)
+* [CLI filter usage](#cli-filter-usage)
+* [CLI rename usage](#cli-rename-usage)
+* [CLI configuration usage](#cli-configuration-usage)
+* [Credits](#credits)
 
 ## Use-cases
 
@@ -121,7 +112,7 @@ Options:
   --verbose        Output more details of the filter process             [count]
 ```
 
-### OpenAPI format options
+## OpenAPI format options
 
 | Parameter    | Alias         | Description                                                                 | Input type   | Default          | Required/Optional |
 |--------------|---------------|-----------------------------------------------------------------------------|--------------|------------------|-------------------|
@@ -137,7 +128,7 @@ Options:
 | --verbose    | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                  | optional          |
 | --help       | h             | display help for command                                                    |              |                  | optional          |
 
-### OpenAPI sort configuration options
+## OpenAPI sort configuration options
 
 The default sorting based on the following logic, which is stored in
 the [defaultSort.json](https://github.com/thim81/openapi-format/blob/main/defaultSort.json) file. You can easily
@@ -161,7 +152,7 @@ do this).
 | schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                                                                  |
 | properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                                                                  |
 
-### OpenAPI filter options
+## OpenAPI filter options
 
 By specifying the desired filter values for the available filter keys, the openapi-format CLI will strip out any
 matching item from the OpenAPI document.
@@ -252,54 +243,53 @@ paths:
             x-exclude: true
 ```
 
-### CLI sort usage
+## CLI sort usage
 
-#### Format a spec with the default sorting and saves it as a new JSON file
+- Format a spec with the default sorting and saves it as a new JSON file
 
 ```shell
 $ openapi-format openapi.json openapi-formatted.json
 ```
 
-#### Format a OpenAPI document with the default sorting and saves it as a new YAML file
+-Format a OpenAPI document with the default sorting and saves it as a new YAML file
 
 ```shell
 $ openapi-format openapi.json openapi.yaml
 ```
 
-#### Format a OpenAPI document with the default sorting and output it as JSON to STDOUT
+- Format a OpenAPI document with the default sorting and output it as JSON to STDOUT
 
 ```shell
 $ openapi-format openapi.json --json
 ```
 
-#### Format a OpenAPI document with the default sorting and output it as YAML to STDOUT
+- Format a OpenAPI document with the default sorting and output it as YAML to STDOUT
 
 ```shell
 $ openapi-format openapi.json --yaml
 ```
 
-#### Format a OpenAPI document with the default sorting and output it as YAML to STDOUT
+- Format a OpenAPI document with the default sorting and save it as YAML
 
 ```shell
 $ openapi-format openapi.json openapi.yaml
 ```
 
-#### Format a OpenAPI document but skip the sorting and saves it as a new JSON file
+- Format a OpenAPI document but skip the sorting and save it as a new JSON file
 
 example:
 
 ```shell
-$ openapi-format openapi.json openapi.json --no-sort
+$ openapi-format openapi.json openapi-formatted.json --no-sort
 ```
 
 Which should keep the OpenAPI fields in the same order. This can be needed, when you only want to do a filtering or
 rename action.
 
-### OpenAPI options
 
-### CLI filter usage
+## CLI filter usage
 
-#### Format a OpenAPI document by filtering fields, default sorting and saves it as a new file
+- Format a OpenAPI document by filtering fields, default sorting and saves it as a new file
 
 When you want to strip certain flags, tags, methods, operationID's, you can pass a `filterFile` which contains the
 specific values for the flags, tags, methods, operationID's.
@@ -324,9 +314,9 @@ operationIds:
     - findPetsByStatus
 ```
 
-### CLI rename usage
+## CLI rename usage
 
-#### Format a OpenAPI document by changing the title and saves it as a new JSON file
+- Format a OpenAPI document by changing the title and saves it as a new JSON file
 
 During CI/CD pipelines, you might want to create different results of the OpenAPI document. Having the option to rename
 them, might make it easier to work with the results, so that is why we provide this command option.
@@ -355,7 +345,7 @@ which results in
         "title": "Swagger Petstore - OpenAPI 3.0",
 ```
 
-### CLI configuration usage
+## CLI configuration usage
 
 All the CLI options can be managed in separate configuration file and passed along the openapi-format command. This will
 make configuration easier, especially in CI/CD implementations where the configuration can be stored in version control

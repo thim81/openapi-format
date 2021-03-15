@@ -107,56 +107,23 @@ function openapiFilter(oaObj, options) {
     const filterArray = [...filterSet.tags];
     const filterProps = [...filterSet.operationIds, ...filterSet.flags];
 
-    // console.log('openapiFilter filterSet', filterSet)
-    // console.log('openapiFilter filterKeys', filterKeys)
-    // console.log('openapiFilter filterKeys', filterArray)
-    // console.log('openapiFilter filterProps', filterProps)
-
     traverse(jsonObj).forEach(function (node) {
 
         // Filter out object matching the "methods"
         if (filterKeys.length > 0 && filterKeys.includes(this.key)) {
-            // console.log('filterKeys-key', this.key)
-            // console.log('filterKeys-node', node)
 
-            // console.log('parent', this.parent)
-            // console.log('parent.key', this.parent.key)
-            // console.log('parent.keys', this.parent.keys)
-            // console.log('parent.path', this.parent.path)
+            // Parent has other nodes, so remove only targeted node
+            this.remove();
 
-            // if (this.parent.keys.length > 1) {
-                // Parent has other nodes, so remove only targeted node
-                this.remove();
-            // } else {
-                // Parent has no nodes after remove, so lets remove parent
-                // this.parent.remove()
-            // }
         }
 
         // Array field matching
         if (Array.isArray(node)) {
-            // console.log('array-key', this.key)
-            // console.log('array-node', node)
             // Filter out object matching the "tags"
-            // if (filterArray.length > 0 && filterArray.includes(this.key) && filterArray.some(i => node.includes(i))) {
             if (filterArray.length > 0 && this.key === 'tags' && filterArray.some(i => node.includes(i))) {
-                // console.log('array-key', this.key)
-                // console.log('array-node', node)
-                // console.log('parent', this.parent)
-                // console.log('parent.key', this.parent.key)
-                // console.log('parent.keys', this.parent.keys)
-                // console.log('parent.parent.key', this.parent.parent.key)
-                // console.log('parent.parent.keys', this.parent.parent.keys)
-                // console.log('parent.parent.parent.keys', this.parent.parent.parent.keys)
-                // console.log('parent.path', this.parent.path)
 
-                // if (this.parent && this.parent.parent && this.parent.parent.keys && this.parent.parent.keys.length === 1) {
-                    // Top Parent has no nodes after remove, so lets remove top parent of matching element
-                    // this.parent.parent.delete()
-                // } else {
-                    // Top parent has other nodes, so remove only targeted parent node of matching element
-                    this.parent.delete();
-                // }
+                // Top parent has other nodes, so remove only targeted parent node of matching element
+                this.parent.delete();
             }
         }
 
@@ -165,40 +132,15 @@ function openapiFilter(oaObj, options) {
         if (typeof node !== 'object' && !Array.isArray(node)) {
             // Filter out fields matching the flags
             if (filterProps.length > 0 && filterProps.includes(this.key)) {
-                // console.log('filterProps-key-key', this.key)
-                // console.log('filterProps-key-node', node)
-                // console.log('parent', this.parent)
-                // console.log('parent.key', this.parent.key)
-                // console.log('parent.keys', this.parent.keys.length)
-                // console.log('parent.parent.keys', this.parent.parent.keys.length)
-                // console.log('parent.path', this.parent.path)
 
-                // if (this.parent && this.parent.parent && this.parent.parent.keys && this.parent.parent.keys.length === 1) {
-                    // Top Parent has no nodes after remove, so lets remove top parent of matching element
-                    // this.parent.parent.remove()
-                // } else {
-                    // Top parent has other nodes, so remove only targeted parent node of matching element
-                    this.parent.remove();
-                // }
+                // Top parent has other nodes, so remove only targeted parent node of matching element
+                this.parent.remove();
             }
 
             // Filter out fields matching the flagValues/Tags/operationIds
             if (filterProps.length > 0 && filterProps.includes(node)) {
-                // console.log('filterProps-node-key', this.key)
-                // console.log('filterProps-node-node', node)
-                // console.log('parent', this.parent)
-                // console.log('parent.key', this.parent.key)
-                // console.log('parent.keys', this.parent.keys.length)
-                // console.log('parent.parent.keys', this.parent.parent.keys.length)
-                // console.log('parent.path', this.parent.path)
-
-                // if (this.parent && this.parent.parent && this.parent.parent.keys && this.parent.parent.keys.length === 1) {
-                    // Top Parent has no nodes after remove, so lets remove top parent of matching element
-                    // this.parent.parent.remove()
-                // } else {
-                    // Top parent has other nodes, so remove only targeted parent node of matching element
-                    this.parent.remove();
-                // }
+                // Top parent has other nodes, so remove only targeted parent node of matching element
+                this.parent.remove();
             }
 
         }
@@ -207,7 +149,7 @@ function openapiFilter(oaObj, options) {
 
     // Clean-up empty objects
     traverse(jsonObj).forEach(function (node) {
-        if(Object.keys(node).length === 0 && node.constructor === Object) {
+        if (Object.keys(node).length === 0 && node.constructor === Object) {
             this.delete();
         }
     });
