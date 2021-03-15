@@ -157,7 +157,8 @@ do this).
 By specifying the desired filter values for the available filter keys, the openapi-format CLI will strip out any
 matching item from the OpenAPI document.
 
-For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter. 
+For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
+really extended options for filtering OpenAPI documents.
 
 | Key          | Description                   | Type  | Examples                         |
 |--------------|-------------------------------|-------|----------------------------------|
@@ -210,7 +211,7 @@ paths:
   Object" https://swagger.io/specification/#operation-object
 
 This will remove specific fields and attached fields that match the operation ID's. In the example below, this would
-mean that all items with the item for `findPetsByStatus` would be removed from the OpenAPI document.
+mean that the item with operationID `findPetsByStatus` would be removed from the OpenAPI document.
 
 For example:
 
@@ -357,8 +358,9 @@ example:
 $ openapi-format openapi.json --configFil openapi-format-options.json
 ```
 
-The formatting will happen based on all the options set in the `openapi-format-options.json` file. All the options
-defined in the
+The formatting will happen based on all the options set in the `openapi-format-options.json` file. All the
+available [OpenAPI format options](https://github.com/thim81/openapi-format#openapi-format-options) can be used in the
+config file.
 
 ## Credits
 
