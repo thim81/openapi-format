@@ -43,9 +43,9 @@ Postman collections, test suites, ...
 - [x] Rename the OpenAPI title
 - [x] Support OpenAPI documents in JSON format
 - [x] Support OpenAPI documents in YAML format
-- [x] Format via CLI.
+- [x] Format via CLI
 - [x] Format via config files
-- [x] Use via as Module.
+- [x] Use via as Module
 - [x] Support for OpenAPI 3.0
 - [ ] Support for OpenAPI 3.1
 
