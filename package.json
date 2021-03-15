@@ -1,7 +1,7 @@
 {
     "name": "openapi-format",
     "version": "1.0.0",
-    "description": "Format the fields of OpenAPI fields by ordering them in a hierarchical order.",
+    "description": "Format a OpenAPI document by ordering and filtering fields.",
     "bin": {
         "openapi-format": "bin/cli.js"
     },
@@ -27,10 +27,11 @@
         "format",
         "sort",
         "order",
+        "filter",
+        "rename",
         "cli"
     ],
     "scripts": {
-        "test": "npx mocha",
-        "openapi-format": "./bin/openapi-format"
+        "test": "npx mocha"
     }
 }

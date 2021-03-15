@@ -11,18 +11,18 @@ function increaseVerbosity(dummyValue, previous) {
 }
 
 program
-    .version(require('../package.json').version, '--version')
     .arguments('<oaFile>')
     .usage('<file> [options]')
-    .description('Format & order the OpenAPI document')
-    .option('-o, --output <output>', 'Write the formatted OpenAPI to an output file path. Default stdout.')
-    .option('-s, --sortFile <sortFile>', 'The file with the sort priority options.', 'defaultSort.json')
-    .option('-f, --filterFile <filterFile>', 'The file with the filter options.')
-    .option('-c, --configFile <configFile>', 'The file with the OpenAPI-format CLI options.')
-    .option('--rename <oaTitle>', 'Overwrite the title in the OpenAPI document.')
-    .option('--json', 'Print the file to stdout as JSON')
-    .option('--yaml', 'Print the file to stdout as YAML')
-    .option('--no-sort', 'Dont sort the file')
+    .description('Format a OpenAPI document by ordering and filtering fields.')
+    .option('-o, --output <output>', 'write the formatted OpenAPI to an output file path.')
+    .option('-s, --sortFile <sortFile>', 'the file with the sort priority options.', 'defaultSort.json')
+    .option('-f, --filterFile <filterFile>', 'the file with the filter options.')
+    .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options.')
+    .option('--no-sort', 'dont sort the file')
+    .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document.')
+    .option('--json', 'print the file to stdout as JSON')
+    .option('--yaml', 'print the file to stdout as YAML')
+    .version(require('../package.json').version, '--version')
     .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
     .action(run)
     .exitOverride((err) => {

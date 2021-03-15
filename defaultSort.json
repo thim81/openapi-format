@@ -10,7 +10,7 @@
     "responses": ["description", "headers", "content", "links"],
     "content": [],
     "components": ["parameters", "schemas"],
-    "Schema": ["description", "type", "items", "properties", "format", "example", "default"],
+    "schema": ["description", "type", "items", "properties", "format", "example", "default"],
     "schemas": ["description", "type", "items", "properties", "format", "example", "default"],
     "properties": ["description", "type","items", "format", "example", "default","enum"]
 }

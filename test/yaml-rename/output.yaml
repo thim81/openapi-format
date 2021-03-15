@@ -24,7 +24,7 @@ info:
     - [The source API definition for the Pet
     Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6-SNAPSHOT
-  title: OpenAPI Format Specification
+  title: OpenAPI Petstore - OpenAPI 3.0
   termsOfService: http://swagger.io/terms/
   contact:
     email: apiteam@swagger.io
