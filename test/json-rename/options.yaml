@@ -1,0 +1,4 @@
+verbose: true
+output: output.json
+no-sort: true
+rename: 'OpenAPI Format Specification'

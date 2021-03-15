@@ -48,14 +48,14 @@ function prioritySort(jsonProp, sortPriority, options) {
 }
 
 // OpenAPI sort function
-// Traverse through all keys and based on the key name, sort the props accoring the
-function openapiSort(rawObj, options) {
+// Traverse through all keys and based on the key name, sort the props according the preferred order.
+function openapiSort(oaObj, options) {
     // Skip sorting, when the option "no-sort" is set
     if (options.sort === false) {
-        return rawObj;
+        return oaObj;
     }
 
-    let jsonObj = JSON.parse(JSON.stringify(rawObj)); // Deep copy of the schema object
+    let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
     let sortSet = options.sortSet || JSON.parse(fs.readFileSync("defaultSort.json", 'utf8'));
 
     // Recursive traverse through OpenAPI document
@@ -95,10 +95,10 @@ function openapiSort(rawObj, options) {
     return jsonObj;
 }
 
-// OpenAPI sort function
-// Traverse through all keys and based on the key name, sort the props accoring the
-function openapiFilter(rawObj, options) {
-    let jsonObj = JSON.parse(JSON.stringify(rawObj)); // Deep copy of the schema object
+// OpenAPI filter function
+// Traverse through all keys and based on the key name, filter the props according to the filter configuration.
+function openapiFilter(oaObj, options) {
+    let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
     let defaultFilter = JSON.parse(fs.readFileSync("defaultFilter.json", 'utf8'))
     let filterSet = Object.assign({}, defaultFilter, options.filterSet);
 
@@ -215,7 +215,21 @@ function openapiFilter(rawObj, options) {
     return jsonObj;
 }
 
+// OpenAPI rename function
+// Change the title of the OpenAPI document with a provided value.
+function openapiRename(oaObj, options) {
+    let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
+
+    // OpenAPI 3
+    if (jsonObj.info && jsonObj.info.title && options.rename && options.rename !== "") {
+        jsonObj.info.title = options.rename
+    }
+
+    return jsonObj;
+}
+
 module.exports = {
     openapiFilter: openapiFilter,
-    openapiSort: openapiSort
+    openapiSort: openapiSort,
+    openapiRename: openapiRename
 };

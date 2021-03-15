@@ -16,9 +16,10 @@ program
     .usage('<file> [options]')
     .description('Format & order the OpenAPI document')
     .option('-o, --output <output>', 'Write the formatted OpenAPI to an output file path. Default stdout.')
-    .option('--sortFile <sortFile>', 'The file with the sort priority options.', 'defaultSort.json')
-    .option('--filterFile <filterFile>', 'The file with the filter options.')
+    .option('-s, --sortFile <sortFile>', 'The file with the sort priority options.', 'defaultSort.json')
+    .option('-f, --filterFile <filterFile>', 'The file with the filter options.')
     .option('-c, --configFile <configFile>', 'The file with the OpenAPI-format CLI options.')
+    .option('--rename <oaTitle>', 'Overwrite the title in the OpenAPI document.')
     .option('--json', 'Print the file to stdout as JSON')
     .option('--yaml', 'Print the file to stdout as YAML')
     .option('--no-sort', 'Dont sort the file')
@@ -57,6 +58,10 @@ async function run(oaFile, options) {
         try {
             let configFileOptions = {}
             configFileOptions = jy.load(fs.readFileSync(options.configFile, 'utf8'));
+            if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
+                configFileOptions.sort = !(configFileOptions['no-sort'])
+                delete configFileOptions['no-sort'];
+            }
             options = Object.assign({}, options, configFileOptions);
         } catch (err) {
             console.error('\x1b[31m', 'Config file error - no such file or directory "' + options.configFile + '"')
@@ -66,12 +71,16 @@ async function run(oaFile, options) {
         }
     }
 
+    if (options.verbose >= 1 || options.verbose === true) {
+        console.table(options);
+    }
+
     // apply ordering by priority file if present
-    if (options && options.sortFile) {
+    if (options && options.sortFile && options.sort === true) {
         info('Sort File: ' + options.sortFile)
         try {
-            let sortOptions = {sortPrio: {}}
-            sortOptions.sortPrio = jy.load(fs.readFileSync(options.sortFile, 'utf8'));
+            let sortOptions = {sortSet: {}}
+            sortOptions.sortSet = jy.load(fs.readFileSync(options.sortFile, 'utf8'));
             options = Object.assign({}, options, sortOptions);
         } catch (err) {
             console.error('\x1b[31m', 'Sort file error - no such file or directory "' + options.sortFile + '"')
@@ -104,13 +113,18 @@ async function run(oaFile, options) {
 
     // Filter OpenAPI document
     if (options.filterSet) {
-        console.log('filterSet', options.filterSet)
         res = await openapiFormat.openapiFilter(res, options);
     }
 
-    // Format & Order
+    // Format & Order OpenAPI document
     if (options.sort === true) {
         res = await openapiFormat.openapiSort(res, options);
+    }
+
+    // Rename title OpenAPI document
+    if (options.rename) {
+        res = await openapiFormat.openapiRename(res, options);
+        info('OpenAPI title renamed to: "' + options.rename+'"')
     }
 
     if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {

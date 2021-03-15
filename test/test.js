@@ -22,7 +22,7 @@ describe('openapi-format tests', () => {
                 let options = {};
                 let configFile = null;
                 let configFileOptions = {};
-                let sortOptions = {sortPrio: {}};
+                let sortOptions = {sortSet: {}};
                 let sortFile = null;
                 let filterFile = null;
                 let filterOptions = {filterSet: {}}
@@ -41,8 +41,9 @@ describe('openapi-format tests', () => {
                         // Fallback to options.json
                         configFile = path.join(__dirname, test, 'options.json');
                         configFileOptions = JSON.parse(fs.readFileSync(configFile, 'utf8'));
-                        if (configFileOptions['no-sort']) {
-                            configFileOptions.sort = !!(configFileOptions['no-sort'])
+                        if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
+                            configFileOptions.sort = !(configFileOptions['no-sort'])
+                            delete configFileOptions['no-sort'];
                         }
                         options = Object.assign({}, options, configFileOptions);
                     } catch (ex) {
@@ -54,19 +55,19 @@ describe('openapi-format tests', () => {
                 try {
                     // Load customSort.yaml
                     sortFile = path.join(__dirname, test, 'customSort.yaml');
-                    sortOptions.sortPrio = jy.load(fs.readFileSync(sortFile, 'utf8'));
+                    sortOptions.sortSet = jy.load(fs.readFileSync(sortFile, 'utf8'));
                     options = Object.assign({}, options, sortOptions);
                 } catch (ex) {
                     // console.error('ERROR Load customSort.yaml', ex)
                     try {
                         // Fallback to customSort.json
                         sortFile = path.join(__dirname, test, 'customSort.json');
-                        sortOptions.sortPrio = JSON.parse(fs.readFileSync(sortFile, 'utf8'));
+                        sortOptions.sortSet = JSON.parse(fs.readFileSync(sortFile, 'utf8'));
                         options = Object.assign({}, options, sortOptions);
                     } catch (ex) {
                         // No options found. defaultSort.json will be used
                         // console.error('ERROR Load customSort.json', ex)
-                        options.sortPrio = require('../defaultSort.json')
+                        options.sortSet = require('../defaultSort.json')
                     }
                 }
 
@@ -118,6 +119,11 @@ describe('openapi-format tests', () => {
                 let result = openapiFormat.openapiSort(input, options);
                 if (options.filterSet) {
                     result = openapiFormat.openapiFilter(result, options);
+                }
+
+                // Rename title OpenAPI document
+                if (options.rename) {
+                    result = openapiFormat.openapiRename(result, options);
                 }
 
                 if (!readOutput) {
