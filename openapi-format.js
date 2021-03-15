@@ -56,7 +56,7 @@ function openapiSort(oaObj, options) {
     }
 
     let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-    let sortSet = options.sortSet || JSON.parse(fs.readFileSync("defaultSort.json", 'utf8'));
+    let sortSet = options.sortSet | JSON.parse(fs.readFileSync(__dirname + "/defaultSort.json", 'utf8'));
 
     // Recursive traverse through OpenAPI document
     traverse(jsonObj).forEach(function (node) {
@@ -99,7 +99,7 @@ function openapiSort(oaObj, options) {
 // Traverse through all keys and based on the key name, filter the props according to the filter configuration.
 function openapiFilter(oaObj, options) {
     let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-    let defaultFilter = JSON.parse(fs.readFileSync("defaultFilter.json", 'utf8'))
+    let defaultFilter = JSON.parse(fs.readFileSync(__dirname + "/defaultFilter.json", 'utf8'))
     let filterSet = Object.assign({}, defaultFilter, options.filterSet);
 
     // Merge object filters
@@ -111,28 +111,23 @@ function openapiFilter(oaObj, options) {
 
         // Filter out object matching the "methods"
         if (filterKeys.length > 0 && filterKeys.includes(this.key)) {
-
             // Parent has other nodes, so remove only targeted node
             this.remove();
-
         }
 
         // Array field matching
         if (Array.isArray(node)) {
             // Filter out object matching the "tags"
             if (filterArray.length > 0 && this.key === 'tags' && filterArray.some(i => node.includes(i))) {
-
                 // Top parent has other nodes, so remove only targeted parent node of matching element
                 this.parent.delete();
             }
         }
 
-
         // Single field matching
         if (typeof node !== 'object' && !Array.isArray(node)) {
             // Filter out fields matching the flags
             if (filterProps.length > 0 && filterProps.includes(this.key)) {
-
                 // Top parent has other nodes, so remove only targeted parent node of matching element
                 this.parent.remove();
             }
@@ -142,14 +137,13 @@ function openapiFilter(oaObj, options) {
                 // Top parent has other nodes, so remove only targeted parent node of matching element
                 this.parent.remove();
             }
-
         }
 
     });
 
     // Clean-up empty objects
     traverse(jsonObj).forEach(function (node) {
-        if (Object.keys(node).length === 0 && node.constructor === Object) {
+        if (node && Object.keys(node).length === 0 && node.constructor === Object) {
             this.delete();
         }
     });
