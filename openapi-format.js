@@ -140,6 +140,13 @@ function openapiFilter(oaObj, options) {
             }
         }
 
+        // Filter out OpenApi.tags matching the flags
+        if (this.parent && this.parent && this.key === 'tags' && this.parent.key === undefined && Array.isArray(node)) {
+            // Deep filter array of tags
+            let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
+            const oaFilteredTags = oaTags.filter(item => !filterProps.some(i => (Object.keys(item).includes(i))));
+            this.update(oaFilteredTags);
+        }
     });
 
     // Clean-up jsonObj
