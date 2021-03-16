@@ -75,7 +75,7 @@ function openapiSort(oaObj, options) {
 
                 } else if (this.key === 'responses' || this.key === 'schemas' || this.key === 'properties') {
                     // Deep sort list of properties
-                    let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
+                    let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the object
                     for (let keyRes in sortedObj) {
                         sortedObj[keyRes] = prioritySort(sortedObj[keyRes], sortSet[this.key]);
                     }
@@ -101,6 +101,7 @@ function openapiFilter(oaObj, options) {
     let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
     let defaultFilter = JSON.parse(fs.readFileSync(__dirname + "/defaultFilter.json", 'utf8'))
     let filterSet = Object.assign({}, defaultFilter, options.filterSet);
+    const httpVerbs = ["get", "post", "put", "patch", "delete"];
 
     // Merge object filters
     const filterKeys = [...filterSet.methods];
@@ -141,9 +142,14 @@ function openapiFilter(oaObj, options) {
 
     });
 
-    // Clean-up empty objects
+    // Clean-up jsonObj
     traverse(jsonObj).forEach(function (node) {
+        // Remove empty objects
         if (node && Object.keys(node).length === 0 && node.constructor === Object) {
+            this.delete();
+        }
+        // Remove path items without operations
+        if (this.parent && this.parent.key === 'paths' && !httpVerbs.some(i => this.keys.includes(i))) {
             this.delete();
         }
     });
