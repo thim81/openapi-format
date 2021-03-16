@@ -343,7 +343,7 @@ which results in
 {
     "openapi": "3.0.2",
     "info": {
-        "title": "Swagger Petstore - OpenAPI 3.0",
+        "title": "OpenAPI Petstore - OpenAPI 3.0",
 ```
 
 ## CLI configuration usage
