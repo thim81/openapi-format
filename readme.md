@@ -5,8 +5,8 @@ Format an OpenAPI document by ordering and filtering fields.
 The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, and can
 output the file with clean indenting, to either JSON or YAML.
 
-Next to the ordering, the CLI provides additional options to filter fields & parts of the OpenAPI document based on out flags, tags, methods
-and operationID's.
+Next to the ordering, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
+flags, tags, methods and operationID's.
 
 ## Table of content
 * [Use-cases](#use-cases)
