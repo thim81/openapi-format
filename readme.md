@@ -5,6 +5,9 @@ Format an OpenAPI document by ordering and filtering fields.
 The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, and can
 output the file with clean indenting, to either JSON or YAML.
 
+Next to the ordering, the CLI provides additional options to filter fields & parts of the OpenAPI document based on out flags, tags, methods
+and operationID's.
+
 ## Table of content
 * [Use-cases](#use-cases)
 * [Features](#features)
@@ -130,10 +133,15 @@ Options:
 
 ## OpenAPI sort configuration options
 
-The default sorting based on the following logic, which is stored in
-the [defaultSort.json](https://github.com/thim81/openapi-format/blob/main/defaultSort.json) file. You can easily
-modify this by specifying your own ordering per key, which can passed on to the CLI (see below for an example on how to
-do this).
+The CLI will sort the OpenAPI document in the defined order liked defined per OpenAPI key/element. The fields that are
+not specified will keep their order like it is in the orginal OpenAPI document, so only defined fields will be
+re-ordered.
+
+The default sorting based on the defined order (listed in the table below), which is stored in
+the [defaultSort.json](https://github.com/thim81/openapi-format/blob/main/defaultSort.json) file. 
+
+You can easily modify this by specifying your own ordering per key, which can passed on to the CLI (see below for an
+example on how to do this).
 
 | Key         | Ordered by                                                                                                        | OpenAPI reference                                                                                              |
 | ----------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
@@ -154,20 +162,20 @@ do this).
 
 ## OpenAPI filter options
 
-By specifying the desired filter values for the available filter keys, the openapi-format CLI will strip out any
-matching item from the OpenAPI document.
+By specifying the desired filter values for the available filter types, the openapi-format CLI will strip out any
+matching item from the OpenAPI document. You can combine multiple types to filter out a range of OpenAPI items.
 
 For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
 really extended options for filtering OpenAPI documents.
 
-| Key          | Description                   | Type  | Examples                         |
+| Type         | Description                   | Type  | Examples                         |
 |--------------|-------------------------------|-------|----------------------------------|
 | methods      | a list OpenAPI methods.       | array | ['get','post','put']             |
 | tags         | a list OpenAPI tags.          | array | ['pet','user']                   |
 | operationIds | a list OpenAPI operation ID's.| array | ['findPetsByStatus','updatePet'] |
 | flags        | a list of custom flags        | array | ['x-exclude','x-internal']       |
 
-Some more details on the available filter keys:
+Some more details on the available filter types:
 
 - **methods**: Refers to the "Path Item Object" https://swagger.io/specification/#path-item-object
 
