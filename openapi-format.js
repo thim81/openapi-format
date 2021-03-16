@@ -56,7 +56,7 @@ function openapiSort(oaObj, options) {
     }
 
     let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-    let sortSet = options.sortSet | JSON.parse(fs.readFileSync(__dirname + "/defaultSort.json", 'utf8'));
+    let sortSet = options.sortSet || JSON.parse(fs.readFileSync(__dirname + "/defaultSort.json", 'utf8'));
 
     // Recursive traverse through OpenAPI document
     traverse(jsonObj).forEach(function (node) {

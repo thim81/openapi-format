@@ -1,2 +1,2 @@
 verbose: true
-output: output.yaml
+filterFile: output.yaml

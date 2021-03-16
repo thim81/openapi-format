@@ -1,4 +1,4 @@
 verbose: true
 no-sort: true
 output: output.yaml
-filter: customFilter.yaml
+filterFile: customFilter.yaml
