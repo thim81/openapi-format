@@ -2,8 +2,8 @@
 
 Format an OpenAPI document by ordering and filtering fields.
 
-The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, and can
-output the file with clean indenting, to either JSON or YAML.
+The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, and
+can output the file with clean indenting, to either JSON or YAML.
 
 Next to the ordering, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
 flags, tags, methods and operationID's.
@@ -48,7 +48,7 @@ Postman collections, test suites, ...
 - [x] Support OpenAPI documents in YAML format
 - [x] Format via CLI
 - [x] Format via config files
-- [x] Use via as Module
+- [x] Use as a Module
 - [x] Support for OpenAPI 3.0
 - [ ] Support for OpenAPI 3.1
 
@@ -143,22 +143,22 @@ the [defaultSort.json](https://github.com/thim81/openapi-format/blob/main/defaul
 You can easily modify this by specifying your own ordering per key, which can passed on to the CLI (see below for an
 example on how to do this).
 
-| Key         | Ordered by                                                                                                        | OpenAPI reference                                                                                              |
-| ----------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| root        | - openapi<br>\- info<br>\- servers<br>\- paths<br>\- components<br>\- tags<br>\- x-tagGroups<br>\- externalDocs | "OpenAPI Objec"<br>https://swagger.io/specification/#openapi-object                                              |
-| get         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | "Path Item Object"<br>https://swagger.io/specification/#path-item-object                                         |
-| post        | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | "Path Item Object"<br>https://swagger.io/specification/#path-item-object                                         |
-| put         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | "Path Item Object"<br>https://swagger.io/specification/#path-item-object                                         |
-| patch       | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | "Path Item Object"<br>https://swagger.io/specification/#path-item-object                                         |
-| delete      | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | "Path Item Object"<br>https://swagger.io/specification/#path-item-object                                         |
-| parameters  | - name<br>\- in<br>\- description<br>\- required<br>\- schema                                                   | https://swagger.io/specification/#parameter-object)                                                              |
-| requestBody | - description<br>\- headers<br>\- content<br>\- links                                                           | https://swagger.io/specification/#request-body-object)                                                           |
-| responses   | - description<br>\- headers<br>\- content<br>\- links                                                           | https://swagger.io/specification/#responses-object)                                                              |
-| content     | (By alphabet)                                                                                                   | https://swagger.io/specification/#responses-object                                                               |
-| components  | - parameters<br>\- schemas                                                                                      | https://swagger.io/specification/#components-object                                                              |
-| schema      | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  | https://swagger.io/specification/#schema-object                                                                  |
-| schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                                                                  |
-| properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                                                                  |
+| Key         | Ordered by                                                                                                      | OpenAPI reference                                                         |
+| ----------- | ----------------------------------------------------------------------------------------------------------------| ------------------------------------------------------------------------- |
+| root        | - openapi<br>\- info<br>\- servers<br>\- paths<br>\- components<br>\- tags<br>\- x-tagGroups<br>\- externalDocs | https://spec.openapis.org/oas/v3.0.3.html#openapi-object                  |
+| get         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
+| post        | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
+| put         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
+| patch       | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
+| delete      | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
+| parameters  | - name<br>\- in<br>\- description<br>\- required<br>\- schema                                                   | https://spec.openapis.org/oas/v3.0.3.html#parameterObject                 |
+| requestBody | - description<br>\- headers<br>\- content<br>\- links                                                           | https://spec.openapis.org/oas/v3.0.3.html#request-body-object             |
+| responses   | - description<br>\- headers<br>\- content<br>\- links                                                           | https://spec.openapis.org/oas/v3.0.3.html#responses-object                |
+| content     | (By alphabet)                                                                                                   | https://spec.openapis.org/oas/v3.0.3.html#responses-object                |
+| components  | - parameters<br>\- schemas                                                                                      | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| schema      | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
+| schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                           |
+| properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                           |
 
 ## OpenAPI filter options
 
@@ -177,7 +177,7 @@ really extended options for filtering OpenAPI documents.
 
 Some more details on the available filter types:
 
-- **methods**: Refers to the "Path Item Object" https://swagger.io/specification/#path-item-object
+- **methods**: Refers to the "Path Item Object" http://spec.openapis.org/oas/v3.0.3.html#operationObject
 
 This will remove all fields and attached fields that match the verbs. In the example below, this would mean that
 all `get`, `put`, `post` items would be removed from the OpenAPI document.
@@ -195,7 +195,8 @@ paths:
             summary: Update an existing pet
 ```  
 
-- **tags**: Refers to the "tags" field from the "Operation Object" https://swagger.io/specification/#operation-object
+- **tags**: Refers to the "tags" field from the "Operation
+  Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
 
 This will remove all fields and attached fields that match the tags. In the example below, this would mean that all
 items with the tags `pet` or `user` would be removed from the OpenAPI document.
@@ -216,7 +217,7 @@ paths:
 ```  
 
 - **operationIds**: Refers to the "operationId" field from the "Operation
-  Object" https://swagger.io/specification/#operation-object
+  Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
 
 This will remove specific fields and attached fields that match the operation ID's. In the example below, this would
 mean that the item with operationID `findPetsByStatus` would be removed from the OpenAPI document.
@@ -342,7 +343,7 @@ which results in
 {
     "openapi": "3.0.2",
     "info": {
-        "title": "Swagger Petstore - OpenAPI 3.0",
+        "title": "Petstore - OpenAPI 3.0",
 ```
 
 - after
