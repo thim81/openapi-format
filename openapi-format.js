@@ -73,7 +73,8 @@ function openapiSort(oaObj, options) {
                     }
                     this.update(sortedObj);
 
-                } else if (this.key === 'responses' || this.key === 'schemas' || this.key === 'properties') {
+                } else if ((this.key === 'responses' || this.key === 'schemas' || this.key === 'properties')
+                    && (this.parent && this.parent.key !== 'properties')) {
                     // Deep sort list of properties
                     let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the object
                     for (let keyRes in sortedObj) {

@@ -1,11 +1,10 @@
 {
   "name": "openapi-format",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Format a OpenAPI document by ordering and filtering fields.",
   "keywords": [
     "openapi",
     "openapi3",
-    "swagger",
     "format",
     "sort",
     "order",
