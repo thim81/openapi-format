@@ -371,6 +371,12 @@ The formatting will happen based on all the options set in the `openapi-format-o
 available [OpenAPI format options](https://github.com/thim81/openapi-format#openapi-format-options) can be used in the
 config file.
 
+## AsyncAPI documents
+
+For handling AsyncAPI documents, we have created a separate
+package [asyncapi-format](https://github.com/thim81/asyncapi-format) to allow customisation specific for AsyncAPI
+use-cases.
+
 ## Credits
 
 This package is inspired by
