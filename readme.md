@@ -134,7 +134,7 @@ Options:
 ## OpenAPI sort configuration options
 
 The CLI will sort the OpenAPI document in the defined order liked defined per OpenAPI key/element. The fields that are
-not specified will keep their order like it is in the orginal OpenAPI document, so only defined fields will be
+not specified will keep their order like it is in the original OpenAPI document, so only defined fields will be
 re-ordered.
 
 The default sorting based on the defined order (listed in the table below), which is stored in
@@ -258,13 +258,13 @@ paths:
 - Format a spec with the default sorting and saves it as a new JSON file
 
 ```shell
-$ openapi-format openapi.json openapi-formatted.json
+$ openapi-format openapi.json -o openapi-formatted.json
 ```
 
--Format a OpenAPI document with the default sorting and saves it as a new YAML file
+-Format a OpenAPI JSON document with the default sorting and saves it as a new YAML file
 
 ```shell
-$ openapi-format openapi.json openapi.yaml
+$ openapi-format openapi.json -o openapi.yaml
 ```
 
 - Format a OpenAPI document with the default sorting and output it as JSON to STDOUT
@@ -279,10 +279,10 @@ $ openapi-format openapi.json --json
 $ openapi-format openapi.json --yaml
 ```
 
-- Format a OpenAPI document with the default sorting and save it as YAML
+- Format a OpenAPI JSON document with the default sorting and save it as YAML
 
 ```shell
-$ openapi-format openapi.json openapi.yaml
+$ openapi-format openapi.json -o openapi.yaml
 ```
 
 - Format a OpenAPI document but skip the sorting and save it as a new JSON file
@@ -290,7 +290,7 @@ $ openapi-format openapi.json openapi.yaml
 example:
 
 ```shell
-$ openapi-format openapi.json openapi-formatted.json --no-sort
+$ openapi-format openapi.json -o openapi-formatted.json --no-sort
 ```
 
 Which should keep the OpenAPI fields in the same order. This can be needed, when you only want to do a filtering or
@@ -309,7 +309,7 @@ This can be useful to combine with the sorting, to end-up with an order and filt
 example:
 
 ```shell
-$ openapi-format openapi.json openapi-formatted.json --filter customFilter.yaml
+$ openapi-format openapi.json -o openapi-formatted.json --filterFile customFilter.yaml
 ```
 
 where the `customFilter.yaml` would contain a combination of all the elements you want to filter out.
@@ -332,7 +332,7 @@ During CI/CD pipelines, you might want to create different results of the OpenAP
 them, might make it easier to work with the results, so that is why we provide this command option.
 
 ```shell
-$ openapi-format openapi.json openapi.json --rename "OpenAPI Petstore - OpenAPI 3.0"
+$ openapi-format openapi.json -o openapi.json --rename "OpenAPI Petstore - OpenAPI 3.0"
 ```
 
 which results in
