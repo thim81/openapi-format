@@ -49,6 +49,7 @@ Postman collections, test suites, ...
 - [x] Format via CLI
 - [x] Format via config files
 - [x] Use as a Module
+- [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
 - [ ] Support for OpenAPI 3.1
 
@@ -108,6 +109,8 @@ Options:
 
   --configFile     The file with all the format config options            [path]
   
+  --lineWidth      Max line width of YAML output                        [number]
+  
   --json           Prints the file to stdout as JSON                   [boolean]
   --yaml           Prints the file to stdout as YAML                   [boolean]
   
@@ -126,6 +129,7 @@ Options:
 | --no-sort    |               | don't sort the file                                                         | boolean      | FALSE            | optional          |
 | --rename     |               | rename the OpenAPI title                                                    | string       |                  | optional          |
 | --configFile | -c            | the file with all the format config options                                 | path to file |                  | optional          |
+| --lineWidth  |               | max line width of YAML output                                               | number       | -1 (Infinity)    | optional          |
 | --json       |               | prints the file to stdout as JSON                                           |              | FALSE            | optional          |
 | --yaml       |               | prints the file to stdout as YAML                                           |              | FALSE            | optional          |
 | --verbose    | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                  | optional          |
@@ -376,6 +380,18 @@ config file.
 For handling AsyncAPI documents, we have created a separate
 package [asyncapi-format](https://github.com/thim81/asyncapi-format) to allow customisation specific for AsyncAPI
 use-cases.
+
+## Stoplight Studio
+
+We have adopted the YAML parsing style from [Stoplight Studio](https://stoplight.io/studio/), by leveraging
+the [@stoplight/yaml](https://www.npmjs.com/package/@stoplight/yaml) package for handling the parsing of OpenAPI YAML
+files.
+
+By using the Stoplight YAML parsing, the results will be slightly different from when using a normal YAML parsing
+library like in comparison to [js-to-yaml](https://www.npmjs.com/package/js-yaml). We appreciate the Stoplight Studio
+tool, since it is an excellent GUI for working with OpenAPI documents for non-OpenAPI experts who will be contributing
+changes to the OA document. By adopting to the Stoplight Studio YAML parsing, the potential risk of merge conflicts will
+be lower, which is the main reason why we opted for using the @stoplight/yaml package.
 
 ## Credits
 

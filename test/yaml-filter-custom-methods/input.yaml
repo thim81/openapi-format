@@ -148,9 +148,7 @@ paths:
       tags:
         - pet
       summary: Finds Pets by tags
-      description: >-
-        Multiple tags can be provided with comma separated strings. Use tag1,
-        tag2, tag3 for testing.
+      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
       operationId: findPetsByTags
       parameters:
         - name: tags
@@ -366,9 +364,7 @@ paths:
         - store
       summary: Find purchase order by ID
       x-swagger-router-controller: OrderController
-      description: >-
-        For valid response try integer IDs with value <= 5 or > 10. Other values
-        will generated exceptions
+      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
       operationId: getOrderById
       parameters:
         - name: orderId
@@ -397,9 +393,7 @@ paths:
         - store
       summary: Delete purchase order by ID
       x-swagger-router-controller: OrderController
-      description: >-
-        For valid response try integer IDs with value < 1000. Anything above
-        1000 or nonintegers will generate API errors
+      description: For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
       operationId: deleteOrder
       parameters:
         - name: orderId

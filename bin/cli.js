@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const jy = require('js-yaml');
+// const jy = require('js-yaml');
+const sy = require('@stoplight/yaml');
 const openapiFormat = require('../openapi-format')
 const program = require('commander');
 
@@ -19,6 +20,7 @@ program
     .option('-f, --filterFile <filterFile>', 'the file with the filter options.')
     .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options.')
     .option('--no-sort', 'dont sort the file')
+    .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
     .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document.')
     .option('--json', 'print the file to stdout as JSON')
     .option('--yaml', 'print the file to stdout as YAML')
@@ -39,7 +41,6 @@ program
     .parse(process.argv);
 
 async function run(oaFile, options) {
-
     // Helper function to display info message, depending on the verbose level
     function info(msg) {
         if (options.verbose >= 1) {
@@ -57,7 +58,8 @@ async function run(oaFile, options) {
         info('Config File: ' + options.configFile)
         try {
             let configFileOptions = {}
-            configFileOptions = jy.load(fs.readFileSync(options.configFile, 'utf8'));
+            // configFileOptions = jy.load(fs.readFileSync(options.configFile, 'utf8'));
+            configFileOptions = sy.parse(fs.readFileSync(options.configFile, 'utf8'));
             if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
                 configFileOptions.sort = !(configFileOptions['no-sort'])
                 delete configFileOptions['no-sort'];
@@ -80,7 +82,8 @@ async function run(oaFile, options) {
         info('Sort File: ' + options.sortFile)
         try {
             let sortOptions = {sortSet: {}}
-            sortOptions.sortSet = jy.load(fs.readFileSync(options.sortFile, 'utf8'));
+            // sortOptions.sortSet = jy.load(fs.readFileSync(options.sortFile, 'utf8'));
+            sortOptions.sortSet = sy.parse(fs.readFileSync(options.sortFile, 'utf8'));
             options = Object.assign({}, options, sortOptions);
         } catch (err) {
             console.error('\x1b[31m', 'Sort file error - no such file or directory "' + options.sortFile + '"')
@@ -95,7 +98,8 @@ async function run(oaFile, options) {
         info('Filter File: ' + options.filterFile)
         try {
             let filterOptions = {filterSet: {}}
-            filterOptions.filterSet = jy.load(fs.readFileSync(options.filterFile, 'utf8'));
+            // filterOptions.filterSet = jy.load(fs.readFileSync(options.filterFile, 'utf8'));
+            filterOptions.filterSet = sy.parse(fs.readFileSync(options.filterFile, 'utf8'));
             options = Object.assign({}, options, filterOptions);
         } catch (err) {
             console.error('\x1b[31m', 'Filter file error - no such file or directory "' + options.filterFile + '"')
@@ -108,7 +112,8 @@ async function run(oaFile, options) {
     info('Input file: ' + oaFile)
 
     // Get
-    let res = jy.load(fs.readFileSync(oaFile, 'utf8'));
+    // let res = jy.load(fs.readFileSync(oaFile, 'utf8'));
+    let res = sy.parse(fs.readFileSync(oaFile, 'utf8'));
     let o = {};
 
     // Filter OpenAPI document
@@ -124,13 +129,15 @@ async function run(oaFile, options) {
     // Rename title OpenAPI document
     if (options.rename) {
         res = await openapiFormat.openapiRename(res, options);
-        info('OpenAPI title renamed to: "' + options.rename+'"')
+        info('OpenAPI title renamed to: "' + options.rename + '"')
     }
 
     if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
         o = JSON.stringify(res, null, 2);
     } else {
-        o = jy.dump(res,{lineWidth:100});
+        // o = jy.dump(res,{lineWidth:-1});
+        let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity: options.lineWidth) || Infinity;
+        o = sy.safeStringify(res, {lineWidth: lineWidth});
     }
 
     if (options.output) {

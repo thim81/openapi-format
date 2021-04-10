@@ -3,7 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
-const jy = require('js-yaml');
+// const jy = require('js-yaml');
+const sy = require('@stoplight/yaml');
 
 const openapiFormat = require('../openapi-format.js');
 
@@ -12,7 +13,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['json-no-sort']
+// const tests = ['yaml-filter-custom']
 // console.log('tests',tests);
 
 describe('openapi-format tests', () => {
@@ -32,7 +33,8 @@ describe('openapi-format tests', () => {
                 try {
                     // Load options.yaml
                     configFile = path.join(__dirname, test, 'options.yaml');
-                    configFileOptions = jy.load(fs.readFileSync(configFile, 'utf8'));
+                    // configFileOptions = jy.load(fs.readFileSync(configFile, 'utf8'));
+                    configFileOptions = sy.parse(fs.readFileSync(configFile, 'utf8'));
                     configFileOptions.sort = !(configFileOptions['no-sort'])
                     options = Object.assign({}, options, configFileOptions);
                 } catch (ex) {
@@ -55,7 +57,8 @@ describe('openapi-format tests', () => {
                 try {
                     // Load customSort.yaml
                     sortFile = path.join(__dirname, test, 'customSort.yaml');
-                    sortOptions.sortSet = jy.load(fs.readFileSync(sortFile, 'utf8'));
+                    // sortOptions.sortSet = jy.load(fs.readFileSync(sortFile, 'utf8'));
+                    sortOptions.sortSet = sy.parse(fs.readFileSync(sortFile, 'utf8'));
                     options = Object.assign({}, options, sortOptions);
                 } catch (ex) {
                     // console.error('ERROR Load customSort.yaml', ex)
@@ -74,14 +77,16 @@ describe('openapi-format tests', () => {
                 try {
                     // Load customFilter.yaml
                     filterFile = path.join(__dirname, test, 'customFilter.yaml');
-                    filterOptions.filterSet = jy.load(fs.readFileSync(filterFile, 'utf8'));
+                    // filterOptions.filterSet = jy.load(fs.readFileSync(filterFile, 'utf8'));
+                    filterOptions.filterSet = sy.parse(fs.readFileSync(filterFile, 'utf8'));
                     options = Object.assign({}, options, filterOptions);
                 } catch (ex) {
                     // console.error('ERROR Load customSort.yaml', ex)
                     try {
                         // Fallback to customFilter.json
                         filterFile = path.join(__dirname, test, 'customFilter.json');
-                        filterOptions.filterSet = jy.load(fs.readFileSync(filterFile, 'utf8'));
+                        // filterOptions.filterSet = jy.load(fs.readFileSync(filterFile, 'utf8'));
+                        filterOptions.filterSet = sy.parse(fs.readFileSync(filterFile, 'utf8'));
                         options = Object.assign({}, options, filterOptions);
                     } catch (ex) {
                         // No options found. defaultSort.json will be used
@@ -93,13 +98,21 @@ describe('openapi-format tests', () => {
                 try {
                     // Load input.yaml
                     inputFilename = path.join(__dirname, test, 'input.yaml');
-                    input = jy.load(fs.readFileSync(inputFilename, 'utf8'));
+                    // input = jy.load(fs.readFileSync(inputFilename, 'utf8'));
+                    input = sy.parse(fs.readFileSync(inputFilename, 'utf8'));
+                    // input = sy.parseWithPointers(fs.readFileSync(inputFilename, 'utf8'), {
+                    //     ignoreDuplicateKeys: false,
+                    //     mergeKeys: true,
+                    //     preserveKeyOrder: true,
+                    // }).data;
                 } catch (ex) {
                     // console.error('ERROR Load input.yaml', ex)
 
                     // Fallback to customSort.json
                     inputFilename = path.join(__dirname, test, 'input.json');
-                    input = jy.load(fs.readFileSync(inputFilename, 'utf8'));
+                    // input = jy.load(fs.readFileSync(inputFilename, 'utf8'));
+                    // input = jy.load(fs.readFileSync(inputFilename, 'utf8'), { schema:jy.JSON_SCHEMA, json: true });
+                    input = sy.parse(fs.readFileSync(inputFilename, 'utf8'));
                 }
 
                 // DEBUG
@@ -110,7 +123,8 @@ describe('openapi-format tests', () => {
                 let readOutput = false;
                 let output = {};
                 try {
-                    output = jy.load(fs.readFileSync(outputFilename, 'utf8'));
+                    // output = jy.load(fs.readFileSync(outputFilename, 'utf8'));
+                    output = sy.parse(fs.readFileSync(outputFilename, 'utf8'));
                     readOutput = true;
                 } catch (ex) {
                     // No options found. output = {} will be used
@@ -130,7 +144,8 @@ describe('openapi-format tests', () => {
                     if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
                         output = JSON.stringify(result, null, 2);
                     } else {
-                        output = jy.dump(result);
+                        let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity: options.lineWidth) || Infinity;
+                        output = sy.safeStringify(result, {lineWidth: lineWidth});
                     }
                     fs.writeFileSync(outputFilename, output, 'utf8');
                 }

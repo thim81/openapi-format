@@ -1,34 +1,22 @@
 openapi: 3.0.2
 info:
-  description: >-
-    This is a sample Pet Store Server based on the OpenAPI 3.0 specification. 
-    You can find out more about
-
-    Swagger at [http://swagger.io](http://swagger.io). In the third iteration of
-    the pet store, we've switched to the design first approach!
-
-    You can now help us improve the API whether it's by making changes to the
-    definition itself or to the code.
-
-    That way, with time, we can improve the API in general, and expose some of
-    the new features in OAS3.
-
+  description: |-
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+    Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
 
     Some useful links:
-
-    - [The Pet Store
-    repository](https://github.com/swagger-api/swagger-petstore)
-
-    - [The source API definition for the Pet
-    Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6-SNAPSHOT
   title: Swagger Petstore - OpenAPI 3.0
-  termsOfService: http://swagger.io/terms/
+  termsOfService: 'http://swagger.io/terms/'
   contact:
     email: apiteam@swagger.io
   license:
     name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 servers:
   - url: /v3
 paths:
@@ -64,8 +52,8 @@ paths:
           description: Invalid input
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
       tags:
         - pet
     put:
@@ -103,8 +91,8 @@ paths:
           description: Validation exception
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
       tags:
         - pet
   /pet/findByStatus:
@@ -143,8 +131,8 @@ paths:
       description: Multiple status values can be provided with comma separated strings
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
       tags:
         - pet
   /pet/findByTags:
@@ -177,16 +165,14 @@ paths:
           description: Invalid tag value
       operationId: findPetsByTags
       summary: Finds Pets by tags
-      description: >-
-        Multiple tags can be provided with comma separated strings. Use tag1,
-        tag2, tag3 for testing.
+      description: 'Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.'
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
       tags:
         - pet
-  /pet/{petId}:
+  '/pet/{petId}':
     get:
       parameters:
         - required: true
@@ -216,8 +202,8 @@ paths:
       security:
         - api_key: []
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
       tags:
         - pet
     post:
@@ -247,8 +233,8 @@ paths:
           description: Invalid input
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
       tags:
         - pet
     delete:
@@ -274,11 +260,11 @@ paths:
           description: Invalid pet value
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
       tags:
         - pet
-  /pet/{petId}/uploadImage:
+  '/pet/{petId}/uploadImage':
     post:
       operationId: uploadFile
       summary: uploads an image
@@ -312,8 +298,8 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
       security:
         - petstore_auth:
-            - write:pets
-            - read:pets
+            - 'write:pets'
+            - 'read:pets'
       tags:
         - pet
   /store/inventory:
@@ -364,7 +350,7 @@ paths:
       tags:
         - store
       x-swagger-router-controller: OrderController
-  /store/order/{orderId}:
+  '/store/order/{orderId}':
     get:
       parameters:
         - required: true
@@ -390,18 +376,14 @@ paths:
           description: Order not found
       operationId: getOrderById
       summary: Find purchase order by ID
-      description: >-
-        For valid response try integer IDs with value <= 5 or > 10. Other values
-        will generated exceptions
+      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
       tags:
         - store
       x-swagger-router-controller: OrderController
     delete:
       operationId: deleteOrder
       summary: Delete purchase order by ID
-      description: >-
-        For valid response try integer IDs with value < 1000. Anything above
-        1000 or nonintegers will generate API errors
+      description: For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
       parameters:
         - required: true
           schema:
@@ -528,7 +510,7 @@ paths:
       description: ''
       tags:
         - user
-  /user/{username}:
+  '/user/{username}':
     get:
       parameters:
         - required: true
@@ -805,10 +787,10 @@ components:
       type: oauth2
       flows:
         implicit:
-          authorizationUrl: https://petstore.swagger.io/oauth/authorize
+          authorizationUrl: 'https://petstore.swagger.io/oauth/authorize'
           scopes:
-            write:pets: modify pets in your account
-            read:pets: read your pets
+            'write:pets': modify pets in your account
+            'read:pets': read your pets
     api_key:
       type: apiKey
       name: api_key
@@ -818,7 +800,7 @@ tags:
     description: Everything about your Pets
     externalDocs:
       description: Find out more
-      url: http://swagger.io
+      url: 'http://swagger.io'
 externalDocs:
   description: Find out more about Swagger
-  url: http://swagger.io
+  url: 'http://swagger.io'

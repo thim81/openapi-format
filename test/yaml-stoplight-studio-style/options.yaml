@@ -1,3 +1,3 @@
 verbose: true
 output: output.yaml
-filterFile: customFilter.yaml
+no-sort: true

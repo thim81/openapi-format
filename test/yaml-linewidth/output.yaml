@@ -2,15 +2,28 @@ openapi: 3.0.2
 servers:
   - url: /v3
 info:
-  description: |-
-    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
-    Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
-    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+  description: >-
+    This is a sample Pet Store Server based on the OpenAPI
+    3.0 specification.  You can find out more about
+
+    Swagger at [http://swagger.io](http://swagger.io). In
+    the third iteration of the pet store, we've switched to
+    the design first approach!
+
+    You can now help us improve the API whether it's by
+    making changes to the definition itself or to the code.
+
+    That way, with time, we can improve the API in general,
+    and expose some of the new features in OAS3.
+
 
     Some useful links:
-    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+
+    - [The Pet Store
+    repository](https://github.com/swagger-api/swagger-petstore)
+
+    - [The source API definition for the Pet
+    Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6-SNAPSHOT
   title: Swagger Petstore - OpenAPI 3.0
   termsOfService: 'http://swagger.io/terms/'
@@ -70,8 +83,6 @@ paths:
       description: Update an existing pet by Id
       operationId: updatePet
       responses:
-        '400':
-          description: Invalid ID supplied
         '200':
           description: Successful operation
           content:
@@ -81,6 +92,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
+        '400':
+          description: Invalid ID supplied
         '404':
           description: Pet not found
         '405':
@@ -107,13 +120,16 @@ paths:
       tags:
         - pet
       summary: Finds Pets by status
-      description: Multiple status values can be provided with comma separated strings
+      description: >-
+        Multiple status values can be provided with comma
+        separated strings
       operationId: findPetsByStatus
-      x-visibility: true
       parameters:
         - name: status
           in: query
-          description: Status values that need to be considered for filter
+          description: >-
+            Status values that need to be considered for
+            filter
           required: false
           explode: true
           schema:
@@ -148,7 +164,9 @@ paths:
       tags:
         - pet
       summary: Finds Pets by tags
-      description: 'Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.'
+      description: >-
+        Multiple tags can be provided with comma separated
+        strings. Use tag1, tag2, tag3 for testing.
       operationId: findPetsByTags
       parameters:
         - name: tags
@@ -364,7 +382,9 @@ paths:
         - store
       summary: Find purchase order by ID
       x-swagger-router-controller: OrderController
-      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
+      description: >-
+        For valid response try integer IDs with value <= 5
+        or > 10. Other values will generated exceptions
       operationId: getOrderById
       parameters:
         - name: orderId
@@ -393,7 +413,10 @@ paths:
         - store
       summary: Delete purchase order by ID
       x-swagger-router-controller: OrderController
-      description: For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
+      description: >-
+        For valid response try integer IDs with value <
+        1000. Anything above 1000 or nonintegers will
+        generate API errors
       operationId: deleteOrder
       parameters:
         - name: orderId
@@ -528,7 +551,9 @@ paths:
       parameters:
         - name: username
           in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
+          description: >-
+            The name that needs to be fetched. Use user1 for
+            testing. 
           required: true
           schema:
             type: string
