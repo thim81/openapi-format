@@ -269,7 +269,7 @@ paths:
 $ openapi-format openapi.json -o openapi-formatted.json
 ```
 
--Format a OpenAPI JSON document with the default sorting and saves it as a new YAML file
+- Format a OpenAPI JSON document with the default sorting and saves it as a new YAML file
 
 ```shell
 $ openapi-format openapi.json -o openapi.yaml
@@ -295,8 +295,6 @@ $ openapi-format openapi.json -o openapi.yaml
 
 - Format a OpenAPI document but skip the sorting and save it as a new JSON file
 
-example:
-
 ```shell
 $ openapi-format openapi.json -o openapi-formatted.json --no-sort
 ```
@@ -305,8 +303,6 @@ Which should keep the OpenAPI fields in the same order. This can be needed, when
 rename action.
 
 - Format a OpenAPI document, including sorting all elements in the components section
-
-example:
 
 ```shell
 $ openapi-format openapi.json -o openapi-formatted.json --sortComponentsFile ./test/json-sort-components/customSortComponents.json
@@ -383,7 +379,7 @@ systems.
 example:
 
 ```shell
-$ openapi-format openapi.json --configFil openapi-format-options.json
+$ openapi-format openapi.json --configFile openapi-format-options.json
 ```
 
 The formatting will happen based on all the options set in the `openapi-format-options.json` file. All the
@@ -403,9 +399,9 @@ the [@stoplight/yaml](https://www.npmjs.com/package/@stoplight/yaml) package for
 files.
 
 By using the Stoplight YAML parsing, the results will be slightly different from when using a normal YAML parsing
-library like in comparison to [js-to-yaml](https://www.npmjs.com/package/js-yaml). We appreciate the Stoplight Studio
+library, like [js-to-yaml](https://www.npmjs.com/package/js-yaml). We appreciate the Stoplight Studio
 tool, since it is an excellent GUI for working with OpenAPI documents for non-OpenAPI experts who will be contributing
-changes to the OA document. By adopting to the Stoplight Studio YAML parsing, the potential risk of merge conflicts will
+changes. By adopting to the Stoplight Studio YAML parsing, the potential risk of merge conflicts will
 be lower, which is the main reason why we opted for using the @stoplight/yaml package.
 
 ## Credits
