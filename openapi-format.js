@@ -57,11 +57,20 @@ function openapiSort(oaObj, options) {
 
     let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
     let sortSet = options.sortSet || JSON.parse(fs.readFileSync(__dirname + "/defaultSort.json", 'utf8'));
+    let sortComponentsSet = options.sortComponentsSet || JSON.parse(fs.readFileSync(__dirname + "/defaultSortComponents.json", 'utf8'));
 
     // Recursive traverse through OpenAPI document
     traverse(jsonObj).forEach(function (node) {
         // if (obj.hasOwnProperty(this.key) && obj[this.key] && typeof obj[this.key] === 'object') {
         if (typeof node === 'object') {
+
+            // Component sorting by alphabet
+            if (this.parent && this.parent.key && this.parent.key && this.parent.key === 'components'
+                && sortComponentsSet.length > 0 && sortComponentsSet.includes(this.key)
+            ) {
+                node = prioritySort(node, []);
+            }
+
             // Generic sorting
             if (sortSet.hasOwnProperty(this.key) && Array.isArray(sortSet[this.key])) {
 

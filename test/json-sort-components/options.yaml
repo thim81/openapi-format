@@ -1,0 +1,3 @@
+verbose: true
+sortComponentsFile: customSortComponents.json
+output: output.json

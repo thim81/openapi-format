@@ -39,6 +39,7 @@ Postman collections, test suites, ...
 
 - [x] Order OpenAPI fields in a default order
 - [x] Order OpenAPI fields in a custom order
+- [x] Order Components elements by alphabet
 - [x] Filter OpenAPI files based on methods
 - [x] Filter OpenAPI files based on flags
 - [x] Filter OpenAPI files based on tags
@@ -99,41 +100,44 @@ Arguments:
 
 Options:
 
-  -o, --output     Save the formated OpenAPI file as JSON/YAML            [path]
+  -o, --output         Save the formated OpenAPI file as JSON/YAML             [path]
   
-  --sortFile       The file to specify custom OpenAPI fields ordering     [path]
-  --filterFile     The file to specify filter setting                     [path]
+  --sortFile           The file to specify custom OpenAPI fields ordering      [path]
+  --filterFile         The file to specify filter setting                      [path]
     
-  --no-sort        Don't sort the file                                 [boolean]
-  --rename         Rename the OpenAPI title                             [string]
+  --no-sort            Don't sort the OpenAPI file                          [boolean]
+  --sortComponentsFile The file with components to sort alfabehtically         [path]
+  
+  --rename             Rename the OpenAPI title                              [string]
 
-  --configFile     The file with all the format config options            [path]
+  --configFile         The file with all the format config options             [path]
   
-  --lineWidth      Max line width of YAML output                        [number]
+  --lineWidth          Max line width of YAML output                         [number]
   
-  --json           Prints the file to stdout as JSON                   [boolean]
-  --yaml           Prints the file to stdout as YAML                   [boolean]
+  --json               Prints the file to stdout as JSON                    [boolean]
+  --yaml               Prints the file to stdout as YAML                    [boolean]
   
-  --help           Show help                                           [boolean]
-  --verbose        Output more details of the filter process             [count]
+  --help               Show help                                            [boolean]
+  --verbose            Output more details of the filter process              [count]
 ```
 
 ## OpenAPI format options
 
-| Parameter    | Alias         | Description                                                                 | Input type   | Default          | Required/Optional |
-|--------------|---------------|-----------------------------------------------------------------------------|--------------|------------------|-------------------|
-| file         |               | the original OpenAPI file                                                   | path to file |                  | required          |
-| --output     | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                  | optional          |
-| --sortFile   | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json | optional          |
-| --filterFile | -f            | the file to specify filter setting                                          | path to file |                  | optional          |
-| --no-sort    |               | don't sort the file                                                         | boolean      | FALSE            | optional          |
-| --rename     |               | rename the OpenAPI title                                                    | string       |                  | optional          |
-| --configFile | -c            | the file with all the format config options                                 | path to file |                  | optional          |
-| --lineWidth  |               | max line width of YAML output                                               | number       | -1 (Infinity)    | optional          |
-| --json       |               | prints the file to stdout as JSON                                           |              | FALSE            | optional          |
-| --yaml       |               | prints the file to stdout as YAML                                           |              | FALSE            | optional          |
-| --verbose    | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                  | optional          |
-| --help       | h             | display help for command                                                    |              |                  | optional          |
+| Parameter               | Alias         | Description                                                                 | Input type   | Default                     | Required/Optional |
+|-------------------------|---------------|-----------------------------------------------------------------------------|--------------|-----------------------------|-------------------|
+| file                    |               | the original OpenAPI file                                                   | path to file |                             | required          |
+| --output                | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                             | optional          |
+| --sortFile              | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json            | optional          |
+| --filterFile            | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional          |
+| --no-sort               |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                       | optional          |
+| --sortComponentsFile    |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json  | optional          |
+| --rename                |               | rename the OpenAPI title                                                    | string       |                             | optional          |
+| --configFile            | -c            | the file with all the format config options                                 | path to file |                             | optional          |
+| --lineWidth             |               | max line width of YAML output                                               | number       | -1 (Infinity)               | optional          |
+| --json                  |               | prints the file to stdout as JSON                                           |              | FALSE                       | optional          |
+| --yaml                  |               | prints the file to stdout as YAML                                           |              | FALSE                       | optional          |
+| --verbose               | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                             | optional          |
+| --help                  | h             | display help for command                                                    |              |                             | optional          |
 
 ## OpenAPI sort configuration options
 
@@ -299,6 +303,17 @@ $ openapi-format openapi.json -o openapi-formatted.json --no-sort
 
 Which should keep the OpenAPI fields in the same order. This can be needed, when you only want to do a filtering or
 rename action.
+
+- Format a OpenAPI document, including sorting all elements in the components section
+
+example:
+
+```shell
+$ openapi-format openapi.json -o openapi-formatted.json --sortComponentsFile ./test/json-sort-components/customSortComponents.json
+```
+
+This will sort all elements in the components ( components/schemas, components/parameters, components/headers,
+components/requestBodies, components/responses, ...) section by alphabet.
 
 
 ## CLI filter usage

@@ -19,7 +19,8 @@ program
     .option('-s, --sortFile <sortFile>', 'the file with the sort priority options.', 'defaultSort.json')
     .option('-f, --filterFile <filterFile>', 'the file with the filter options.')
     .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options.')
-    .option('--no-sort', 'dont sort the file')
+    .option('--no-sort', 'dont sort the OpenAPI file')
+    .option('--sortComponentsFile <sortComponentsFile>', 'The file with components to sort alfabehtically')
     .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
     .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document.')
     .option('--json', 'print the file to stdout as JSON')
@@ -103,6 +104,22 @@ async function run(oaFile, options) {
             options = Object.assign({}, options, filterOptions);
         } catch (err) {
             console.error('\x1b[31m', 'Filter file error - no such file or directory "' + options.filterFile + '"')
+            if (options.verbose >= 1) {
+                console.error(err)
+            }
+        }
+    }
+
+    // apply components sorting by alphabet, if file is present
+    if (options && options.sortComponentsFile) {
+        info('Sort Components File: ' + options.sortComponentsFile)
+        try {
+            let sortComponentsOptions = {sortComponentsSet: {}}
+            // sortComponentsOptions.sortSet = jy.load(fs.readFileSync(options.sortFile, 'utf8'));
+            sortComponentsOptions.sortComponentsSet = sy.parse(fs.readFileSync(options.sortComponentsFile, 'utf8'));
+            options = Object.assign({}, options, sortComponentsOptions);
+        } catch (err) {
+            console.error('\x1b[31m', 'Sort Components file error - no such file or directory "' + options.sortComponentsFile + '"')
             if (options.verbose >= 1) {
                 console.error(err)
             }

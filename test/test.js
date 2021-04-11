@@ -13,7 +13,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-filter-custom']
+// const tests = ['json-sort-components']
 // console.log('tests',tests);
 
 describe('openapi-format tests', () => {
@@ -24,8 +24,10 @@ describe('openapi-format tests', () => {
                 let configFile = null;
                 let configFileOptions = {};
                 let sortOptions = {sortSet: {}};
+                let sortComponentsOptions = {sortComponentsSet: {}}
                 let sortFile = null;
                 let filterFile = null;
+                let sortComponentsFile = null;
                 let filterOptions = {filterSet: {}}
                 let inputFilename = null;
                 let input = null;
@@ -96,6 +98,26 @@ describe('openapi-format tests', () => {
                 }
 
                 try {
+                    // Load customSortComponents.yaml
+                    sortComponentsFile = path.join(__dirname, test, 'customSortComponents.yaml');
+                    // sortOptions.sortSet = jy.load(fs.readFileSync(sortFile, 'utf8'));
+                    sortComponentsOptions.sortComponentsSet = sy.parse(fs.readFileSync(sortComponentsFile, 'utf8'));
+                    options = Object.assign({}, options, sortComponentsOptions);
+                } catch (ex) {
+                    // console.error('ERROR Load customSort.yaml', ex)
+                    try {
+                        // Fallback to customSort.json
+                        sortComponentsFile = path.join(__dirname, test, 'customSortComponents.json');
+                        sortComponentsOptions.sortComponentsSet = JSON.parse(fs.readFileSync(sortComponentsFile, 'utf8'));
+                        options = Object.assign({}, options, sortComponentsOptions);
+                    } catch (ex) {
+                        // No options found. defaultSort.json will be used
+                        // console.error('ERROR Load customSort.json', ex)
+                        options.sortComponentsOptions = require('../defaultSortComponents.json')
+                    }
+                }
+
+                try {
                     // Load input.yaml
                     inputFilename = path.join(__dirname, test, 'input.yaml');
                     // input = jy.load(fs.readFileSync(inputFilename, 'utf8'));
@@ -118,6 +140,7 @@ describe('openapi-format tests', () => {
                 // DEBUG
                 // console.log('options', options)
                 // console.log('inputFilename', inputFilename)
+                // return done();
 
                 const outputFilename = path.join(__dirname, test, options.output);
                 let readOutput = false;
