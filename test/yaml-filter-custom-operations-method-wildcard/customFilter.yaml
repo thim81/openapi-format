@@ -1,0 +1,9 @@
+#methods:
+#  - get
+#flags:
+#  - x-visibility
+flagValues: []
+tags: []
+operations:
+  - '*::/pet'
+  - 'GET::/pet/findByStatus'

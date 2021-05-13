@@ -44,6 +44,7 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on flags
 - [x] Filter OpenAPI files based on tags
 - [x] Filter OpenAPI files based on operationID's
+- [x] Filter OpenAPI files based on operations definition
 - [x] Rename the OpenAPI title
 - [x] Support OpenAPI documents in JSON format
 - [x] Support OpenAPI documents in YAML format
@@ -181,6 +182,7 @@ really extended options for filtering OpenAPI documents.
 | methods      | a list OpenAPI methods.       | array | ['get','post','put']             |
 | tags         | a list OpenAPI tags.          | array | ['pet','user']                   |
 | operationIds | a list OpenAPI operation ID's.| array | ['findPetsByStatus','updatePet'] |
+| operations   | a list OpenAPI operations.    | array | ['GET::/pets','PUT::/pets']      |
 | flags        | a list of custom flags        | array | ['x-exclude','x-internal']       |
 
 Some more details on the available filter types:
@@ -243,6 +245,53 @@ paths:
             operationId: findPetsByStatus
 ```
 
+- **operations**: References to a combination of the OpenApi method & path from the "Path
+  Object" https://spec.openapis.org/oas/v3.0.3.html#paths-object & "Path
+  item" https://spec.openapis.org/oas/v3.0.3.html#path-item-object
+
+This will remove specific fields and attached fields that match for the operation definition `PUT::/pets` . In the
+example below, this would mean that the item with the path '/pets' and method 'PUT' would be removed from the OpenAPI
+document.
+
+For example:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+            summary: Finds Pets by status
+        put:
+            summary: Update an existing pet
+```
+
+An `operationId` is advised to be unique by OpenApi but optional. To offer support for OpenApi document that
+don't have operationIds, we have added the `operation` definition which is the unique combination of the OpenApi method &
+path, with a `::` separator symbol.
+
+This will allow filtering for very specific OpenApi items, without the need of adding operationIds to the OpenApi
+document.
+
+To facilitate managing the filtering, we have also included wildcard options for the `openApiOperation` option, for the
+methods & path definition.
+
+Strict matching example: `"GET::/pets"`
+This will target only the "GET" method and the specific path "/pets"
+
+Method wildcard matching example: `"*::/pets"`
+This will target all methods ('get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace') and the specific
+path "/pets"
+
+Path wildcard matching example: `"GET::/pets/*"`
+This will target only the "GET" method and any path matching any folder behind the "/pets", like "/pets/123" and
+"/pets/123/buy".
+
+Method & Path wildcard matching example: `"*::/pets/*"`
+A combination of wildcard for method and path are also supported.
+
 - **flags**: Refers to a custom property which can be set on any field in the OpenAPI document.
 
 This will remove all fields and attached fields that match the flags. In the example below, this would mean that all
@@ -299,7 +348,7 @@ $ openapi-format openapi.json -o openapi.yaml
 $ openapi-format openapi.json -o openapi-formatted.json --no-sort
 ```
 
-Which should keep the OpenAPI fields in the same order. This can be needed, when you only want to do a filtering or
+This should keep the OpenAPI fields in the same order. This can be needed, when you only want to do a filtering or
 rename action.
 
 - Format a OpenAPI document, including sorting all elements in the components section
