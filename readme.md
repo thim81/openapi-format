@@ -245,11 +245,11 @@ paths:
             operationId: findPetsByStatus
 ```
 
-- **operations**: References to a combination of the OpenApi method & path from the "Path
+- **operations**: Refers to a combination of a OpenApi method & path from the "Path
   Object" https://spec.openapis.org/oas/v3.0.3.html#paths-object & "Path
   item" https://spec.openapis.org/oas/v3.0.3.html#path-item-object
 
-This will remove specific fields and attached fields that match for the operation definition `PUT::/pets` . In the
+This will remove specific path items that matches the operation definition `PUT::/pets`. In the
 example below, this would mean that the item with the path '/pets' and method 'PUT' would be removed from the OpenAPI
 document.
 
@@ -268,15 +268,17 @@ paths:
             summary: Update an existing pet
 ```
 
-An `operationId` is advised to be unique by OpenApi but optional. To offer support for OpenApi document that
-don't have operationIds, we have added the `operation` definition which is the unique combination of the OpenApi method &
-path, with a `::` separator symbol.
+An `operationId` is an optional property. To offer support for OpenApi documents that don't have operationIds, we have
+added the `operation` definition which is the unique combination of the OpenApi method & path, with a `::` separator
+symbol.
 
 This will allow filtering for very specific OpenApi items, without the need of adding operationIds to the OpenApi
 document.
 
-To facilitate managing the filtering, we have also included wildcard options for the `openApiOperation` option, for the
-methods & path definition.
+To facilitate managing the filtering, we have included wildcard options for the `operations` option, supporting the
+methods & path definitions.
+
+REMARK: Be sure to put quotes around the target definition.
 
 Strict matching example: `"GET::/pets"`
 This will target only the "GET" method and the specific path "/pets"
@@ -290,7 +292,7 @@ This will target only the "GET" method and any path matching any folder behind t
 "/pets/123/buy".
 
 Method & Path wildcard matching example: `"*::/pets/*"`
-A combination of wildcard for method and path are also supported.
+A combination of wildcards for the method and path parts are even possible. 
 
 - **flags**: Refers to a custom property which can be set on any field in the OpenAPI document.
 
