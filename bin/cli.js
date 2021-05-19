@@ -84,7 +84,7 @@ async function run(oaFile, options) {
         try {
             let sortOptions = {sortSet: {}}
             // sortOptions.sortSet = jy.load(fs.readFileSync(options.sortFile, 'utf8'));
-            sortOptions.sortSet = sy.parse(fs.readFileSync(options.sortFile, 'utf8'));
+            sortOptions.sortSet = sy.parse(fs.readFileSync(__dirname + "/../" +options.sortFile, 'utf8'));
             options = Object.assign({}, options, sortOptions);
         } catch (err) {
             console.error('\x1b[31m', 'Sort file error - no such file or directory "' + options.sortFile + '"')
