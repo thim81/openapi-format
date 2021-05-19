@@ -1,8 +1,14 @@
+## Version 1.2.2
+
+Released on 19 May 2021
+
+- Bug fix for sort file error when a custom sort file was defined
+
 ## Version 1.2.1
 
 Released on 19 May 2021
 
-- Bugfix #4 for sort file error - no such file or directory "defaultSort.json"
+- Bug fix #4 for sort file error - no such file or directory "defaultSort.json"
 
 ## Version 1.2.0
 

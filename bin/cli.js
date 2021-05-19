@@ -16,7 +16,7 @@ program
     .usage('<file> [options]')
     .description('Format a OpenAPI document by ordering and filtering fields.')
     .option('-o, --output <output>', 'write the formatted OpenAPI to an output file path.')
-    .option('-s, --sortFile <sortFile>', 'the file with the sort priority options.', 'defaultSort.json')
+    .option('-s, --sortFile <sortFile>', 'the file with the sort priority options.')
     .option('-f, --filterFile <filterFile>', 'the file with the filter options.')
     .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options.')
     .option('--no-sort', 'dont sort the OpenAPI file')
@@ -79,12 +79,13 @@ async function run(oaFile, options) {
     }
 
     // apply ordering by priority file if present
-    if (options && options.sortFile && options.sort === true) {
+    if (options && options.sort === true) {
         info('Sort File: ' + options.sortFile)
         try {
             let sortOptions = {sortSet: {}}
             // sortOptions.sortSet = jy.load(fs.readFileSync(options.sortFile, 'utf8'));
-            sortOptions.sortSet = sy.parse(fs.readFileSync(__dirname + "/../" +options.sortFile, 'utf8'));
+            let sortFile = (options.sortFile) ? options.sortFile : __dirname + "/../defaultSort.json"
+            sortOptions.sortSet = sy.parse(fs.readFileSync(sortFile, 'utf8'));
             options = Object.assign({}, options, sortOptions);
         } catch (err) {
             console.error('\x1b[31m', 'Sort file error - no such file or directory "' + options.sortFile + '"')
