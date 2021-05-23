@@ -1,3 +1,9 @@
+## Version 1.2.3
+
+Released on 23 May 2021
+
+- Reduced package size by setting files in packages.json and excluding the tests
+
 ## Version 1.2.2
 
 Released on 19 May 2021
