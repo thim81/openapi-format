@@ -1,3 +1,15 @@
+## Version 1.2.5
+
+Released on 22 July 2021
+
+- Enhancement that will remove also openapi.tags when filtering on tags
+
+## Version 1.2.4
+
+Released on 14 June 2021
+
+- Dependency bumped by dependabot for security reasons
+
 ## Version 1.2.3
 
 Released on 23 May 2021
