@@ -233,6 +233,12 @@ function openapiFilter(oaObj, options) {
                 // Top parent has other nodes, so remove only targeted parent node of matching element
                 this.parent.delete();
             }
+
+            // Filter out the top OpenApi.tags matching the "tags"
+            if (filterArray.length > 0 && this.key === 'tags' && this.parent.parent === undefined) {
+                node = node.filter(value => !filterArray.includes(value.name))
+                this.update(node);
+            }
         }
 
         // Single field matching

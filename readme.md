@@ -367,8 +367,8 @@ components/requestBodies, components/responses, ...) section by alphabet.
 
 - Format a OpenAPI document by filtering fields, default sorting and saves it as a new file
 
-When you want to strip certain flags, tags, methods, operationID's, you can pass a `filterFile` which contains the
-specific values for the flags, tags, methods, operationID's.
+When you want to strip certain methods ,tags, operationIds, operations, flags you can pass a `filterFile` which contains the
+specific values for the methods ,tags, operationIds, operations, flags.
 
 This can be useful to combine with the sorting, to end-up with an order and filtered OpenAPI document.
 
@@ -459,7 +459,7 @@ be lower, which is the main reason why we opted for using the @stoplight/yaml pa
 
 This package is inspired by
 the [@microsoft.azure/format-spec](https://www.npmjs.com/package/@microsoft.azure/format-spec) from @fearthecowboy. The
-original code was not available on Github, with the last update was 3 years ago, so to improve support and extend it we
+original code was not available on GitHub, with the last update was 3 years ago, so to improve support and extend it we
 tried to reproduce the original functionality.
 
 The filter capabilities from `openapi-format` are a light version inspired by the work from @MikeRalphson on
