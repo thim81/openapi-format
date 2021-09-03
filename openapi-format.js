@@ -151,16 +151,18 @@ function openapiSort(oaObj, options) {
     let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
     let sortSet = options.sortSet || JSON.parse(fs.readFileSync(__dirname + "/defaultSort.json", 'utf8'));
     let sortComponentsSet = options.sortComponentsSet || JSON.parse(fs.readFileSync(__dirname + "/defaultSortComponents.json", 'utf8'));
+    let debugStep = '' // uncomment // debugStep below to see which sort part is triggered
 
     // Recursive traverse through OpenAPI document
     traverse(jsonObj).forEach(function (node) {
         // if (obj.hasOwnProperty(this.key) && obj[this.key] && typeof obj[this.key] === 'object') {
         if (typeof node === 'object') {
 
-            // Component sorting by alphabet
+            // Components sorting by alphabet
             if (this.parent && this.parent.key && this.parent.key && this.parent.key === 'components'
                 && sortComponentsSet.length > 0 && sortComponentsSet.includes(this.key)
             ) {
+                // debugStep = 'Component sorting by alphabet'
                 node = prioritySort(node, []);
             }
 
@@ -168,6 +170,7 @@ function openapiSort(oaObj, options) {
             if (sortSet.hasOwnProperty(this.key) && Array.isArray(sortSet[this.key])) {
 
                 if (Array.isArray(node)) {
+                    // debugStep = 'Generic sorting - array'
                     // Deep sort array of properties
                     let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
                     for (let i = 0; i < sortedObj.length; i++) {
@@ -178,6 +181,7 @@ function openapiSort(oaObj, options) {
                 } else if ((this.key === 'responses' || this.key === 'schemas' || this.key === 'properties')
                     && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value')
                 ) {
+                    // debugStep = 'Generic sorting - responses/schemas/properties'
                     // Deep sort list of properties
                     let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the object
                     for (let keyRes in sortedObj) {
@@ -185,8 +189,16 @@ function openapiSort(oaObj, options) {
                     }
                     this.update(sortedObj);
                 } else {
-                    // Sort list of properties
-                    this.update(prioritySort(node, sortSet[this.key]));
+                    if(this.path[0] === 'components' && this.path[1] === 'examples' && this.path[3] === 'value') {
+                        // debugStep = 'Generic sorting - skip nested components>examples'
+                        // debugStep = 'Generic sorting - skip nested components>examples'
+                        // Skip nested components>examples values
+                    } else {
+                        // debugStep = 'Generic sorting - properties'
+                        // Sort list of properties
+                        this.update(prioritySort(node, sortSet[this.key]));
+                    }
+
                 }
             }
         }
