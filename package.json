@@ -39,7 +39,8 @@
         "test": "test"
     },
     "scripts": {
-        "test": "npx mocha"
+        "test": "npx mocha",
+        "release": "np --branch main"
     },
     "dependencies": {
         "@stoplight/yaml": "^4.2.2",

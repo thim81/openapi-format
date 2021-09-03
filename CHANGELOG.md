@@ -2,6 +2,7 @@
 
 - Added option to strip flags from OpenAPI
 - Handled the unwanted sorting of components > examples > value properties
+- Bumped dependencies @stoplight/yaml, mocha
 
 ## [1.2.5] - 2020-07-22
 
