@@ -1,0 +1,13 @@
+#methods:
+#  - get
+flags:
+  - x-visibility
+#flagValues: []
+#tags: []
+#operationIds:
+#  - addPet
+#  - findPetsByStatus
+stripFlags:
+  - x-visibility
+  - x-swagger-router-controller
+

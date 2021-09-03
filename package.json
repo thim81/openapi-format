@@ -42,11 +42,11 @@
         "test": "npx mocha"
     },
     "dependencies": {
-        "@stoplight/yaml": "^4.2.1",
+        "@stoplight/yaml": "^4.2.2",
         "commander": "^7.1.0",
         "traverse": "^0.6.6"
     },
     "devDependencies": {
-        "mocha": "^8.0.1"
+        "mocha": "^8.4.0"
     }
 }
