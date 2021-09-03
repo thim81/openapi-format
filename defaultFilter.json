@@ -4,5 +4,6 @@
     "operationIds": [],
     "operations": [],
     "flags": [],
-    "flagValues": []
+    "flagValues": [],
+    "stripFlags": []
 }

@@ -45,6 +45,7 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on tags
 - [x] Filter OpenAPI files based on operationID's
 - [x] Filter OpenAPI files based on operations definition
+- [x] Strip flags from OpenAPI files
 - [x] Rename the OpenAPI title
 - [x] Support OpenAPI documents in JSON format
 - [x] Support OpenAPI documents in YAML format
@@ -177,13 +178,14 @@ matching item from the OpenAPI document. You can combine multiple types to filte
 For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
 really extended options for filtering OpenAPI documents.
 
-| Type         | Description                   | Type  | Examples                         |
-|--------------|-------------------------------|-------|----------------------------------|
-| methods      | a list OpenAPI methods.       | array | ['get','post','put']             |
-| tags         | a list OpenAPI tags.          | array | ['pet','user']                   |
-| operationIds | a list OpenAPI operation ID's.| array | ['findPetsByStatus','updatePet'] |
-| operations   | a list OpenAPI operations.    | array | ['GET::/pets','PUT::/pets']      |
-| flags        | a list of custom flags        | array | ['x-exclude','x-internal']       |
+| Type         | Description                                    | Type  | Examples                         |
+|--------------|------------------------------------------------|-------|----------------------------------|
+| methods      | a list OpenAPI methods.                        | array | ['get','post','put']             |
+| tags         | a list OpenAPI tags.                           | array | ['pet','user']                   |
+| operationIds | a list OpenAPI operation ID's.                 | array | ['findPetsByStatus','updatePet'] |
+| operations   | a list OpenAPI operations.                     | array | ['GET::/pets','PUT::/pets']      |
+| flags        | a list of custom flags                         | array | ['x-exclude','x-internal']       |
+| stripFlags   | a list of custom flags that will be stripped   | array | ['x-exclude','x-internal']       |
 
 Some more details on the available filter types:
 
@@ -310,6 +312,38 @@ paths:
     /pets:
         get:
             x-exclude: true
+```
+
+- **stripFlags**: Refers to a lis of custom properties which can be set on any field in the OpenAPI document.
+
+This will remove only the flags, the linked parent and properties will remain. In the example below, this would mean that all
+flags `x-exclude` itself would be stripped from the OpenAPI document.
+
+Example before:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+          x-exclude: true
+          summary: Finds Pets by status
+```
+
+Example after:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+          summary: Finds Pets by status
 ```
 
 ## CLI sort usage

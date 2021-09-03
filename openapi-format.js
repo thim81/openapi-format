@@ -229,11 +229,15 @@ function openapiFilter(oaObj, options) {
     const filterArray = [...filterSet.tags];
     const filterOperations = [...filterSet.operations];
     const filterProps = [...filterSet.operationIds, ...filterSet.flags];
+    const stripFlags = [...filterSet.stripFlags];
+
+    let debugFilterStep = '' // uncomment // debugFilterStep below to see which sort part is triggered
 
     traverse(jsonObj).forEach(function (node) {
 
         // Filter out object matching the "methods"
         if (filterKeys.length > 0 && filterKeys.includes(this.key)) {
+            // debugFilterStep = 'Filter - methods'
             // Parent has other nodes, so remove only targeted node
             this.remove();
         }
@@ -242,12 +246,14 @@ function openapiFilter(oaObj, options) {
         if (Array.isArray(node)) {
             // Filter out object matching the "tags"
             if (filterArray.length > 0 && this.key === 'tags' && filterArray.some(i => node.includes(i))) {
+                // debugFilterStep = 'Filter - tags'
                 // Top parent has other nodes, so remove only targeted parent node of matching element
                 this.parent.delete();
             }
 
             // Filter out the top OpenApi.tags matching the "tags"
             if (filterArray.length > 0 && this.key === 'tags' && this.parent.parent === undefined) {
+                // debugFilterStep = 'Filter - top tags'
                 node = node.filter(value => !filterArray.includes(value.name))
                 this.update(node);
             }
@@ -257,12 +263,14 @@ function openapiFilter(oaObj, options) {
         if (typeof node !== 'object' && !Array.isArray(node)) {
             // Filter out fields matching the flags
             if (filterProps.length > 0 && filterProps.includes(this.key)) {
+                // debugFilterStep = 'Filter - Single field - flags'
                 // Top parent has other nodes, so remove only targeted parent node of matching element
                 this.parent.remove();
             }
 
             // Filter out fields matching the flagValues/Tags/operationIds
             if (filterProps.length > 0 && filterProps.includes(node)) {
+                // debugFilterStep = 'Filter - Single field - flagValues/Tags/operationIds'
                 // Top parent has other nodes, so remove only targeted parent node of matching element
                 this.parent.remove();
             }
@@ -270,6 +278,7 @@ function openapiFilter(oaObj, options) {
 
         // Filter out fields matching the operations
         if (filterOperations.length > 0 && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
+            // debugFilterStep = 'Filter - fields - operations'
             for (let i = 0; i < filterOperations.length; i++) {
                 if (isMatchOperationItem(this.parent.key, this.key, filterOperations[i])) {
                     this.delete();
@@ -279,6 +288,7 @@ function openapiFilter(oaObj, options) {
 
         // Filter out OpenApi.tags matching the flags
         if (this.parent && this.parent && this.key === 'tags' && this.parent.key === undefined && Array.isArray(node)) {
+            // debugFilterStep = 'Filter - tag flags'
             // Deep filter array of tags
             let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
             const oaFilteredTags = oaTags.filter(item => !filterProps.some(i => (Object.keys(item).includes(i))));
@@ -290,10 +300,17 @@ function openapiFilter(oaObj, options) {
     traverse(jsonObj).forEach(function (node) {
         // Remove empty objects
         if (node && Object.keys(node).length === 0 && node.constructor === Object) {
+            // debugFilterStep = 'Filter - Remove empty objects'
             this.delete();
         }
         // Remove path items without operations
         if (this.parent && this.parent.key === 'paths' && !httpVerbs.some(i => this.keys.includes(i))) {
+            // debugFilterStep = 'Filter - Remove empty paths'
+            this.delete();
+        }
+        // Strip flags
+        if (stripFlags.length > 0 && stripFlags.includes(this.key)) {
+            // debugFilterStep = 'Filter - Strip flags'
             this.delete();
         }
     });
