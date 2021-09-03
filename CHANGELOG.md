@@ -1,4 +1,4 @@
-## Unreleased
+## [1.3.0] - 2020-09-03
 
 - Added option to strip flags from OpenAPI
 - Handled the unwanted sorting of components > examples > value properties
