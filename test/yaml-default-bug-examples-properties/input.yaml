@@ -769,6 +769,41 @@ components:
           type: string
       xml:
         name: '##default'
+  examples:
+    sample-example-reports:
+      value:
+        id: bbadbeef-b3ab-40af-b05c-c0ffee6544cd
+        created: '2020-06-19T12:01:03.456Z'
+        lastAction: '2020-06-19T12:06:03.456Z'
+        status: Succeeded
+        type: ListExport
+        resourceLocation: https://customername.example/export
+        properties:
+          reportLocation: https://customername.example/reports/ABC-123-DEF-456
+    sample-send-notification:
+      value:
+        - reference: 1234567ABC
+          to:
+            deviceToken: 1234567890AZERTYUIOP
+            provider: apple
+          content:
+            title: Hello world, content title
+            message: Hello world, content message
+            badge: null
+            sound: null
+            buttons: []
+            pushType: 2
+            inAppNotification:
+              title: Hello world, inAppNotification title
+              body: Hello world, inAppNotification body
+            expirationdate: null
+            data:
+              SMLTR_DEL_STATE: '2'
+              SMLTR_DEL_RETRY_CNT: '1'
+          tags:
+            - tag1
+            - tag 2
+      summary: A payload example for a notification
   requestBodies:
     Pet:
       content:
@@ -800,17 +835,6 @@ components:
       type: apiKey
       name: api_key
       in: header
-  examples:
-    sample-example-reports:
-      value:
-        id: bbadbeef-b3ab-40af-b05c-c0ffee6544cd
-        created: '2020-06-19T12:01:03.456Z'
-        lastAction: '2020-06-19T12:06:03.456Z'
-        status: Succeeded
-        type: ListExport
-        resourceLocation: https://customername.example/export
-        properties:
-          reportLocation: https://customername.example/reports/ABC-123-DEF-456
 tags:
   - name: pet
     description: Everything about your Pets
