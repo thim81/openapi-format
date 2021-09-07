@@ -8,6 +8,8 @@ can output the file with clean indenting, to either JSON or YAML.
 Next to the ordering, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
 flags, tags, methods and operationID's.
 
+![npm](https://img.shields.io/npm/v/openapi-format.svg) ![npm](https://img.shields.io/npm/dw/openapi-format.svg)
+
 ## Table of content
 * [Use-cases](#use-cases)
 * [Features](#features)
