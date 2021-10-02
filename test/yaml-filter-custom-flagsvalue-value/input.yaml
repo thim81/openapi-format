@@ -34,9 +34,7 @@ paths:
       description: Add a new pet to the store
       operationId: addPet
       x-visibility: true
-      x-versions:
-        - 3.0
-        - 1.0
+      x-version: 1.0
       responses:
         '200':
           description: Successful operation
@@ -72,6 +70,7 @@ paths:
       summary: Update an existing pet
       description: Update an existing pet by Id
       operationId: updatePet
+      x-version: 1.0
       responses:
         '200':
           description: Successful operation
@@ -113,6 +112,7 @@ paths:
       description: Multiple status values can be provided with comma separated strings
       operationId: findPetsByStatus
       x-visibility: true
+      x-version: 2.0
       parameters:
         - name: status
           in: query
@@ -153,6 +153,7 @@ paths:
       summary: Finds Pets by tags
       description: 'Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.'
       operationId: findPetsByTags
+      x-version: 3.0
       parameters:
         - name: tags
           in: query

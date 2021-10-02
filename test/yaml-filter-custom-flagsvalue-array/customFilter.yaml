@@ -1,0 +1,11 @@
+#methods:
+#  - get
+flags: []
+flagValues:
+   - x-versions: 1.0
+   - x-versions: 2.0
+tags: []
+#operationIds:
+#  - addPet
+#  - findPetsByStatus
+
