@@ -231,6 +231,10 @@ function openapiFilter(oaObj, options) {
     const filterProps = [...filterSet.operationIds, ...filterSet.flags];
     const stripFlags = [...filterSet.stripFlags];
 
+    // Convert flag values to flags
+    const filterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.flagValues));
+    const filterFlagValues = [...filterSet.flagValues];
+
     let debugFilterStep = '' // uncomment // debugFilterStep below to see which sort part is triggered
 
     traverse(jsonObj).forEach(function (node) {
@@ -257,6 +261,18 @@ function openapiFilter(oaObj, options) {
                 node = node.filter(value => !filterArray.includes(value.name))
                 this.update(node);
             }
+
+            // Filter out fields matching the flagValues
+            if (filterFlagValuesKeys.length > 0 && filterFlagValuesKeys.includes(this.key)) {
+                for (let i = 0; i < node.length; i++) {
+                    const itmObj = {[this.key]: node[i]};
+                    if (filterFlagValues.some(item => JSON.stringify(item) === JSON.stringify(itmObj))) {
+                        // debugFilterStep = 'Filter - Single field - flagValues - array value'
+                        // Top parent has other nodes, so remove only targeted parent node of matching element
+                        this.parent.remove();
+                    }
+                }
+            }
         }
 
         // Single field matching
@@ -268,9 +284,19 @@ function openapiFilter(oaObj, options) {
                 this.parent.remove();
             }
 
-            // Filter out fields matching the flagValues/Tags/operationIds
+            // Filter out fields matching the flagValues
+            if (filterFlagValuesKeys.length > 0 && filterFlagValuesKeys.includes(this.key)) {
+                const itmObj = {[this.key]: node};
+                if (filterFlagValues.some(item => JSON.stringify(item) === JSON.stringify(itmObj))) {
+                    // debugFilterStep = 'Filter - Single field - flagValues - single value'
+                    // Top parent has other nodes, so remove only targeted parent node of matching element
+                    this.parent.remove();
+                }
+            }
+
+            // Filter out fields matching the Tags/operationIds
             if (filterProps.length > 0 && filterProps.includes(node)) {
-                // debugFilterStep = 'Filter - Single field - flagValues/Tags/operationIds'
+                // debugFilterStep = 'Filter - Single field - Tags/operationIds'
                 // Top parent has other nodes, so remove only targeted parent node of matching element
                 this.parent.remove();
             }

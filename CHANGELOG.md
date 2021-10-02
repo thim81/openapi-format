@@ -1,3 +1,8 @@
+## [1.4.0] - 2020-10-02
+
+- Added option to strip flags based on the value of the flags from OpenAPI
+- Added NPM badges
+
 ## [1.3.0] - 2020-09-03
 
 - Added option to strip flags from OpenAPI

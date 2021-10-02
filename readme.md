@@ -44,6 +44,7 @@ Postman collections, test suites, ...
 - [x] Order Components elements by alphabet
 - [x] Filter OpenAPI files based on methods
 - [x] Filter OpenAPI files based on flags
+- [x] Filter OpenAPI files based on flags values
 - [x] Filter OpenAPI files based on tags
 - [x] Filter OpenAPI files based on operationID's
 - [x] Filter OpenAPI files based on operations definition
@@ -180,14 +181,15 @@ matching item from the OpenAPI document. You can combine multiple types to filte
 For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
 really extended options for filtering OpenAPI documents.
 
-| Type         | Description                                    | Type  | Examples                         |
-|--------------|------------------------------------------------|-------|----------------------------------|
-| methods      | a list OpenAPI methods.                        | array | ['get','post','put']             |
-| tags         | a list OpenAPI tags.                           | array | ['pet','user']                   |
-| operationIds | a list OpenAPI operation ID's.                 | array | ['findPetsByStatus','updatePet'] |
-| operations   | a list OpenAPI operations.                     | array | ['GET::/pets','PUT::/pets']      |
-| flags        | a list of custom flags                         | array | ['x-exclude','x-internal']       |
-| stripFlags   | a list of custom flags that will be stripped   | array | ['x-exclude','x-internal']       |
+| Type         | Description                                    | Type  | Examples                            |
+|--------------|------------------------------------------------|-------|-------------------------------------|
+| methods      | a list OpenAPI methods.                        | array | ['get','post','put']                |
+| tags         | a list OpenAPI tags.                           | array | ['pet','user']                      |
+| operationIds | a list OpenAPI operation ID's.                 | array | ['findPetsByStatus','updatePet']    |
+| operations   | a list OpenAPI operations.                     | array | ['GET::/pets','PUT::/pets']         |
+| flags        | a list of custom flags                         | array | ['x-exclude','x-internal']          |
+| flagValues   | a list of custom flags with a specific value   | array | ['x-version: 1.0','x-version: 3.0'] |
+| stripFlags   | a list of custom flags that will be stripped   | array | ['x-exclude','x-internal']          |
 
 Some more details on the available filter types:
 
@@ -315,6 +317,58 @@ paths:
         get:
             x-exclude: true
 ```
+
+- **flagValues**: Refers to a flag, custom property which can be set on any field in the OpenAPI document, and the combination with the value for that flag.
+
+This will remove all fields and attached fields that match the flag with the specific value. 
+
+A `flagValues` example:
+
+```yaml
+flagValues:
+    - x-version: 1.0
+    - x-version: 3.0
+```
+In the example below, this would mean that all items with the flag `x-version` that match `x-version: 1.0` OR `x-version: 3.0` would be removed from the OpenAPI document.
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+            x-version: 1.0
+```
+
+The filter option `flagValues` also will remove flags that contain an array of values in the OpenAPI document.
+
+A `flagValues` example:
+
+```yaml
+flagValues:
+    - x-versions: 1.0
+    - x-versions: 2.0
+```
+
+In the example below, this would mean that all items with the flag `x-versions`, which is an array, that match `x-version: 1.0` OR `x-version: 3.0` would be removed from the OpenAPI document.
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+            x-versions:
+                - 1.0
+                - 3.0
+                - 5.0
+```
+
+Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-valye) and [flagValues for array values](test/yaml-filter-custom-flagsvalue-array) for a practical example.
 
 - **stripFlags**: Refers to a lis of custom properties which can be set on any field in the OpenAPI document.
 
