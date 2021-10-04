@@ -810,3 +810,12 @@ components:
       type: apiKey
       name: api_key
       in: header
+x-tagGroups:
+  - name: Pet Store
+    x-version: 1.0
+    tags:
+      - pet
+      - store
+  - name: Users
+    tags:
+      - user

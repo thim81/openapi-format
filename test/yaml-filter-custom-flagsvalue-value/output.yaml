@@ -694,3 +694,7 @@ components:
       type: apiKey
       name: api_key
       in: header
+x-tagGroups:
+  - name: Users
+    tags:
+      - user
