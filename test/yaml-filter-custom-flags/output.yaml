@@ -22,9 +22,14 @@ info:
 tags:
   - name: pet
     description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
+  - name: store
+    description: Everything about your store
+x-tagGroups:
+  - name: Pet Store
+    x-version: 1
+    tags:
+      - pet
+      - store
 paths:
   /pet:
     put:

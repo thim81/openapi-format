@@ -1,3 +1,7 @@
+## [1.4.1] - 2020-10-05
+
+- Implemented the missing functionality for removal of OpenApi.x-tagGroups matching flags
+
 ## [1.4.0] - 2020-10-02
 
 - Added option to strip flags based on the value of the flags from OpenAPI

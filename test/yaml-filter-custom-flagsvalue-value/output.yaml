@@ -22,9 +22,11 @@ info:
 tags:
   - name: pet
     description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
+  - name: store
+    x-visibility: true
+    description: Everything about your store
+  - name: user
+    description: Everything about your user
 paths:
   /pet/findByStatus:
     get:
