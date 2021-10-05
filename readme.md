@@ -50,6 +50,7 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on operationID's
 - [x] Filter OpenAPI files based on operations definition
 - [x] Strip flags from OpenAPI files
+- [x] Strip unused components from OpenAPI files
 - [x] Rename the OpenAPI title
 - [x] Support OpenAPI documents in JSON format
 - [x] Support OpenAPI documents in YAML format
@@ -182,19 +183,20 @@ matching item from the OpenAPI document. You can combine multiple types to filte
 For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
 really extended options for filtering OpenAPI documents.
 
-| Type         | Description                                    | Type  | Examples                            |
-|--------------|------------------------------------------------|-------|-------------------------------------|
-| methods      | a list OpenAPI methods.                        | array | ['get','post','put']                |
-| tags         | a list OpenAPI tags.                           | array | ['pet','user']                      |
-| operationIds | a list OpenAPI operation ID's.                 | array | ['findPetsByStatus','updatePet']    |
-| operations   | a list OpenAPI operations.                     | array | ['GET::/pets','PUT::/pets']         |
-| flags        | a list of custom flags                         | array | ['x-exclude','x-internal']          |
-| flagValues   | a list of custom flags with a specific value   | array | ['x-version: 1.0','x-version: 3.0'] |
-| stripFlags   | a list of custom flags that will be stripped   | array | ['x-exclude','x-internal']          |
+| Type             | Description                                    | Type  | Examples                            |
+|------------------|------------------------------------------------|-------|-------------------------------------|
+| methods          | a list OpenAPI methods.                        | array | ['get','post','put']                |
+| tags             | a list OpenAPI tags.                           | array | ['pet','user']                      |
+| operationIds     | a list OpenAPI operation ID's.                 | array | ['findPetsByStatus','updatePet']    |
+| operations       | a list OpenAPI operations.                     | array | ['GET::/pets','PUT::/pets']         |
+| flags            | a list of custom flags                         | array | ['x-exclude','x-internal']          |
+| flagValues       | a list of custom flags with a specific value   | array | ['x-version: 1.0','x-version: 3.0'] |
+| unusedComponents | a list of unused components                    | array | ['examples','schemas']              |
+| stripFlags       | a list of custom flags that will be stripped   | array | ['x-exclude','x-internal']          |
 
 Some more details on the available filter types:
 
-- **methods**: Refers to the "Path Item Object" http://spec.openapis.org/oas/v3.0.3.html#operationObject
+=> **methods**: Refers to the "Path Item Object" http://spec.openapis.org/oas/v3.0.3.html#operationObject
 
 This will remove all fields and attached fields that match the verbs. In the example below, this would mean that
 all `get`, `put`, `post` items would be removed from the OpenAPI document.
@@ -212,7 +214,7 @@ paths:
             summary: Update an existing pet
 ```  
 
-- **tags**: Refers to the "tags" field from the "Operation
+=> **tags**: Refers to the "tags" field from the "Operation
   Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
 
 This will remove all fields and attached fields that match the tags. In the example below, this would mean that all
@@ -233,7 +235,7 @@ paths:
             summary: Update an existing pet
 ```  
 
-- **operationIds**: Refers to the "operationId" field from the "Operation
+=> **operationIds**: Refers to the "operationId" field from the "Operation
   Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
 
 This will remove specific fields and attached fields that match the operation ID's. In the example below, this would
@@ -252,7 +254,7 @@ paths:
             operationId: findPetsByStatus
 ```
 
-- **operations**: Refers to a combination of a OpenApi method & path from the "Path
+=> **operations**: Refers to a combination of a OpenApi method & path from the "Path
   Object" https://spec.openapis.org/oas/v3.0.3.html#paths-object & "Path
   item" https://spec.openapis.org/oas/v3.0.3.html#path-item-object
 
@@ -301,7 +303,7 @@ This will target only the "GET" method and any path matching any folder behind t
 Method & Path wildcard matching example: `"*::/pets/*"`
 A combination of wildcards for the method and path parts are even possible. 
 
-- **flags**: Refers to a custom property which can be set on any field in the OpenAPI document.
+=> **flags**: Refers to a custom property which can be set on any field in the OpenAPI document.
 
 This will remove all fields and attached fields that match the flags. In the example below, this would mean that all
 items with the flag `x-exclude` would be removed from the OpenAPI document.
@@ -319,7 +321,7 @@ paths:
             x-exclude: true
 ```
 
-- **flagValues**: Refers to a flag, custom property which can be set on any field in the OpenAPI document, and the combination with the value for that flag.
+=> **flagValues**: Refers to a flag, custom property which can be set on any field in the OpenAPI document, and the combination with the value for that flag.
 
 This will remove all fields and attached fields that match the flag with the specific value. 
 
@@ -371,9 +373,24 @@ paths:
 
 Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-valye) and [flagValues for array values](test/yaml-filter-custom-flagsvalue-array) for a practical example.
 
-- **stripFlags**: Refers to a lis of custom properties which can be set on any field in the OpenAPI document.
+=> **unusedComponents**: Refers to a list of [reusable component types]( https://spec.openapis.org/oas/v3.0.3.html#components-object), from which unused items will be removed.
 
-This will remove only the flags, the linked parent and properties will remain. In the example below, this would mean that all
+This option allows you to strip the OpenApi document from any unused items of the targeted `components` types. 
+An item in the `components` that is not referenced by `$ref`, will get marked and removed from the OpenAPI document. 
+
+REMARK: We will only strip unused components **once**, if after this one-time removal other items become unused, they will remain in the OpenApi doc. 
+
+Supported component types that can be marked as "unused":
+- schemas
+- parameters
+- examples
+- headers
+- requestBodies
+- responses
+
+=> **stripFlags**: Refers to a lis of custom properties which can be set on any field in the OpenAPI document.
+
+The `stripFlags` will remove only the flags, the linked parent and properties will remain. In the example below, this would mean that all
 flags `x-exclude` itself would be stripped from the OpenAPI document.
 
 Example before:

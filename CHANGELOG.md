@@ -1,3 +1,7 @@
+## [1.5.0] - 2020-10-05
+
+- Added option to remove "unused" component items.
+
 ## [1.4.1] - 2020-10-05
 
 - Implemented the missing functionality for removal of OpenApi.x-tagGroups matching flags
