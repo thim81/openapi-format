@@ -172,5 +172,5 @@ async function run(oaFile, options) {
         console.log(o);
     }
 
-    info('\n✅ OpenAPI was formatted successfully')
+    info('\n✅  OpenAPI was formatted successfully')
 }
