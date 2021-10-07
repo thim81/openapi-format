@@ -20,14 +20,8 @@ info:
 tags:
   - name: pet
     description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
   - name: user
     description: Everything about your users
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
 paths:
   /pet:
     post:
@@ -513,7 +507,12 @@ paths:
       description: This can only be done by the logged in user.
       operationId: deleteUser
       parameters:
-        - $ref: '#/components/parameters/username'
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
       responses:
         '400':
           description: Invalid username supplied
@@ -710,29 +709,7 @@ components:
       xml:
         name: '##default'
       type: object
-    Unused:
-      properties:
-        code:
-          type: integer
-          format: int32
-        type:
-          type: string
-        message:
-          type: string
-      xml:
-        name: '##default'
-      type: object
   requestBodies:
-    NewItem:
-      description: A JSON object containing item data
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-          examples:
-            tshirt:
-              $ref: '#/components/examples/tshirt'
     Pet:
       content:
         application/json:
@@ -750,84 +727,6 @@ components:
             items:
               $ref: '#/components/schemas/User'
       description: List of user object
-    UnusedArray:
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
-      description: List of user object
-  parameters:
-    offsetParam:
-      name: offset
-      in: query
-      schema:
-        type: integer
-        minimum: 0
-      description: The number of items to skip before returning the results
-    limitParam:
-      in: query
-      name: limit
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
-        maximum: 100
-        default: 20
-      description: The number of items to return
-    username:
-      name: username
-      in: path
-      description: name that need to be deleted
-      required: true
-      schema:
-        type: string
-  responses:
-    GeneralError:
-      description: An error occurred
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorModel'
-      headers:
-        X-RateLimit-Limit:
-          $ref: '#/components/headers/X-RateLimit-Limit'
-        X-RateLimit-Remaining:
-          $ref: '#/components/headers/X-RateLimit-Remaining'
-  headers:
-    X-RateLimit-Limit:
-      description: Request limit per hour
-      schema:
-        type: integer
-      example: 100
-    X-RateLimit-Remaining:
-      description: Remaining requests for the hour
-      schema:
-        type: integer
-      example: 94
-    X-RateLimit-Unused:
-      description: Remaining requests for the hour
-      schema:
-        type: integer
-      example: 94
-  examples:
-    tshirt:
-      summary: Sample T-shirt data
-      value:
-        id: 17
-        name: T-shirt
-        description: 100% cotton shirt
-        categories:
-          - clothes
-    tshirt-unused:
-      summary: Sample T-shirt data
-      value:
-        id: 17
-        name: T-shirt
-        description: 100% cotton shirt
-        categories:
-          - clothes
   securitySchemes:
     petstore_auth:
       type: oauth2
