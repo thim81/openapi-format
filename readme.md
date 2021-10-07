@@ -30,18 +30,18 @@ flags, tags, methods, operationID's and even unused components.
 
 ## Use-cases
 
-**Public documentation**
+**Public documentation:**
 An OpenAPI document is a specification that evolves and changes. To facilitate working with the specification and publishing the
 document as public documentation, you want to deliver a clean and structured specification. OpenAPI-format helps you to
 organise the fields by sorting and filtering specific elements from the OpenAPI like internal endpoints, beta tags, ...
 and even unused schemas, examples, responses, ...
 
-**Maintenance**
+**Maintenance:**
 When working on large OpenAPI documents or with multiple team members, the file can be become messy and difficult to
 compare changes. By sorting it from time to time, the fields are all ordered in a structured manner, which will help you
 to maintain the file with greater ease.
 
-**CI/CD pipelines**
+**CI/CD pipelines:**
 OpenAPI-format can be useful in CI/CD pipelines, where the OpenAPI is used as source for other documents like Web documentation,
 Postman collections, test suites, ...
 
