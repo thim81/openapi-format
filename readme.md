@@ -261,7 +261,7 @@ paths:
             operationId: findPetsByStatus
 ```
 
-=> **operations**: Refers to a combination of a OpenApi method & path from the "Path
+=> **operations**: Refers to a combination of a OpenAPI method & path from the "Path
   Object" https://spec.openapis.org/oas/v3.0.3.html#paths-object & "Path
   item" https://spec.openapis.org/oas/v3.0.3.html#path-item-object
 
@@ -284,11 +284,11 @@ paths:
             summary: Update an existing pet
 ```
 
-An `operationId` is an optional property. To offer support for OpenApi documents that don't have operationIds, we have
-added the `operation` definition which is the unique combination of the OpenApi method & path, with a `::` separator
+An `operationId` is an optional property. To offer support for OpenAPI documents that don't have operationIds, we have
+added the `operation` definition which is the unique combination of the OpenAPI method & path, with a `::` separator
 symbol.
 
-This will allow filtering for very specific OpenApi items, without the need of adding operationIds to the OpenApi
+This will allow filtering for very specific OpenAPI items, without the need of adding operationIds to the OpenAPI
 document.
 
 To facilitate managing the filtering, we have included wildcard options for the `operations` option, supporting the
@@ -382,10 +382,10 @@ Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-valye) and [flagV
 
 => **unusedComponents**: Refers to a list of [reusable component types]( https://spec.openapis.org/oas/v3.0.3.html#components-object), from which unused items will be removed.
 
-This option allows you to strip the OpenApi document from any unused items of the targeted `components` types. 
-An item in the `components` that is not referenced by `$ref`, will get marked and removed from the OpenAPI document. 
+This option allows you to strip the OpenAPI document from any unused items of the targeted `components` types. 
+An item in the list of OpenAPI `components` that is not referenced as `$ref`, will get marked and removed from the OpenAPI document. 
 
-REMARK: We will strip all unused components in a recursive manner, with a maximum depth of 10 times. 
+REMARK: We will recursively strip all unused components, with a maximum depth of 10 times. This means that "nested" components, that become unused, will also get removed
 
 Supported component types that can be marked as "unused":
 - schemas
