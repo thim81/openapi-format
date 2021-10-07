@@ -5,6 +5,7 @@ const fs = require('fs');
 const sy = require('@stoplight/yaml');
 const openapiFormat = require('../openapi-format')
 const program = require('commander');
+const {infoTable, infoOut, logOut, debugOut} = require("../util-log-output");
 
 // CLI Helper - change verbosity
 function increaseVerbosity(dummyValue, previous) {
@@ -33,7 +34,7 @@ program
             err.code === "commander.missingArgument" ||
             err.code === "commander.unknownOption"
         ) {
-            stdout.write("\n");
+            process.stdout.write("\n");
             program.outputHelp();
         }
 
@@ -42,21 +43,23 @@ program
     .parse(process.argv);
 
 async function run(oaFile, options) {
-    // Helper function to display info message, depending on the verbose level
-    function info(msg) {
-        if (options.verbose >= 1) {
-            console.warn(msg);
-        }
-    }
+    // General variables
+    let outputLogOptions = ''
+    let outputLogFiltered = ''
+    let cliLog = {};
+    const consoleLine = process.stdout.columns ? '='.repeat(process.stdout.columns) : '='.repeat(80)
 
     if (!oaFile) {
-        console.error('Provide file to OpenAPI document');
+        console.error('Please provide a file path for the OpenAPI document');
+        // process.exit(1)
         return;
     }
 
+    infoOut(`${consoleLine}`); // LOG - horizontal rule
+    infoOut(`OpenAPI-Format CLI settings:`) // LOG - config file
+
     // apply options from config file if present
     if (options && options.configFile) {
-        info('Config File: ' + options.configFile)
         try {
             let configFileOptions = {}
             // configFileOptions = jy.load(fs.readFileSync(options.configFile, 'utf8'));
@@ -65,6 +68,7 @@ async function run(oaFile, options) {
                 configFileOptions.sort = !(configFileOptions['no-sort'])
                 delete configFileOptions['no-sort'];
             }
+            infoOut(`- Config file:\t\t${options.configFile}`) // LOG - config file
             options = Object.assign({}, options, configFileOptions);
         } catch (err) {
             console.error('\x1b[31m', 'Config file error - no such file or directory "' + options.configFile + '"')
@@ -74,13 +78,12 @@ async function run(oaFile, options) {
         }
     }
 
-    if (options.verbose >= 1 || options.verbose === true) {
-        console.table(options);
-    }
+    // LOG - Render info table with options
+    outputLogOptions = infoTable(options, options.verbose)
 
     // apply ordering by priority file if present
     if (options && options.sort === true) {
-        info('Sort File: ' + options.sortFile)
+        infoOut(`- Sort file:\t\t${options.sortFile}`) // LOG - sort file
         try {
             let sortOptions = {sortSet: {}}
             // sortOptions.sortSet = jy.load(fs.readFileSync(options.sortFile, 'utf8'));
@@ -88,7 +91,7 @@ async function run(oaFile, options) {
             sortOptions.sortSet = sy.parse(fs.readFileSync(sortFile, 'utf8'));
             options = Object.assign({}, options, sortOptions);
         } catch (err) {
-            console.error('\x1b[31m', 'Sort file error - no such file or directory "' + options.sortFile + '"')
+            console.error('\x1b[31m', `Sort file error - no such file or directory "${options.sortFile}"`)
             if (options.verbose >= 1) {
                 console.error(err)
             }
@@ -97,14 +100,14 @@ async function run(oaFile, options) {
 
     // apply filtering by filter file if present
     if (options && options.filterFile) {
-        info('Filter File: ' + options.filterFile)
+        infoOut(`- Filter file:\t\t${options.filterFile}`) // LOG - Filter file
         try {
             let filterOptions = {filterSet: {}}
             // filterOptions.filterSet = jy.load(fs.readFileSync(options.filterFile, 'utf8'));
             filterOptions.filterSet = sy.parse(fs.readFileSync(options.filterFile, 'utf8'));
             options = Object.assign({}, options, filterOptions);
         } catch (err) {
-            console.error('\x1b[31m', 'Filter file error - no such file or directory "' + options.filterFile + '"')
+            console.error('\x1b[31m', `Filter file error - no such file or directory "${options.filterFile}"`)
             if (options.verbose >= 1) {
                 console.error(err)
             }
@@ -113,21 +116,21 @@ async function run(oaFile, options) {
 
     // apply components sorting by alphabet, if file is present
     if (options && options.sortComponentsFile) {
-        info('Sort Components File: ' + options.sortComponentsFile)
+        infoOut(`- Sort Components file:\t ${options.sortComponentsFile}`) // LOG - Sort file
         try {
             let sortComponentsOptions = {sortComponentsSet: {}}
             // sortComponentsOptions.sortSet = jy.load(fs.readFileSync(options.sortFile, 'utf8'));
             sortComponentsOptions.sortComponentsSet = sy.parse(fs.readFileSync(options.sortComponentsFile, 'utf8'));
             options = Object.assign({}, options, sortComponentsOptions);
         } catch (err) {
-            console.error('\x1b[31m', 'Sort Components file error - no such file or directory "' + options.sortComponentsFile + '"')
+            console.error('\x1b[31m', `Sort Components file error - no such file or directory "${options.sortComponentsFile}"`)
             if (options.verbose >= 1) {
                 console.error(err)
             }
         }
     }
 
-    info('Input file: ' + oaFile)
+    infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
 
     // Get
     // let res = jy.load(fs.readFileSync(oaFile, 'utf8'));
@@ -136,34 +139,39 @@ async function run(oaFile, options) {
 
     // Filter OpenAPI document
     if (options.filterSet) {
-        res = await openapiFormat.openapiFilter(res, options);
+        const resFilter = await openapiFormat.openapiFilter(res, options);
+        cliLog.unusedComp = resFilter?.resultData?.unusedComp;
+        outputLogFiltered = `filtered & `;
+        res = resFilter.data;
     }
 
     // Format & Order OpenAPI document
     if (options.sort === true) {
-        res = await openapiFormat.openapiSort(res, options);
+        const resFormat = await openapiFormat.openapiSort(res, options);
+        if (resFormat.data) res = resFormat.data
     }
 
     // Rename title OpenAPI document
     if (options.rename) {
-        res = await openapiFormat.openapiRename(res, options);
-        info('OpenAPI title renamed to: "' + options.rename + '"')
+        const resRename = await openapiFormat.openapiRename(res, options);
+        if (resRename.data) res = resRename.data
+        debugOut(`- OAS.title renamed to: "${options.rename}"`, options.verbose) // LOG - Rename title
     }
 
     if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
         o = JSON.stringify(res, null, 2);
     } else {
         // o = jy.dump(res,{lineWidth:-1});
-        let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity: options.lineWidth) || Infinity;
+        let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
         o = sy.safeStringify(res, {lineWidth: lineWidth});
     }
 
     if (options.output) {
         try {
             fs.writeFileSync(options.output, o, 'utf8');
-            info('Output file: ' + options.output)
+            infoOut(`- Output file:\t\t${options.output}`) // LOG - config file
         } catch (err) {
-            console.error('\x1b[31m', 'Output file error - no such file or directory "' + options.output + '"')
+            console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`)
             if (options.verbose >= 1) {
                 console.error(err)
             }
@@ -172,5 +180,35 @@ async function run(oaFile, options) {
         console.log(o);
     }
 
-    info('\n✅  OpenAPI was formatted successfully')
+    if (outputLogOptions) { //&& options.verbose > 2) {
+        // Show options
+        debugOut(`${consoleLine}\n`, options.verbose); // LOG - horizontal rule
+        debugOut(`OpenAPI-Format CLI options:`, options.verbose) // LOG - config file
+        debugOut(`${outputLogOptions}`, options.verbose);
+    }
+
+    // Show unused components
+    if (cliLog?.unusedComp) {
+        // List unused component
+        logOut(`${consoleLine}`, options.verbose); // LOG - horizontal rule
+        logOut(`Removed unused components:`, options.verbose); // LOG - horizontal rule
+        const unusedComp = cliLog.unusedComp
+        const keys = Object.keys(unusedComp, options.verbose)
+        let count = 0
+        keys.map((comp) => {
+            if (unusedComp?.[comp].length > 0) {
+                unusedComp[comp].forEach(value => {
+                    const spacer = (comp === 'requestBodies' ? `\t` : `\t\t`);
+                    logOut(`- components/${comp}${spacer} "${value}"`, options.verbose);
+                    count++;
+                });
+            }
+        });
+        logOut(`Total components removed: ${count}`, options.verbose);
+    }
+
+    // Final result
+    infoOut(`${consoleLine}\n`); // LOG - horizontal rule
+    infoOut(`✅  OpenAPI ${outputLogFiltered}formatted successfully\n`, 99) // LOG - success message
+    infoOut(`${consoleLine}\n`); // LOG - horizontal rule
 }

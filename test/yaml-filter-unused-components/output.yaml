@@ -601,17 +601,6 @@ externalDocs:
   url: 'http://swagger.io'
 components:
   schemas:
-    ErrorModel:
-      type: object
-      required:
-        - code
-        - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     Order:
       x-swagger-router-model: io.swagger.petstore.model.Order
       properties:
@@ -642,23 +631,6 @@ components:
           type: boolean
       xml:
         name: order
-      type: object
-    Address:
-      properties:
-        street:
-          type: string
-          example: 437 Lytton
-        city:
-          type: string
-          example: Palo Alto
-        state:
-          type: string
-          example: CA
-        zip:
-          type: string
-          example: 94301
-      xml:
-        name: address
       type: object
     Category:
       x-swagger-router-model: io.swagger.petstore.model.Category
@@ -768,7 +740,6 @@ components:
       xml:
         name: '##default'
       type: object
-  requestBodies: {}
   parameters:
     username:
       name: username
@@ -777,27 +748,6 @@ components:
       required: true
       schema:
         type: string
-  responses: {}
-  headers:
-    X-RateLimit-Limit:
-      description: Request limit per hour
-      schema:
-        type: integer
-      example: 100
-    X-RateLimit-Remaining:
-      description: Remaining requests for the hour
-      schema:
-        type: integer
-      example: 94
-  examples:
-    tshirt:
-      summary: Sample T-shirt data
-      value:
-        id: 17
-        name: T-shirt
-        description: 100% cotton shirt
-        categories:
-          - clothes
   securitySchemes:
     petstore_auth:
       type: oauth2

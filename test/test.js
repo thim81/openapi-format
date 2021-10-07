@@ -13,7 +13,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['json-sort-components']
+// const tests = ['yaml-filter-unused-components']
 // console.log('tests',tests);
 
 describe('openapi-format tests', () => {
@@ -153,24 +153,39 @@ describe('openapi-format tests', () => {
                     // No options found. output = {} will be used
                 }
 
-                let result = openapiFormat.openapiSort(input, options);
+                // Initialize data
+                let result = input
+
+                // Filter OpenAPI document
                 if (options.filterSet) {
-                    result = openapiFormat.openapiFilter(result, options);
+                    const resFilter = openapiFormat.openapiFilter(result, options);
+                    if (resFilter.data) result = resFilter.data
+                }
+
+                // Sort OpenAPI document
+                if (options.sort === true) {
+                    const resFormat = openapiFormat.openapiSort(result, options);
+                    if (resFormat.data) result = resFormat.data
                 }
 
                 // Rename title OpenAPI document
                 if (options.rename) {
-                    result = openapiFormat.openapiRename(result, options);
+                    const resRename = openapiFormat.openapiRename(result, options);
+                    if (resRename.data) result = resRename.data
                 }
 
-                if (!readOutput) {
-                    if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
-                        output = JSON.stringify(result, null, 2);
-                    } else {
-                        let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity: options.lineWidth) || Infinity;
-                        output = sy.safeStringify(result, {lineWidth: lineWidth});
+                try {
+                    if (!readOutput) {
+                        if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
+                            output = JSON.stringify(result, null, 2);
+                        } else {
+                            let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
+                            output = sy.safeStringify(result, {lineWidth: lineWidth});
+                        }
+                        fs.writeFileSync(outputFilename, output, 'utf8');
                     }
-                    fs.writeFileSync(outputFilename, output, 'utf8');
+                } catch (error) {
+                    console.log('error', error)
                 }
 
                 assert.deepStrictEqual(result, output);
