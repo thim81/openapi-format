@@ -1,4 +1,4 @@
-## [1.6.0] - 2020-10-05
+## [1.6.0] - 2020-10-08
 
 - Added option to remove all "unused" component items through recursion
 - Improved the openapi-format terminal log output and how verbose is handled
