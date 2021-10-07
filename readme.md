@@ -383,7 +383,7 @@ Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-valye) and [flagV
 => **unusedComponents**: Refers to a list of [reusable component types]( https://spec.openapis.org/oas/v3.0.3.html#components-object), from which unused items will be removed.
 
 This option allows you to strip the OpenAPI document from any unused items of the targeted `components` types. 
-An item in the list of OpenAPI `components` that is not referenced as `$ref`, will get marked and removed from the OpenAPI document. 
+Any item in the list of OpenAPI `components` that is not referenced as `$ref`, will get marked and removed from the OpenAPI document. 
 
 REMARK: We will recursively strip all unused components, with a maximum depth of 10 times. This means that "nested" components, that become unused, will also get removed
 
