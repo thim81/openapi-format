@@ -6,7 +6,7 @@ The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ord
 can output the file with clean indenting, to either JSON or YAML.
 
 Next to the ordering, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
-flags, tags, methods and operationID's.
+flags, tags, methods, operationID's and even unused components.
 
 <a href="https://www.npmjs.com/package/openapi-format" alt="Latest Stable Version">![npm](https://img.shields.io/npm/v/openapi-format.svg)</a> 
 <a href="https://www.npmjs.com/package/openapi-format" alt="Total Downloads">![npm](https://img.shields.io/npm/dw/openapi-format.svg)</a>
@@ -30,12 +30,19 @@ flags, tags, methods and operationID's.
 
 ## Use-cases
 
+**Public documentation**
+An OpenAPI document is a specification that evolves and changes. To facilitate working with the specification and publishing the
+document as public documentation, you want to deliver a clean and structured specification. OpenAPI-format helps you to
+organise the fields by sorting and filtering specific elements from the OpenAPI like internal endpoints, beta tags, ...
+and even unused schemas, examples, responses, ...
+
+**Maintenance**
 When working on large OpenAPI documents or with multiple team members, the file can be become messy and difficult to
 compare changes. By sorting it from time to time, the fields are all ordered in a structured manner, which will help you
 to maintain the file with greater ease.
 
-The filtering is a handy add-on to remove specific elements from the OpenAPI like internal endpoints, beta tags, ...
-This can be useful in CI/CD pipelines, where the OpenAPI is used as source for other documents like Web documentation,
+**CI/CD pipelines**
+OpenAPI-format can be useful in CI/CD pipelines, where the OpenAPI is used as source for other documents like Web documentation,
 Postman collections, test suites, ...
 
 ## Features
@@ -378,7 +385,7 @@ Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-valye) and [flagV
 This option allows you to strip the OpenApi document from any unused items of the targeted `components` types. 
 An item in the `components` that is not referenced by `$ref`, will get marked and removed from the OpenAPI document. 
 
-REMARK: We will only strip unused components **once**, if after this one-time removal other items become unused, they will remain in the OpenApi doc. 
+REMARK: We will strip all unused components in a recursive manner, with a maximum depth of 10 times. 
 
 Supported component types that can be marked as "unused":
 - schemas
