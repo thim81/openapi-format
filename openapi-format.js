@@ -384,6 +384,16 @@ function openapiFilter(oaObj, options) {
                 this.update(oaFilteredTags);
             }
         }
+
+        // Filter out markdown comments in description fields
+        if (this.key === 'description') {
+            const lines = node.split('\n');
+            if (lines.length > 1) {
+                const filtered = lines.filter(line => !line.startsWith('[comment]: <>'))
+                const cleanDescription = filtered.join('\n');
+                this.update(cleanDescription)
+            }
+        }
     });
 
     if (stripUnused.length > 0) {

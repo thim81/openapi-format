@@ -736,8 +736,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Tag'
-            xml:
-              name: tag
           xml:
             wrapped: true
         status:
@@ -799,9 +797,6 @@ components:
 tags:
   - name: pet
     description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
