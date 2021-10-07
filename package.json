@@ -27,6 +27,7 @@
         "README.md",
         "LICENSE",
         "openapi-format.js",
+        "util-log-output.js",
         "defaultSort.json",
         "defaultFilter.json",
         "defaultSortComponents.json",
@@ -39,7 +40,7 @@
         "test": "test"
     },
     "scripts": {
-        "test": "npx mocha",
+        "test": "mocha",
         "release": "np --branch main"
     },
     "dependencies": {

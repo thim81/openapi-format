@@ -207,7 +207,9 @@ function openapiSort(oaObj, options) {
     if (jsonObj.openapi) {
         jsonObj = prioritySort(jsonObj, sortSet['root'])
     }
-    return jsonObj;
+
+    // Return result object
+    return {data: jsonObj, resultData: {}}
 }
 
 /**
@@ -222,6 +224,7 @@ function openapiFilter(oaObj, options) {
     let defaultFilter = JSON.parse(fs.readFileSync(__dirname + "/defaultFilter.json", 'utf8'))
     let filterSet = Object.assign({}, defaultFilter, options.filterSet);
     const httpVerbs = ["get", "post", "put", "patch", "delete"];
+    options.unusedDepth = options.unusedDepth || 0;
 
     // Merge object filters
     const filterKeys = [...filterSet.methods];
@@ -236,63 +239,65 @@ function openapiFilter(oaObj, options) {
     const filterFlagValues = [...filterSet.flagValues];
 
     // Initiate components tracking
-    const compSchemas = {}
-    const compResponses = {}
-    const compParams = {}
-    const compExamples = {}
-    const compRequestBodies = {}
-    const compHeaders = {}
+    const comps = {
+        schemas: {},
+        responses: {},
+        parameters: {},
+        examples: {},
+        requestBodies: {},
+        headers: {},
+        meta: {total: 0}
+    }
+
+    // Prepare unused components
+    let unusedComp = {
+        schemas: [],
+        responses: [],
+        parameters: [],
+        examples: [],
+        requestBodies: [],
+        headers: [],
+        meta: {total: 0}
+    }
+    // Use options.unusedComp to collect unused components during multiple recursion
+    if(!options.unusedComp) options.unusedComp = JSON.parse(JSON.stringify(unusedComp));
 
     let debugFilterStep = '' // uncomment // debugFilterStep below to see which sort part is triggered
 
     traverse(jsonObj).forEach(function (node) {
-        // Register components
+        // Register components presence
         if (this?.parent?.parent?.key === 'components') {
-            if (this?.parent?.key === 'schemas') {
-                compSchemas[this.key] = {...compSchemas[this.key], present: true};
-            }
-            if (this?.parent?.key === 'responses') {
-                compResponses[this.key] = {...compResponses[this.key], present: true};
-            }
-            if (this?.parent?.key === 'parameters') {
-                compParams[this.key] = {...compParams[this.key], present: true};
-            }
-            if (this?.parent?.key === 'examples') {
-                compExamples[this.key] = {...compExamples[this.key], present: true};
-            }
-            if (this?.parent?.key === 'requestBodies') {
-                compRequestBodies[this.key] = {...compRequestBodies[this.key], present: true};
-            }
-            if (this?.parent?.key === 'headers') {
-                compHeaders[this.key] = {...compHeaders[this.key], present: true};
+            if (this?.parent?.key && comps[this.parent.key]) {
+                comps[this.parent.key][this.key] = {...comps[this.parent.key][this.key], present: true};
+                comps.meta.total = comps.meta.total++;
             }
         }
 
-        // Register component/schemas usage
+        // Register components usage
         if (this?.key === '$ref') {
             if (node.startsWith('#/components/schemas/')) {
                 const compSchema = node.replace('#/components/schemas/', '');
-                compSchemas[compSchema] = {...compSchemas[compSchema], used: true};
+                comps.schemas[compSchema] = {...comps.schemas[compSchema], used: true};
             }
             if (node.startsWith('#/components/responses/')) {
                 const compResp = node.replace('#/components/responses/', '');
-                compResponses[compResp] = {...compResponses[compResp], used: true};
+                comps.responses[compResp] = {...comps.responses[compResp], used: true};
             }
             if (node.startsWith('#/components/parameters/')) {
                 const compParam = node.replace('#/components/parameters/', '');
-                compParams[compParam] = {...compParams[compParam], used: true};
+                comps.parameters[compParam] = {...comps.parameters[compParam], used: true};
             }
             if (node.startsWith('#/components/examples/')) {
                 const compExample = node.replace('#/components/examples/', '');
-                compExamples[compExample] = {...compExamples[compExample], used: true};
+                comps.examples[compExample] = {...comps.examples[compExample], used: true};
             }
             if (node.startsWith('#/components/requestBodies/')) {
                 const compRequestBody = node.replace('#/components/requestBodies/', '');
-                compRequestBodies[compRequestBody] = {...compRequestBodies[compRequestBody], used: true};
+                comps.requestBodies[compRequestBody] = {...comps.requestBodies[compRequestBody], used: true};
             }
             if (node.startsWith('#/components/headers/')) {
                 const compHeader = node.replace('#/components/headers/', '');
-                compHeaders[compHeader] = {...compHeaders[compHeader], used: true};
+                comps.headers[compHeader] = {...comps.headers[compHeader], used: true};
             }
         }
 
@@ -379,59 +384,40 @@ function openapiFilter(oaObj, options) {
                 this.update(oaFilteredTags);
             }
         }
+
+        // Filter out markdown comments in description fields
+        if (this.key === 'description') {
+            const lines = node.split('\n');
+            if (lines.length > 1) {
+                const filtered = lines.filter(line => !line.startsWith('[comment]: <>'))
+                const cleanDescription = filtered.join('\n');
+                this.update(cleanDescription)
+            }
+        }
     });
 
-    // Prepare unused components
-    let unusedSchemas = []
-    let unusedResponses = []
-    let unusedParams = []
-    let unusedExamples = []
-    let unusedRequestBodies = []
-    let unusedHeaders = []
     if (stripUnused.length > 0) {
-        unusedSchemas = Object.keys(compSchemas).filter(key => !compSchemas[key]?.used);
-        unusedResponses = Object.keys(compResponses).filter(key => !compResponses[key]?.used);
-        unusedParams = Object.keys(compParams).filter(key => !compParams[key]?.used);
-        unusedExamples = Object.keys(compExamples).filter(key => !compExamples[key]?.used);
-        unusedRequestBodies = Object.keys(compRequestBodies).filter(key => !compRequestBodies[key]?.used);
-        unusedHeaders = Object.keys(compHeaders).filter(key => !compHeaders[key]?.used);
+        unusedComp.schemas = Object.keys(comps.schemas).filter(key => !comps.schemas[key]?.used);
+        options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
+        unusedComp.responses = Object.keys(comps.responses).filter(key => !comps.responses[key]?.used);
+        options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
+        unusedComp.parameters = Object.keys(comps.parameters).filter(key => !comps.parameters[key]?.used);
+        options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
+        unusedComp.examples = Object.keys(comps.examples).filter(key => !comps.examples[key]?.used);
+        options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
+        unusedComp.requestBodies = Object.keys(comps.requestBodies).filter(key => !comps.requestBodies[key]?.used);
+        options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
+        unusedComp.headers = Object.keys(comps.headers).filter(key => !comps.headers[key]?.used);
+        options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
+        unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length
     }
-
-    // if (options.verbose >= 1 || options.verbose === true) {
-    //     if (unusedSchemas.length > 0) console.log('- Removed unused components/schemas:\n', unusedSchemas.join(', '))
-    //     if (unusedResponses.length > 0) console.log('- Removed unused components/responses:\n', unusedResponses.join(', '))
-    //     if (unusedParams.length > 0) console.log('- Removed unused components/parameters:\n', unusedParams.join(', '))
-    //     if (unusedExamples.length > 0) console.log('- Removed unused components/examples:\n', unusedExamples.join(', '))
-    //     if (unusedRequestBodies.length > 0) console.log('- Removed unused components/requestBodies:\n', unusedRequestBodies.join(', '))
-    //     if (unusedHeaders.length > 0) console.log('- Removed unused components/headers:\n', unusedHeaders.join(', '))
-    // }
 
     // Clean-up jsonObj
     traverse(jsonObj).forEach(function (node) {
-        // Remove unused component/schemas
+        // Remove unused component
         if (this.path[0] === 'components' && stripUnused.length > 0) {
-            if (this.path[1] === 'schemas' && stripUnused.includes('schemas') && unusedSchemas.includes(this.key)) {
-                // debugFilterStep = 'Filter - Remove unused component/schemas'
-                this.delete();
-            }
-            if (this.path[1] === 'responses' && stripUnused.includes('responses') && unusedResponses.includes(this.key)) {
-                // debugFilterStep = 'Filter - Remove unused component/responses'
-                this.delete();
-            }
-            if (this.path[1] === 'parameters' && stripUnused.includes('parameters') && unusedParams.includes(this.key)) {
-                // debugFilterStep = 'Filter - Remove unused component/parameters'
-                this.delete();
-            }
-            if (this.path[1] === 'examples' && stripUnused.includes('examples') && unusedExamples.includes(this.key)) {
-                // debugFilterStep = 'Filter - Remove unused component/examples'
-                this.delete();
-            }
-            if (this.path[1] === 'requestBodies' && stripUnused.includes('requestBodies') && unusedRequestBodies.includes(this.key)) {
-                // debugFilterStep = 'Filter - Remove unused component/requestBodies'
-                this.delete();
-            }
-            if (this.path[1] === 'headers' && stripUnused.includes('headers') && unusedHeaders.includes(this.key)) {
-                // debugFilterStep = 'Filter - Remove unused component/headers'
+            if (stripUnused.includes(this.path[1]) && unusedComp[this.path[1]].includes(this.key)) {
+                // debugFilterStep = 'Filter - Remove unused components'
                 this.delete();
             }
         }
@@ -453,7 +439,16 @@ function openapiFilter(oaObj, options) {
         }
     });
 
-    return jsonObj;
+    // Recurse to strip any remaining unusedComp, to a maximum depth of 10
+    if (stripUnused.length > 0 && unusedComp.meta.total > 0 && options.unusedDepth <= 10) {
+        options.unusedDepth++;
+        const resultObj = openapiFilter(jsonObj, options);
+        jsonObj = resultObj.data;
+        unusedComp = JSON.parse(JSON.stringify(options.unusedComp));
+    }
+
+    // Return result object
+    return {data: jsonObj, resultData: {unusedComp: unusedComp}}
 }
 
 /**
@@ -471,7 +466,8 @@ function openapiRename(oaObj, options) {
         jsonObj.info.title = options.rename
     }
 
-    return jsonObj;
+    // Return result object
+    return {data: jsonObj, resultData: {}}
 }
 
 module.exports = {

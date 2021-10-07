@@ -22,9 +22,6 @@ info:
 tags:
   - name: pet
     description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
 paths:
   /pet:
     post:
@@ -750,8 +747,6 @@ components:
             wrapped: true
           items:
             $ref: '#/components/schemas/Tag'
-            xml:
-              name: tag
         status:
           type: string
           description: pet status in the store

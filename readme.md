@@ -6,7 +6,7 @@ The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ord
 can output the file with clean indenting, to either JSON or YAML.
 
 Next to the ordering, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
-flags, tags, methods and operationID's.
+flags, tags, methods, operationID's and even unused components.
 
 <a href="https://www.npmjs.com/package/openapi-format" alt="Latest Stable Version">![npm](https://img.shields.io/npm/v/openapi-format.svg)</a> 
 <a href="https://www.npmjs.com/package/openapi-format" alt="Total Downloads">![npm](https://img.shields.io/npm/dw/openapi-format.svg)</a>
@@ -30,12 +30,19 @@ flags, tags, methods and operationID's.
 
 ## Use-cases
 
+**Public documentation:**
+An OpenAPI document is a specification that evolves and changes. To facilitate working with the specification and publishing the
+document as public documentation, you want to deliver a clean and structured specification. OpenAPI-format helps you to
+organize the fields by sorting and filtering specific elements from the OpenAPI like internal endpoints, beta tags, ...
+and even unused schemas, examples, responses, ... with a clean and optimized OpenAPI document as a result.
+
+**Maintenance:**
 When working on large OpenAPI documents or with multiple team members, the file can be become messy and difficult to
 compare changes. By sorting it from time to time, the fields are all ordered in a structured manner, which will help you
 to maintain the file with greater ease.
 
-The filtering is a handy add-on to remove specific elements from the OpenAPI like internal endpoints, beta tags, ...
-This can be useful in CI/CD pipelines, where the OpenAPI is used as source for other documents like Web documentation,
+**CI/CD pipelines:**
+OpenAPI-format can be useful in CI/CD pipelines, where the OpenAPI is used as the source for other documents like Web documentation,
 Postman collections, test suites, ...
 
 ## Features
@@ -113,7 +120,7 @@ Options:
   --filterFile         The file to specify filter setting                      [path]
     
   --no-sort            Don't sort the OpenAPI file                          [boolean]
-  --sortComponentsFile The file with components to sort alfabehtically         [path]
+  --sortComponentsFile The file with components to sort alphabetically         [path]
   
   --rename             Rename the OpenAPI title                              [string]
 
@@ -155,7 +162,7 @@ re-ordered.
 The default sorting based on the defined order (listed in the table below), which is stored in
 the [defaultSort.json](https://github.com/thim81/openapi-format/blob/main/defaultSort.json) file. 
 
-You can easily modify this by specifying your own ordering per key, which can passed on to the CLI (see below for an
+You can easily modify this by specifying your own ordering per key, which can be passed on to the CLI (see below for an
 example on how to do this).
 
 | Key         | Ordered by                                                                                                      | OpenAPI reference                                                         |
@@ -181,7 +188,7 @@ By specifying the desired filter values for the available filter types, the open
 matching item from the OpenAPI document. You can combine multiple types to filter out a range of OpenAPI items.
 
 For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
-really extended options for filtering OpenAPI documents.
+extended options for filtering OpenAPI documents.
 
 | Type             | Description                                    | Type  | Examples                            |
 |------------------|------------------------------------------------|-------|-------------------------------------|
@@ -254,13 +261,12 @@ paths:
             operationId: findPetsByStatus
 ```
 
-=> **operations**: Refers to a combination of a OpenApi method & path from the "Path
+=> **operations**: Refers to a combination of a OpenAPI method & path from the "Path
   Object" https://spec.openapis.org/oas/v3.0.3.html#paths-object & "Path
   item" https://spec.openapis.org/oas/v3.0.3.html#path-item-object
 
-This will remove specific path items that matches the operation definition `PUT::/pets`. In the
-example below, this would mean that the item with the path '/pets' and method 'PUT' would be removed from the OpenAPI
-document.
+This will remove specific path items that match the operation definition `PUT::/pets`. In the example below, this would
+mean that the item with the path '/pets' and method 'PUT' would be removed from the OpenAPI document.
 
 For example:
 
@@ -277,11 +283,11 @@ paths:
             summary: Update an existing pet
 ```
 
-An `operationId` is an optional property. To offer support for OpenApi documents that don't have operationIds, we have
-added the `operation` definition which is the unique combination of the OpenApi method & path, with a `::` separator
+An `operationId` is an optional property. To offer support for OpenAPI documents that don't have operationIds, we have
+added the `operation` definition which is the unique combination of the OpenAPI method & path, with a `::` separator
 symbol.
 
-This will allow filtering for very specific OpenApi items, without the need of adding operationIds to the OpenApi
+This will allow filtering for very specific OpenAPI items, without the need of adding operationIds to the OpenAPI
 document.
 
 To facilitate managing the filtering, we have included wildcard options for the `operations` option, supporting the
@@ -301,9 +307,9 @@ This will target only the "GET" method and any path matching any folder behind t
 "/pets/123/buy".
 
 Method & Path wildcard matching example: `"*::/pets/*"`
-A combination of wildcards for the method and path parts are even possible. 
+A combination of wildcards for the method and path parts is even possible. 
 
-=> **flags**: Refers to a custom property which can be set on any field in the OpenAPI document.
+=> **flags**: Refers to a custom property that can be set on any field in the OpenAPI document.
 
 This will remove all fields and attached fields that match the flags. In the example below, this would mean that all
 items with the flag `x-exclude` would be removed from the OpenAPI document.
@@ -332,7 +338,7 @@ flagValues:
     - x-version: 1.0
     - x-version: 3.0
 ```
-In the example below, this would mean that all items with the flag `x-version` that match `x-version: 1.0` OR `x-version: 3.0` would be removed from the OpenAPI document.
+In the example below, this would mean that all items with the flag `x-version` that matches `x-version: 1.0` OR `x-version: 3.0` would be removed from the OpenAPI document.
 
 ```yaml
 openapi: 3.0.0
@@ -375,10 +381,10 @@ Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-valye) and [flagV
 
 => **unusedComponents**: Refers to a list of [reusable component types]( https://spec.openapis.org/oas/v3.0.3.html#components-object), from which unused items will be removed.
 
-This option allows you to strip the OpenApi document from any unused items of the targeted `components` types. 
-An item in the `components` that is not referenced by `$ref`, will get marked and removed from the OpenAPI document. 
+This option allows you to strip the OpenAPI document from any unused items of the targeted `components` types. 
+Any item in the list of OpenAPI `components` that is not referenced as `$ref`, will get marked and removed from the OpenAPI document. 
 
-REMARK: We will only strip unused components **once**, if after this one-time removal other items become unused, they will remain in the OpenApi doc. 
+REMARK: We will recursively strip all unused components, with a maximum depth of 10 times. This means that "nested" components, that become unused, will also get removed
 
 Supported component types that can be marked as "unused":
 - schemas
@@ -388,7 +394,7 @@ Supported component types that can be marked as "unused":
 - requestBodies
 - responses
 
-=> **stripFlags**: Refers to a lis of custom properties which can be set on any field in the OpenAPI document.
+=> **stripFlags**: Refers to a list of custom properties that can be set on any field in the OpenAPI document.
 
 The `stripFlags` will remove only the flags, the linked parent and properties will remain. In the example below, this would mean that all
 flags `x-exclude` itself would be stripped from the OpenAPI document.
@@ -428,31 +434,31 @@ paths:
 $ openapi-format openapi.json -o openapi-formatted.json
 ```
 
-- Format a OpenAPI JSON document with the default sorting and saves it as a new YAML file
+- Format an OpenAPI JSON document with the default sorting and saves it as a new YAML file
 
 ```shell
 $ openapi-format openapi.json -o openapi.yaml
 ```
 
-- Format a OpenAPI document with the default sorting and output it as JSON to STDOUT
+- Format an OpenAPI document with the default sorting and output it as JSON to STDOUT
 
 ```shell
 $ openapi-format openapi.json --json
 ```
 
-- Format a OpenAPI document with the default sorting and output it as YAML to STDOUT
+- Format an OpenAPI document with the default sorting and output it as YAML to STDOUT
 
 ```shell
 $ openapi-format openapi.json --yaml
 ```
 
-- Format a OpenAPI JSON document with the default sorting and save it as YAML
+- Format an OpenAPI JSON document with the default sorting and save it as YAML
 
 ```shell
 $ openapi-format openapi.json -o openapi.yaml
 ```
 
-- Format a OpenAPI document but skip the sorting and save it as a new JSON file
+- Format an OpenAPI document but skip the sorting and save it as a new JSON file
 
 ```shell
 $ openapi-format openapi.json -o openapi-formatted.json --no-sort
@@ -461,7 +467,7 @@ $ openapi-format openapi.json -o openapi-formatted.json --no-sort
 This should keep the OpenAPI fields in the same order. This can be needed, when you only want to do a filtering or
 rename action.
 
-- Format a OpenAPI document, including sorting all elements in the components section
+- Format an OpenAPI document, including sorting all elements in the components section
 
 ```shell
 $ openapi-format openapi.json -o openapi-formatted.json --sortComponentsFile ./test/json-sort-components/customSortComponents.json
@@ -473,12 +479,12 @@ components/requestBodies, components/responses, ...) section by alphabet.
 
 ## CLI filter usage
 
-- Format a OpenAPI document by filtering fields, default sorting and saves it as a new file
+- Format an OpenAPI document by filtering fields, default sorting and saves it as a new file
 
 When you want to strip certain methods ,tags, operationIds, operations, flags you can pass a `filterFile` which contains the
 specific values for the methods ,tags, operationIds, operations, flags.
 
-This can be useful to combine with the sorting, to end-up with an order and filtered OpenAPI document.
+This can be useful to combine with the sorting, to end up with an order and filtered OpenAPI document.
 
 example:
 
@@ -500,10 +506,10 @@ operationIds:
 
 ## CLI rename usage
 
-- Format a OpenAPI document by changing the title and saves it as a new JSON file
+- Format an OpenAPI document by changing the title and saves it as a new JSON file
 
 During CI/CD pipelines, you might want to create different results of the OpenAPI document. Having the option to rename
-them, might make it easier to work with the results, so that is why we provide this command option.
+them might make it easier to work with the results, so that is why we provide this command option.
 
 ```shell
 $ openapi-format openapi.json -o openapi.json --rename "OpenAPI Petstore - OpenAPI 3.0"
@@ -531,7 +537,7 @@ which results in
 
 ## CLI configuration usage
 
-All the CLI options can be managed in separate configuration file and passed along the openapi-format command. This will
+All the CLI options can be managed in a separate configuration file and passed along the openapi-format command. This will
 make configuration easier, especially in CI/CD implementations where the configuration can be stored in version control
 systems.
 
@@ -558,10 +564,10 @@ the [@stoplight/yaml](https://www.npmjs.com/package/@stoplight/yaml) package for
 files.
 
 By using the Stoplight YAML parsing, the results will be slightly different from when using a normal YAML parsing
-library, like [js-to-yaml](https://www.npmjs.com/package/js-yaml). We appreciate the Stoplight Studio
-tool, since it is an excellent GUI for working with OpenAPI documents for non-OpenAPI experts who will be contributing
-changes. By adopting to the Stoplight Studio YAML parsing, the potential risk of merge conflicts will
-be lower, which is the main reason why we opted for using the @stoplight/yaml package.
+library, like [js-to-yaml](https://www.npmjs.com/package/js-yaml). We appreciate the Stoplight Studio tool, since it is
+an excellent GUI for working with OpenAPI documents for non-OpenAPI experts who will be contributing changes. By
+adopting the Stoplight Studio YAML parsing, the potential risk of merge conflicts will be lower, which is the main
+reason why we opted for using the @stoplight/yaml package.
 
 ## Credits
 

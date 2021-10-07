@@ -6,10 +6,10 @@ info:
     This is a sample Pet Store Server based on the OpenAPI 3.0 specification. You can find out more about
     Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
     You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+    [comment]: <> (That way, with time, we can improve the API in general, and expose some of the new features in OAS3.)
 
     Some useful links:
-    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    [comment]: <> (- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore))
     - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6-SNAPSHOT
   title: Swagger Petstore - OpenAPI 3.0
@@ -581,7 +581,12 @@ paths:
       description: This can only be done by the logged in user.
       operationId: deleteUser
       parameters:
-        - $ref: '#/components/parameters/username'
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
       responses:
         '400':
           description: Invalid username supplied
@@ -592,6 +597,17 @@ externalDocs:
   url: 'http://swagger.io'
 components:
   schemas:
+    ErrorModel:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     Order:
       x-swagger-router-model: io.swagger.petstore.model.Order
       properties:
@@ -622,6 +638,42 @@ components:
           type: boolean
       xml:
         name: order
+      type: object
+    Customer:
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 100000
+        username:
+          type: string
+          example: fehguy
+        address:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+          xml:
+            wrapped: true
+            name: addresses
+      xml:
+        name: customer
+      type: object
+    Address:
+      properties:
+        street:
+          type: string
+          example: 437 Lytton
+        city:
+          type: string
+          example: Palo Alto
+        state:
+          type: string
+          example: CA
+        zip:
+          type: string
+          example: 94301
+      xml:
+        name: address
       type: object
     Category:
       x-swagger-router-model: io.swagger.petstore.model.Category
@@ -731,14 +783,24 @@ components:
       xml:
         name: '##default'
       type: object
-  parameters:
-    username:
-      name: username
-      in: path
-      description: name that need to be deleted
-      required: true
-      schema:
-        type: string
+  requestBodies:
+    Pet:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pet'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Pet'
+      description: Pet object that needs to be added to the store
+    UserArray:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+      description: List of user object
   securitySchemes:
     petstore_auth:
       type: oauth2
