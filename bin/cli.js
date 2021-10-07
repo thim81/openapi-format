@@ -21,7 +21,7 @@ program
     .option('-f, --filterFile <filterFile>', 'the file with the filter options.')
     .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options.')
     .option('--no-sort', 'dont sort the OpenAPI file')
-    .option('--sortComponentsFile <sortComponentsFile>', 'The file with components to sort alfabehtically')
+    .option('--sortComponentsFile <sortComponentsFile>', 'The file with components to sort alphabetically')
     .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
     .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document.')
     .option('--json', 'print the file to stdout as JSON')
