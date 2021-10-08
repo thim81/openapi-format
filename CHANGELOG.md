@@ -1,3 +1,7 @@
+## [1.6.2] - 2020-10-08
+
+- Fix for unsafe Object.keys variables
+
 ## [1.6.1] - 2020-10-08
 
 - Fix for issue with the markdown comments strip filtering when non-strings descriptions
