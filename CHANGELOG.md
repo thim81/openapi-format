@@ -1,3 +1,7 @@
+## [1.6.1] - 2020-10-08
+
+- Fix for markdown comments strip, to handle "description" field better
+
 ## [1.6.0] - 2020-10-08
 
 - Added option to remove all "unused" component items through recursion
