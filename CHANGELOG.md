@@ -2,7 +2,8 @@
 
 - Added option to remove all "unused" component items through recursion
 - Improved the openapi-format terminal log output and how verbose is handled
-- Filtering will remove lines with markdown comments (syntax [comment]: <>) from the description fields. 
+- Filtering will remove lines with markdown comments (syntax [comment]: <>) from the description fields.
+- Fix/Hack to handle x-tagGroups filtering on flagValues
 
 ## [1.5.0] - 2020-10-05
 
