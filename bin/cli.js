@@ -190,21 +190,25 @@ async function run(oaFile, options) {
     // Show unused components
     if (cliLog?.unusedComp) {
         // List unused component
-        logOut(`${consoleLine}`, options.verbose); // LOG - horizontal rule
-        logOut(`Removed unused components:`, options.verbose); // LOG - horizontal rule
-        const unusedComp = cliLog.unusedComp
-        const keys = Object.keys(unusedComp, options.verbose)
+        const unusedComp = cliLog.unusedComp;
+        const keys = Object.keys(unusedComp || {});
         let count = 0
+        const cliOut = []
         keys.map((comp) => {
             if (unusedComp?.[comp].length > 0) {
                 unusedComp[comp].forEach(value => {
                     const spacer = (comp === 'requestBodies' ? `\t` : `\t\t`);
-                    logOut(`- components/${comp}${spacer} "${value}"`, options.verbose);
+                    cliOut.push(`- components/${comp}${spacer} "${value}"`);
                     count++;
                 });
             }
         });
-        logOut(`Total components removed: ${count}`, options.verbose);
+        if (count > 0) {
+            logOut(`${consoleLine}`, options.verbose); // LOG - horizontal rule
+            logOut(`Removed unused components:`, options.verbose); // LOG - horizontal rule
+            logOut(cliOut.join('\n'), options.verbose);
+            logOut(`Total components removed: ${count}`, options.verbose);
+        }
     }
 
     // Final result

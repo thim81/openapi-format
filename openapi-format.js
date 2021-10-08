@@ -401,7 +401,7 @@ function openapiFilter(oaObj, options) {
                 // debugFilterStep = 'Filter - tag/x-tagGroup - flags'
                 // Deep filter array of tag/x-tagGroup
                 let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
-                const oaFilteredTags = oaTags.filter(item => !filterProps.some(i => (Object.keys(item).includes(i))));
+                const oaFilteredTags = oaTags.filter(item => !filterProps.some(i => (Object.keys(item || {}).includes(i))));
                 this.update(oaFilteredTags);
             }
         }
@@ -418,17 +418,17 @@ function openapiFilter(oaObj, options) {
     });
 
     if (stripUnused.length > 0) {
-        unusedComp.schemas = Object.keys(comps.schemas).filter(key => !comps.schemas[key]?.used);
+        unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !comps.schemas[key]?.used);
         options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
-        unusedComp.responses = Object.keys(comps.responses).filter(key => !comps.responses[key]?.used);
+        unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !comps.responses[key]?.used);
         options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
-        unusedComp.parameters = Object.keys(comps.parameters).filter(key => !comps.parameters[key]?.used);
+        unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !comps.parameters[key]?.used);
         options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
-        unusedComp.examples = Object.keys(comps.examples).filter(key => !comps.examples[key]?.used);
+        unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !comps.examples[key]?.used);
         options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
-        unusedComp.requestBodies = Object.keys(comps.requestBodies).filter(key => !comps.requestBodies[key]?.used);
+        unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key]?.used);
         options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
-        unusedComp.headers = Object.keys(comps.headers).filter(key => !comps.headers[key]?.used);
+        unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key]?.used);
         options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
         unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length
     }
@@ -449,7 +449,7 @@ function openapiFilter(oaObj, options) {
                 debugFilterStep = 'Filter - tag/x-tagGroup - fixed flags'
                 // Deep filter array of tag/x-tagGroup
                 let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
-                const oaFilteredTags = oaTags.filter(item => !fixedFlags.some(i => (Object.keys(item).includes(i))));
+                const oaFilteredTags = oaTags.filter(item => !fixedFlags.some(i => (Object.keys(item || {}).includes(i))));
                 this.update(oaFilteredTags);
             }
         }
