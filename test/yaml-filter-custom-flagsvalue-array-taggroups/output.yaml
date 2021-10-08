@@ -1,0 +1,14 @@
+x-tagGroups:
+  - name: Tag Group 1
+    x-test: stay
+    x-versions:
+      - 5
+    tags:
+      - Marco Polo
+  - name: Tag Group 5
+    x-test: stay
+    x-versions:
+      - 3
+      - 5
+    tags:
+      - Amerigo Vespucci

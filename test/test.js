@@ -8,12 +8,14 @@ const sy = require('@stoplight/yaml');
 
 const openapiFormat = require('../openapi-format.js');
 
+let destroyOutput = false;
 const tests = fs.readdirSync(__dirname).filter(file => {
     return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_') || doPrivate);
 });
 
 // SELECTIVE TESTING DEBUG
 // const tests = ['yaml-filter-unused-components']
+// destroyOutput = true
 // console.log('tests',tests);
 
 describe('openapi-format tests', () => {
@@ -145,6 +147,12 @@ describe('openapi-format tests', () => {
                 const outputFilename = path.join(__dirname, test, options.output);
                 let readOutput = false;
                 let output = {};
+
+                // Destroy existing output, to force update test
+                if (destroyOutput) {
+                    fs.unlinkSync(outputFilename);
+                }
+
                 try {
                     // output = jy.load(fs.readFileSync(outputFilename, 'utf8'));
                     output = sy.parse(fs.readFileSync(outputFilename, 'utf8'));
