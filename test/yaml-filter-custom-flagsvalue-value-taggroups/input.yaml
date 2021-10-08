@@ -1,0 +1,33 @@
+x-tagGroups:
+  - name: Tag Group 1
+    x-test: stay
+    x-release: live
+    tags:
+      - Marco Polo
+  - name: Tag Group 2
+    x-test: filtered
+    x-release: dev
+    tags:
+      - Colombus
+  - name: Tag Group 3
+    x-test: stay
+    x-release: live
+    tags:
+      - John Cabot
+  - name: Tag Group 4
+    x-test: filtered
+    x-release: dev
+    tags:
+      - Ferdinand Magellan
+      - Hernan Cortes
+      - Francis Drake
+  - name: Tag Group 5
+    x-test: filtered
+    x-release: preview
+    tags:
+      - Amerigo Vespucci
+  - name: Tag Group 6
+    x-test: stay
+    x-release: live
+    tags:
+      - Walter Raleigh

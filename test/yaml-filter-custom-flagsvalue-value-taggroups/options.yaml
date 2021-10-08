@@ -1,0 +1,4 @@
+verbose: true
+no-sort: true
+output: output.yaml
+filterFile: customFilter.yaml

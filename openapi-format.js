@@ -224,19 +224,21 @@ function openapiFilter(oaObj, options) {
     let defaultFilter = JSON.parse(fs.readFileSync(__dirname + "/defaultFilter.json", 'utf8'))
     let filterSet = Object.assign({}, defaultFilter, options.filterSet);
     const httpVerbs = ["get", "post", "put", "patch", "delete"];
+    const fixedFlags = ["x-openapi-format-filter"]
     options.unusedDepth = options.unusedDepth || 0;
 
     // Merge object filters
     const filterKeys = [...filterSet.methods];
     const filterArray = [...filterSet.tags];
     const filterOperations = [...filterSet.operations];
-    const filterProps = [...filterSet.operationIds, ...filterSet.flags];
+    const filterProps = [...filterSet.operationIds, ...filterSet.flags, ...fixedFlags];
     const stripFlags = [...filterSet.stripFlags];
     const stripUnused = [...filterSet.unusedComponents];
 
     // Convert flag values to flags
     const filterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.flagValues));
     const filterFlagValues = [...filterSet.flagValues];
+    const filterFlagHash = filterFlagValues.map(o => (JSON.stringify(o)));
 
     // Initiate components tracking
     const comps = {
@@ -260,7 +262,7 @@ function openapiFilter(oaObj, options) {
         meta: {total: 0}
     }
     // Use options.unusedComp to collect unused components during multiple recursion
-    if(!options.unusedComp) options.unusedComp = JSON.parse(JSON.stringify(unusedComp));
+    if (!options.unusedComp) options.unusedComp = JSON.parse(JSON.stringify(unusedComp));
 
     let debugFilterStep = '' // uncomment // debugFilterStep below to see which sort part is triggered
 
@@ -328,10 +330,20 @@ function openapiFilter(oaObj, options) {
             if (filterFlagValuesKeys.length > 0 && filterFlagValuesKeys.includes(this.key)) {
                 for (let i = 0; i < node.length; i++) {
                     const itmObj = {[this.key]: node[i]};
-                    if (filterFlagValues.some(item => JSON.stringify(item) === JSON.stringify(itmObj))) {
-                        // debugFilterStep = 'Filter - Single field - flagValues - array value'
-                        // Top parent has other nodes, so remove only targeted parent node of matching element
-                        this.parent.remove();
+                    const itmObjHash = JSON.stringify(itmObj);
+                    if (filterFlagHash.some(filterFlag => filterFlag === itmObjHash)) {
+                        // ========================================================================
+                        // HACK to overcome the issue with removing items from an array
+                        if (this?.parent?.parent.key === 'x-tagGroups') {
+                            // debugFilterStep = 'Filter -x-tagGroups - flagValues - array value'
+                            const tagGroup = this.parent.node
+                            tagGroup['x-openapi-format-filter'] = true
+                            this.parent.update(tagGroup)
+                            // ========================================================================
+                        } else {
+                            // debugFilterStep = 'Filter - Single field - flagValues - array value'
+                            this.parent.remove();
+                        }
                     }
                 }
             }
@@ -349,17 +361,26 @@ function openapiFilter(oaObj, options) {
             // Filter out fields matching the flagValues
             if (filterFlagValuesKeys.length > 0 && filterFlagValuesKeys.includes(this.key)) {
                 const itmObj = {[this.key]: node};
-                if (filterFlagValues.some(item => JSON.stringify(item) === JSON.stringify(itmObj))) {
-                    // debugFilterStep = 'Filter - Single field - flagValues - single value'
-                    // Top parent has other nodes, so remove only targeted parent node of matching element
-                    this.parent.remove();
+                const itmObjHash = JSON.stringify(itmObj);
+                if (filterFlagHash.some(filterFlagHash => filterFlagHash === itmObjHash)) {
+                    // ========================================================================
+                    // HACK to overcome the issue with removing items from an array
+                    if (this?.parent?.parent.key === 'x-tagGroups') {
+                        // debugFilterStep = 'Filter -x-tagGroups - flagValues - single value'
+                        const tagGroup = this.parent.node
+                        tagGroup['x-openapi-format-filter'] = true
+                        this.parent.update(tagGroup)
+                        // ========================================================================
+                    } else {
+                        // debugFilterStep = 'Filter - Single field - flagValues - single value'
+                        this.parent.remove();
+                    }
                 }
             }
 
             // Filter out fields matching the Tags/operationIds
             if (filterProps.length > 0 && filterProps.includes(node)) {
                 // debugFilterStep = 'Filter - Single field - Tags/operationIds'
-                // Top parent has other nodes, so remove only targeted parent node of matching element
                 this.parent.remove();
             }
         }
@@ -419,6 +440,17 @@ function openapiFilter(oaObj, options) {
             if (stripUnused.includes(this.path[1]) && unusedComp[this.path[1]].includes(this.key)) {
                 // debugFilterStep = 'Filter - Remove unused components'
                 this.delete();
+            }
+        }
+
+        // Filter out OpenApi.tags & OpenApi.x-tagGroups matching the fixedFlags
+        if ((this?.key === 'tags' || this?.key === 'x-tagGroups') && this?.parent.key === undefined && Array.isArray(node)) {
+            if (fixedFlags.length > 0) {
+                debugFilterStep = 'Filter - tag/x-tagGroup - fixed flags'
+                // Deep filter array of tag/x-tagGroup
+                let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
+                const oaFilteredTags = oaTags.filter(item => !fixedFlags.some(i => (Object.keys(item).includes(i))));
+                this.update(oaFilteredTags);
             }
         }
 

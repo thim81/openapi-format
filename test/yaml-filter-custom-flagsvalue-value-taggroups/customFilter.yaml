@@ -1,0 +1,11 @@
+#methods:
+#  - get
+flags: []
+flagValues:
+   - x-release: preview
+   - x-release: dev
+tags: []
+#operationIds:
+#  - addPet
+#  - findPetsByStatus
+
