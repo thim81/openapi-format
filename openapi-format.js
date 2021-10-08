@@ -407,7 +407,7 @@ function openapiFilter(oaObj, options) {
         }
 
         // Filter out markdown comments in description fields
-        if (this.key === 'description') {
+        if (this.key === 'description' && (typeof node === 'string' || node instanceof String)) {
             const lines = node.split('\n');
             if (lines.length > 1) {
                 const filtered = lines.filter(line => !line.startsWith('[comment]: <>'))
