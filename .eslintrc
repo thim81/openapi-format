@@ -1,12 +1,19 @@
 {
-  "extends": ["prettier"],
-  "ignorePatterns": ["node_modules", "vendor", "libs"],
-  "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 8
+  "env": {
+    "browser": false,
+    "node": true,
+    "es6": true
   },
+  "ignorePatterns": [
+    "node_modules",
+    "vendor",
+    "libs"
+  ],
   "rules": {
     "semi": "error",
-    "space-before-function-paren": ["error", "never"]
+    "space-before-function-paren": [
+      "error",
+      "never"
+    ]
   }
 }
