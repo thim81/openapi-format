@@ -3,6 +3,7 @@
 
 const fs = require('fs');
 const traverse = require('traverse');
+const {isString, isArray} = require("./util-types");
 
 /**
  * Sort Object by Key or list of names
@@ -234,6 +235,7 @@ function openapiFilter(oaObj, options) {
     const filterProps = [...filterSet.operationIds, ...filterSet.flags, ...fixedFlags];
     const stripFlags = [...filterSet.stripFlags];
     const stripUnused = [...filterSet.unusedComponents];
+    const valReplace = []
 
     // Convert flag values to flags
     const filterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.flagValues));
@@ -415,6 +417,12 @@ function openapiFilter(oaObj, options) {
                 this.update(cleanDescription)
             }
         }
+
+        // Replace words in text with new value
+        if (isString(node) && valReplace.length > 0) {
+            const replaceRes = valueReplace(node, valReplace);
+            this.update(replaceRes);
+        }
     });
 
     if (stripUnused.length > 0) {
@@ -500,6 +508,26 @@ function openapiRename(oaObj, options) {
 
     // Return result object
     return {data: jsonObj, resultData: {}}
+}
+
+/**
+ * Value replacement function
+ * @param {string} valueAsString
+ * @param {array} replacements
+ * @returns {*}
+ */
+function valueReplace(valueAsString, replacements) {
+    if (!isString(valueAsString)) return valueAsString
+    if (!isArray(replacements)) return valueAsString
+
+    replacements.map(({searchFor, replaceWith}) => {
+        const pattern = searchFor.replace(/\"/g, '\\\\"')
+        const replacement = replaceWith.replace(/\"/g, '\\"')
+        valueAsString = valueAsString.replace(new RegExp(pattern, 'g'), replacement)
+        return valueAsString
+    })
+
+    return valueAsString
 }
 
 module.exports = {
