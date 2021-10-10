@@ -14,7 +14,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-filter-unused-components']
+// const tests = ['yaml-filter-replace-text']
 // destroyOutput = true
 // console.log('tests',tests);
 
@@ -150,7 +150,11 @@ describe('openapi-format tests', () => {
 
                 // Destroy existing output, to force update test
                 if (destroyOutput) {
-                    fs.unlinkSync(outputFilename);
+                    try {
+                        fs.unlinkSync(outputFilename);
+                    } catch (e) {
+                        // console.error('ERROR delete output.yaml', ex)
+                    }
                 }
 
                 try {

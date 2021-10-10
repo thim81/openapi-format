@@ -235,7 +235,7 @@ function openapiFilter(oaObj, options) {
     const filterProps = [...filterSet.operationIds, ...filterSet.flags, ...fixedFlags];
     const stripFlags = [...filterSet.stripFlags];
     const stripUnused = [...filterSet.unusedComponents];
-    const textReplace = [...filterSet.textReplace];
+    const textReplace = filterSet.textReplace || [];
 
     // Convert flag values to flags
     const filterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.flagValues));
