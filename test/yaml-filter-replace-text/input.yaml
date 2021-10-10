@@ -559,12 +559,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: description
-          in: path
-          description: name that need to be deleted
-          required: true
-          schema:
-            type: string
       responses:
         default:
           description: successful operation
