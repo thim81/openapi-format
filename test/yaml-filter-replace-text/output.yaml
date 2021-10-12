@@ -3,14 +3,12 @@ servers:
   - url: /v3
 info:
   description: |-
-    This is a sample Pet Store Server based on the OpenAPI 3.0 specification. You can find out more about
-    Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    This is a sample Animal Store Server based on the OpenAPI 3.0 specification. You can find out more about
+    Swagger at [http://openapis.org/](http://openapis.org/). In the third iteration of the pet store, we've switched to the design first approach!
     You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    [comment]: <> (That way, with time, we can improve the API in general, and expose some of the new features in OAS3.)
 
-    Some useful links:
-    [comment]: <> (- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore))
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+    Some useful links: ABCDE
+    - [The source API definition for the Animal Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6-SNAPSHOT
   title: Swagger Petstore - OpenAPI 3.0
   termsOfService: 'http://swagger.io/terms/'
@@ -18,10 +16,10 @@ info:
     email: apiteam@swagger.io
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
   - name: pet
-    description: Everything about your Pets
+    description: Everything about your Animals
   - name: user
     description: Everything about your users
   - name: store
@@ -107,7 +105,7 @@ paths:
     get:
       tags:
         - pet
-      summary: Finds Pets by status
+      summary: Finds Animals by status
       description: Multiple status values can be provided with comma separated strings
       operationId: findPetsByStatus
       x-visibility: true
@@ -148,7 +146,7 @@ paths:
     get:
       tags:
         - pet
-      summary: Finds Pets by tags
+      summary: Finds Animals by tags
       description: 'Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.'
       operationId: findPetsByTags
       parameters:
@@ -559,12 +557,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: description
-          in: path
-          description: name that need to be deleted
-          required: true
-          schema:
-            type: string
       responses:
         default:
           description: successful operation
@@ -600,7 +592,7 @@ paths:
           description: User not found
 externalDocs:
   description: Find out more about Swagger
-  url: 'http://swagger.io'
+  url: 'http://openapis.org/'
 components:
   schemas:
     ErrorModel:

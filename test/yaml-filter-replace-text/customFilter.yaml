@@ -1,0 +1,22 @@
+#methods:
+#  - get
+#flags:
+#  - x-visibility
+#flagValues: []
+#tags:
+#  - store
+#  - user
+#operationIds:
+#  - addPet
+#  - findPetsByStatus
+textReplace:
+  - searchFor: 'Pets'
+    replaceWith: 'Animals'
+  - searchFor: 'Pet Store'
+    replaceWith: 'Animal Store'
+  - searchFor: 'swagger.io'
+    replaceWith: 'openapis.org/'
+  - searchFor: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    replaceWith: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+  - searchFor: '?.[]*(){}'
+    replaceWith: 'ABCDE'

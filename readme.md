@@ -190,16 +190,17 @@ matching item from the OpenAPI document. You can combine multiple types to filte
 For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
 extended options for filtering OpenAPI documents.
 
-| Type             | Description                                    | Type  | Examples                            |
-|------------------|------------------------------------------------|-------|-------------------------------------|
-| methods          | a list OpenAPI methods.                        | array | ['get','post','put']                |
-| tags             | a list OpenAPI tags.                           | array | ['pet','user']                      |
-| operationIds     | a list OpenAPI operation ID's.                 | array | ['findPetsByStatus','updatePet']    |
-| operations       | a list OpenAPI operations.                     | array | ['GET::/pets','PUT::/pets']         |
-| flags            | a list of custom flags                         | array | ['x-exclude','x-internal']          |
-| flagValues       | a list of custom flags with a specific value   | array | ['x-version: 1.0','x-version: 3.0'] |
-| unusedComponents | a list of unused components                    | array | ['examples','schemas']              |
-| stripFlags       | a list of custom flags that will be stripped   | array | ['x-exclude','x-internal']          |
+| Type             | Description                                  | Type  | Examples                                  |
+|------------------|----------------------------------------------|-------|-------------------------------------------|
+| methods          | a list OpenAPI methods.                      | array | ['get','post','put']                      |
+| tags             | a list OpenAPI tags.                         | array | ['pet','user']                            |
+| operationIds     | a list OpenAPI operation ID's.               | array | ['findPetsByStatus','updatePet']          |
+| operations       | a list OpenAPI operations.                   | array | ['GET::/pets','PUT::/pets']               |
+| flags            | a list of custom flags                       | array | ['x-exclude','x-internal']                |
+| flagValues       | a list of custom flags with a specific value | array | ['x-version: 1.0','x-version: 3.0']       |
+| unusedComponents | a list of unused components                  | array | ['examples','schemas']                    |
+| stripFlags       | a list of custom flags that will be stripped | array | ['x-exclude','x-internal']                |
+| textReplace      | a list of search & replace values to replace | array | [{'searchFor':'Pet','replaceWith':'Dog'}] |
 
 Some more details on the available filter types:
 
@@ -393,6 +394,23 @@ Supported component types that can be marked as "unused":
 - headers
 - requestBodies
 - responses
+
+=> **textReplace**: "search & replace" option to replace text in the OpenAPI specification
+
+The `textReplace` provides a "search & replace" method, that will search for a text/word/characters in the OpenAPI description, summary, URL fields and replace it with another text/word/characters.
+This is very useful to replace data in the OpenAPI specification.
+
+A `textReplace` example:
+
+```yaml
+textReplace:
+    - searchFor: 'Pets'
+      replaceWith: 'Dogs'
+    - searchFor: 'swagger.io'
+      replaceWith: 'openapis.org'
+```
+
+This will replace all "Pets" with "Dogs" & "swagger.io" with "openapi.org" in the OpenAPI document.
 
 => **stripFlags**: Refers to a list of custom properties that can be set on any field in the OpenAPI document.
 

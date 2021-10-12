@@ -1,3 +1,7 @@
+## [1.6.3] - 2020-10-12
+
+- Added the option to replace words/characters in description, summary, URL fields with new value
+
 ## [1.6.2] - 2020-10-08
 
 - Fix for unsafe Object.keys variables

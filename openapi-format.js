@@ -3,6 +3,7 @@
 
 const fs = require('fs');
 const traverse = require('traverse');
+const {isString, isArray} = require("./util-types");
 
 /**
  * Sort Object by Key or list of names
@@ -234,6 +235,7 @@ function openapiFilter(oaObj, options) {
     const filterProps = [...filterSet.operationIds, ...filterSet.flags, ...fixedFlags];
     const stripFlags = [...filterSet.stripFlags];
     const stripUnused = [...filterSet.unusedComponents];
+    const textReplace = filterSet.textReplace || [];
 
     // Convert flag values to flags
     const filterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.flagValues));
@@ -407,13 +409,22 @@ function openapiFilter(oaObj, options) {
         }
 
         // Filter out markdown comments in description fields
-        if (this.key === 'description' && (typeof node === 'string' || node instanceof String)) {
+        if (this.key === 'description' && isString(node)) {
             const lines = node.split('\n');
             if (lines.length > 1) {
                 const filtered = lines.filter(line => !line.startsWith('[comment]: <>'))
                 const cleanDescription = filtered.join('\n');
                 this.update(cleanDescription)
+                node = cleanDescription
             }
+        }
+
+        // Replace words in text with new value
+        if (isString(node) && textReplace.length > 0
+            && (this.key === 'description' || this.key === 'summary' || this.key === 'url')) {
+            const replaceRes = valueReplace(node, textReplace);
+            this.update(replaceRes);
+            node = replaceRes
         }
     });
 
@@ -500,6 +511,35 @@ function openapiRename(oaObj, options) {
 
     // Return result object
     return {data: jsonObj, resultData: {}}
+}
+
+/**
+ * Value replacement function
+ * @param {string} valueAsString
+ * @param {array} replacements
+ * @returns {*}
+ */
+function valueReplace(valueAsString, replacements) {
+    if (!isString(valueAsString)) return valueAsString
+    if (!isArray(replacements)) return valueAsString
+
+    replacements.map(({searchFor, replaceWith}) => {
+        const pattern = searchFor.replace(/"/g, '\\\\"')
+        const replacement = replaceWith.replace(/"/g, '\\"')
+        valueAsString = valueAsString.replace(new RegExp(escapeRegExp(pattern), 'g'), replacement);
+        return valueAsString
+    })
+
+    return valueAsString
+}
+
+/**
+ * Function fo escaping input to be treated as a literal string within a regular expression
+ * @param string
+ * @returns {*}
+ */
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 module.exports = {
