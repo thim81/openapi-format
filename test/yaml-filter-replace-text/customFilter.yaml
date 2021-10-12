@@ -18,3 +18,5 @@ textReplace:
     replaceWith: 'openapis.org/'
   - searchFor: 'http://www.apache.org/licenses/LICENSE-2.0.html'
     replaceWith: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+  - searchFor: '?.[]*(){}'
+    replaceWith: 'ABCDE'

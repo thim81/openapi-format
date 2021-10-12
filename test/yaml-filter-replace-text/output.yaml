@@ -7,7 +7,7 @@ info:
     Swagger at [http://openapis.org/](http://openapis.org/). In the third iteration of the pet store, we've switched to the design first approach!
     You can now help us improve the API whether it's by making changes to the definition itself or to the code.
 
-    Some useful links:
+    Some useful links: ABCDE
     - [The source API definition for the Animal Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6-SNAPSHOT
   title: Swagger Petstore - OpenAPI 3.0

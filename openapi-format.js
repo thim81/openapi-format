@@ -526,11 +526,17 @@ function valueReplace(valueAsString, replacements) {
     replacements.map(({searchFor, replaceWith}) => {
         const pattern = searchFor.replace(/\"/g, '\\\\"')
         const replacement = replaceWith.replace(/\"/g, '\\"')
-        valueAsString = valueAsString.replace(new RegExp(pattern, 'g'), replacement)
+        valueAsString = valueAsString.replace(new RegExp(escapeRegExp(pattern), 'g'), replacement);
         return valueAsString
     })
 
     return valueAsString
+}
+
+/* Define function for escaping user input to be treated as
+   a literal string within a regular expression */
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 module.exports = {
