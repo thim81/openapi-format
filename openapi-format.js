@@ -533,8 +533,11 @@ function valueReplace(valueAsString, replacements) {
     return valueAsString
 }
 
-/* Define function for escaping user input to be treated as
-   a literal string within a regular expression */
+/**
+ * Function fo escaping input to be treated as a literal string within a regular expression
+ * @param string
+ * @returns {*}
+ */
 function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
