@@ -28,7 +28,7 @@
         "LICENSE",
         "openapi-format.js",
         "util-log-output.js",
-        "util-types-output.js",
+        "util-types.js",
         "defaultSort.json",
         "defaultFilter.json",
         "defaultSortComponents.json",
