@@ -524,8 +524,8 @@ function valueReplace(valueAsString, replacements) {
     if (!isArray(replacements)) return valueAsString
 
     replacements.map(({searchFor, replaceWith}) => {
-        const pattern = searchFor.replace(/\"/g, '\\\\"')
-        const replacement = replaceWith.replace(/\"/g, '\\"')
+        const pattern = searchFor.replace(/"/g, '\\\\"')
+        const replacement = replaceWith.replace(/"/g, '\\"')
         valueAsString = valueAsString.replace(new RegExp(escapeRegExp(pattern), 'g'), replacement);
         return valueAsString
     })
