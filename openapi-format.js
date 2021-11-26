@@ -233,6 +233,10 @@ function openapiFilter(oaObj, options) {
     const filterArray = [...filterSet.tags];
     const filterOperations = [...filterSet.operations];
     const filterProps = [...filterSet.operationIds, ...filterSet.flags, ...fixedFlags];
+
+    // Inverse object filters
+    const inverseFilterProps = [...filterSet.inverseOperationIds];
+
     const stripFlags = [...filterSet.stripFlags];
     const stripUnused = [...filterSet.unusedComponents];
     const textReplace = filterSet.textReplace || [];
@@ -378,6 +382,12 @@ function openapiFilter(oaObj, options) {
                         this.parent.remove();
                     }
                 }
+            }
+
+            // Filter out fields matching the inverse Tags/operationIds
+            if (inverseFilterProps.length > 0 && this.key === 'operationId' && !inverseFilterProps.includes(node)) {
+                debugFilterStep = 'Filter - Single field - Inverse Tags/operationIds'
+                this.parent.remove();
             }
 
             // Filter out fields matching the Tags/operationIds

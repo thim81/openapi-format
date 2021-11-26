@@ -9,14 +9,14 @@ const sy = require('@stoplight/yaml');
 const openapiFormat = require('../openapi-format.js');
 
 let destroyOutput = false;
-const tests = fs.readdirSync(__dirname).filter(file => {
-    return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_') || doPrivate);
-});
+// const tests = fs.readdirSync(__dirname).filter(file => {
+//     return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_') || doPrivate);
+// });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-filter-replace-text']
-// destroyOutput = true
-// console.log('tests',tests);
+const tests = ['yaml-filter-inverse-flags']
+destroyOutput = true
+console.log('tests',tests);
 
 describe('openapi-format tests', () => {
     tests.forEach((test) => {
