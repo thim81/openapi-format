@@ -270,15 +270,15 @@ function openapiFilter(oaObj, options) {
 
     traverse(jsonObj).forEach(function (node) {
         // Register components presence
-        if (this?.parent?.parent?.key === 'components') {
-            if (this?.parent?.key && comps[this.parent.key]) {
+        if (get(this,'parent.parent.key') && this.parent.parent.key === 'components') {
+            if (get(this,'parent.key') && this.parent.key && comps[this.parent.key]) {
                 comps[this.parent.key][this.key] = {...comps[this.parent.key][this.key], present: true};
                 comps.meta.total = comps.meta.total++;
             }
         }
 
         // Register components usage
-        if (this?.key === '$ref') {
+        if (this.key === '$ref') {
             if (node.startsWith('#/components/schemas/')) {
                 const compSchema = node.replace('#/components/schemas/', '');
                 comps.schemas[compSchema] = {...comps.schemas[compSchema], used: true};
@@ -336,7 +336,7 @@ function openapiFilter(oaObj, options) {
                     if (filterFlagHash.some(filterFlag => filterFlag === itmObjHash)) {
                         // ========================================================================
                         // HACK to overcome the issue with removing items from an array
-                        if (this?.parent?.parent.key === 'x-tagGroups') {
+                        if (get(this,'parent.parent.key') && this.parent.parent.key === 'x-tagGroups') {
                             // debugFilterStep = 'Filter -x-tagGroups - flagValues - array value'
                             const tagGroup = this.parent.node
                             tagGroup['x-openapi-format-filter'] = true
@@ -367,7 +367,7 @@ function openapiFilter(oaObj, options) {
                 if (filterFlagHash.some(filterFlagHash => filterFlagHash === itmObjHash)) {
                     // ========================================================================
                     // HACK to overcome the issue with removing items from an array
-                    if (this?.parent?.parent.key === 'x-tagGroups') {
+                    if (get(this,'parent.parent.key') && this.parent.parent.key === 'x-tagGroups') {
                         // debugFilterStep = 'Filter -x-tagGroups - flagValues - single value'
                         const tagGroup = this.parent.node
                         tagGroup['x-openapi-format-filter'] = true
@@ -398,7 +398,7 @@ function openapiFilter(oaObj, options) {
         }
 
         // Filter out OpenApi.tags & OpenApi.x-tagGroups matching the flags
-        if ((this?.key === 'tags' || this?.key === 'x-tagGroups') && this?.parent.key === undefined && Array.isArray(node)) {
+        if ((this.key === 'tags' || this.key === 'x-tagGroups') && this.parent.key === undefined && Array.isArray(node)) {
             if (filterProps.length > 0) {
                 // debugFilterStep = 'Filter - tag/x-tagGroup - flags'
                 // Deep filter array of tag/x-tagGroup
@@ -429,17 +429,17 @@ function openapiFilter(oaObj, options) {
     });
 
     if (stripUnused.length > 0) {
-        unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !comps.schemas[key]?.used);
+        unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !get(comps,`schemas[${key}].used`)); //comps.schemas[key]?.used);
         options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
-        unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !comps.responses[key]?.used);
+        unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !get(comps,`responses[${key}].used`));//!comps.responses[key]?.used);
         options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
-        unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !comps.parameters[key]?.used);
+        unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !get(comps,`parameters[${key}].used`));//!comps.parameters[key]?.used);
         options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
-        unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !comps.examples[key]?.used);
+        unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !get(comps,`examples[${key}].used`));//!comps.examples[key]?.used);
         options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
-        unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key]?.used);
+        unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !get(comps,`requestBodies[${key}].used`));//!comps.requestBodies[key]?.used);
         options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
-        unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key]?.used);
+        unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !get(comps,`headers[${key}].used`));//!comps.headers[key]?.used);
         options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
         unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length
     }
@@ -455,7 +455,7 @@ function openapiFilter(oaObj, options) {
         }
 
         // Filter out OpenApi.tags & OpenApi.x-tagGroups matching the fixedFlags
-        if ((this?.key === 'tags' || this?.key === 'x-tagGroups') && this?.parent.key === undefined && Array.isArray(node)) {
+        if ((this.key === 'tags' || this.key === 'x-tagGroups') && this.parent.key === undefined && Array.isArray(node)) {
             if (fixedFlags.length > 0) {
                 debugFilterStep = 'Filter - tag/x-tagGroup - fixed flags'
                 // Deep filter array of tag/x-tagGroup
@@ -540,6 +540,22 @@ function valueReplace(valueAsString, replacements) {
  */
 function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Alternative optional chaining function, to provide support for NodeJS 12
+ * TODO replace this with native ?. optional chaining once NodeJS12 is deprecated.
+ * @param obj object
+ * @param path path to access the properties
+ * @param defaultValue
+ * @returns {T}
+ */
+function get(obj, path, defaultValue = undefined) {
+    const travel = regexp => String.prototype.split.call(path, regexp)
+        .filter(Boolean).reduce((res, key) => res !== null && res !== undefined ? res[key] : res, obj);
+
+    const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/);
+    return result === undefined || result === obj ? defaultValue : result;
 }
 
 module.exports = {
