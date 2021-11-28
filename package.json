@@ -51,5 +51,8 @@
     },
     "devDependencies": {
         "mocha": "^9.1.2"
+    },
+    "engines": {
+        "node": ">=12"
     }
 }

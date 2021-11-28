@@ -140,7 +140,9 @@ async function run(oaFile, options) {
     // Filter OpenAPI document
     if (options.filterSet) {
         const resFilter = await openapiFormat.openapiFilter(res, options);
-        cliLog.unusedComp = resFilter?.resultData?.unusedComp;
+        if (resFilter.resultData && resFilter.resultData.unusedComp) {
+            cliLog.unusedComp = resFilter.resultData.unusedComp
+        }
         outputLogFiltered = `filtered & `;
         res = resFilter.data;
     }
@@ -188,14 +190,14 @@ async function run(oaFile, options) {
     }
 
     // Show unused components
-    if (cliLog?.unusedComp) {
+    if (cliLog && cliLog.unusedComp) {
         // List unused component
         const unusedComp = cliLog.unusedComp;
         const keys = Object.keys(unusedComp || {});
         let count = 0
         const cliOut = []
         keys.map((comp) => {
-            if (unusedComp?.[comp].length > 0) {
+            if (unusedComp && unusedComp[comp] && unusedComp[comp].length > 0) {
                 unusedComp[comp].forEach(value => {
                     const spacer = (comp === 'requestBodies' ? `\t` : `\t\t`);
                     cliOut.push(`- components/${comp}${spacer} "${value}"`);
