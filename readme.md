@@ -114,7 +114,7 @@ Arguments:
 
 Options:
 
-  -o, --output         Save the formated OpenAPI file as JSON/YAML             [path]
+  --output, -o         Save the formated OpenAPI file as JSON/YAML             [path]
   
   --sortFile           The file to specify custom OpenAPI fields ordering      [path]
   --filterFile         The file to specify filter setting                      [path]
@@ -137,21 +137,21 @@ Options:
 
 ## OpenAPI format options
 
-| Parameter               | Alias         | Description                                                                 | Input type   | Default                     | Required/Optional |
-|-------------------------|---------------|-----------------------------------------------------------------------------|--------------|-----------------------------|-------------------|
-| file                    |               | the original OpenAPI file                                                   | path to file |                             | required          |
-| --output                | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                             | optional          |
-| --sortFile              | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json            | optional          |
-| --filterFile            | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional          |
-| --no-sort               |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                       | optional          |
-| --sortComponentsFile    |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json  | optional          |
-| --rename                |               | rename the OpenAPI title                                                    | string       |                             | optional          |
-| --configFile            | -c            | the file with all the format config options                                 | path to file |                             | optional          |
-| --lineWidth             |               | max line width of YAML output                                               | number       | -1 (Infinity)               | optional          |
-| --json                  |               | prints the file to stdout as JSON                                           |              | FALSE                       | optional          |
-| --yaml                  |               | prints the file to stdout as YAML                                           |              | FALSE                       | optional          |
-| --verbose               | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                             | optional          |
-| --help                  | h             | display help for command                                                    |              |                             | optional          |
+| Parameter             | Alias         | Description                                                                 | Input type   | Default                     | Info      |
+|-----------------------|---------------|-----------------------------------------------------------------------------|--------------|-----------------------------|-----------|
+| file                  |               | the original OpenAPI file                                                   | path to file |                             | required  |
+| --output              | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                             | optional  |
+| --sortFile            | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json            | optional  |
+| --filterFile          | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional  |
+| --no-sort             |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                       | optional  |
+| --sortComponentsFile  |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json  | optional  |
+| --rename              |               | rename the OpenAPI title                                                    | string       |                             | optional  |
+| --configFile          | -c            | the file with all the format config options                                 | path to file |                             | optional  |
+| --lineWidth           |               | max line width of YAML output                                               | number       | -1 (Infinity)               | optional  |
+| --json                |               | prints the file to stdout as JSON                                           |              | FALSE                       | optional  |
+| --yaml                |               | prints the file to stdout as YAML                                           |              | FALSE                       | optional  |
+| --verbose             | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                             | optional  |
+| --help                | h             | display help for command                                                    |              |                             | optional  |
 
 ## OpenAPI sort configuration options
 
