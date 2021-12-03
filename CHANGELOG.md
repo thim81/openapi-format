@@ -1,3 +1,11 @@
+## [1.7.0] - 2020-12-03
+
+- Filtering - Inverse filtering for operationIds via `inverseOperationIds`
+- Filtering - Inverse filtering for tags via `inverseTags`
+- Filtering - Inverse filtering for methods via `inverseMethods`
+- Keep empty security object (#23)
+- Improved openapi-format success output
+
 ## [1.6.3] - 2020-10-12
 
 - Added the option to replace words/characters in description, summary, URL fields with new value
