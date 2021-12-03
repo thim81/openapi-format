@@ -35,6 +35,14 @@ tags:
     externalDocs:
       description: Find out more
       url: 'http://swagger.io'
+x-tagGroups:
+  - name: Tag Group 1
+    tags:
+      - pet
+  - name: Tag Group 2
+    tags:
+      - user
+      - store
 paths:
   /pet:
     post:

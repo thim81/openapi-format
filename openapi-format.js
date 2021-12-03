@@ -236,6 +236,7 @@ function openapiFilter(oaObj, options) {
 
     // Inverse object filters
     const inverseFilterProps = [...filterSet.inverseOperationIds];
+    const inverseFilterArray = [...filterSet.inverseTags];
 
     const stripFlags = [...filterSet.stripFlags];
     const stripUnused = [...filterSet.unusedComponents];
@@ -318,6 +319,20 @@ function openapiFilter(oaObj, options) {
 
         // Array field matching
         if (Array.isArray(node)) {
+            // Filter out object matching the inverse "tags"
+            if (inverseFilterArray.length > 0 && this.key === 'tags' && !inverseFilterArray.some(i => node.includes(i)) && this.parent.parent !== undefined) {
+                debugFilterStep = 'Filter - inverse tags'
+                // Top parent has other nodes, so remove only targeted parent node of matching element
+                this.parent.delete();
+            }
+
+            // Filter out the top OpenApi.tags matching the inverse "tags"
+            if (inverseFilterArray.length > 0 && this.key === 'tags' && this.parent.parent === undefined) {
+                debugFilterStep = 'Filter - inverse top tags'
+                node = node.filter(value => inverseFilterArray.includes(value.name))
+                this.update(node);
+            }
+
             // Filter out object matching the "tags"
             if (filterArray.length > 0 && this.key === 'tags' && filterArray.some(i => node.includes(i))) {
                 // debugFilterStep = 'Filter - tags'
@@ -470,7 +485,10 @@ function openapiFilter(oaObj, options) {
                 debugFilterStep = 'Filter - tag/x-tagGroup - fixed flags'
                 // Deep filter array of tag/x-tagGroup
                 let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
-                const oaFilteredTags = oaTags.filter(item => !fixedFlags.some(i => (Object.keys(item || {}).includes(i))));
+                const oaFilteredTags = oaTags
+                    .filter(item => !fixedFlags
+                    .some(i => (Object.keys(item || {}).includes(i))))
+                    .filter(e=>e);
                 this.update(oaFilteredTags);
             }
         }

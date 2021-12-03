@@ -1,0 +1,12 @@
+#methods:
+#  - get
+#flags:
+#  - x-visibility
+#flagValues: []
+inverseTags:
+  - store
+  - user
+#operationIds:
+#  - addPet
+#  - findPetsByStatus
+
