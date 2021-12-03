@@ -1,3 +1,7 @@
+## [1.7.1] - 2020-12-03
+
+- Reverted openapi-format success output because of minor offset
+
 ## [1.7.0] - 2020-12-03
 
 - Filtering - Inverse filtering for operationIds via `inverseOperationIds`

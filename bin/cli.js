@@ -47,7 +47,7 @@ async function run(oaFile, options) {
     let outputLogOptions = ''
     let outputLogFiltered = ''
     let cliLog = {};
-    const consoleLine = process.stdout.columns ? '='.repeat(process.stdout.columns - 6) : '='.repeat(80)
+    const consoleLine = process.stdout.columns ? '='.repeat(process.stdout.columns) : '='.repeat(80)
 
     if (!oaFile) {
         console.error('Please provide a file path for the OpenAPI document');
@@ -214,7 +214,7 @@ async function run(oaFile, options) {
     }
 
     // Final result
-    infoOut(`\x1b[32m ${consoleLine}\x1b[0m`); // LOG - horizontal rule
-    infoOut(`\x1b[32m ✅\tOpenAPI ${outputLogFiltered}formatted successfully\x1b[0m`, 99) // LOG - success message
-    infoOut(`\x1b[32m ${consoleLine}\x1b[0m`); // LOG - horizontal rule
+    infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
+    infoOut(`\x1b[32m✅  OpenAPI ${outputLogFiltered}formatted successfully\x1b[0m`, 99) // LOG - success message
+    infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
 }
