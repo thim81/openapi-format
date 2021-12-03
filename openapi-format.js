@@ -233,6 +233,12 @@ function openapiFilter(oaObj, options) {
     const filterArray = [...filterSet.tags];
     const filterOperations = [...filterSet.operations];
     const filterProps = [...filterSet.operationIds, ...filterSet.flags, ...fixedFlags];
+
+    // Inverse object filters
+    const inverseFilterKeys = [...filterSet.inverseMethods];
+    const inverseFilterProps = [...filterSet.inverseOperationIds];
+    const inverseFilterArray = [...filterSet.inverseTags];
+
     const stripFlags = [...filterSet.stripFlags];
     const stripUnused = [...filterSet.unusedComponents];
     const textReplace = filterSet.textReplace || [];
@@ -305,6 +311,14 @@ function openapiFilter(oaObj, options) {
             }
         }
 
+        // Filter out object matching the inverse "methods"
+        if (inverseFilterKeys.length > 0 && !inverseFilterKeys.includes(this.key)
+            && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
+            // debugFilterStep = 'Filter - inverse methods'
+            // Parent has other nodes, so remove only targeted node
+            this.remove();
+        }
+
         // Filter out object matching the "methods"
         if (filterKeys.length > 0 && filterKeys.includes(this.key)) {
             // debugFilterStep = 'Filter - methods'
@@ -314,6 +328,20 @@ function openapiFilter(oaObj, options) {
 
         // Array field matching
         if (Array.isArray(node)) {
+            // Filter out object matching the inverse "tags"
+            if (inverseFilterArray.length > 0 && this.key === 'tags' && !inverseFilterArray.some(i => node.includes(i)) && this.parent.parent !== undefined) {
+                // debugFilterStep = 'Filter - inverse tags'
+                // Top parent has other nodes, so remove only targeted parent node of matching element
+                this.parent.delete();
+            }
+
+            // Filter out the top OpenApi.tags matching the inverse "tags"
+            if (inverseFilterArray.length > 0 && this.key === 'tags' && this.parent.parent === undefined) {
+                // debugFilterStep = 'Filter - inverse top tags'
+                node = node.filter(value => inverseFilterArray.includes(value.name))
+                this.update(node);
+            }
+
             // Filter out object matching the "tags"
             if (filterArray.length > 0 && this.key === 'tags' && filterArray.some(i => node.includes(i))) {
                 // debugFilterStep = 'Filter - tags'
@@ -378,6 +406,12 @@ function openapiFilter(oaObj, options) {
                         this.parent.remove();
                     }
                 }
+            }
+
+            // Filter out fields matching the inverse Tags/operationIds
+            if (inverseFilterProps.length > 0 && this.key === 'operationId' && !inverseFilterProps.includes(node)) {
+                // debugFilterStep = 'Filter - Single field - Inverse Tags/operationIds'
+                this.parent.remove();
             }
 
             // Filter out fields matching the Tags/operationIds
@@ -457,10 +491,12 @@ function openapiFilter(oaObj, options) {
         // Filter out OpenApi.tags & OpenApi.x-tagGroups matching the fixedFlags
         if ((this.key === 'tags' || this.key === 'x-tagGroups') && this.parent.key === undefined && Array.isArray(node)) {
             if (fixedFlags.length > 0) {
-                debugFilterStep = 'Filter - tag/x-tagGroup - fixed flags'
+                // debugFilterStep = 'Filter - tag/x-tagGroup - fixed flags'
                 // Deep filter array of tag/x-tagGroup
                 let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
-                const oaFilteredTags = oaTags.filter(item => !fixedFlags.some(i => (Object.keys(item || {}).includes(i))));
+                const oaFilteredTags = oaTags
+                    .filter(item => !fixedFlags.some(i => (Object.keys(item || {}).includes(i))))
+                    .filter(e => e);
                 this.update(oaFilteredTags);
             }
         }

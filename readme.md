@@ -190,17 +190,20 @@ matching item from the OpenAPI document. You can combine multiple types to filte
 For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
 extended options for filtering OpenAPI documents.
 
-| Type             | Description                                  | Type  | Examples                                  |
-|------------------|----------------------------------------------|-------|-------------------------------------------|
-| methods          | a list OpenAPI methods.                      | array | ['get','post','put']                      |
-| tags             | a list OpenAPI tags.                         | array | ['pet','user']                            |
-| operationIds     | a list OpenAPI operation ID's.               | array | ['findPetsByStatus','updatePet']          |
-| operations       | a list OpenAPI operations.                   | array | ['GET::/pets','PUT::/pets']               |
-| flags            | a list of custom flags                       | array | ['x-exclude','x-internal']                |
-| flagValues       | a list of custom flags with a specific value | array | ['x-version: 1.0','x-version: 3.0']       |
-| unusedComponents | a list of unused components                  | array | ['examples','schemas']                    |
-| stripFlags       | a list of custom flags that will be stripped | array | ['x-exclude','x-internal']                |
-| textReplace      | a list of search & replace values to replace | array | [{'searchFor':'Pet','replaceWith':'Dog'}] |
+| Type                | Description                                | Type  | Examples                                  |
+|---------------------|--------------------------------------------|-------|-------------------------------------------|
+| methods             | OpenAPI methods.                           | array | ['get','post','put']                      |
+| inverseMethods      | OpenAPI methods that will be kept.         | array | ['get','post','put']                      |
+| tags                | OpenAPI tags.                              | array | ['pet','user']                            |
+| inverseTags         | OpenAPI tags that will be kept.            | array | ['pet','user']                            |
+| operationIds        | OpenAPI operation ID's.                    | array | ['findPetsByStatus','updatePet']          |
+| inverseOperationIds | OpenAPI operation ID's that will be kept.  | array | ['findPetsByStatus','updatePet']          |
+| operations          | OpenAPI operations.                        | array | ['GET::/pets','PUT::/pets']               |
+| flags               | Custom flags                               | array | ['x-exclude','x-internal']                |
+| flagValues          | Custom flags with a specific value         | array | ['x-version: 1.0','x-version: 3.0']       |
+| unusedComponents    | Unused components                          | array | ['examples','schemas']                    |
+| stripFlags          | Custom flags that will be stripped         | array | ['x-exclude','x-internal']                |
+| textReplace         | Search & replace values to replace         | array | [{'searchFor':'Pet','replaceWith':'Dog'}] |
 
 Some more details on the available filter types:
 

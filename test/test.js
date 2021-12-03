@@ -14,9 +14,8 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-filter-replace-text']
+// const tests = ['yaml-filter-inverse-operationids']
 // destroyOutput = true
-// console.log('tests',tests);
 
 describe('openapi-format tests', () => {
     tests.forEach((test) => {
