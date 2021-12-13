@@ -328,13 +328,6 @@ function openapiFilter(oaObj, options) {
 
         // Array field matching
         if (Array.isArray(node)) {
-            // Filter out object matching the inverse "tags"
-            if (inverseFilterArray.length > 0 && this.key === 'tags' && !inverseFilterArray.some(i => node.includes(i)) && this.parent.parent !== undefined) {
-                // debugFilterStep = 'Filter - inverse tags'
-                // Top parent has other nodes, so remove only targeted parent node of matching element
-                this.parent.delete();
-            }
-
             // Filter out the top OpenApi.tags matching the inverse "tags"
             if (inverseFilterArray.length > 0 && this.key === 'tags' && this.parent.parent === undefined) {
                 // debugFilterStep = 'Filter - inverse top tags'
@@ -428,6 +421,13 @@ function openapiFilter(oaObj, options) {
                 if (isMatchOperationItem(this.parent.key, this.key, filterOperations[i])) {
                     this.delete();
                 }
+            }
+        }
+
+        // Filter out operations not matching inverseFilterArray
+        if (inverseFilterArray.length > 0 && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
+            if((node.tags === undefined || !inverseFilterArray.some(i => node.tags.includes(i)))) {
+                this.delete();
             }
         }
 
