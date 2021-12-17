@@ -276,8 +276,8 @@ function openapiFilter(oaObj, options) {
 
     traverse(jsonObj).forEach(function (node) {
         // Register components presence
-        if (get(this,'parent.parent.key') && this.parent.parent.key === 'components') {
-            if (get(this,'parent.key') && this.parent.key && comps[this.parent.key]) {
+        if (get(this, 'parent.parent.key') && this.parent.parent.key === 'components') {
+            if (get(this, 'parent.key') && this.parent.key && comps[this.parent.key]) {
                 comps[this.parent.key][this.key] = {...comps[this.parent.key][this.key], present: true};
                 comps.meta.total = comps.meta.total++;
             }
@@ -364,7 +364,7 @@ function openapiFilter(oaObj, options) {
                     if (filterFlagHash.some(filterFlag => filterFlag === itmObjHash)) {
                         // ========================================================================
                         // HACK to overcome the issue with removing items from an array
-                        if (get(this,'parent.parent.key') && this.parent.parent.key === 'x-tagGroups') {
+                        if (get(this, 'parent.parent.key') && this.parent.parent.key === 'x-tagGroups') {
                             // debugFilterStep = 'Filter -x-tagGroups - flagValues - array value'
                             const tagGroup = this.parent.node
                             tagGroup['x-openapi-format-filter'] = true
@@ -395,7 +395,7 @@ function openapiFilter(oaObj, options) {
                 if (filterFlagHash.some(filterFlagHash => filterFlagHash === itmObjHash)) {
                     // ========================================================================
                     // HACK to overcome the issue with removing items from an array
-                    if (get(this,'parent.parent.key') && this.parent.parent.key === 'x-tagGroups') {
+                    if (get(this, 'parent.parent.key') && this.parent.parent.key === 'x-tagGroups') {
                         // debugFilterStep = 'Filter -x-tagGroups - flagValues - single value'
                         const tagGroup = this.parent.node
                         tagGroup['x-openapi-format-filter'] = true
@@ -433,7 +433,7 @@ function openapiFilter(oaObj, options) {
 
         // Filter out operations not matching inverseFilterArray
         if (inverseFilterArray.length > 0 && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
-            if((node.tags === undefined || !inverseFilterArray.some(i => node.tags.includes(i)))) {
+            if ((node.tags === undefined || !inverseFilterArray.some(i => node.tags.includes(i)))) {
                 this.delete();
             }
         }
@@ -470,17 +470,17 @@ function openapiFilter(oaObj, options) {
     });
 
     if (stripUnused.length > 0) {
-        unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !get(comps,`schemas[${key}].used`)); //comps.schemas[key]?.used);
+        unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !get(comps, `schemas[${key}].used`)); //comps.schemas[key]?.used);
         options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
-        unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !get(comps,`responses[${key}].used`));//!comps.responses[key]?.used);
+        unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !get(comps, `responses[${key}].used`));//!comps.responses[key]?.used);
         options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
-        unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !get(comps,`parameters[${key}].used`));//!comps.parameters[key]?.used);
+        unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !get(comps, `parameters[${key}].used`));//!comps.parameters[key]?.used);
         options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
-        unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !get(comps,`examples[${key}].used`));//!comps.examples[key]?.used);
+        unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !get(comps, `examples[${key}].used`));//!comps.examples[key]?.used);
         options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
-        unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !get(comps,`requestBodies[${key}].used`));//!comps.requestBodies[key]?.used);
+        unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !get(comps, `requestBodies[${key}].used`));//!comps.requestBodies[key]?.used);
         options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
-        unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !get(comps,`headers[${key}].used`));//!comps.headers[key]?.used);
+        unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !get(comps, `headers[${key}].used`));//!comps.headers[key]?.used);
         options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
         unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length
     }
