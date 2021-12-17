@@ -1,3 +1,7 @@
+## [1.7.2] - 2020-12-17
+
+- Filtering - Fix handling of `inverseTags` for operations without tags (#25)
+
 ## [1.7.1] - 2020-12-03
 
 - Reverted openapi-format success output because of minor offset
