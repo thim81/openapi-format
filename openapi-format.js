@@ -431,6 +431,13 @@ function openapiFilter(oaObj, options) {
             }
         }
 
+        // Filter out operations not matching inverseFilterArray
+        if (inverseFilterArray.length > 0 && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
+            if((node.tags === undefined || !inverseFilterArray.some(i => node.tags.includes(i)))) {
+                this.delete();
+            }
+        }
+
         // Filter out OpenApi.tags & OpenApi.x-tagGroups matching the flags
         if ((this.key === 'tags' || this.key === 'x-tagGroups') && this.parent.key === undefined && Array.isArray(node)) {
             if (filterProps.length > 0) {
