@@ -292,8 +292,6 @@ paths:
             - 'read:pets'
   '/pet/{petId}/uploadImage':
     post:
-      tags:
-        - pet
       summary: uploads an image
       description: ''
       operationId: uploadFile
