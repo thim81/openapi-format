@@ -1,0 +1,185 @@
+openapi: 3.0.2
+info:
+  description: |-
+    this is a sample Pet Store Server based on the OpenAPI 3.0 specification. you can find out more about
+    Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+    Some useful links:
+    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  version: 1.0.6-SNAPSHOT
+  title: Swagger Petstore - OpenAPI 3.0
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  - url: /v3
+paths:
+  /pet:
+    post:
+      operationId: addPet
+      summary: add a new pet to the store
+      description: add a new pet to the store
+      requestBody:
+        description: Create a new pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PetModel'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/PetModel'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetModel'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PetModel'
+        '405':
+          description: Invalid input
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+      tags:
+        - pet
+  /PetModel/findByStatus:
+    get:
+      operationId: findPetsByStatus
+      summary: Finds Pets by status
+      description: Multiple status values can be provided with comma separated strings
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PetModel'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PetModel'
+        '400':
+          description: Invalid status value
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+      tags:
+        - pet
+components:
+  schemas:
+    CategoryModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Dogs
+      x-swagger-router-model: io.swagger.petstore.model.Category
+      xml:
+        name: category
+    TagModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      x-swagger-router-model: io.swagger.petstore.model.Tag
+      xml:
+        name: tag
+    PetModel:
+      type: object
+      properties:
+        properties:
+          type: string
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: doggie
+        category:
+          $ref: '#/components/schemas/CategoryModel'
+        photoUrls:
+          type: array
+          items:
+            type: string
+            xml:
+              name: photoUrl
+          xml:
+            wrapped: true
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagModel'
+          xml:
+            wrapped: true
+        status:
+          description: pet status in the store
+          type: string
+          enum:
+            - available
+            - pending
+            - sold
+      required:
+        - name
+        - photoUrls
+      x-swagger-router-model: io.swagger.petstore.model.Pet
+      xml:
+        name: pet
+  parameters:
+    limitParam:
+      name: limit
+      in: query
+      description: max records to return
+      required: true
+      schema:
+        type: integer
+        format: int32
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://petstore.swagger.io/oauth/authorize'
+          scopes:
+            'write:pets': modify pets in your account
+            'read:pets': read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+tags:
+  - name: pet
+    description: Everything about your Pets
+    externalDocs:
+      description: Find out more
+      url: 'http://swagger.io'
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
