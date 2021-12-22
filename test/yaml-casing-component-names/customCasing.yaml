@@ -1,0 +1,7 @@
+componentsExamples: PascalCase
+componentsSchemas: snake_case
+componentsHeaders: snake_case
+componentsParameters: snake_case
+componentsResponses: snake_case
+componentsRequestBodies: snake_case
+componentsSecuritySchemes: snake_case
