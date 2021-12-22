@@ -65,7 +65,7 @@ paths:
         '405':
           description: Invalid input
       security:
-        - Petstore_Auth:
+        - PetstoreAuth:
             - 'write:pets'
             - 'read:pets'
       tags:
@@ -94,7 +94,8 @@ paths:
         '400':
           description: Invalid status value
       security:
-        - Petstore_Auth:
+        - ApiKey: []
+        - PetstoreAuth:
             - 'write:pets'
             - 'read:pets'
       tags:
@@ -127,8 +128,8 @@ paths:
         '404':
           description: Pet not found
       security:
-        - api_key: []
-        - Petstore_Auth:
+        - ApiKey: []
+        - PetstoreAuth:
             - 'write:pets'
             - 'read:pets'
       tags:
@@ -159,7 +160,7 @@ paths:
         '405':
           description: Invalid input
       security:
-        - Petstore_Auth:
+        - PetstoreAuth:
             - 'write:pets'
             - 'read:pets'
       tags:
@@ -186,7 +187,7 @@ paths:
         '400':
           description: Invalid pet value
       security:
-        - Petstore_Auth:
+        - PetstoreAuth:
             - 'write:pets'
             - 'read:pets'
       tags:
@@ -263,13 +264,87 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserModel'
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                  example: 10
+                username:
+                  type: string
+                  example: theUser
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: James
+                sites:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      siteUrl:
+                        type: string
+                        example: www.example.com
+                      domainName:
+                        type: string
+                        example: example.com
+                      meta:
+                        type: object
+                        properties:
+                          extInt:
+                            type: string
+                            example: com
+                          secureConn:
+                            type: string
+                            example: https
+                          properties:
+                            type: string
+                            example: https
             examples:
               sample-example-reports:
                 $ref: '#/components/examples/sample-example-reports'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/UserModel'
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                  example: 10
+                username:
+                  type: string
+                  example: theUser
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: James
+                sites:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      siteUrl:
+                        type: string
+                        example: www.example.com
+                      domainName:
+                        type: string
+                        example: example.com
+                      meta:
+                        type: object
+                        properties:
+                          extInt:
+                            type: string
+                            example: com
+                          secureConn:
+                            type: string
+                            example: https
+                          properties:
+                            type: string
+                            example: https
           application/xml:
             schema:
               $ref: '#/components/schemas/UserModel'
@@ -287,10 +362,10 @@ components:
         - code
         - message
       properties:
-        code:
+        codeError:
           type: integer
           format: int32
-        message:
+        messageError:
           type: string
     OrderModel:
       type: object
@@ -536,6 +611,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/'
+    GeneralPet:
+      description: Pet Model
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              properties:
+                type: string
+              idPet:
+                type: integer
+                format: int64
+                example: 10
+              namePet:
+                type: string
+                example: doggie
+              pet-model:
+                $ref: '#/components/responses/GeneralError'
       headers:
         X-RateLimit-Limit:
           $ref: '#/components/headers/X-RateLimit-Limit'
@@ -568,7 +661,7 @@ components:
           scopes:
             'write:pets': modify pets in your account
             'read:pets': read your pets
-    api_key:
+    ApiKey:
       type: apiKey
       name: api_key
       in: header

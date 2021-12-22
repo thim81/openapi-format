@@ -676,7 +676,14 @@ function openapiChangeCase(oaObj, options) {
             // debugCasingStep = 'Casing - components/schema - properties name'
             this.update(changeObjKeysCase(node,casingSet.properties));
         }
-        // Change security - properties
+        // Change paths>schema - properties
+        if (this.path[0] === 'paths' && this.key === 'properties' && casingSet.properties
+            && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value')
+        ) {
+            // debugCasingStep = 'Casing - paths>schema - properties name'
+            this.update(changeObjKeysCase(node,casingSet.properties));
+        }
+        // Change security - keys
         if (this.path[0] === 'paths' && this.key === 'security' && isArray(node) && casingSet.componentsSecuritySchemes) {
             // debugCasingStep = 'Casing - path > - security'
             this.update(changeArrayObjKeysCase(node, casingSet.componentsSecuritySchemes))
