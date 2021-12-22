@@ -50,6 +50,7 @@ Postman collections, test suites, ...
 - [x] Order OpenAPI fields in a default order
 - [x] Order OpenAPI fields in a custom order
 - [x] Order Components elements by alphabet
+- [x] Format the casing (camelCase,PascalCase, ...) of component elements
 - [x] Filter OpenAPI files based on methods
 - [x] Filter OpenAPI files based on flags
 - [x] Filter OpenAPI files based on flags values
@@ -143,6 +144,7 @@ Options:
 | --output              | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                             | optional  |
 | --sortFile            | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json            | optional  |
 | --filterFile          | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional  |
+| --casingFile          | -c            | the file to specify casing setting                                          | path to file |                             | optional  |
 | --no-sort             |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                       | optional  |
 | --sortComponentsFile  |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json  | optional  |
 | --rename              |               | rename the OpenAPI title                                                    | string       |                             | optional  |
@@ -181,6 +183,33 @@ example on how to do this).
 | schema      | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
 | schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                           |
 | properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                           |
+
+## OpenAPI casing configuration options
+
+The CLI can change the casing of the properties/keys/names for the different elements in the OpenAPI document. 
+The desired casing can be defined per OpenAPI key/element (see list below).
+The keys that are not specified will keep their casing like it is in the original OpenAPI document, so only for defined fields the casing will be changed.
+
+| Key                       | Description                                                                    | OpenAPI reference                                                         |
+| ------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| operationId               | Changes operation ID's that are part of the Operations Object                  | https://spec.openapis.org/oas/v3.1.0#operation-object                     |
+| properties                | Changes property keys of the schemas from the components/response/requestBody  | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
+| componentsSchemas         | Changes the names of the schema models in the components sections              | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsExamples        | Changes the names of the example models in the components sections             | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsHeaders         | Changes the names of the header models in the components sections              | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsResponses       | Changes the names of the response models in the components sections            | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsRequestBodies   | Changes the names of the request body models in the components sections        | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsSecuritySchemes | Changes the names of the security schemes in the components sections           | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+
+Available casing options:
+- camelCase
+- PascalCase
+- kebab-case
+- snake_case
+- CONSTANT_CASE
+- capitalCase
+- lowerCase
+- upperCase
 
 ## OpenAPI filter options
 
