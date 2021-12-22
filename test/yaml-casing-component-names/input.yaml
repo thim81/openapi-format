@@ -94,7 +94,7 @@ paths:
         '400':
           description: Invalid status value
       security:
-        - ApiKey
+        - ApiKey: []
         - PetstoreAuth:
             - 'write:pets'
             - 'read:pets'
