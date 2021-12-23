@@ -25,6 +25,7 @@
     "main": "bin/cli.js",
     "files": [
         "README.md",
+        "CHANGELOG.md",
         "LICENSE",
         "openapi-format.js",
         "util-case-anything.js",
