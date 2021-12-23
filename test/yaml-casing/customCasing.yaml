@@ -1,6 +1,9 @@
 operationId: snake_case
 properties: snake_case
-parametersName: snake_case
+
+parametersQuery: snake_case
+parametersHeader: kebap-case
+parametersPath: snake_case
 
 componentsExamples: PascalCase
 componentsSchemas: snake_case

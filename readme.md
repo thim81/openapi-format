@@ -192,8 +192,11 @@ The keys that are not specified will keep their casing like it is in the origina
 
 | Key                       | Description                                                                    | OpenAPI reference                                                         |
 | ------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| operationId               | Changes operation ID's that are part of the Operations Object                  | https://spec.openapis.org/oas/v3.1.0#operation-object                     |
+| operationId               | Changes operation ID's that are part of the Operations Object                  | https://spec.openapis.org/oas/v3.0.3.html#operation-object                |
 | properties                | Changes property keys of the schemas from the components/response/requestBody  | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
+| parametersPath            | Changes the path names of the parameters inline & models in the components     | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
+| parametersHeader          | Changes the header names of the parameters inline & models in the components   | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
+| parametersQuery           | Changes the query names of the parameters inline & models in the components    | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
 | componentsSchemas         | Changes the names of the schema models in the components sections              | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
 | componentsExamples        | Changes the names of the example models in the components sections             | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
 | componentsHeaders         | Changes the names of the header models in the components sections              | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
