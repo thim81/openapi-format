@@ -1,3 +1,9 @@
+## unreleased
+
+- new feature - Formatting - Change casing of OpenAPI elements
+  - Support common casing (camelCase, PascalCase, kebap-case, snake_case, ...)
+  - Provide support properties, operationId, query params, path variables, headers, component names
+
 ## [1.7.2] - 2020-12-17
 
 - Filtering - Fix handling of `inverseTags` for operations without tags (#25)
