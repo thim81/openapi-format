@@ -565,13 +565,7 @@ function openapiChangeCase(oaObj, options) {
 
     // Initiate components tracking
     const comps = {
-        schemas: {},
-        responses: {},
         parameters: {},
-        examples: {},
-        requestBodies: {},
-        headers: {},
-        meta: {total: 0}
     }
 
     // Recursive traverse through OpenAPI document to update components
@@ -593,10 +587,30 @@ function openapiChangeCase(oaObj, options) {
                 // debugCasingStep = 'Casing - components/headers - names
                 this.update(changeObjKeysCase(node, casingSet.componentsHeaders));
             }
-            // Change components/parameters - keys
-            if (this.path[1] === 'parameters' && this.path.length === 2 && casingSet.componentsParameters) {
-                // debugCasingStep = 'Casing - components/parameters - names
-                this.update(changeObjKeysCase(node, casingSet.componentsParameters));
+            // Change components/parameters - in:query/in:headers/in:path - key
+            if (this.path[1] === 'parameters' && this.path.length === 2 && casingSet.componentsParametersHeader) {
+                const orgObj = JSON.parse(JSON.stringify(node));
+                let replacedItems = Object.keys(orgObj).map((key) => {
+                    if (orgObj[key].in && orgObj[key].in === 'query' && casingSet.componentsParametersQuery) {
+                        debugCasingStep = 'Casing - components/parameters - in:query - key'
+                        const newKey = changeCase(key, casingSet.componentsParametersQuery);
+                        comps.parameters[key] = newKey
+                        return {[newKey]: orgObj[key]};
+                    }
+                    if (orgObj[key].in && orgObj[key].in === 'path' && casingSet.componentsParametersPath) {
+                        debugCasingStep = 'Casing - components/parameters - in:path - key'
+                        const newKey = changeCase(key, casingSet.componentsParametersPath);
+                        comps.parameters[key] = newKey
+                        return {[newKey]: orgObj[key]};
+                    }
+                    if (orgObj[key].in && orgObj[key].in === 'header' && casingSet.componentsParametersHeader) {
+                        debugCasingStep = 'Casing - components/parameters - in:header - key'
+                        const newKey = changeCase(key, casingSet.componentsParametersHeader);
+                        comps.parameters[key] = newKey
+                        return {[newKey]: orgObj[key]};
+                    }
+                });
+                this.update( Object.assign({}, ...replacedItems));
             }
             // Change components/parameters - query/header name
             if (this.path[1] === 'parameters' && this.path.length === 3) {
@@ -650,9 +664,11 @@ function openapiChangeCase(oaObj, options) {
                 const compName = node.replace('#/components/responses/', '');
                 this.update(`#/components/responses/${changeCase(compName, casingSet.componentsResponses)}`);
             }
-            if (node.startsWith('#/components/parameters/') && casingSet.componentsParameters) {
+            if (node.startsWith('#/components/parameters/')) {
                 const compName = node.replace('#/components/parameters/', '');
-                this.update(`#/components/parameters/${changeCase(compName, casingSet.componentsParameters)}`);
+                if (comps.parameters[compName]) {
+                    this.update(`#/components/parameters/${comps.parameters[compName]}`);
+                }
             }
             if (node.startsWith('#/components/headers/') && casingSet.componentsHeaders) {
                 const compName = node.replace('#/components/headers/', '');
@@ -828,6 +844,7 @@ function changeCase(valueAsString, caseType) {
         case "pascalcase":
             return pascalCase(valueAsString)
         case "kebabcase":
+        case "kebapcase":
             return kebabCase(valueAsString)
         case "capitalkebabcase":
             return capitalKebabCase(valueAsString)

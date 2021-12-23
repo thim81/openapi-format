@@ -76,8 +76,8 @@ paths:
       summary: Finds Pets by status
       description: Multiple status values can be provided with comma separated strings
       parameters:
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/X-RateLimit-Limit'
+        - $ref: '#/components/parameters/limit_param'
+        - $ref: '#/components/parameters/x-rate-limit-limit'
       responses:
         '200':
           description: successful operation
@@ -140,7 +140,7 @@ paths:
       summary: Updates a pet in the store with form data
       description: ''
       parameters:
-        - $ref: '#/components/parameters/petId'
+        - $ref: '#/components/parameters/pet-id'
         - name: name
           in: query
           description: Name of pet that needs to be updated
@@ -509,7 +509,7 @@ components:
             - tag 2
       summary: A payload example for a notification
   parameters:
-    petId:
+    pet-id:
       name: petId
       in: path
       description: ID of pet to return
@@ -517,7 +517,7 @@ components:
       schema:
         type: integer
         format: int64
-    skipParam:
+    skip_param:
       name: skip
       in: query
       description: number of items to skip
@@ -525,7 +525,7 @@ components:
       schema:
         type: integer
         format: int32
-    limitParam:
+    limit_param:
       name: limit
       in: query
       description: max records to return
@@ -533,14 +533,14 @@ components:
       schema:
         type: integer
         format: int32
-    X-RateLimit-Limit:
+    x-rate-limit-limit:
       name: X-RateLimit-Limit
       description: Request limit per hour
       in: header
       schema:
         type: integer
       example: 100
-    X-RateLimit-Remaining:
+    x-rate-limit-remaining:
       name: X-RateLimit-Remaining
       description: Remaining requests for the hour
       in: header

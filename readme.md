@@ -194,19 +194,22 @@ The CLI can change the casing of the properties/keys/names for the different ele
 The desired casing can be defined per OpenAPI key/element (see list below).
 The keys that are not specified will keep their casing like it is in the original OpenAPI document, so only for defined fields the casing will be changed.
 
-| Key                       | Description                                                                    | OpenAPI reference                                                         |
-| ------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| operationId               | Changes operation ID's that are part of the Operations Object                  | https://spec.openapis.org/oas/v3.0.3.html#operation-object                |
-| properties                | Changes property keys of the schemas from the components/response/requestBody  | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
-| parametersPath            | Changes the path names of the parameters inline & models in the components     | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
-| parametersHeader          | Changes the header names of the parameters inline & models in the components   | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
-| parametersQuery           | Changes the query names of the parameters inline & models in the components    | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
-| componentsSchemas         | Changes the names of the schema models in the components sections              | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsExamples        | Changes the names of the example models in the components sections             | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsHeaders         | Changes the names of the header models in the components sections              | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsResponses       | Changes the names of the response models in the components sections            | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsRequestBodies   | Changes the names of the request body models in the components sections        | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsSecuritySchemes | Changes the names of the security schemes in the components sections           | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| Key                        | Description                                                                    | OpenAPI reference                                                         |
+| -------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| operationId                | Changes operation ID's that are part of the Operations Object                  | https://spec.openapis.org/oas/v3.0.3.html#operation-object                |
+| properties                 | Changes property keys of the schemas from the components/response/requestBody  | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
+| parametersPath             | Changes the path names of the parameters inline & models in the components     | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
+| parametersHeader           | Changes the header names of the parameters inline & models in the components   | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
+| parametersQuery            | Changes the query names of the parameters inline & models in the components    | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
+| componentsParametersPath   | Changes the key of the path models in the components parameters sections       | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsParametersQuery  | Changes the key of the query models in the components parameters sections      | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsParametersHeader | Changes the key of the header models in the components parameters sections     | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsSchemas          | Changes the key of the schema models in the components sections                | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsExamples         | Changes the key of the example models in the components sections               | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsHeaders          | Changes the key of the header models in the components sections                | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsResponses        | Changes the key of the response models in the components sections              | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsRequestBodies    | Changes the key of the request body models in the components sections          | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsSecuritySchemes  | Changes the key of the security schemes in the components sections             | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
 
 Available casing options:
 - **camelCase**: converts a strings to `camelCase`

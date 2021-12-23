@@ -27,7 +27,7 @@ paths:
       description: add a new pet to the store
       parameters:
         - in: header
-          name: contentType
+          name: content-type
           required: true
           schema:
             type: string
@@ -84,7 +84,7 @@ paths:
       summary: Finds Pets by status
       description: Multiple status values can be provided with comma separated strings
       parameters:
-        - $ref: '#/components/parameters/limit_param'
+        - $ref: '#/components/parameters/limitParam'
       responses:
         '200':
           description: successful operation
@@ -185,7 +185,7 @@ paths:
       summary: Deletes a pet
       description: ''
       parameters:
-        - name: apiKeySECURITY
+        - name: api-key-security
           in: header
           description: ''
           required: false
@@ -603,7 +603,7 @@ components:
             - tag 2
       summary: A payload example for a notification
   parameters:
-    skip_param:
+    skipParam:
       name: skip_items
       in: query
       description: number of items to skip
@@ -611,7 +611,7 @@ components:
       schema:
         type: integer
         format: int32
-    limit_param:
+    limitParam:
       name: limit_param
       in: query
       description: max records to return

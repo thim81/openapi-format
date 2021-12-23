@@ -14,7 +14,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-casing']
+// const tests = ['yaml-casing-component-names']
 // destroyOutput = true
 
 describe('openapi-format tests', () => {

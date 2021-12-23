@@ -1,4 +1,4 @@
-openapi: 3.0.2
+openapi: 3.0.3
 info:
   description: |-
     this is a sample Pet Store Server based on the OpenAPI 3.0 specification. you can find out more about
@@ -26,7 +26,7 @@ paths:
       summary: add a new pet to the store
       description: add a new pet to the store
       parameters:
-        - $ref: '#/components/headers/x_rate_limit_limit'
+        - $ref: '#/components/headers/x-rate-limit-limit'
       requestBody:
         description: Create a new pet in the store
         content:
@@ -76,7 +76,8 @@ paths:
       summary: Finds Pets by status
       description: Multiple status values can be provided with comma separated strings
       parameters:
-        - $ref: '#/components/parameters/limit_param'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/X-RateLimit-Limit'
       responses:
         '200':
           description: successful operation
@@ -139,13 +140,7 @@ paths:
       summary: Updates a pet in the store with form data
       description: ''
       parameters:
-        - name: petId
-          in: path
-          description: ID of pet that needs to be updated
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/petId'
         - name: name
           in: query
           description: Name of pet that needs to be updated
@@ -226,7 +221,7 @@ paths:
       summary: Get user by user name
       description: ''
       parameters:
-        - name: username
+        - name: userName
           in: path
           description: 'The name that needs to be fetched. Use user1 for testing. '
           required: true
@@ -253,7 +248,7 @@ paths:
       summary: Update user
       description: This can only be done by the logged in user.
       parameters:
-        - name: username
+        - name: userName
           in: path
           description: name that need to be deleted
           required: true
@@ -514,7 +509,15 @@ components:
             - tag 2
       summary: A payload example for a notification
   parameters:
-    skip_param:
+    petId:
+      name: petId
+      in: path
+      description: ID of pet to return
+      required: true
+      schema:
+        type: integer
+        format: int64
+    skipParam:
       name: skip
       in: query
       description: number of items to skip
@@ -522,7 +525,7 @@ components:
       schema:
         type: integer
         format: int32
-    limit_param:
+    limitParam:
       name: limit
       in: query
       description: max records to return
@@ -530,6 +533,20 @@ components:
       schema:
         type: integer
         format: int32
+    X-RateLimit-Limit:
+      name: X-RateLimit-Limit
+      description: Request limit per hour
+      in: header
+      schema:
+        type: integer
+      example: 100
+    X-RateLimit-Remaining:
+      name: X-RateLimit-Remaining
+      description: Remaining requests for the hour
+      in: header
+      schema:
+        type: integer
+      example: 94
   responses:
     general_error:
       description: An error occurred
@@ -557,9 +574,9 @@ components:
                 $ref: '#/components/responses/general_error'
       headers:
         X-RateLimit-Limit:
-          $ref: '#/components/headers/x_rate_limit_limit'
+          $ref: '#/components/headers/x-rate-limit-limit'
         X-RateLimit-Remaining:
-          $ref: '#/components/headers/x_rate_limit_remaining'
+          $ref: '#/components/headers/x-rate-limit-remaining'
   requestBodies:
     req_body_pet:
       content:
@@ -592,17 +609,17 @@ components:
       name: api_key
       in: header
   headers:
-    x_rate_limit_limit:
+    x-rate-limit-limit:
       description: Request limit per hour
       schema:
         type: integer
       example: 100
-    x_rate_limit_remaining:
+    x-rate-limit-remaining:
       description: Remaining requests for the hour
       schema:
         type: integer
       example: 94
-    x_rate_limit_unused:
+    x-rate-limit-unused:
       description: Remaining requests for the hour
       schema:
         type: integer
