@@ -170,7 +170,7 @@ async function run(oaFile, options) {
     }
 
     // Change case OpenAPI document
-    if (options.casingSet === true) {
+    if (options.casingSet) {
         const resFormat = await openapiFormat.openapiChangeCase(res, options);
         if (resFormat.data) res = resFormat.data
     }
