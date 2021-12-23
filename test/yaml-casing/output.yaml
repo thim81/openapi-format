@@ -22,23 +22,23 @@ servers:
 paths:
   /pet:
     post:
-      operationId: addPet
+      operationId: add_pet
       summary: add a new pet to the store
       description: add a new pet to the store
       parameters:
-        - $ref: '#/components/headers/X-RateLimit-Limit'
+        - $ref: '#/components/headers/x_rate_limit_limit'
       requestBody:
         description: Create a new pet in the store
         content:
           application/json:
             schema:
-              $ref: '#/components/requestBodies/reqBodyPet'
+              $ref: '#/components/requestBodies/req_body_pet'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PetModel'
+              $ref: '#/components/schemas/pet_model'
           application/xml:
             schema:
-              $ref: '#/components/schemas/PetModel'
+              $ref: '#/components/schemas/pet_model'
         required: true
       responses:
         '200':
@@ -58,25 +58,25 @@ paths:
                     type: string
                     example: doggie
                   pet_model:
-                    $ref: '#/components/responses/GeneralError'
+                    $ref: '#/components/responses/general_error'
             application/xml:
               schema:
-                $ref: '#/components/schemas/PetModel'
+                $ref: '#/components/schemas/pet_model'
         '405':
           description: Invalid input
       security:
-        - PetstoreAuth:
+        - petstore_auth:
             - 'write:pets'
             - 'read:pets'
       tags:
         - pet
   /PetModel/findByStatus:
     get:
-      operationId: findPetsByStatus
+      operationId: find_pets_by_status
       summary: Finds Pets by status
       description: Multiple status values can be provided with comma separated strings
       parameters:
-        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/limit_param'
       responses:
         '200':
           description: successful operation
@@ -85,24 +85,24 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PetModel'
+                  $ref: '#/components/schemas/pet_model'
             application/xml:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PetModel'
+                  $ref: '#/components/schemas/pet_model'
         '400':
           description: Invalid status value
       security:
-        - ApiKey: []
-        - PetstoreAuth:
+        - api_key: []
+        - petstore_auth:
             - 'write:pets'
             - 'read:pets'
       tags:
         - pet
   '/pet/{petId}':
     get:
-      operationId: getPetById
+      operationId: get_pet_by_id
       summary: Find pet by ID
       description: Returns a single pet
       parameters:
@@ -119,23 +119,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PetModel'
+                $ref: '#/components/schemas/pet_model'
             application/xml:
               schema:
-                $ref: '#/components/schemas/PetModel'
+                $ref: '#/components/schemas/pet_model'
         '400':
           description: Invalid ID supplied
         '404':
           description: Pet not found
       security:
-        - ApiKey: []
-        - PetstoreAuth:
+        - api_key: []
+        - petstore_auth:
             - 'write:pets'
             - 'read:pets'
       tags:
         - pet
     post:
-      operationId: updatePetWithForm
+      operationId: update_pet_with_form
       summary: Updates a pet in the store with form data
       description: ''
       parameters:
@@ -160,13 +160,13 @@ paths:
         '405':
           description: Invalid input
       security:
-        - PetstoreAuth:
+        - petstore_auth:
             - 'write:pets'
             - 'read:pets'
       tags:
         - pet
     delete:
-      operationId: deletePet
+      operationId: delete_pet
       summary: Deletes a pet
       description: ''
       parameters:
@@ -187,34 +187,34 @@ paths:
         '400':
           description: Invalid pet value
       security:
-        - PetstoreAuth:
+        - petstore_auth:
             - 'write:pets'
             - 'read:pets'
       tags:
         - pet
   /store/order:
     post:
-      operationId: placeOrder
+      operationId: place_order
       summary: Place an order for a pet
       description: Place a new order in the store
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OrderModel'
+              $ref: '#/components/schemas/order_model'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/OrderModel'
+              $ref: '#/components/schemas/order_model'
           application/xml:
             schema:
-              $ref: '#/components/schemas/OrderModel'
+              $ref: '#/components/schemas/order_model'
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderModel'
+                $ref: '#/components/schemas/order_model'
         '405':
           description: Invalid input
       tags:
@@ -222,7 +222,7 @@ paths:
       x-swagger-router-controller: OrderController
   '/user/{username}':
     get:
-      operationId: getUserByName
+      operationId: get_user_by_name
       summary: Get user by user name
       description: ''
       parameters:
@@ -238,10 +238,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserModel'
+                $ref: '#/components/schemas/user_model'
             application/xml:
               schema:
-                $ref: '#/components/schemas/UserModel'
+                $ref: '#/components/schemas/user_model'
         '400':
           description: Invalid username supplied
         '404':
@@ -249,7 +249,7 @@ paths:
       tags:
         - user
     put:
-      operationId: updateUser
+      operationId: update_user
       summary: Update user
       description: This can only be done by the logged in user.
       parameters:
@@ -303,8 +303,8 @@ paths:
                             type: string
                             example: https
             examples:
-              sample-example-reports:
-                $ref: '#/components/examples/sample-example-reports'
+              SampleExampleReports:
+                $ref: '#/components/examples/SampleExampleReports'
           application/x-www-form-urlencoded:
             schema:
               type: object
@@ -347,7 +347,7 @@ paths:
                             example: https
           application/xml:
             schema:
-              $ref: '#/components/schemas/UserModel'
+              $ref: '#/components/schemas/user_model'
       responses:
         default:
           description: successful operation
@@ -356,7 +356,7 @@ paths:
       x-swagger-router-controller: UserController
 components:
   schemas:
-    ErrorModel:
+    error_model:
       type: object
       required:
         - code
@@ -367,7 +367,7 @@ components:
           format: int32
         message_error:
           type: string
-    OrderModel:
+    order_model:
       type: object
       properties:
         id:
@@ -421,7 +421,7 @@ components:
       x-swagger-router-model: io.swagger.petstore.model.Order
       xml:
         name: order
-    CustomerModel:
+    customer_model:
       type: object
       properties:
         id:
@@ -434,13 +434,13 @@ components:
         address:
           type: array
           items:
-            $ref: '#/components/schemas/AddressModel'
+            $ref: '#/components/schemas/address_model'
           xml:
             wrapped: true
             name: addresses
       xml:
         name: customer
-    AddressModel:
+    address_model:
       type: object
       properties:
         street:
@@ -457,7 +457,7 @@ components:
           example: 94301
       xml:
         name: address
-    CategoryModel:
+    category_model:
       type: object
       properties:
         id:
@@ -470,7 +470,7 @@ components:
       x-swagger-router-model: io.swagger.petstore.model.Category
       xml:
         name: category
-    UserModel:
+    user_model:
       type: object
       properties:
         id:
@@ -500,7 +500,7 @@ components:
       x-swagger-router-model: io.swagger.petstore.model.User
       xml:
         name: user
-    TagModel:
+    tag_model:
       type: object
       properties:
         id:
@@ -511,7 +511,7 @@ components:
       x-swagger-router-model: io.swagger.petstore.model.Tag
       xml:
         name: tag
-    PetModel:
+    pet_model:
       type: object
       properties:
         properties:
@@ -524,7 +524,7 @@ components:
           type: string
           example: doggie
         category:
-          $ref: '#/components/schemas/CategoryModel'
+          $ref: '#/components/schemas/category_model'
         photo_urls:
           type: array
           items:
@@ -536,7 +536,7 @@ components:
         tags:
           type: array
           items:
-            $ref: '#/components/schemas/TagModel'
+            $ref: '#/components/schemas/tag_model'
           xml:
             wrapped: true
         status:
@@ -553,7 +553,7 @@ components:
       xml:
         name: pet
   examples:
-    sample-example-reports:
+    SampleExampleReports:
       value:
         id: bbadbeef-b3ab-40af-b05c-c0ffee6544cd
         created: '2020-06-19T12:01:03.456Z'
@@ -563,7 +563,7 @@ components:
         resourceLocation: 'https://customername.example/export'
         properties:
           reportLocation: 'https://customername.example/reports/ABC-123-DEF-456'
-    sample-send-notification:
+    SampleSendNotification:
       value:
         - reference: 1234567ABC
           to:
@@ -588,7 +588,7 @@ components:
             - tag 2
       summary: A payload example for a notification
   parameters:
-    skipParam:
+    skip_param:
       name: skip
       in: query
       description: number of items to skip
@@ -596,7 +596,7 @@ components:
       schema:
         type: integer
         format: int32
-    limitParam:
+    limit_param:
       name: limit
       in: query
       description: max records to return
@@ -605,17 +605,17 @@ components:
         type: integer
         format: int32
   responses:
-    NotFound:
+    not_found:
       description: Entity not found.
-    IllegalInput:
+    illegal_input:
       description: Illegal input for operation.
-    GeneralError:
+    general_error:
       description: An error occurred
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/'
-    GeneralPet:
+    general_pet:
       description: Pet Model
       content:
         application/json:
@@ -632,32 +632,32 @@ components:
                 type: string
                 example: doggie
               pet-model:
-                $ref: '#/components/responses/GeneralError'
+                $ref: '#/components/responses/general_error'
       headers:
         X-RateLimit-Limit:
-          $ref: '#/components/headers/X-RateLimit-Limit'
+          $ref: '#/components/headers/x_rate_limit_limit'
         X-RateLimit-Remaining:
-          $ref: '#/components/headers/X-RateLimit-Remaining'
+          $ref: '#/components/headers/x_rate_limit_remaining'
   requestBodies:
-    reqBodyPet:
+    req_body_pet:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/PetModel'
+            $ref: '#/components/schemas/pet_model'
         application/xml:
           schema:
-            $ref: '#/components/schemas/PetModel'
+            $ref: '#/components/schemas/pet_model'
       description: Pet object that needs to be added to the store
-    UserArray:
+    user_array:
       content:
         application/json:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/UserModel'
+              $ref: '#/components/schemas/user_model'
       description: List of user object
   securitySchemes:
-    PetstoreAuth:
+    petstore_auth:
       type: oauth2
       flows:
         implicit:
@@ -665,22 +665,22 @@ components:
           scopes:
             'write:pets': modify pets in your account
             'read:pets': read your pets
-    ApiKey:
+    api_key:
       type: apiKey
       name: api_key
       in: header
   headers:
-    X-RateLimit-Limit:
+    x_rate_limit_limit:
       description: Request limit per hour
       schema:
         type: integer
       example: 100
-    X-RateLimit-Remaining:
+    x_rate_limit_remaining:
       description: Remaining requests for the hour
       schema:
         type: integer
       example: 94
-    X-RateLimit-Unused:
+    x_rate_limit_unused:
       description: Remaining requests for the hour
       schema:
         type: integer
