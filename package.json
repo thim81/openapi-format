@@ -27,6 +27,7 @@
         "README.md",
         "LICENSE",
         "openapi-format.js",
+        "util-case-anything.js",
         "util-log-output.js",
         "util-types.js",
         "defaultSort.json",

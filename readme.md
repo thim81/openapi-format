@@ -1,12 +1,14 @@
 # openapi-format
 
-Format an OpenAPI document by ordering and filtering fields.
+Format an OpenAPI document by ordering, formatting and filtering fields.
 
 The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, and
 can output the file with clean indenting, to either JSON or YAML.
 
 Next to the ordering, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
 flags, tags, methods, operationID's and even unused components.
+
+
 
 <a href="https://www.npmjs.com/package/openapi-format" alt="Latest Stable Version">![npm](https://img.shields.io/npm/v/openapi-format.svg)</a> 
 <a href="https://www.npmjs.com/package/openapi-format" alt="Total Downloads">![npm](https://img.shields.io/npm/dw/openapi-format.svg)</a>
@@ -118,14 +120,16 @@ Options:
   --output, -o         Save the formated OpenAPI file as JSON/YAML             [path]
   
   --sortFile           The file to specify custom OpenAPI fields ordering      [path]
-  --filterFile         The file to specify filter setting                      [path]
+  --casingFile         The file to specify casing rules                        [path]
+  --filterFile         The file to specify filter rules                        [path]
+
     
   --no-sort            Don't sort the OpenAPI file                          [boolean]
   --sortComponentsFile The file with components to sort alphabetically         [path]
   
   --rename             Rename the OpenAPI title                              [string]
 
-  --configFile         The file with all the format config options             [path]
+  --configFile         The file with the OpenAPI-format CLI options            [path]
   
   --lineWidth          Max line width of YAML output                         [number]
   
