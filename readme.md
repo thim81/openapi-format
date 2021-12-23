@@ -205,14 +205,15 @@ The keys that are not specified will keep their casing like it is in the origina
 | componentsSecuritySchemes | Changes the names of the security schemes in the components sections           | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
 
 Available casing options:
-- camelCase
-- PascalCase
-- kebab-case
-- snake_case
-- CONSTANT_CASE
-- capitalCase
-- lowerCase
-- upperCase
+- **camelCase**: converts a strings to `camelCase`
+- **PascalCase**: converts a strings to `PascalCase`
+- **kebab-case**: converts a strings to `kebab-case`
+- **Capital-Kebab-Case**: converts a strings to `Kebab-Case`
+- **snake_case**: converts a strings to `snake_case`
+- **CONSTANT_CASE**: converts a strings to `CONSTANT_CASE`
+- **CapitalCase**: converts a strings to `Capital Case` (with spaces)
+- **lowercase**: converts a strings to `lower case` (with spaces)
+- **UPPERCASE**: converts a strings to `UPPER CASE` (with spaces)
 
 ## OpenAPI filter options
 

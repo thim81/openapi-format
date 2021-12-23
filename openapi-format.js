@@ -6,13 +6,14 @@ const traverse = require('traverse');
 const {isString, isArray, isObject} = require("./util-types");
 const {
     camelCase,
+    capitalCase,
+    capitalKebabCase,
+    constantCase,
+    firstCapitalCase,
     kebabCase,
+    lowerCase,
     pascalCase,
     snakeCase,
-    constantCase,
-    capitalCase,
-    firstCapitalCase,
-    lowerCase,
     upperCase
 } = require("./util-case-anything");
 
@@ -708,7 +709,7 @@ function openapiChangeCase(oaObj, options) {
         }
         // Change parameters - name
         if (this.path[0] === 'paths' && this.key === 'parameters'
-            && (casingSet.parametersQuery || casingSet.parametersHeader|| casingSet.parametersPath)) {
+            && (casingSet.parametersQuery || casingSet.parametersHeader || casingSet.parametersPath)) {
             // debugCasingStep = 'Casing - components > parameters - name'
 
             // Loop over parameters array
@@ -816,28 +817,31 @@ function changeArrayObjKeysCase(node, caseType) {
  * @returns {string}
  */
 function changeCase(valueAsString, caseType) {
-    const caseTypes = ['camelCase', 'PascalCase', 'kebab-case', 'snake_case', 'CONSTANT_CASE', 'capitalCase', 'lowerCase', 'upperCase']
+    const caseTypes = ['camelCase', 'PascalCase', 'kebab-case', 'snake_case', 'CONSTANT_CASE', 'capitalCase', 'lowerCase', 'UPPERCASE']
     if (!isString(valueAsString) || valueAsString === "") return valueAsString
-    if (!caseTypes.includes(caseType)) return valueAsString
+    // if (!caseTypes.includes(caseType)) return valueAsString
+    const normCaseType = caseType.toLowerCase().replace('-', '').replace('_', '')
 
-    switch (caseType) {
-        case "camelCase":
+    switch (normCaseType) {
+        case "camelcase":
             return camelCase(valueAsString)
-        case "PascalCase":
+        case "pascalcase":
             return pascalCase(valueAsString)
-        case "kebab-case":
+        case "kebabcase":
             return kebabCase(valueAsString)
-        case "snake_case":
+        case "capitalkebabcase":
+            return capitalKebabCase(valueAsString)
+        case "snakecase":
             return snakeCase(valueAsString)
-        case "CONSTANT_CASE":
+        case "constantcase":
             return constantCase(valueAsString)
-        case "capitalCase":
+        case "capitalcase":
             return capitalCase(valueAsString)
-        case "firstCapitalCase":
+        case "firstcapitalcase":
             return firstCapitalCase(valueAsString)
-        case "lowerCase":
+        case "lowercase":
             return lowerCase(valueAsString)
-        case "upperCase":
+        case "uppercase":
             return upperCase(valueAsString)
         default:
             return valueAsString

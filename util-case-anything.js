@@ -91,6 +91,19 @@ function kebabCase(string) {
 }
 
 /**
+ * converts strings to Capital-Kebab-Case
+ *
+ * @export
+ * @param {string} string
+ * @returns {string} in Kebab-Case
+ */
+function capitalKebabCase(string) {
+    return getParts(string, noSpecialChars)
+        .map(part => capitaliseWord(part))
+        .join('-')
+}
+
+/**
  * converts strings to snake_case
  *
  * @export
@@ -198,6 +211,7 @@ exports.capitalCase = capitalCase;
 exports.constantCase = constantCase;
 exports.firstCapitalCase = firstCapitalCase;
 exports.kebabCase = kebabCase;
+exports.capitalKebabCase = capitalKebabCase;
 exports.lowerCase = lowerCase;
 exports.pascalCase = pascalCase;
 exports.pathCase = pathCase;
