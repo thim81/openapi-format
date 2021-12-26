@@ -197,7 +197,7 @@ The openapi-format CLI can change the casing of the properties/keys/names for th
 The desired casing can be defined per OpenAPI key/element (see list below).
 The keys that are not specified will keep their casing like it is in the original OpenAPI document, so only for defined fields, the casing will be changed.
 
-| Key                        | Description                                                                    | OpenAPI reference                                                         |
+| Key                        | <div style="width:290px">Description</div>                                           | OpenAPI reference                                                         |
 | -------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
 | operationId                | Changes operation ID's that are part of the Operations Object                        | https://spec.openapis.org/oas/v3.0.3.html#operation-object                |
 | properties                 | Changes property keys of the schemas of the inline response/requestBody & components | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
