@@ -1,6 +1,6 @@
-# openapi-format
-
 <img src="assets/openapi-format-logo.svg">
+
+# openapi-format
 
 Format an OpenAPI document by ordering, formatting and filtering fields.
 
@@ -174,18 +174,18 @@ example on how to do this).
 
 | Key         | Ordered by                                                                                                      | OpenAPI reference                                                         |
 | ----------- | ----------------------------------------------------------------------------------------------------------------| ------------------------------------------------------------------------- |
-| root        | - openapi<br>\- info<br>\- servers<br>\- paths<br>\- components<br>\- tags<br>\- x-tagGroups<br>\- externalDocs | https://spec.openapis.org/oas/v3.0.3.html#openapi-object                  |
-| get         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
-| post        | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
-| put         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
-| patch       | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
-| delete      | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
-| parameters  | - name<br>\- in<br>\- description<br>\- required<br>\- schema                                                   | https://spec.openapis.org/oas/v3.0.3.html#parameterObject                 |
-| requestBody | - description<br>\- headers<br>\- content<br>\- links                                                           | https://spec.openapis.org/oas/v3.0.3.html#request-body-object             |
-| responses   | - description<br>\- headers<br>\- content<br>\- links                                                           | https://spec.openapis.org/oas/v3.0.3.html#responses-object                |
-| content     | (By alphabet)                                                                                                   | https://spec.openapis.org/oas/v3.0.3.html#responses-object                |
-| components  | - parameters<br>\- schemas                                                                                      | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| schema      | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
+| root        | - openapi<br>\- info<br>\- servers<br>\- paths<br>\- components<br>\- tags<br>\- x-tagGroups<br>\- externalDocs | [openapi-object](https://spec.openapis.org/oas/v3.0.3.html#openapi-object)                  |
+| get         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                |
+| post        | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
+| put         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
+| patch       | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
+| delete      | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
+| parameters  | - name<br>\- in<br>\- description<br>\- required<br>\- schema                                                   | [parameterObject](https://spec.openapis.org/oas/v3.0.3.html#parameterObject)                 |
+| requestBody | - description<br>\- headers<br>\- content<br>\- links                                                           | [request-body-object](https://spec.openapis.org/oas/v3.0.3.html#request-body-object)             |
+| responses   | - description<br>\- headers<br>\- content<br>\- links                                                           | [responses-object](https://spec.openapis.org/oas/v3.0.3.html#responses-object)                |
+| content     | (By alphabet)                                                                                                   | [responses-object](https://spec.openapis.org/oas/v3.0.3.html#responses-object)                |
+| components  | - parameters<br>\- schemas                                                                                      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object)               |
+| schema      | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  | [schemaObject](https://spec.openapis.org/oas/v3.0.3.html#schemaObject)                    |
 | schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                           |
 | properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                           |
 
