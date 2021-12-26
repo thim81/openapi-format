@@ -1,5 +1,7 @@
 # openapi-format
 
+<img src="assets/openapi-format-logo.png">
+
 Format an OpenAPI document by ordering, formatting and filtering fields.
 
 The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, format the casing of the fields and
