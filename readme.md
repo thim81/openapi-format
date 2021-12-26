@@ -2,13 +2,11 @@
 
 Format an OpenAPI document by ordering, formatting and filtering fields.
 
-The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, and
+The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, format the casing of the fields and
 can output the file with clean indenting, to either JSON or YAML.
 
-Next to the ordering, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
+Next to the ordering & formatting, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
 flags, tags, methods, operationID's and even unused components.
-
-
 
 <a href="https://www.npmjs.com/package/openapi-format" alt="Latest Stable Version">![npm](https://img.shields.io/npm/v/openapi-format.svg)</a> 
 <a href="https://www.npmjs.com/package/openapi-format" alt="Total Downloads">![npm](https://img.shields.io/npm/dw/openapi-format.svg)</a>
@@ -21,8 +19,9 @@ flags, tags, methods, operationID's and even unused components.
     + [Global Installation](#global-installation)
     + [NPX usage](#npx-usage)
 * [Command Line Interface](#command-line-interface)
-* [OpenAPI format options](#openapi-format-options)
+* [OpenAPI format CLI options](#openapi-format-cli-options)
 * [OpenAPI sort configuration options](#openapi-sort-configuration-options)
+* [OpenAPI formatting configuration options](#openapi-formatting-configuration-options)
 * [OpenAPI filter options](#openapi-filter-options)
 * [CLI sort usage](#cli-sort-usage)
 * [CLI filter usage](#cli-filter-usage)
@@ -140,7 +139,7 @@ Options:
   --verbose            Output more details of the filter process              [count]
 ```
 
-## OpenAPI format options
+## OpenAPI format CLI options
 
 | Parameter             | Alias         | Description                                                                 | Input type   | Default                     | Info      |
 |-----------------------|---------------|-----------------------------------------------------------------------------|--------------|-----------------------------|-----------|
@@ -188,28 +187,30 @@ example on how to do this).
 | schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                           |
 | properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                           |
 
-## OpenAPI casing configuration options
+## OpenAPI formatting configuration options - BETA 🏗
 
-The CLI can change the casing of the properties/keys/names for the different elements in the OpenAPI document. 
+🏗 NOTICE: This feature is considered BETA, since we are investigating the configuration syntax and extra formatting/casing capabilities.
+
+The openapi-format CLI can change the casing of the properties/keys/names for the different elements in the OpenAPI document. 
 The desired casing can be defined per OpenAPI key/element (see list below).
-The keys that are not specified will keep their casing like it is in the original OpenAPI document, so only for defined fields the casing will be changed.
+The keys that are not specified will keep their casing like it is in the original OpenAPI document, so only for defined fields, the casing will be changed.
 
 | Key                        | Description                                                                    | OpenAPI reference                                                         |
-| -------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| operationId                | Changes operation ID's that are part of the Operations Object                  | https://spec.openapis.org/oas/v3.0.3.html#operation-object                |
-| properties                 | Changes property keys of the schemas from the components/response/requestBody  | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
-| parametersPath             | Changes the path names of the parameters inline & models in the components     | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
-| parametersHeader           | Changes the header names of the parameters inline & models in the components   | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
-| parametersQuery            | Changes the query names of the parameters inline & models in the components    | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
-| componentsParametersPath   | Changes the key of the path models in the components parameters sections       | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsParametersQuery  | Changes the key of the query models in the components parameters sections      | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsParametersHeader | Changes the key of the header models in the components parameters sections     | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsSchemas          | Changes the key of the schema models in the components sections                | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsExamples         | Changes the key of the example models in the components sections               | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsHeaders          | Changes the key of the header models in the components sections                | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsResponses        | Changes the key of the response models in the components sections              | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsRequestBodies    | Changes the key of the request body models in the components sections          | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| componentsSecuritySchemes  | Changes the key of the security schemes in the components sections             | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| -------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| operationId                | Changes operation ID's that are part of the Operations Object                        | https://spec.openapis.org/oas/v3.0.3.html#operation-object                |
+| properties                 | Changes property keys of the schemas of the inline response/requestBody & components | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
+| parametersPath             | Changes the path names of the parameters inline & models in the components           | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
+| parametersHeader           | Changes the header names of the parameters inline & models in the components         | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
+| parametersQuery            | Changes the query names of the parameters inline & models in the components          | https://spec.openapis.org/oas/v3.0.3.html#parameter-object                |
+| componentsParametersPath   | Changes the key of the path models in the components parameters sections             | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsParametersQuery  | Changes the key of the query models in the components parameters sections            | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsParametersHeader | Changes the key of the header models in the components parameters sections           | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsSchemas          | Changes the key of the schema models in the components sections                      | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsExamples         | Changes the key of the example models in the components sections                     | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsHeaders          | Changes the key of the header models in the components sections                      | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsResponses        | Changes the key of the response models in the components sections                    | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsRequestBodies    | Changes the key of the request body models in the components sections                | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
+| componentsSecuritySchemes  | Changes the key of the security schemes in the components sections                   | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
 
 Available casing options:
 - **camelCase**: converts a strings to `camelCase`
