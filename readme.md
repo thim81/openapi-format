@@ -1,4 +1,4 @@
-![openapi-format icon]("./assets/openapi-format-logo.svg")
+![openapi-format icon](./assets/openapi-format-logo.svg)
 
 <a href="https://www.npmjs.com/package/openapi-format" alt="Latest Stable Version">![npm](https://img.shields.io/npm/v/openapi-format.svg)</a>
 <a href="https://www.npmjs.com/package/openapi-format" alt="Total Downloads">![npm](https://img.shields.io/npm/dw/openapi-format.svg)</a>
