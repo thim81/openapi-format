@@ -36,7 +36,7 @@ flags, tags, methods, operationID's and even unused components.
 **Public documentation:**
 An OpenAPI document is a specification that evolves and changes. To facilitate working with the specification and publishing the
 document as public documentation, you want to deliver a clean and structured specification. OpenAPI-format helps you to
-organize the fields by sorting and filtering specific elements from the OpenAPI like internal endpoints, beta tags, ...
+organize the fields by sorting, formatting and filtering specific elements from the OpenAPI like internal endpoints, beta tags, ...
 and even unused schemas, examples, responses, ... with a clean and optimized OpenAPI document as a result.
 
 **Maintenance:**
@@ -191,9 +191,12 @@ example on how to do this).
 
 ## OpenAPI formatting configuration options
 
-🏗 BETA NOTICE: This feature is considered BETA, since we are investigating the configuration syntax and extra formatting/casing capabilities.
+🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
 
-The openapi-format CLI can change the casing of the properties/keys/names for the different elements in the OpenAPI document. 
+When using tools like [spectral](https://github.com/stoplightio/spectral) or [speccy](https://speccy.io/), or any of the [linting tools](https://nordicapis.com/8-openapi-linters/), to validate & lint OpenAPI specifications to be uniform. The linting tool informs about the incorrect usage of OpenAPI properties & inconsistent field names.
+This is very useful and helps to guard the quality of the OpenAPI specification. They inform which fields to correct so that the specification will comply with all the defined linting rules.
+
+The openapi-format CLI formatting option can assist with keeping the field names consistent by automatically changing the casing of the properties/keys/names for the different elements in the OpenAPI document.
 The desired casing can be defined per OpenAPI key/element (see list below).
 The keys that are not specified will keep their casing like it is in the original OpenAPI document, so only for defined fields, the casing will be changed.
 
@@ -201,9 +204,9 @@ The keys that are not specified will keep their casing like it is in the origina
 | -------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | operationId                | Changes operation ID's that are part of the Operations Object                             | [operation-object](https://spec.openapis.org/oas/v3.0.3.html#operation-object)|
 | properties                 | Changes property keys of the schemas of the inline response/requestBody & components      | [schemaObject](https://spec.openapis.org/oas/v3.0.3.html#schemaObject) |
-| parametersPath             | Changes the path names of the parameters inline & models in the components                | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
-| parametersHeader           | Changes the header names of the parameters inline & models in the components              | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
-| parametersQuery            | Changes the query names of the parameters inline & models in the components               | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| parametersPath             | Changes the path name of the parameters inline & models in the components                 | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| parametersHeader           | Changes the header name of the parameters inline & models in the components               | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| parametersQuery            | Changes the query name of the parameters inline & models in the components                | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
 | componentsParametersPath   | Changes the key of the path models in the components parameters sections & "$ref" links   | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
 | componentsParametersQuery  | Changes the key of the query models in the components parameters sections & "$ref" links  | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
 | componentsParametersHeader | Changes the key of the header models in the components parameters sections & "$ref" links | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
