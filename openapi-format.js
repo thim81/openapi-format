@@ -836,7 +836,7 @@ function changeCase(valueAsString, caseType) {
     const caseTypes = ['camelCase', 'PascalCase', 'kebab-case', 'snake_case', 'CONSTANT_CASE', 'capitalCase', 'lowerCase', 'UPPERCASE']
     if (!isString(valueAsString) || valueAsString === "") return valueAsString
     // if (!caseTypes.includes(caseType)) return valueAsString
-    const normCaseType = caseType.toLowerCase().replace('-', '').replace('_', '')
+    const normCaseType = caseType.toLowerCase().replace(/-/g, '').replace(/_/g, '')
 
     switch (normCaseType) {
         case "camelcase":
