@@ -1,3 +1,5 @@
+<img src="assets/openapi-format-logo.svg">
+
 # openapi-format
 
 Format an OpenAPI document by ordering and filtering fields.
