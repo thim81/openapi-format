@@ -1,4 +1,7 @@
-<img src="assets/openapi-format-logo.svg">
+![openapi-format icon](./assets/openapi-format-logo.svg)
+
+<a href="https://www.npmjs.com/package/openapi-format" alt="Latest Stable Version">![npm](https://img.shields.io/npm/v/openapi-format.svg)</a>
+<a href="https://www.npmjs.com/package/openapi-format" alt="Total Downloads">![npm](https://img.shields.io/npm/dw/openapi-format.svg)</a>
 
 # openapi-format
 
@@ -9,9 +12,6 @@ can output the file with clean indenting, to either JSON or YAML.
 
 Next to the ordering & formatting, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
 flags, tags, methods, operationID's and even unused components.
-
-<a href="https://www.npmjs.com/package/openapi-format" alt="Latest Stable Version">![npm](https://img.shields.io/npm/v/openapi-format.svg)</a> 
-<a href="https://www.npmjs.com/package/openapi-format" alt="Total Downloads">![npm](https://img.shields.io/npm/dw/openapi-format.svg)</a>
 
 ## Table of content
 * [Use-cases](#use-cases)
