@@ -17,9 +17,10 @@ program
     .usage('<file> [options]')
     .description('Format a OpenAPI document by ordering and filtering fields.')
     .option('-o, --output <output>', 'write the formatted OpenAPI to an output file path.')
-    .option('-s, --sortFile <sortFile>', 'the file with the sort priority options.')
-    .option('-f, --filterFile <filterFile>', 'the file with the filter options.')
-    .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options.')
+    .option('-s, --sortFile <sortFile>', 'The file to specify custom OpenAPI fields ordering.')
+    .option('-c, --casingFile <filterFile>', 'The file to specify casing rules.')
+    .option('-f, --filterFile <filterFile>', 'The file to specify filter rules .')
+    .option('-c, --configFile <configFile>', 'The file with the OpenAPI-format CLI options.')
     .option('--no-sort', 'dont sort the OpenAPI file')
     .option('--sortComponentsFile <sortComponentsFile>', 'The file with components to sort alphabetically')
     .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
@@ -130,6 +131,21 @@ async function run(oaFile, options) {
         }
     }
 
+    // apply change casing by casing file if present
+    if (options && options.casingFile) {
+        infoOut(`- Casing file:\t\t${options.casingFile}`) // LOG - Casing file
+        try {
+            let casingOptions = {casingSet: {}}
+            casingOptions.casingSet = sy.parse(fs.readFileSync(options.casingFile, 'utf8'));
+            options = Object.assign({}, options, casingOptions);
+        } catch (err) {
+            console.error('\x1b[31m', `Casing file error - no such file or directory "${options.casingFile}"`)
+            if (options.verbose >= 1) {
+                console.error(err)
+            }
+        }
+    }
+
     infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
 
     // Get
@@ -150,6 +166,12 @@ async function run(oaFile, options) {
     // Format & Order OpenAPI document
     if (options.sort === true) {
         const resFormat = await openapiFormat.openapiSort(res, options);
+        if (resFormat.data) res = resFormat.data
+    }
+
+    // Change case OpenAPI document
+    if (options.casingSet) {
+        const resFormat = await openapiFormat.openapiChangeCase(res, options);
         if (resFormat.data) res = resFormat.data
     }
 

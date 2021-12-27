@@ -5,14 +5,13 @@
 
 # openapi-format
 
-Format an OpenAPI document by ordering and filtering fields.
+Format an OpenAPI document by ordering, formatting and filtering fields.
 
-The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, and
+The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, format the casing of the fields and
 can output the file with clean indenting, to either JSON or YAML.
 
-Next to the ordering, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
+Next to the ordering & formatting, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
 flags, tags, methods, operationID's and even unused components.
-
 
 ## Table of content
 * [Use-cases](#use-cases)
@@ -22,8 +21,9 @@ flags, tags, methods, operationID's and even unused components.
     + [Global Installation](#global-installation)
     + [NPX usage](#npx-usage)
 * [Command Line Interface](#command-line-interface)
-* [OpenAPI format options](#openapi-format-options)
+* [OpenAPI format CLI options](#openapi-format-cli-options)
 * [OpenAPI sort configuration options](#openapi-sort-configuration-options)
+* [OpenAPI formatting configuration options](#openapi-formatting-configuration-options)
 * [OpenAPI filter options](#openapi-filter-options)
 * [CLI sort usage](#cli-sort-usage)
 * [CLI filter usage](#cli-filter-usage)
@@ -36,7 +36,7 @@ flags, tags, methods, operationID's and even unused components.
 **Public documentation:**
 An OpenAPI document is a specification that evolves and changes. To facilitate working with the specification and publishing the
 document as public documentation, you want to deliver a clean and structured specification. OpenAPI-format helps you to
-organize the fields by sorting and filtering specific elements from the OpenAPI like internal endpoints, beta tags, ...
+organize the fields by sorting, formatting and filtering specific elements from the OpenAPI like internal endpoints, beta tags, ...
 and even unused schemas, examples, responses, ... with a clean and optimized OpenAPI document as a result.
 
 **Maintenance:**
@@ -53,6 +53,7 @@ Postman collections, test suites, ...
 - [x] Order OpenAPI fields in a default order
 - [x] Order OpenAPI fields in a custom order
 - [x] Order Components elements by alphabet
+- [x] Format the casing (camelCase,PascalCase, ...) of component elements
 - [x] Filter OpenAPI files based on methods
 - [x] Filter OpenAPI files based on flags
 - [x] Filter OpenAPI files based on flags values
@@ -120,14 +121,16 @@ Options:
   --output, -o         Save the formated OpenAPI file as JSON/YAML             [path]
   
   --sortFile           The file to specify custom OpenAPI fields ordering      [path]
-  --filterFile         The file to specify filter setting                      [path]
+  --casingFile         The file to specify casing rules                        [path]
+  --filterFile         The file to specify filter rules                        [path]
+
     
   --no-sort            Don't sort the OpenAPI file                          [boolean]
   --sortComponentsFile The file with components to sort alphabetically         [path]
   
   --rename             Rename the OpenAPI title                              [string]
 
-  --configFile         The file with all the format config options             [path]
+  --configFile         The file with the OpenAPI-format CLI options            [path]
   
   --lineWidth          Max line width of YAML output                         [number]
   
@@ -138,7 +141,7 @@ Options:
   --verbose            Output more details of the filter process              [count]
 ```
 
-## OpenAPI format options
+## OpenAPI format CLI options
 
 | Parameter             | Alias         | Description                                                                 | Input type   | Default                     | Info      |
 |-----------------------|---------------|-----------------------------------------------------------------------------|--------------|-----------------------------|-----------|
@@ -146,6 +149,7 @@ Options:
 | --output              | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                             | optional  |
 | --sortFile            | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json            | optional  |
 | --filterFile          | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional  |
+| --casingFile          | -c            | the file to specify casing setting                                          | path to file |                             | optional  |
 | --no-sort             |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                       | optional  |
 | --sortComponentsFile  |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json  | optional  |
 | --rename              |               | rename the OpenAPI title                                                    | string       |                             | optional  |
@@ -170,20 +174,242 @@ example on how to do this).
 
 | Key         | Ordered by                                                                                                      | OpenAPI reference                                                         |
 | ----------- | ----------------------------------------------------------------------------------------------------------------| ------------------------------------------------------------------------- |
-| root        | - openapi<br>\- info<br>\- servers<br>\- paths<br>\- components<br>\- tags<br>\- x-tagGroups<br>\- externalDocs | https://spec.openapis.org/oas/v3.0.3.html#openapi-object                  |
-| get         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
-| post        | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
-| put         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
-| patch       | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
-| delete      | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | https://spec.openapis.org/oas/v3.0.3.html#operationObject                 |
-| parameters  | - name<br>\- in<br>\- description<br>\- required<br>\- schema                                                   | https://spec.openapis.org/oas/v3.0.3.html#parameterObject                 |
-| requestBody | - description<br>\- headers<br>\- content<br>\- links                                                           | https://spec.openapis.org/oas/v3.0.3.html#request-body-object             |
-| responses   | - description<br>\- headers<br>\- content<br>\- links                                                           | https://spec.openapis.org/oas/v3.0.3.html#responses-object                |
-| content     | (By alphabet)                                                                                                   | https://spec.openapis.org/oas/v3.0.3.html#responses-object                |
-| components  | - parameters<br>\- schemas                                                                                      | https://spec.openapis.org/oas/v3.0.3.html#components-object               |
-| schema      | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  | https://spec.openapis.org/oas/v3.0.3.html#schemaObject                    |
+| root        | - openapi<br>\- info<br>\- servers<br>\- paths<br>\- components<br>\- tags<br>\- x-tagGroups<br>\- externalDocs | [openapi-object](https://spec.openapis.org/oas/v3.0.3.html#openapi-object)                  |
+| get         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                |
+| post        | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
+| put         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
+| patch       | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
+| delete      | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
+| parameters  | - name<br>\- in<br>\- description<br>\- required<br>\- schema                                                   | [parameterObject](https://spec.openapis.org/oas/v3.0.3.html#parameterObject)                 |
+| requestBody | - description<br>\- headers<br>\- content<br>\- links                                                           | [request-body-object](https://spec.openapis.org/oas/v3.0.3.html#request-body-object)             |
+| responses   | - description<br>\- headers<br>\- content<br>\- links                                                           | [responses-object](https://spec.openapis.org/oas/v3.0.3.html#responses-object)                |
+| content     | (By alphabet)                                                                                                   | [responses-object](https://spec.openapis.org/oas/v3.0.3.html#responses-object)                |
+| components  | - parameters<br>\- schemas                                                                                      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object)               |
+| schema      | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  | [schemaObject](https://spec.openapis.org/oas/v3.0.3.html#schemaObject)                    |
 | schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                           |
 | properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                           |
+
+## OpenAPI formatting configuration options
+
+🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
+
+Tools like [spectral](https://github.com/stoplightio/spectral) or [speccy](https://speccy.io/), or any of the [linting tools](https://nordicapis.com/8-openapi-linters/), provide a manner to validate & lint OpenAPI specifications to be uniform. The linting tool informs about the incorrect usage of OpenAPI properties & inconsistent field names.
+This is very useful and helps to guard the quality of the OpenAPI specification. They inform which fields to correct so that the specification will comply with all the defined linting rules.
+
+The openapi-format CLI formatting option can assist with keeping the field names consistent by automatically changing the casing of the properties/keys/names for the different elements in the OpenAPI document.
+The desired casing can be defined per OpenAPI key/element (see list below).
+The keys that are not specified will keep their casing like it is in the original OpenAPI document, so only for defined fields, the casing will be changed.
+
+| Key                        | Description                                                                               | OpenAPI reference                                                         |
+| -------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| operationId                | Changes operation ID's that are part of the Operations Object                             | [operation-object](https://spec.openapis.org/oas/v3.0.3.html#operation-object)|
+| properties                 | Changes property keys of the schemas of the inline response/requestBody & components      | [schemaObject](https://spec.openapis.org/oas/v3.0.3.html#schemaObject) |
+| parametersPath             | Changes the path name of the parameters inline & models in the components                 | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| parametersHeader           | Changes the header name of the parameters inline & models in the components               | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| parametersQuery            | Changes the query name of the parameters inline & models in the components                | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| componentsParametersPath   | Changes the key of the path models in the components parameters sections & "$ref" links   | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsParametersQuery  | Changes the key of the query models in the components parameters sections & "$ref" links  | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsParametersHeader | Changes the key of the header models in the components parameters sections & "$ref" links | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsSchemas          | Changes the key of the schema models in the components sections & "$ref" links            | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsExamples         | Changes the key of the example models in the components sections & "$ref" links           | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsHeaders          | Changes the key of the header models in the components sections & "$ref" links            | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsResponses        | Changes the key of the response models in the components sections & "$ref" links          | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsRequestBodies    | Changes the key of the request body models in the components sections & "$ref" links      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsSecuritySchemes  | Changes the key of the security schemes in the components sections & "$ref" links         | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+
+Available casing options:
+- **camelCase**: converts a strings to `camelCase`
+- **PascalCase**: converts a strings to `PascalCase`
+- **kebab-case**: converts a strings to `kebab-case`
+- **Capital-Kebab-Case**: converts a strings to `Kebab-Case`
+- **snake_case**: converts a strings to `snake_case`
+- **CONSTANT_CASE**: converts a strings to `CONSTANT_CASE`
+- **CapitalCase**: converts a strings to `Capital Case` (with spaces)
+- **lowercase**: converts a strings to `lower case` (with spaces)
+- **UPPERCASE**: converts a strings to `UPPER CASE` (with spaces)
+
+=> **operationId**: Refers to the `operationId` properties in the OpenAPI document.
+
+Formatting casing example:
+
+```yaml
+operationId: kebab-case
+```
+
+Example before:
+
+```yaml
+openapi: 3.0.3
+paths:
+    /pets:
+        get:
+          operationId: getPets
+```
+
+openapi-format will format the "getPets" from the original camelcase to kebab-case.
+
+Example after:
+
+```yaml
+openapi: 3.0.3
+paths:
+    /pets:
+        get:
+          operationId: get-pets
+```
+
+=> **properties**: Refers to all the schema properties, that are defined inline in the paths request bodies & responses and the models in the components section of the OpenAPI document.
+
+Formatting casing example:
+
+```yaml
+properties: snake_case
+```
+
+Example before:
+
+```yaml
+openapi: 3.0.3
+components:
+    schemas:
+        UserModel:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    example: 10
+                emailAddress:
+                    type: string
+                    example: john@doe.com
+                firstName:
+                    type: string
+                    example: John
+```
+
+The CLI will format all the properties like: "id", "username", "firstName" from the original camelcase to snake_case.
+
+Example after:
+
+```yaml
+openapi: 3.0.3
+components:
+    schemas:
+        UserModel:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    example: 10
+                email_address:
+                    type: string
+                    example: john@doe.com
+                first_name:
+                    type: string
+                    example: John
+```
+
+=> **componentsSchemas/componentsExamples/componentsParametersHeader/componentsParametersQuery/componentsParametersQuery/componentsParametersPath/componentsHeaders/componentsResponses/componentsRequestBodies/componentsSecuritySchemes**: Refers to all the model keys that are defined in the components section of the OpenAPI document.
+
+Formatting casing example:
+
+```yaml
+componentsSchemas: PascalCase 
+```
+
+Example before:
+
+```yaml
+openapi: 3.0.3
+paths:
+    /orders:
+        get:
+            responses:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/order-model'
+components:
+    schemas:
+        userModel:
+            type: object
+        order-model:
+            type: object
+        pet_model:
+            type: object
+```
+
+openapi-format will format all the component keys like: "userModel", "order-model", "pet_model" to PascalCase, including formatting all the "$ref" used in the OpenAPI document.
+
+Example after:
+
+```yaml
+openapi: 3.0.3
+paths:
+    /orders:
+        get:
+            responses:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/OrderModel'
+components:
+    schemas:
+        UserModel:
+            type: object
+        OrderModel:
+            type: object
+        PetModel:
+            type: object
+```
+=> **componentsParametersPath/componentsParametersQuery/componentsParametersHeader**: Refers to "name" in the Parameters types: Path, Query or Header, which can be defined inline in the Path or as a reference in the components of the OpenAPI document.
+
+Formatting casing example:
+
+```yaml
+componentsSchemas: kebab-case 
+```
+
+Example before:
+
+```yaml
+openapi: 3.0.3
+paths:
+    '/pet/{petId}':
+        get:
+            parameters:
+                - name: petId
+                  in: path
+                  description: ID of pet to return
+                - $ref: '#/components/parameters/LimitParam'
+components:
+    parameters:
+        LimitParam:
+            name: limitParam
+            in: query
+            description: max records to return
+```
+
+The CLI will format the "name" of the parameters: Path, Query or Header like: "petId", "limitParam" to kebab-case in the OpenAPI document.
+
+Example after:
+
+```yaml
+openapi: 3.0.3
+paths:
+    '/pet/{petId}':
+        get:
+            parameters:
+                - name: pet-id
+                  in: path
+                  description: ID of pet to return
+               - $ref: '#/components/parameters/LimitParam'
+components:
+    parameters:
+        LimitParam:
+            name: limit-param
+            in: query
+            description: max records to return
+```
 
 ## OpenAPI filter options
 

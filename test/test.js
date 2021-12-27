@@ -14,7 +14,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-filter-inverse-operationids']
+// const tests = ['yaml-casing-component-names']
 // destroyOutput = true
 
 describe('openapi-format tests', () => {
@@ -28,8 +28,10 @@ describe('openapi-format tests', () => {
                 let sortComponentsOptions = {sortComponentsSet: {}};
                 let sortFile = null;
                 let filterFile = null;
+                let casingFile = null;
                 let sortComponentsFile = null;
                 let filterOptions = {filterSet: {}};
+                let casingOptions = {casingSet: {}};
                 let inputFilename = null;
                 let input = null;
 
@@ -84,7 +86,7 @@ describe('openapi-format tests', () => {
                     filterOptions.filterSet = sy.parse(fs.readFileSync(filterFile, 'utf8'));
                     options = Object.assign({}, options, filterOptions);
                 } catch (ex) {
-                    // console.error('ERROR Load customSort.yaml', ex)
+                    // console.error('ERROR Load customFilter.yaml', ex)
                     try {
                         // Fallback to customFilter.json
                         filterFile = path.join(__dirname, test, 'customFilter.json');
@@ -95,6 +97,25 @@ describe('openapi-format tests', () => {
                         // No options found. defaultSort.json will be used
                         // console.error('ERROR Load customSort.json', ex)
                         options.filterSet = require('../defaultFilter.json');
+                    }
+                }
+
+                try {
+                    // Load customCasing.yaml
+                    casingFile = path.join(__dirname, test, 'customCasing.yaml');
+                    // filterOptions.filterSet = jy.load(fs.readFileSync(filterFile, 'utf8'));
+                    casingOptions.casingSet = sy.parse(fs.readFileSync(casingFile, 'utf8'));
+                    options = Object.assign({}, options, casingOptions);
+                } catch (ex) {
+                    // console.error('ERROR Load customCasing.yaml', ex)
+                    try {
+                        // Fallback to customCasing.json
+                        casingFile = path.join(__dirname, test, 'customCasing.json');
+                        // filterOptions.filterSet = jy.load(fs.readFileSync(filterFile, 'utf8'));
+                        casingOptions.casingSet = sy.parse(fs.readFileSync(casingFile, 'utf8'));
+                        options = Object.assign({}, options, casingOptions);
+                    } catch (ex) {
+                        // No options found
                     }
                 }
 
@@ -176,6 +197,12 @@ describe('openapi-format tests', () => {
                 // Sort OpenAPI document
                 if (options.sort === true) {
                     const resFormat = openapiFormat.openapiSort(result, options);
+                    if (resFormat.data) result = resFormat.data;
+                }
+
+                // Change case OpenAPI document
+                if (options.casingSet) {
+                    const resFormat = openapiFormat.openapiChangeCase(result, options);
                     if (resFormat.data) result = resFormat.data;
                 }
 

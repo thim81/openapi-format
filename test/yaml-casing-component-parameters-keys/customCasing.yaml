@@ -1,0 +1,3 @@
+componentsParametersHeader: kebab-case
+componentsParametersQuery: snake_case
+componentsParametersPath: kebab-case
