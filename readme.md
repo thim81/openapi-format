@@ -193,7 +193,7 @@ example on how to do this).
 
 🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
 
-When using tools like [spectral](https://github.com/stoplightio/spectral) or [speccy](https://speccy.io/), or any of the [linting tools](https://nordicapis.com/8-openapi-linters/), to validate & lint OpenAPI specifications to be uniform. The linting tool informs about the incorrect usage of OpenAPI properties & inconsistent field names.
+Tools like [spectral](https://github.com/stoplightio/spectral) or [speccy](https://speccy.io/), or any of the [linting tools](https://nordicapis.com/8-openapi-linters/), provide a manner to validate & lint OpenAPI specifications to be uniform. The linting tool informs about the incorrect usage of OpenAPI properties & inconsistent field names.
 This is very useful and helps to guard the quality of the OpenAPI specification. They inform which fields to correct so that the specification will comply with all the defined linting rules.
 
 The openapi-format CLI formatting option can assist with keeping the field names consistent by automatically changing the casing of the properties/keys/names for the different elements in the OpenAPI document.
