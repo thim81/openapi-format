@@ -847,6 +847,7 @@ function changeCase(valueAsString, caseType) {
         case "kebapcase":
             return kebabCase(valueAsString)
         case "capitalkebabcase":
+        case "capitalkebapcase":
             return capitalKebabCase(valueAsString)
         case "snakecase":
             return snakeCase(valueAsString)
