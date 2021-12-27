@@ -1,8 +1,12 @@
 ## unreleased
 
+## [1.8.0] - 2020-12-27
+
 - new feature - Formatting - Change casing of OpenAPI elements
   - Support common casing (camelCase, PascalCase, kebap-case, snake_case, ...)
-  - Provide support properties, operationId, query params, path variables, headers, component names
+  - Format the casing of fields & model names/keys for: properties, operationId, query params, path variables, headers, components
+
+For more details on this new feature: https://github.com/thim81/openapi-format#openapi-formatting-configuration-options
 
 ## [1.7.2] - 2020-12-17
 
