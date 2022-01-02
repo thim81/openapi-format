@@ -43,7 +43,7 @@
         "test": "test"
     },
     "scripts": {
-        "test": "mocha",
+        "test": "jest --colors --verbose --reporters=default --collectCoverage --no-cache",
         "release": "np --branch main"
     },
     "dependencies": {
@@ -52,7 +52,8 @@
         "traverse": "^0.6.6"
     },
     "devDependencies": {
-        "mocha": "^9.1.2"
+        "mocha": "^9.1.2",
+        "jest": "^27.4.5"
     },
     "engines": {
         "node": ">=12"
