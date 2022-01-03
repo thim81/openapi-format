@@ -2,7 +2,7 @@
 
 const testUtils = require('./__utils__/test-utils')
 
-describe('openapi-format filtering tests', () => {
+describe('openapi-format CLI filtering tests', () => {
 
     describe('json-filter-markdown-comments', () => {
         it('json-filter-markdown-comments - should match expected output', async () => {

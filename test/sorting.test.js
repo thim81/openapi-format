@@ -2,7 +2,7 @@
 
 const testUtils = require('./__utils__/test-utils')
 
-describe('openapi-format sorting tests', () => {
+describe('openapi-format CLI sorting tests', () => {
 
     describe('json-custom', () => {
         it('json-custom - should match expected output', async () => {

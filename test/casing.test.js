@@ -2,7 +2,7 @@
 
 const testUtils = require('./__utils__/test-utils')
 
-describe('openapi-format casing tests', () => {
+describe('openapi-format CLI casing tests', () => {
 
     describe('yaml-casing', () => {
         it('yaml-casing - should match expected output', async () => {

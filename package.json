@@ -52,7 +52,6 @@
         "traverse": "^0.6.6"
     },
     "devDependencies": {
-        "mocha": "^9.1.2",
         "jest": "^27.4.5"
     },
     "engines": {

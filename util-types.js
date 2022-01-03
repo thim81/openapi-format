@@ -1,4 +1,4 @@
-
+/* istanbul ignore file */
 function isBoolean (v) { return typeof v === 'boolean'; }
 function isNumber (v) { return typeof v === 'number'; }
 function isString (v) { return typeof v === 'string'; }
