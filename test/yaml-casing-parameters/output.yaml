@@ -612,7 +612,7 @@ components:
         type: integer
         format: int32
     limitParam:
-      name: limit_param
+      name: $limit_param
       in: query
       description: max records to return
       required: true
