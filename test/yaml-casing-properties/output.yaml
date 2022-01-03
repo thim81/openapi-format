@@ -54,7 +54,7 @@ paths:
                     type: integer
                     format: int64
                     example: 10
-                  '@name_pet':
+                  name_pet:
                     type: string
                     example: doggie
                   pet_model:
@@ -525,7 +525,7 @@ components:
           example: doggie
         category:
           $ref: '#/components/schemas/CategoryModel'
-        '@photo_urls':
+        photo_urls:
           type: array
           items:
             type: string
