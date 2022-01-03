@@ -1,27 +1,10 @@
-const path = require("path");
-const exec = require("child_process").exec;
+const testUtils = require('../test/__utils__/test-utils')
 
-describe("CLI command", () => {
-    it("should run a prototype project by default", async () => {
-        let result = await cli(["new", sandbox], ".");
+describe("openapi-format CLI command", () => {
+
+    it("should output the version", async () => {
+        let result = await testUtils.cli([`--version`], '.');
+        // console.log('result', result)
         expect(result.code).toBe(0);
-        expect(result.stdout).toContain("prototyping");
     });
 })
-
-function cli(args, cwd) {
-    return new Promise(resolve => {
-        exec(
-            `node ${path.resolve("./bin/cli")} ${args.join(" ")}`,
-            { cwd },
-            (error, stdout, stderr) => {
-                resolve({
-                    code: error && error.code ? error.code : 0,
-                    error,
-                    stdout,
-                    stderr
-                });
-            }
-        );
-    });
-}
