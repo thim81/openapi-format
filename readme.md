@@ -219,21 +219,21 @@ The keys that are not specified will keep their casing like it is in the origina
 
 Available casing options:
 
-| Casing              | Description                                         | Example          |
-| ------------------- | --------------------------------------------------- | ---------------- |
-| 🐪 camelCase        | converts a strings to `camelCase`                   | `openapiFormat`  |
-| 👨‍🏫 PascalCase       | converts a strings to `PascalCase`                  | `OpenapiFormat`  |
-| 🥙 kebab-case       | converts a strings to `kebab-case`                  | `openapi-format` |
-| 🚂 Train-Case       | converts a strings to `Train-Case`                  | `Openapi-Format` |
-| 🐍 snake_case       | converts a strings to `snake_case`                  | `openapi_format` |
-| 🕊 Ada_Case         | converts a strings to `Ada_Case`                    | `Openapi_Format` |
-| 📣 CONSTANT_CASE    | converts a strings to `CONSTANT_CASE`               | `OPENAPI_FORMAT` |
-| 👔 COBOL-CASE       | converts a strings to `COBOL-CASE`                  | `OPENAPI-FORMAT` |
-| 📍 Dot.notation     | converts a strings to `Dot.notation`                | `openapi.Format` |
-| 🛰 Space case       | converts a strings to `Space case` (with spaces)    | `openapi format` |
-| 🏛 Capital Case     | converts a strings to `Capital Case` (with spaces)  | `Openapi Format` |
-| 🔡 lower case       | converts a strings to `lower case` (with spaces)    | `openapi format` |
-| 🔠 UPPER CASE       | converts a strings to `UPPER CASE` (with spaces)    | `OPENAPI FORMAT` |
+| Casing type      | Casing alias | Description                                         | Example          |
+| -----------------| ------------ | --------------------------------------------------- | ---------------- |
+| 🐪 camelCase     | camelCase    | converts a strings to `camelCase`                   | `openapiFormat`  |
+| 👨‍🏫 PascalCase    | PascalCase   | converts a strings to `PascalCase`                  | `OpenapiFormat`  |
+| 🥙 kebab-case    | kebabCase    | converts a strings to `kebab-case`                  | `openapi-format` |
+| 🚂 Train-Case    | TrainCase    | converts a strings to `Train-Case`                  | `Openapi-Format` |
+| 🐍 snake_case    | snakeCase    | converts a strings to `snake_case`                  | `openapi_format` |
+| 🕊 Ada_Case      | AdaCase      | converts a strings to `Ada_Case`                    | `Openapi_Format` |
+| 📣 CONSTANT_CASE | constantCase | converts a strings to `CONSTANT_CASE`               | `OPENAPI_FORMAT` |
+| 👔 COBOL-CASE    | cobolCase    | converts a strings to `COBOL-CASE`                  | `OPENAPI-FORMAT` |
+| 📍 Dot.notation  | dotNotation  | converts a strings to `Dot.notation`                | `openapi.format` |
+| 🛰 Space case    | spaceCase    | converts a strings to `Space case` (with spaces)    | `openapi format` |
+| 🏛 Capital Case  | capitalCase  | converts a strings to `Capital Case` (with spaces)  | `Openapi Format` |
+| 🔡 lower case    | lowerCase    | converts a strings to `lower case` (with spaces)    | `openapi format` |
+| 🔠 UPPER CASE    | upperCase    | converts a strings to `UPPER CASE` (with spaces)    | `OPENAPI FORMAT` |
 
 > REMARK: All special characters are stripped during conversion, except for the `@` and `$`, since they can be part of the query strings.
 
