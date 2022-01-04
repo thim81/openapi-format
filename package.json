@@ -47,7 +47,7 @@
     },
     "dependencies": {
         "@stoplight/yaml": "^4.2.2",
-        "case-anything": "^2.1.1",
+        "case-anything": "mesqueeb/case-anything",
         "commander": "^7.1.0",
         "traverse": "^0.6.6"
     },
