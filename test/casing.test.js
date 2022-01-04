@@ -1,6 +1,7 @@
 'use strict';
 
 const testUtils = require('./__utils__/test-utils')
+const of = require ('./../openapi-format')
 
 describe('openapi-format CLI casing tests', () => {
 
@@ -69,4 +70,47 @@ describe('openapi-format CLI casing tests', () => {
             expect(outputAfter).toStrictEqual(outputBefore);
         });
     })
+
+    describe('convert casing', () => {
+        const str = 'openapi-format'
+        it('casing should match camelCase', async () => {
+            expect(of.changeCase(str, 'camelCase')).toBe('openapiFormat');
+        });
+        it('casing should match PascalCase', async () => {
+            expect(of.changeCase(str, 'PascalCase')).toBe('OpenapiFormat');
+        });
+        it('casing should match kebab-case', async () => {
+            expect(of.changeCase(str, 'kebab-case')).toBe('openapi-format');
+        });
+        it('casing should match Train-Case', async () => {
+            expect(of.changeCase(str, 'Train-Case')).toBe('Openapi-Format');
+        });
+        it('casing should match snake_case', async () => {
+            expect(of.changeCase(str, 'snake_case')).toBe('openapi_format');
+        });
+        it('casing should match Ada_Case', async () => {
+            expect(of.changeCase(str, 'Ada_Case')).toBe('Openapi_Format');
+        });
+        it('casing should match CONSTANT_CASE', async () => {
+            expect(of.changeCase(str, 'CONSTANT_CASE')).toBe('OPENAPI_FORMAT');
+        });
+        it('casing should match COBOL-CASE', async () => {
+            expect(of.changeCase(str, 'COBOL-CASE')).toBe('OPENAPI-FORMAT');
+        });
+        it('casing should match Dot.notation', async () => {
+            expect(of.changeCase(str, 'Dot.notation')).toBe('openapi.format');
+        });
+        it('casing should match Space case', async () => {
+            expect(of.changeCase(str, 'Space case')).toBe('openapi format');
+        });
+        it('casing should match Capital Case', async () => {
+            expect(of.changeCase(str, 'Capital Case')).toBe('Openapi Format');
+        });
+        it('casing should match lower case', async () => {
+            expect(of.changeCase(str, 'lower case')).toBe('openapi format');
+        });
+        it('casing should match UPPER CASE', async () => {
+            expect(of.changeCase(str, 'UPPER CASE')).toBe('OPENAPI FORMAT');
+        });
+    });
 });

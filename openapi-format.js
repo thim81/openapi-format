@@ -905,5 +905,6 @@ module.exports = {
     openapiFilter: openapiFilter,
     openapiSort: openapiSort,
     openapiChangeCase: openapiChangeCase,
-    openapiRename: openapiRename
+    openapiRename: openapiRename,
+    changeCase: changeCase
 };
