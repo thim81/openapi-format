@@ -28,7 +28,6 @@
         "CHANGELOG.md",
         "LICENSE",
         "openapi-format.js",
-        "util-case-anything.js",
         "util-log-output.js",
         "util-types.js",
         "defaultSort.json",
@@ -48,6 +47,7 @@
     },
     "dependencies": {
         "@stoplight/yaml": "^4.2.2",
+        "case-anything": "^2.1.1",
         "commander": "^7.1.0",
         "traverse": "^0.6.6"
     },
