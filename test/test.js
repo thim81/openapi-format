@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const assert = require('assert');
 // const jy = require('js-yaml');
 const sy = require('@stoplight/yaml');
 
@@ -10,7 +9,7 @@ const openapiFormat = require('../openapi-format.js');
 
 let destroyOutput = false;
 const tests = fs.readdirSync(__dirname).filter(file => {
-    return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_') || doPrivate);
+    return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_'));
 });
 
 // SELECTIVE TESTING DEBUG
@@ -20,7 +19,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 describe('openapi-format tests', () => {
     tests.forEach((test) => {
         describe(test, () => {
-            it('should match expected output', (done) => {
+            it('should match expected output', async () => {
                 let options = {};
                 let configFile = null;
                 let configFileOptions = {};
@@ -226,8 +225,8 @@ describe('openapi-format tests', () => {
                     console.log('error', error);
                 }
 
-                assert.deepStrictEqual(result, output);
-                return done();
+                // Assert results with output
+                expect(result).toStrictEqual(output);
             });
         });
     });

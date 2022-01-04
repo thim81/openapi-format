@@ -1,4 +1,5 @@
 'use strict';
+/* istanbul ignore file */
 
 // case-anything
 // https://github.com/mesqueeb/case-anything
