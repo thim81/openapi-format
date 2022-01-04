@@ -838,6 +838,7 @@ the [@microsoft.azure/format-spec](https://www.npmjs.com/package/@microsoft.azur
 original code was not available on GitHub, with the last update being 3 years ago, so to improve support and extend it we
 tried to reproduce the original functionality.
 
-The filter capabilities from `openapi-format` are a light version of the [openapi-filter](https://github.com/Mermade/openapi-filter) package from [@MikeRalphson](https://github.com/mikeralphson).
+The filter capabilities from `openapi-format` are a light version grounded by the work from [@MikeRalphson](https://github.com/mikeralphson) on
+the [openapi-filter](https://github.com/Mermade/openapi-filter) package.
 
 The casing options available in `openapi-format` are powered by the [case-anything](https://github.com/mesqueeb/case-anything) nano package from Luca Ban ([@mesqueeb](https://github.com/mesqueeb)).
