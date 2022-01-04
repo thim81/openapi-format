@@ -224,10 +224,10 @@ Available casing options:
 | 🐪 camelCase        | converts a strings to `camelCase`                   | `openapiFormat`  |
 | 👨‍🏫 PascalCase       | converts a strings to `PascalCase`                  | `OpenapiFormat`  |
 | 🥙 kebab-case       | converts a strings to `kebab-case`                  | `openapi-format` |
-| 🐍 snake_case       | converts a strings to `snake_case`                  | `openapi_format` |
 | 🚂 Train-Case       | converts a strings to `Train-Case`                  | `Openapi-Format` |
+| 🐍 snake_case       | converts a strings to `snake_case`                  | `openapi_format` |
+| 🕊 Ada_Case         | converts a strings to `Ada_Case`                    | `Openapi_Format` |
 | 📣 CONSTANT_CASE    | converts a strings to `CONSTANT_CASE`               | `OPENAPI_FORMAT` |
-| 🕊 Ada_Case         | converts a strings to `Ada_Case`                    | `Openapi-Format` |
 | 👔 COBOL-CASE       | converts a strings to `COBOL-CASE`                  | `OPENAPI-FORMAT` |
 | 📍 Dot.notation     | converts a strings to `Dot.notation`                | `openapi.Format` |
 | 🛰 Space case       | converts a strings to `Space case` (with spaces)    | `openapi format` |
@@ -235,7 +235,7 @@ Available casing options:
 | 🔡 lower case       | converts a strings to `lower case` (with spaces)    | `openapi format` |
 | 🔠 UPPER CASE       | converts a strings to `UPPER CASE` (with spaces)    | `OPENAPI FORMAT` |
 
-> REMARK: All special characters are removed during conversion, except for the `@` and `$`, since they can be part of the query strings.
+> REMARK: All special characters are stripped during conversion, except for the `@` and `$`, since they can be part of the query strings.
 
 The casing options are provided by the nano NPM [case-anything](https://github.com/mesqueeb/case-anything) package.
 
