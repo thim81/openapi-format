@@ -610,7 +610,7 @@ function openapiChangeCase(oaObj, options) {
                         return {[newKey]: orgObj[key]};
                     }
                 });
-                this.update( Object.assign({}, ...replacedItems));
+                this.update(Object.assign({}, ...replacedItems));
             }
             // Change components/parameters - query/header name
             if (this.path[1] === 'parameters' && this.path.length === 3) {
@@ -685,7 +685,7 @@ function openapiChangeCase(oaObj, options) {
         }
 
         // Change operationId
-        if (this.key === 'operationId' && casingSet.operationId) {
+        if (this.key === 'operationId' && casingSet.operationId && this.path[0] === 'paths' && this.path.length === 4) {
             // debugCasingStep = 'Casing - Single field - OperationId'
             this.update(changeCase(node, casingSet.operationId));
         }
