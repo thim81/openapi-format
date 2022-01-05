@@ -218,15 +218,27 @@ The keys that are not specified will keep their casing like it is in the origina
 | componentsSecuritySchemes  | Changes the key of the security schemes in the components sections & "$ref" links         | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
 
 Available casing options:
-- **camelCase**: converts a strings to `camelCase`
-- **PascalCase**: converts a strings to `PascalCase`
-- **kebab-case**: converts a strings to `kebab-case`
-- **Capital-Kebab-Case**: converts a strings to `Kebab-Case`
-- **snake_case**: converts a strings to `snake_case`
-- **CONSTANT_CASE**: converts a strings to `CONSTANT_CASE`
-- **CapitalCase**: converts a strings to `Capital Case` (with spaces)
-- **lowercase**: converts a strings to `lower case` (with spaces)
-- **UPPERCASE**: converts a strings to `UPPER CASE` (with spaces)
+
+| Casing type      | Casing alias | Description                                       | Example          |
+| -----------------| ------------ | ------------------------------------------------- | --------------- |
+| 🐪 camelCase     | camelCase    | converts a strings to `camelCase`                 | `openapiFormat`  |
+| 👨‍🏫 PascalCase    | PascalCase   | converts a strings to `PascalCase`                | `OpenapiFormat`  |
+| 🥙 kebab-case    | kebabCase    | converts a strings to `kebab-case`                | `openapi-format` |
+| 🚂 Train-Case    | TrainCase    | converts a strings to `Train-Case`                | `Openapi-Format` |
+| 🐍 snake_case    | snakeCase    | converts a strings to `snake_case`                | `openapi_format` |
+| 🕊 Ada_Case      | AdaCase      | converts a strings to `Ada_Case`                  | `Openapi_Format` |
+| 📣 CONSTANT_CASE | constantCase | converts a strings to `CONSTANT_CASE`             | `OPENAPI_FORMAT` |
+| 👔 COBOL-CASE    | cobolCase    | converts a strings to `COBOL-CASE`                | `OPENAPI-FORMAT` |
+| 📍 Dot.notation  | dotNotation  | converts a strings to `Dot.notation`              | `openapi.format` |
+| 🛰 Space case    | spaceCase    | converts a strings to `Space case` (with spaces)  | `openapi format` |
+| 🏛 Capital Case  | capitalCase  | converts a strings to `Capital Case` (with spaces)| `Openapi Format` |
+| 🔡 lower case    | lowerCase    | converts a strings to `lower case` (with spaces)  | `openapi format` |
+| 🔠 UPPER CASE    | upperCase    | converts a strings to `UPPER CASE` (with spaces)  | `OPENAPI FORMAT` |
+
+> REMARK: All special characters are stripped during conversion, except for the `@` and `$`, since they can be part of the query strings.
+
+The casing options are provided by the nano NPM [case-anything](https://github.com/mesqueeb/case-anything) package.
+
 
 => **operationId**: Refers to the `operationId` properties in the OpenAPI document.
 
@@ -822,9 +834,11 @@ reason why we opted for using the @stoplight/yaml package.
 ## Credits
 
 This package is inspired by
-the [@microsoft.azure/format-spec](https://www.npmjs.com/package/@microsoft.azure/format-spec) from @fearthecowboy. The
-original code was not available on GitHub, with the last update was 3 years ago, so to improve support and extend it we
+the [@microsoft.azure/format-spec](https://www.npmjs.com/package/@microsoft.azure/format-spec) from [@fearthecowboy](https://github.com/fearthecowboy). The
+original code was not available on GitHub, with the last update being 3 years ago, so to improve support and extend it we
 tried to reproduce the original functionality.
 
-The filter capabilities from `openapi-format` are a light version inspired by the work from @MikeRalphson on
-the https://github.com/Mermade/openapi-filter package.
+The filter capabilities from `openapi-format` are a light version grounded by the work from [@MikeRalphson](https://github.com/mikeralphson) on
+the [openapi-filter](https://github.com/Mermade/openapi-filter) package.
+
+The casing options available in `openapi-format` are powered by the [case-anything](https://github.com/mesqueeb/case-anything) nano package from Luca Ban ([@mesqueeb](https://github.com/mesqueeb)).

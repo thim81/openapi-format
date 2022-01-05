@@ -5,17 +5,20 @@ const fs = require('fs');
 const traverse = require('traverse');
 const {isString, isArray, isObject} = require("./util-types");
 const {
+    adaCase,
     camelCase,
     capitalCase,
-    capitalKebabCase,
+    cobolCase,
     constantCase,
-    firstCapitalCase,
+    dotNotation,
     kebabCase,
     lowerCase,
     pascalCase,
     snakeCase,
+    spaceCase,
+    trainCase,
     upperCase
-} = require("./util-case-anything");
+} = require("case-anything");
 
 /**
  * Sort Object by Key or list of names
@@ -833,34 +836,41 @@ function changeArrayObjKeysCase(node, caseType) {
  * @returns {string}
  */
 function changeCase(valueAsString, caseType) {
-    const caseTypes = ['camelCase', 'PascalCase', 'kebab-case', 'snake_case', 'CONSTANT_CASE', 'capitalCase', 'lowerCase', 'UPPERCASE']
     if (!isString(valueAsString) || valueAsString === "") return valueAsString
-    // if (!caseTypes.includes(caseType)) return valueAsString
-    const normCaseType = caseType.toLowerCase().replace(/-/g, '').replace(/_/g, '')
+    const keepChars = ['$', '@']
+    const normCaseType = camelCase(caseType)
 
     switch (normCaseType) {
-        case "camelcase":
-            return camelCase(valueAsString)
-        case "pascalcase":
-            return pascalCase(valueAsString)
-        case "kebabcase":
-        case "kebapcase":
-            return kebabCase(valueAsString)
-        case "capitalkebabcase":
-        case "capitalkebapcase":
-            return capitalKebabCase(valueAsString)
-        case "snakecase":
-            return snakeCase(valueAsString)
-        case "constantcase":
-            return constantCase(valueAsString)
-        case "capitalcase":
-            return capitalCase(valueAsString)
-        case "firstcapitalcase":
-            return firstCapitalCase(valueAsString)
-        case "lowercase":
-            return lowerCase(valueAsString)
-        case "uppercase":
-            return upperCase(valueAsString)
+        case "camelCase":
+            return camelCase(valueAsString, {keep: keepChars})
+        case "pascalCase":
+        case "upperCamelCase":
+            return pascalCase(valueAsString, {keep: keepChars})
+        case "kebabCase":
+        case "kebapCase":
+            return kebabCase(valueAsString, {keep: keepChars})
+        case "trainCase":
+        case "capitalKebabCase":
+        case "capitalKebapCase":
+            return trainCase(valueAsString, {keep: keepChars})
+        case "snakeCase":
+            return snakeCase(valueAsString, {keep: keepChars})
+        case "adaCase":
+            return adaCase(valueAsString, {keep: keepChars})
+        case "constantCase":
+            return constantCase(valueAsString, {keep: keepChars})
+        case "cobolCase":
+            return cobolCase(valueAsString, {keep: keepChars})
+        case "dotNotation":
+            return dotNotation(valueAsString, {keep: keepChars})
+        case "spaceCase":
+            return spaceCase(valueAsString, {keep: keepChars})
+        case "capitalCase":
+            return capitalCase(valueAsString, {keep: keepChars})
+        case "lowerCase":
+            return lowerCase(valueAsString, {keep: keepChars})
+        case "upperCase":
+            return upperCase(valueAsString, {keep: keepChars})
         default:
             return valueAsString
     }
@@ -895,5 +905,6 @@ module.exports = {
     openapiFilter: openapiFilter,
     openapiSort: openapiSort,
     openapiChangeCase: openapiChangeCase,
-    openapiRename: openapiRename
+    openapiRename: openapiRename,
+    changeCase: changeCase
 };
