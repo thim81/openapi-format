@@ -217,7 +217,7 @@ The keys that are not specified will keep their casing like it is in the origina
 | componentsRequestBodies    | Changes the key of the request body models in the components sections & "$ref" links      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
 | componentsSecuritySchemes  | Changes the key of the security schemes in the components sections & "$ref" links         | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
 
-Available casing options:
+### Casing options
 
 | Casing type      | Casing alias | Description                                       | Example          |
 | -----------------| ------------ | ------------------------------------------------- | --------------- |
@@ -239,6 +239,7 @@ Available casing options:
 
 The casing options are provided by the nano NPM [case-anything](https://github.com/mesqueeb/case-anything) package.
 
+### Format casing - operationId
 
 => **operationId**: Refers to the `operationId` properties in the OpenAPI document.
 
@@ -269,6 +270,8 @@ paths:
         get:
           operationId: get-pets
 ```
+
+### Format casing - model & schema properties
 
 => **properties**: Refers to all the schema properties, that are defined inline in the paths request bodies & responses and the models in the components section of the OpenAPI document.
 
@@ -319,6 +322,7 @@ components:
                     type: string
                     example: John
 ```
+### Format casing - model & schema keys
 
 => **componentsSchemas/componentsExamples/componentsParametersHeader/componentsParametersQuery/componentsParametersQuery/componentsParametersPath/componentsHeaders/componentsResponses/componentsRequestBodies/componentsSecuritySchemes**: Refers to all the model keys that are defined in the components section of the OpenAPI document.
 
@@ -373,6 +377,9 @@ components:
         PetModel:
             type: object
 ```
+
+### Format casing - parameter names
+
 => **componentsParametersPath/componentsParametersQuery/componentsParametersHeader**: Refers to "name" in the Parameters types: Path, Query or Header, which can be defined inline in the Path or as a reference in the components of the OpenAPI document.
 
 Formatting casing example:
@@ -448,6 +455,8 @@ extended options for filtering OpenAPI documents.
 
 Some more details on the available filter types:
 
+### Filter - methods/inverseMethods
+
 => **methods**: Refers to the "Path Item Object" http://spec.openapis.org/oas/v3.0.3.html#operationObject
 
 This will remove all fields and attached fields that match the verbs. In the example below, this would mean that
@@ -464,7 +473,11 @@ paths:
             summary: Finds Pets by status
         put:
             summary: Update an existing pet
-```  
+```
+
+=> **inverseMethods**: This option does the inverse filtering, by keeping only the verbs defined and remove all other verbs.
+
+### Filter - tags
 
 => **tags**: Refers to the "tags" field from the "Operation
   Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
@@ -487,6 +500,10 @@ paths:
             summary: Update an existing pet
 ```  
 
+=> **inverseTags**: This option does the inverse filtering, by keeping only the tags defined and remove all other tags, including the operations without a tags.
+
+### Filter - operationIds
+
 => **operationIds**: Refers to the "operationId" field from the "Operation
   Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
 
@@ -505,6 +522,10 @@ paths:
         get:
             operationId: findPetsByStatus
 ```
+
+=> **inverseTags**: This option does the inverse filtering, by keeping only the operationIds defined and remove all other operationIds, including the operations without an operationId.
+
+### Filter - operations
 
 => **operations**: Refers to a combination of a OpenAPI method & path from the "Path
   Object" https://spec.openapis.org/oas/v3.0.3.html#paths-object & "Path
@@ -554,6 +575,8 @@ This will target only the "GET" method and any path matching any folder behind t
 Method & Path wildcard matching example: `"*::/pets/*"`
 A combination of wildcards for the method and path parts is even possible. 
 
+### Filter - flags
+
 => **flags**: Refers to a custom property that can be set on any field in the OpenAPI document.
 
 This will remove all fields and attached fields that match the flags. In the example below, this would mean that all
@@ -571,6 +594,8 @@ paths:
         get:
             x-exclude: true
 ```
+
+### Filter - flagValues
 
 => **flagValues**: Refers to a flag, custom property which can be set on any field in the OpenAPI document, and the combination with the value for that flag.
 
@@ -624,6 +649,8 @@ paths:
 
 Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-valye) and [flagValues for array values](test/yaml-filter-custom-flagsvalue-array) for a practical example.
 
+### Filter - unusedComponents
+
 => **unusedComponents**: Refers to a list of [reusable component types]( https://spec.openapis.org/oas/v3.0.3.html#components-object), from which unused items will be removed.
 
 This option allows you to strip the OpenAPI document from any unused items of the targeted `components` types. 
@@ -638,6 +665,8 @@ Supported component types that can be marked as "unused":
 - headers
 - requestBodies
 - responses
+
+### Filter - textReplace
 
 => **textReplace**: "search & replace" option to replace text in the OpenAPI specification
 
@@ -655,6 +684,8 @@ textReplace:
 ```
 
 This will replace all "Pets" with "Dogs" & "swagger.io" with "openapi.org" in the OpenAPI document.
+
+### Filter - stripFlags
 
 => **stripFlags**: Refers to a list of custom properties that can be set on any field in the OpenAPI document.
 
@@ -841,4 +872,4 @@ tried to reproduce the original functionality.
 The filter capabilities from `openapi-format` are a light version grounded by the work from [@MikeRalphson](https://github.com/mikeralphson) on
 the [openapi-filter](https://github.com/Mermade/openapi-filter) package.
 
-The casing options available in `openapi-format` are powered by the [case-anything](https://github.com/mesqueeb/case-anything) nano package from Luca Ban ([@mesqueeb](https://github.com/mesqueeb)).
+The casing options available in `openapi-format` are powered by the excellent [case-anything](https://github.com/mesqueeb/case-anything) nano package from Luca Ban ([@mesqueeb](https://github.com/mesqueeb)).
