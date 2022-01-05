@@ -17,7 +17,7 @@ flags, tags, methods, operationID's and even unused components.
 * [Use-cases](#use-cases)
 * [Features](#features)
 * [Installation](#installation)
-    + [Local Installation (recommended)](#local-installation--recommended-)
+    + [Local Installation (recommended)](#local-installation-recommended)
     + [Global Installation](#global-installation)
     + [NPX usage](#npx-usage)
 * [Command Line Interface](#command-line-interface)
@@ -41,7 +41,7 @@ and even unused schemas, examples, responses, ... with a clean and optimized Ope
 
 **Maintenance:**
 When working on large OpenAPI documents or with multiple team members, the file can be become messy and difficult to
-compare changes. By sorting it from time to time, the fields are all ordered in a structured manner, which will help you
+compare changes. By sorting & formatting from time to time, the fields are all ordered in a structured manner & properly cased, which will help you
 to maintain the file with greater ease.
 
 **CI/CD pipelines:**
@@ -406,7 +406,7 @@ paths:
                 - 5.0
 ```
 
-Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-valye) and [flagValues for array values](test/yaml-filter-custom-flagsvalue-array) for a practical example.
+Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-value) and [flagValues for array values](test/yaml-filter-custom-flagsvalue-array) for a practical example.
 
 ### Filter - unusedComponents
 
@@ -859,7 +859,7 @@ files.
 By using the Stoplight YAML parsing, the results will be slightly different from when using a normal YAML parsing
 library, like [js-to-yaml](https://www.npmjs.com/package/js-yaml). We appreciate the Stoplight Studio tool, since it is
 an excellent GUI for working with OpenAPI documents for non-OpenAPI experts who will be contributing changes. By
-adopting the Stoplight Studio YAML parsing, the potential risk of merge conflicts will be lower, which is the main
+adopting the Stoplight Studio YAML parsing, the potential risk of merge conflicts will be lowered, which is the main
 reason why we opted for using the @stoplight/yaml package.
 
 ## Credits
