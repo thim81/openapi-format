@@ -189,247 +189,6 @@ example on how to do this).
 | schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                           |
 | properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                           |
 
-## OpenAPI formatting configuration options
-
-🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
-
-Tools like [spectral](https://github.com/stoplightio/spectral) or [speccy](https://speccy.io/), or any of the [linting tools](https://nordicapis.com/8-openapi-linters/), provide a manner to validate & lint OpenAPI specifications to be uniform. The linting tool informs about the incorrect usage of OpenAPI properties & inconsistent field names.
-This is very useful and helps to guard the quality of the OpenAPI specification. They inform which fields to correct so that the specification will comply with all the defined linting rules.
-
-The openapi-format CLI formatting option can assist with keeping the field names consistent by automatically changing the casing of the properties/keys/names for the different elements in the OpenAPI document.
-The desired casing can be defined per OpenAPI key/element (see list below).
-The keys that are not specified will keep their casing like it is in the original OpenAPI document, so only for defined fields, the casing will be changed.
-
-| Key                        | Description                                                                               | OpenAPI reference                                                         |
-| -------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| operationId                | Changes operation ID's that are part of the Operations Object                             | [operation-object](https://spec.openapis.org/oas/v3.0.3.html#operation-object)|
-| properties                 | Changes property keys of the schemas of the inline response/requestBody & components      | [schemaObject](https://spec.openapis.org/oas/v3.0.3.html#schemaObject) |
-| parametersPath             | Changes the path name of the parameters inline & models in the components                 | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
-| parametersHeader           | Changes the header name of the parameters inline & models in the components               | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
-| parametersQuery            | Changes the query name of the parameters inline & models in the components                | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
-| componentsParametersPath   | Changes the key of the path models in the components parameters sections & "$ref" links   | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsParametersQuery  | Changes the key of the query models in the components parameters sections & "$ref" links  | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsParametersHeader | Changes the key of the header models in the components parameters sections & "$ref" links | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsSchemas          | Changes the key of the schema models in the components sections & "$ref" links            | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsExamples         | Changes the key of the example models in the components sections & "$ref" links           | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsHeaders          | Changes the key of the header models in the components sections & "$ref" links            | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsResponses        | Changes the key of the response models in the components sections & "$ref" links          | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsRequestBodies    | Changes the key of the request body models in the components sections & "$ref" links      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsSecuritySchemes  | Changes the key of the security schemes in the components sections & "$ref" links         | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-
-### Casing options
-
-| Casing type      | Casing alias | Description                                       | Example          |
-| -----------------| ------------ | ------------------------------------------------- | --------------- |
-| 🐪 camelCase     | camelCase    | converts a strings to `camelCase`                 | `openapiFormat`  |
-| 👨‍🏫 PascalCase    | PascalCase   | converts a strings to `PascalCase`                | `OpenapiFormat`  |
-| 🥙 kebab-case    | kebabCase    | converts a strings to `kebab-case`                | `openapi-format` |
-| 🚂 Train-Case    | TrainCase    | converts a strings to `Train-Case`                | `Openapi-Format` |
-| 🐍 snake_case    | snakeCase    | converts a strings to `snake_case`                | `openapi_format` |
-| 🕊 Ada_Case      | AdaCase      | converts a strings to `Ada_Case`                  | `Openapi_Format` |
-| 📣 CONSTANT_CASE | constantCase | converts a strings to `CONSTANT_CASE`             | `OPENAPI_FORMAT` |
-| 👔 COBOL-CASE    | cobolCase    | converts a strings to `COBOL-CASE`                | `OPENAPI-FORMAT` |
-| 📍 Dot.notation  | dotNotation  | converts a strings to `Dot.notation`              | `openapi.format` |
-| 🛰 Space case    | spaceCase    | converts a strings to `Space case` (with spaces)  | `openapi format` |
-| 🏛 Capital Case  | capitalCase  | converts a strings to `Capital Case` (with spaces)| `Openapi Format` |
-| 🔡 lower case    | lowerCase    | converts a strings to `lower case` (with spaces)  | `openapi format` |
-| 🔠 UPPER CASE    | upperCase    | converts a strings to `UPPER CASE` (with spaces)  | `OPENAPI FORMAT` |
-
-> REMARK: All special characters are stripped during conversion, except for the `@` and `$`, since they can be part of the query strings.
-
-The casing options are provided by the nano NPM [case-anything](https://github.com/mesqueeb/case-anything) package.
-
-### Format casing - operationId
-
-=> **operationId**: Refers to the `operationId` properties in the OpenAPI document.
-
-Formatting casing example:
-
-```yaml
-operationId: kebab-case
-```
-
-Example before:
-
-```yaml
-openapi: 3.0.3
-paths:
-    /pets:
-        get:
-          operationId: getPets
-```
-
-openapi-format will format the "getPets" from the original camelcase to kebab-case.
-
-Example after:
-
-```yaml
-openapi: 3.0.3
-paths:
-    /pets:
-        get:
-          operationId: get-pets
-```
-
-### Format casing - model & schema properties
-
-=> **properties**: Refers to all the schema properties, that are defined inline in the paths request bodies & responses and the models in the components section of the OpenAPI document.
-
-Formatting casing example:
-
-```yaml
-properties: snake_case
-```
-
-Example before:
-
-```yaml
-openapi: 3.0.3
-components:
-    schemas:
-        UserModel:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    example: 10
-                emailAddress:
-                    type: string
-                    example: john@doe.com
-                firstName:
-                    type: string
-                    example: John
-```
-
-The CLI will format all the properties like: "id", "username", "firstName" from the original camelcase to snake_case.
-
-Example after:
-
-```yaml
-openapi: 3.0.3
-components:
-    schemas:
-        UserModel:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    example: 10
-                email_address:
-                    type: string
-                    example: john@doe.com
-                first_name:
-                    type: string
-                    example: John
-```
-### Format casing - model & schema keys
-
-=> **componentsSchemas / componentsExamples / componentsParametersHeader / componentsParametersQuery / componentsParametersQuery / componentsParametersPath / componentsHeaders / componentsResponses / componentsRequestBodies / componentsSecuritySchemes**: Refers to all the model keys that are defined in the components section of the OpenAPI document.
-
-Formatting casing example:
-
-```yaml
-componentsSchemas: PascalCase 
-```
-
-Example before:
-
-```yaml
-openapi: 3.0.3
-paths:
-    /orders:
-        get:
-            responses:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/order-model'
-components:
-    schemas:
-        userModel:
-            type: object
-        order-model:
-            type: object
-        pet_model:
-            type: object
-```
-
-openapi-format will format all the component keys like: "userModel", "order-model", "pet_model" to PascalCase, including formatting all the "$ref" used in the OpenAPI document.
-
-Example after:
-
-```yaml
-openapi: 3.0.3
-paths:
-    /orders:
-        get:
-            responses:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/OrderModel'
-components:
-    schemas:
-        UserModel:
-            type: object
-        OrderModel:
-            type: object
-        PetModel:
-            type: object
-```
-
-### Format casing - parameter names
-
-=> **componentsParametersPath / componentsParametersQuery / componentsParametersHeader**: Refers to "name" in the Parameters types: Path, Query or Header, which can be defined inline in the Path or as a reference in the components of the OpenAPI document.
-
-Formatting casing example:
-
-```yaml
-componentsSchemas: kebab-case 
-```
-
-Example before:
-
-```yaml
-openapi: 3.0.3
-paths:
-    '/pet/{petId}':
-        get:
-            parameters:
-                - name: petId
-                  in: path
-                  description: ID of pet to return
-                - $ref: '#/components/parameters/LimitParam'
-components:
-    parameters:
-        LimitParam:
-            name: limitParam
-            in: query
-            description: max records to return
-```
-
-The CLI will format the "name" of the parameters: Path, Query or Header like: "petId", "limitParam" to kebab-case in the OpenAPI document.
-
-Example after:
-
-```yaml
-openapi: 3.0.3
-paths:
-    '/pet/{petId}':
-        get:
-            parameters:
-                - name: pet-id
-                  in: path
-                  description: ID of pet to return
-               - $ref: '#/components/parameters/LimitParam'
-components:
-    parameters:
-        LimitParam:
-            name: limit-param
-            in: query
-            description: max records to return
-```
-
 ## OpenAPI filter options
 
 By specifying the desired filter values for the available filter types, the openapi-format CLI will strip out any
@@ -717,6 +476,247 @@ paths:
     /pets:
         get:
           summary: Finds Pets by status
+```
+
+## OpenAPI formatting configuration options
+
+🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
+
+Tools like [spectral](https://github.com/stoplightio/spectral) or [speccy](https://speccy.io/), or any of the [linting tools](https://nordicapis.com/8-openapi-linters/), provide a manner to validate & lint OpenAPI specifications to be uniform. The linting tool informs about the incorrect usage of OpenAPI properties & inconsistent field names.
+This is very useful and helps to guard the quality of the OpenAPI specification. They inform which fields to correct so that the specification will comply with all the defined linting rules.
+
+The openapi-format CLI formatting option can assist with keeping the field names consistent by automatically changing the casing of the properties/keys/names for the different elements in the OpenAPI document.
+The desired casing can be defined per OpenAPI key/element (see list below).
+The keys that are not specified will keep their casing like it is in the original OpenAPI document, so only for defined fields, the casing will be changed.
+
+| Key                        | Description                                                                               | OpenAPI reference                                                         |
+| -------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| operationId                | Changes operation ID's that are part of the Operations Object                             | [operation-object](https://spec.openapis.org/oas/v3.0.3.html#operation-object)|
+| properties                 | Changes property keys of the schemas of the inline response/requestBody & components      | [schemaObject](https://spec.openapis.org/oas/v3.0.3.html#schemaObject) |
+| parametersPath             | Changes the path name of the parameters inline & models in the components                 | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| parametersHeader           | Changes the header name of the parameters inline & models in the components               | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| parametersQuery            | Changes the query name of the parameters inline & models in the components                | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| componentsParametersPath   | Changes the key of the path models in the components parameters sections & "$ref" links   | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsParametersQuery  | Changes the key of the query models in the components parameters sections & "$ref" links  | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsParametersHeader | Changes the key of the header models in the components parameters sections & "$ref" links | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsSchemas          | Changes the key of the schema models in the components sections & "$ref" links            | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsExamples         | Changes the key of the example models in the components sections & "$ref" links           | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsHeaders          | Changes the key of the header models in the components sections & "$ref" links            | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsResponses        | Changes the key of the response models in the components sections & "$ref" links          | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsRequestBodies    | Changes the key of the request body models in the components sections & "$ref" links      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsSecuritySchemes  | Changes the key of the security schemes in the components sections & "$ref" links         | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+
+### Casing options
+
+| Casing type      | Casing alias | Description                                       | Example          |
+| -----------------| ------------ | ------------------------------------------------- | --------------- |
+| 🐪 camelCase     | camelCase    | converts a strings to `camelCase`                 | `openapiFormat`  |
+| 👨‍🏫 PascalCase    | PascalCase   | converts a strings to `PascalCase`                | `OpenapiFormat`  |
+| 🥙 kebab-case    | kebabCase    | converts a strings to `kebab-case`                | `openapi-format` |
+| 🚂 Train-Case    | TrainCase    | converts a strings to `Train-Case`                | `Openapi-Format` |
+| 🐍 snake_case    | snakeCase    | converts a strings to `snake_case`                | `openapi_format` |
+| 🕊 Ada_Case      | AdaCase      | converts a strings to `Ada_Case`                  | `Openapi_Format` |
+| 📣 CONSTANT_CASE | constantCase | converts a strings to `CONSTANT_CASE`             | `OPENAPI_FORMAT` |
+| 👔 COBOL-CASE    | cobolCase    | converts a strings to `COBOL-CASE`                | `OPENAPI-FORMAT` |
+| 📍 Dot.notation  | dotNotation  | converts a strings to `Dot.notation`              | `openapi.format` |
+| 🛰 Space case    | spaceCase    | converts a strings to `Space case` (with spaces)  | `openapi format` |
+| 🏛 Capital Case  | capitalCase  | converts a strings to `Capital Case` (with spaces)| `Openapi Format` |
+| 🔡 lower case    | lowerCase    | converts a strings to `lower case` (with spaces)  | `openapi format` |
+| 🔠 UPPER CASE    | upperCase    | converts a strings to `UPPER CASE` (with spaces)  | `OPENAPI FORMAT` |
+
+> REMARK: All special characters are stripped during conversion, except for the `@` and `$`, since they can be part of the query strings.
+
+The casing options are provided by the nano NPM [case-anything](https://github.com/mesqueeb/case-anything) package.
+
+### Format casing - operationId
+
+=> **operationId**: Refers to the `operationId` properties in the OpenAPI document.
+
+Formatting casing example:
+
+```yaml
+operationId: kebab-case
+```
+
+Example before:
+
+```yaml
+openapi: 3.0.3
+paths:
+    /pets:
+        get:
+          operationId: getPets
+```
+
+openapi-format will format the "getPets" from the original camelcase to kebab-case.
+
+Example after:
+
+```yaml
+openapi: 3.0.3
+paths:
+    /pets:
+        get:
+          operationId: get-pets
+```
+
+### Format casing - model & schema properties
+
+=> **properties**: Refers to all the schema properties, that are defined inline in the paths request bodies & responses and the models in the components section of the OpenAPI document.
+
+Formatting casing example:
+
+```yaml
+properties: snake_case
+```
+
+Example before:
+
+```yaml
+openapi: 3.0.3
+components:
+    schemas:
+        UserModel:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    example: 10
+                emailAddress:
+                    type: string
+                    example: john@doe.com
+                firstName:
+                    type: string
+                    example: John
+```
+
+The CLI will format all the properties like: "id", "username", "firstName" from the original camelcase to snake_case.
+
+Example after:
+
+```yaml
+openapi: 3.0.3
+components:
+    schemas:
+        UserModel:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    example: 10
+                email_address:
+                    type: string
+                    example: john@doe.com
+                first_name:
+                    type: string
+                    example: John
+```
+### Format casing - model & schema keys
+
+=> **componentsSchemas / componentsExamples / componentsParametersHeader / componentsParametersQuery / componentsParametersQuery / componentsParametersPath / componentsHeaders / componentsResponses / componentsRequestBodies / componentsSecuritySchemes**: Refers to all the model keys that are defined in the components section of the OpenAPI document.
+
+Formatting casing example:
+
+```yaml
+componentsSchemas: PascalCase 
+```
+
+Example before:
+
+```yaml
+openapi: 3.0.3
+paths:
+    /orders:
+        get:
+            responses:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/order-model'
+components:
+    schemas:
+        userModel:
+            type: object
+        order-model:
+            type: object
+        pet_model:
+            type: object
+```
+
+openapi-format will format all the component keys like: "userModel", "order-model", "pet_model" to PascalCase, including formatting all the "$ref" used in the OpenAPI document.
+
+Example after:
+
+```yaml
+openapi: 3.0.3
+paths:
+    /orders:
+        get:
+            responses:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/OrderModel'
+components:
+    schemas:
+        UserModel:
+            type: object
+        OrderModel:
+            type: object
+        PetModel:
+            type: object
+```
+
+### Format casing - parameter names
+
+=> **componentsParametersPath / componentsParametersQuery / componentsParametersHeader**: Refers to "name" in the Parameters types: Path, Query or Header, which can be defined inline in the Path or as a reference in the components of the OpenAPI document.
+
+Formatting casing example:
+
+```yaml
+componentsSchemas: kebab-case 
+```
+
+Example before:
+
+```yaml
+openapi: 3.0.3
+paths:
+    '/pet/{petId}':
+        get:
+            parameters:
+                - name: petId
+                  in: path
+                  description: ID of pet to return
+                - $ref: '#/components/parameters/LimitParam'
+components:
+    parameters:
+        LimitParam:
+            name: limitParam
+            in: query
+            description: max records to return
+```
+
+The CLI will format the "name" of the parameters: Path, Query or Header like: "petId", "limitParam" to kebab-case in the OpenAPI document.
+
+Example after:
+
+```yaml
+openapi: 3.0.3
+paths:
+    '/pet/{petId}':
+        get:
+            parameters:
+                - name: pet-id
+                  in: path
+                  description: ID of pet to return
+               - $ref: '#/components/parameters/LimitParam'
+components:
+    parameters:
+        LimitParam:
+            name: limit-param
+            in: query
+            description: max records to return
 ```
 
 ## CLI sort usage
