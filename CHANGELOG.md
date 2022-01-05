@@ -4,6 +4,7 @@
 
 - Integrated "case-anything" package
 - Enabled additional casing options (Ada_Case, Train-Case, ...)
+- Set "@" and "$" as special characters during case formatting
 - Migrated tests from Mocha to Jest
 
 ## [1.8.0] - 2021-12-27
