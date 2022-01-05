@@ -324,7 +324,7 @@ components:
 ```
 ### Format casing - model & schema keys
 
-=> **componentsSchemas/componentsExamples/componentsParametersHeader/componentsParametersQuery/componentsParametersQuery/componentsParametersPath/componentsHeaders/componentsResponses/componentsRequestBodies/componentsSecuritySchemes**: Refers to all the model keys that are defined in the components section of the OpenAPI document.
+=> **componentsSchemas / componentsExamples / componentsParametersHeader / componentsParametersQuery / componentsParametersQuery / componentsParametersPath / componentsHeaders / componentsResponses / componentsRequestBodies / componentsSecuritySchemes**: Refers to all the model keys that are defined in the components section of the OpenAPI document.
 
 Formatting casing example:
 
@@ -380,7 +380,7 @@ components:
 
 ### Format casing - parameter names
 
-=> **componentsParametersPath/componentsParametersQuery/componentsParametersHeader**: Refers to "name" in the Parameters types: Path, Query or Header, which can be defined inline in the Path or as a reference in the components of the OpenAPI document.
+=> **componentsParametersPath / componentsParametersQuery / componentsParametersHeader**: Refers to "name" in the Parameters types: Path, Query or Header, which can be defined inline in the Path or as a reference in the components of the OpenAPI document.
 
 Formatting casing example:
 
