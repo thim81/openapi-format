@@ -17,7 +17,7 @@ flags, tags, methods, operationID's and even unused components.
 * [Use-cases](#use-cases)
 * [Features](#features)
 * [Installation](#installation)
-    + [Local Installation (recommended)](#local-installation--recommended-)
+    + [Local Installation (recommended)](#local-installation-recommended)
     + [Global Installation](#global-installation)
     + [NPX usage](#npx-usage)
 * [Command Line Interface](#command-line-interface)
@@ -41,7 +41,7 @@ and even unused schemas, examples, responses, ... with a clean and optimized Ope
 
 **Maintenance:**
 When working on large OpenAPI documents or with multiple team members, the file can be become messy and difficult to
-compare changes. By sorting it from time to time, the fields are all ordered in a structured manner, which will help you
+compare changes. By sorting & formatting from time to time, the fields are all ordered in a structured manner & properly cased, which will help you
 to maintain the file with greater ease.
 
 **CI/CD pipelines:**
@@ -189,6 +189,297 @@ example on how to do this).
 | schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                           |
 | properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                           |
 
+Have a look at the folder [yaml-default](test/yaml-default) and compare the "output.yaml" (sorted document) with the "input.yaml" (original document), to see how openapi-format have sorted the OpenAPI document.
+
+## OpenAPI filter options
+
+By specifying the desired filter values for the available filter types, the openapi-format CLI will strip out any
+matching item from the OpenAPI document. You can combine multiple types to filter out a range of OpenAPI items.
+
+For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
+extended options for filtering OpenAPI documents.
+
+| Type                | Description                                | Type  | Examples                                  |
+|---------------------|--------------------------------------------|-------|-------------------------------------------|
+| methods             | OpenAPI methods.                           | array | ['get','post','put']                      |
+| inverseMethods      | OpenAPI methods that will be kept.         | array | ['get','post','put']                      |
+| tags                | OpenAPI tags.                              | array | ['pet','user']                            |
+| inverseTags         | OpenAPI tags that will be kept.            | array | ['pet','user']                            |
+| operationIds        | OpenAPI operation ID's.                    | array | ['findPetsByStatus','updatePet']          |
+| inverseOperationIds | OpenAPI operation ID's that will be kept.  | array | ['findPetsByStatus','updatePet']          |
+| operations          | OpenAPI operations.                        | array | ['GET::/pets','PUT::/pets']               |
+| flags               | Custom flags                               | array | ['x-exclude','x-internal']                |
+| flagValues          | Custom flags with a specific value         | array | ['x-version: 1.0','x-version: 3.0']       |
+| unusedComponents    | Unused components                          | array | ['examples','schemas']                    |
+| stripFlags          | Custom flags that will be stripped         | array | ['x-exclude','x-internal']                |
+| textReplace         | Search & replace values to replace         | array | [{'searchFor':'Pet','replaceWith':'Dog'}] |
+
+Some more details on the available filter types:
+
+### Filter - methods/inverseMethods
+
+=> **methods**: Refers to the "Path Item Object" http://spec.openapis.org/oas/v3.0.3.html#operationObject
+
+This will remove all fields and attached fields that match the verbs. In the example below, this would mean that
+all `get`, `put`, `post` items would be removed from the OpenAPI document.
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+            summary: Finds Pets by status
+        put:
+            summary: Update an existing pet
+```
+
+=> **inverseMethods**: This option does the inverse filtering, by keeping only the verbs defined and remove all other verbs.
+
+### Filter - tags
+
+=> **tags**: Refers to the "tags" field from the "Operation
+  Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
+
+This will remove all fields and attached fields that match the tags. In the example below, this would mean that all
+items with the tags `pet` or `user` would be removed from the OpenAPI document.
+
+For example:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        put:
+            tags:
+                - pet
+            summary: Update an existing pet
+```  
+
+=> **inverseTags**: This option does the inverse filtering, by keeping only the tags defined and remove all other tags, including the operations without a tags.
+
+### Filter - operationIds
+
+=> **operationIds**: Refers to the "operationId" field from the "Operation
+  Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
+
+This will remove specific fields and attached fields that match the operation ID's. In the example below, this would
+mean that the item with operationID `findPetsByStatus` would be removed from the OpenAPI document.
+
+For example:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+            operationId: findPetsByStatus
+```
+
+=> **inverseTags**: This option does the inverse filtering, by keeping only the operationIds defined and remove all other operationIds, including the operations without an operationId.
+
+### Filter - operations
+
+=> **operations**: Refers to a combination of a OpenAPI method & path from the "Path
+  Object" https://spec.openapis.org/oas/v3.0.3.html#paths-object & "Path
+  item" https://spec.openapis.org/oas/v3.0.3.html#path-item-object
+
+This will remove specific path items that match the operation definition `PUT::/pets`. In the example below, this would
+mean that the item with the path '/pets' and method 'PUT' would be removed from the OpenAPI document.
+
+For example:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+            summary: Finds Pets by status
+        put:
+            summary: Update an existing pet
+```
+
+An `operationId` is an optional property. To offer support for OpenAPI documents that don't have operationIds, we have
+added the `operation` definition which is the unique combination of the OpenAPI method & path, with a `::` separator
+symbol.
+
+This will allow filtering for very specific OpenAPI items, without the need of adding operationIds to the OpenAPI
+document.
+
+To facilitate managing the filtering, we have included wildcard options for the `operations` option, supporting the
+methods & path definitions.
+
+REMARK: Be sure to put quotes around the target definition.
+
+Strict matching example: `"GET::/pets"`
+This will target only the "GET" method and the specific path "/pets"
+
+Method wildcard matching example: `"*::/pets"`
+This will target all methods ('get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace') and the specific
+path "/pets"
+
+Path wildcard matching example: `"GET::/pets/*"`
+This will target only the "GET" method and any path matching any folder behind the "/pets", like "/pets/123" and
+"/pets/123/buy".
+
+Method & Path wildcard matching example: `"*::/pets/*"`
+A combination of wildcards for the method and path parts is even possible. 
+
+### Filter - flags
+
+=> **flags**: Refers to a custom property that can be set on any field in the OpenAPI document.
+
+This will remove all fields and attached fields that match the flags. In the example below, this would mean that all
+items with the flag `x-exclude` would be removed from the OpenAPI document.
+
+For example:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+            x-exclude: true
+```
+
+### Filter - flagValues
+
+=> **flagValues**: Refers to a flag, custom property which can be set on any field in the OpenAPI document, and the combination with the value for that flag.
+
+This will remove all fields and attached fields that match the flag with the specific value. 
+
+A `flagValues` example:
+
+```yaml
+flagValues:
+    - x-version: 1.0
+    - x-version: 3.0
+```
+In the example below, this would mean that all items with the flag `x-version` that matches `x-version: 1.0` OR `x-version: 3.0` would be removed from the OpenAPI document.
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+            x-version: 1.0
+```
+
+The filter option `flagValues` also will remove flags that contain an array of values in the OpenAPI document.
+
+A `flagValues` example:
+
+```yaml
+flagValues:
+    - x-versions: 1.0
+    - x-versions: 2.0
+```
+
+In the example below, this would mean that all items with the flag `x-versions`, which is an array, that match `x-version: 1.0` OR `x-version: 3.0` would be removed from the OpenAPI document.
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+            x-versions:
+                - 1.0
+                - 3.0
+                - 5.0
+```
+
+Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-value) and [flagValues for array values](test/yaml-filter-custom-flagsvalue-array) for a practical example.
+
+### Filter - unusedComponents
+
+=> **unusedComponents**: Refers to a list of [reusable component types]( https://spec.openapis.org/oas/v3.0.3.html#components-object), from which unused items will be removed.
+
+This option allows you to strip the OpenAPI document from any unused items of the targeted `components` types. 
+Any item in the list of OpenAPI `components` that is not referenced as `$ref`, will get marked and removed from the OpenAPI document. 
+
+REMARK: We will recursively strip all unused components, with a maximum depth of 10 times. This means that "nested" components, that become unused, will also get removed
+
+Supported component types that can be marked as "unused":
+- schemas
+- parameters
+- examples
+- headers
+- requestBodies
+- responses
+
+### Filter - textReplace
+
+=> **textReplace**: "search & replace" option to replace text in the OpenAPI specification
+
+The `textReplace` provides a "search & replace" method, that will search for a text/word/characters in the OpenAPI description, summary, URL fields and replace it with another text/word/characters.
+This is very useful to replace data in the OpenAPI specification.
+
+A `textReplace` example:
+
+```yaml
+textReplace:
+    - searchFor: 'Pets'
+      replaceWith: 'Dogs'
+    - searchFor: 'swagger.io'
+      replaceWith: 'openapis.org'
+```
+
+This will replace all "Pets" with "Dogs" & "swagger.io" with "openapi.org" in the OpenAPI document.
+
+### Filter - stripFlags
+
+=> **stripFlags**: Refers to a list of custom properties that can be set on any field in the OpenAPI document.
+
+The `stripFlags` will remove only the flags, the linked parent and properties will remain. In the example below, this would mean that all
+flags `x-exclude` itself would be stripped from the OpenAPI document.
+
+Example before:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+          x-exclude: true
+          summary: Finds Pets by status
+```
+
+Example after:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+          summary: Finds Pets by status
+```
+
 ## OpenAPI formatting configuration options
 
 🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
@@ -217,7 +508,7 @@ The keys that are not specified will keep their casing like it is in the origina
 | componentsRequestBodies    | Changes the key of the request body models in the components sections & "$ref" links      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
 | componentsSecuritySchemes  | Changes the key of the security schemes in the components sections & "$ref" links         | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
 
-Available casing options:
+### Casing options
 
 | Casing type      | Casing alias | Description                                       | Example          |
 | -----------------| ------------ | ------------------------------------------------- | --------------- |
@@ -239,6 +530,7 @@ Available casing options:
 
 The casing options are provided by the nano NPM [case-anything](https://github.com/mesqueeb/case-anything) package.
 
+### Format casing - operationId
 
 => **operationId**: Refers to the `operationId` properties in the OpenAPI document.
 
@@ -269,6 +561,8 @@ paths:
         get:
           operationId: get-pets
 ```
+
+### Format casing - model & schema properties
 
 => **properties**: Refers to all the schema properties, that are defined inline in the paths request bodies & responses and the models in the components section of the OpenAPI document.
 
@@ -319,8 +613,9 @@ components:
                     type: string
                     example: John
 ```
+### Format casing - model & schema keys
 
-=> **componentsSchemas/componentsExamples/componentsParametersHeader/componentsParametersQuery/componentsParametersQuery/componentsParametersPath/componentsHeaders/componentsResponses/componentsRequestBodies/componentsSecuritySchemes**: Refers to all the model keys that are defined in the components section of the OpenAPI document.
+=> **componentsSchemas / componentsExamples / componentsParametersHeader / componentsParametersQuery / componentsParametersQuery / componentsParametersPath / componentsHeaders / componentsResponses / componentsRequestBodies / componentsSecuritySchemes**: Refers to all the model keys that are defined in the components section of the OpenAPI document.
 
 Formatting casing example:
 
@@ -373,7 +668,10 @@ components:
         PetModel:
             type: object
 ```
-=> **componentsParametersPath/componentsParametersQuery/componentsParametersHeader**: Refers to "name" in the Parameters types: Path, Query or Header, which can be defined inline in the Path or as a reference in the components of the OpenAPI document.
+
+### Format casing - parameter names
+
+=> **componentsParametersPath / componentsParametersQuery / componentsParametersHeader**: Refers to "name" in the Parameters types: Path, Query or Header, which can be defined inline in the Path or as a reference in the components of the OpenAPI document.
 
 Formatting casing example:
 
@@ -421,271 +719,6 @@ components:
             name: limit-param
             in: query
             description: max records to return
-```
-
-## OpenAPI filter options
-
-By specifying the desired filter values for the available filter types, the openapi-format CLI will strip out any
-matching item from the OpenAPI document. You can combine multiple types to filter out a range of OpenAPI items.
-
-For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
-extended options for filtering OpenAPI documents.
-
-| Type                | Description                                | Type  | Examples                                  |
-|---------------------|--------------------------------------------|-------|-------------------------------------------|
-| methods             | OpenAPI methods.                           | array | ['get','post','put']                      |
-| inverseMethods      | OpenAPI methods that will be kept.         | array | ['get','post','put']                      |
-| tags                | OpenAPI tags.                              | array | ['pet','user']                            |
-| inverseTags         | OpenAPI tags that will be kept.            | array | ['pet','user']                            |
-| operationIds        | OpenAPI operation ID's.                    | array | ['findPetsByStatus','updatePet']          |
-| inverseOperationIds | OpenAPI operation ID's that will be kept.  | array | ['findPetsByStatus','updatePet']          |
-| operations          | OpenAPI operations.                        | array | ['GET::/pets','PUT::/pets']               |
-| flags               | Custom flags                               | array | ['x-exclude','x-internal']                |
-| flagValues          | Custom flags with a specific value         | array | ['x-version: 1.0','x-version: 3.0']       |
-| unusedComponents    | Unused components                          | array | ['examples','schemas']                    |
-| stripFlags          | Custom flags that will be stripped         | array | ['x-exclude','x-internal']                |
-| textReplace         | Search & replace values to replace         | array | [{'searchFor':'Pet','replaceWith':'Dog'}] |
-
-Some more details on the available filter types:
-
-=> **methods**: Refers to the "Path Item Object" http://spec.openapis.org/oas/v3.0.3.html#operationObject
-
-This will remove all fields and attached fields that match the verbs. In the example below, this would mean that
-all `get`, `put`, `post` items would be removed from the OpenAPI document.
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        get:
-            summary: Finds Pets by status
-        put:
-            summary: Update an existing pet
-```  
-
-=> **tags**: Refers to the "tags" field from the "Operation
-  Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
-
-This will remove all fields and attached fields that match the tags. In the example below, this would mean that all
-items with the tags `pet` or `user` would be removed from the OpenAPI document.
-
-For example:
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        put:
-            tags:
-                - pet
-            summary: Update an existing pet
-```  
-
-=> **operationIds**: Refers to the "operationId" field from the "Operation
-  Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
-
-This will remove specific fields and attached fields that match the operation ID's. In the example below, this would
-mean that the item with operationID `findPetsByStatus` would be removed from the OpenAPI document.
-
-For example:
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        get:
-            operationId: findPetsByStatus
-```
-
-=> **operations**: Refers to a combination of a OpenAPI method & path from the "Path
-  Object" https://spec.openapis.org/oas/v3.0.3.html#paths-object & "Path
-  item" https://spec.openapis.org/oas/v3.0.3.html#path-item-object
-
-This will remove specific path items that match the operation definition `PUT::/pets`. In the example below, this would
-mean that the item with the path '/pets' and method 'PUT' would be removed from the OpenAPI document.
-
-For example:
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        get:
-            summary: Finds Pets by status
-        put:
-            summary: Update an existing pet
-```
-
-An `operationId` is an optional property. To offer support for OpenAPI documents that don't have operationIds, we have
-added the `operation` definition which is the unique combination of the OpenAPI method & path, with a `::` separator
-symbol.
-
-This will allow filtering for very specific OpenAPI items, without the need of adding operationIds to the OpenAPI
-document.
-
-To facilitate managing the filtering, we have included wildcard options for the `operations` option, supporting the
-methods & path definitions.
-
-REMARK: Be sure to put quotes around the target definition.
-
-Strict matching example: `"GET::/pets"`
-This will target only the "GET" method and the specific path "/pets"
-
-Method wildcard matching example: `"*::/pets"`
-This will target all methods ('get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace') and the specific
-path "/pets"
-
-Path wildcard matching example: `"GET::/pets/*"`
-This will target only the "GET" method and any path matching any folder behind the "/pets", like "/pets/123" and
-"/pets/123/buy".
-
-Method & Path wildcard matching example: `"*::/pets/*"`
-A combination of wildcards for the method and path parts is even possible. 
-
-=> **flags**: Refers to a custom property that can be set on any field in the OpenAPI document.
-
-This will remove all fields and attached fields that match the flags. In the example below, this would mean that all
-items with the flag `x-exclude` would be removed from the OpenAPI document.
-
-For example:
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        get:
-            x-exclude: true
-```
-
-=> **flagValues**: Refers to a flag, custom property which can be set on any field in the OpenAPI document, and the combination with the value for that flag.
-
-This will remove all fields and attached fields that match the flag with the specific value. 
-
-A `flagValues` example:
-
-```yaml
-flagValues:
-    - x-version: 1.0
-    - x-version: 3.0
-```
-In the example below, this would mean that all items with the flag `x-version` that matches `x-version: 1.0` OR `x-version: 3.0` would be removed from the OpenAPI document.
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        get:
-            x-version: 1.0
-```
-
-The filter option `flagValues` also will remove flags that contain an array of values in the OpenAPI document.
-
-A `flagValues` example:
-
-```yaml
-flagValues:
-    - x-versions: 1.0
-    - x-versions: 2.0
-```
-
-In the example below, this would mean that all items with the flag `x-versions`, which is an array, that match `x-version: 1.0` OR `x-version: 3.0` would be removed from the OpenAPI document.
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        get:
-            x-versions:
-                - 1.0
-                - 3.0
-                - 5.0
-```
-
-Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-valye) and [flagValues for array values](test/yaml-filter-custom-flagsvalue-array) for a practical example.
-
-=> **unusedComponents**: Refers to a list of [reusable component types]( https://spec.openapis.org/oas/v3.0.3.html#components-object), from which unused items will be removed.
-
-This option allows you to strip the OpenAPI document from any unused items of the targeted `components` types. 
-Any item in the list of OpenAPI `components` that is not referenced as `$ref`, will get marked and removed from the OpenAPI document. 
-
-REMARK: We will recursively strip all unused components, with a maximum depth of 10 times. This means that "nested" components, that become unused, will also get removed
-
-Supported component types that can be marked as "unused":
-- schemas
-- parameters
-- examples
-- headers
-- requestBodies
-- responses
-
-=> **textReplace**: "search & replace" option to replace text in the OpenAPI specification
-
-The `textReplace` provides a "search & replace" method, that will search for a text/word/characters in the OpenAPI description, summary, URL fields and replace it with another text/word/characters.
-This is very useful to replace data in the OpenAPI specification.
-
-A `textReplace` example:
-
-```yaml
-textReplace:
-    - searchFor: 'Pets'
-      replaceWith: 'Dogs'
-    - searchFor: 'swagger.io'
-      replaceWith: 'openapis.org'
-```
-
-This will replace all "Pets" with "Dogs" & "swagger.io" with "openapi.org" in the OpenAPI document.
-
-=> **stripFlags**: Refers to a list of custom properties that can be set on any field in the OpenAPI document.
-
-The `stripFlags` will remove only the flags, the linked parent and properties will remain. In the example below, this would mean that all
-flags `x-exclude` itself would be stripped from the OpenAPI document.
-
-Example before:
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        get:
-          x-exclude: true
-          summary: Finds Pets by status
-```
-
-Example after:
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        get:
-          summary: Finds Pets by status
 ```
 
 ## CLI sort usage
@@ -828,7 +861,7 @@ files.
 By using the Stoplight YAML parsing, the results will be slightly different from when using a normal YAML parsing
 library, like [js-to-yaml](https://www.npmjs.com/package/js-yaml). We appreciate the Stoplight Studio tool, since it is
 an excellent GUI for working with OpenAPI documents for non-OpenAPI experts who will be contributing changes. By
-adopting the Stoplight Studio YAML parsing, the potential risk of merge conflicts will be lower, which is the main
+adopting the Stoplight Studio YAML parsing, the potential risk of merge conflicts will be lowered, which is the main
 reason why we opted for using the @stoplight/yaml package.
 
 ## Credits
@@ -841,4 +874,4 @@ tried to reproduce the original functionality.
 The filter capabilities from `openapi-format` are a light version grounded by the work from [@MikeRalphson](https://github.com/mikeralphson) on
 the [openapi-filter](https://github.com/Mermade/openapi-filter) package.
 
-The casing options available in `openapi-format` are powered by the [case-anything](https://github.com/mesqueeb/case-anything) nano package from Luca Ban ([@mesqueeb](https://github.com/mesqueeb)).
+The casing options available in `openapi-format` are powered by the excellent [case-anything](https://github.com/mesqueeb/case-anything) nano package from Luca Ban ([@mesqueeb](https://github.com/mesqueeb)).
