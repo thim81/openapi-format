@@ -189,6 +189,8 @@ example on how to do this).
 | schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                           |
 | properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                           |
 
+Have a look at the folder [yaml-default](test/yaml-default) and compare the "output.yaml" (sorted document) with the "input.yaml" (original document), to see how openapi-format have sorted the OpenAPI document.
+
 ## OpenAPI filter options
 
 By specifying the desired filter values for the available filter types, the openapi-format CLI will strip out any
