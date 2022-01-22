@@ -123,7 +123,6 @@ Options:
   --sortFile           The file to specify custom OpenAPI fields ordering      [path]
   --casingFile         The file to specify casing rules                        [path]
   --filterFile         The file to specify filter rules                        [path]
-
     
   --no-sort            Don't sort the OpenAPI file                          [boolean]
   --sortComponentsFile The file with components to sort alphabetically         [path]
@@ -202,12 +201,12 @@ extended options for filtering OpenAPI documents.
 | Type                | Description                                | Type  | Examples                                  |
 |---------------------|--------------------------------------------|-------|-------------------------------------------|
 | methods             | OpenAPI methods.                           | array | ['get','post','put']                      |
-| inverseMethods      | OpenAPI methods that will be kept.         | array | ['get','post','put']                      |
-| tags                | OpenAPI tags.                              | array | ['pet','user']                            |
-| inverseTags         | OpenAPI tags that will be kept.            | array | ['pet','user']                            |
-| operationIds        | OpenAPI operation ID's.                    | array | ['findPetsByStatus','updatePet']          |
-| inverseOperationIds | OpenAPI operation ID's that will be kept.  | array | ['findPetsByStatus','updatePet']          |
-| operations          | OpenAPI operations.                        | array | ['GET::/pets','PUT::/pets']               |
+| inverseMethods      | OpenAPI methods that will be kept          | array | ['get','post','put']                      |
+| tags                | OpenAPI tags                               | array | ['pet','user']                            |
+| inverseTags         | OpenAPI tags that will be kept             | array | ['pet','user']                            |
+| operationIds        | OpenAPI operation ID's                     | array | ['findPetsByStatus','updatePet']          |
+| inverseOperationIds | OpenAPI operation ID's that will be kept   | array | ['findPetsByStatus','updatePet']          |
+| operations          | OpenAPI operations                         | array | ['GET::/pets','PUT::/pets']               |
 | flags               | Custom flags                               | array | ['x-exclude','x-internal']                |
 | flagValues          | Custom flags with a specific value         | array | ['x-version: 1.0','x-version: 3.0']       |
 | unusedComponents    | Unused components                          | array | ['examples','schemas']                    |
@@ -259,7 +258,7 @@ paths:
             tags:
                 - pet
             summary: Update an existing pet
-```  
+```
 
 => **inverseTags**: This option does the inverse filtering, by keeping only the tags defined and remove all other tags, including the operations without a tags.
 
@@ -613,14 +612,15 @@ components:
                     type: string
                     example: John
 ```
-### Format casing - model & schema keys
 
-=> **componentsSchemas / componentsExamples / componentsParametersHeader / componentsParametersQuery / componentsParametersQuery / componentsParametersPath / componentsHeaders / componentsResponses / componentsRequestBodies / componentsSecuritySchemes**: Refers to all the model keys that are defined in the components section of the OpenAPI document.
+### Format casing - component keys
+
+=> **componentsSchemas / componentsExamples / componentsParametersHeader / componentsParametersQuery / componentsParametersQuery / componentsParametersPath / componentsHeaders / componentsResponses / componentsRequestBodies / componentsSecuritySchemes**: Refers to all the model objects that are defined in the components section of the OpenAPI document.
 
 Formatting casing example:
 
 ```yaml
-componentsSchemas: PascalCase 
+componentsSchemas: PascalCase
 ```
 
 Example before:
@@ -832,9 +832,9 @@ which results in
 
 ## CLI configuration usage
 
-All the CLI options can be managed in a separate configuration file and passed along the openapi-format command. This will
-make configuration easier, especially in CI/CD implementations where the configuration can be stored in version control
-systems.
+All the CLI options can be managed in a separate configuration file and passed along the openapi-format command. This
+will make configuration easier, especially in CI/CD implementations where the configuration can be stored in version
+control systems.
 
 example:
 
