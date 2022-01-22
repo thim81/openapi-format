@@ -1,0 +1,24 @@
+openapi: 3.0.2
+paths:
+  /user:
+    get:
+      tags:
+        - user
+      summary: Get user
+      description: This can only be done by the logged in user.
+      operationId: getUser
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token.Id'
+components:
+  schemas:
+    Token.Id:
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
