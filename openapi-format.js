@@ -338,6 +338,14 @@ function openapiFilter(oaObj, options) {
       this.remove();
     }
 
+    // Filter out fields without operationIds, when Inverse operationIds is set
+    if (inverseFilterProps.length > 0 && this.path[0] === 'paths' && node.operationId === undefined
+      && httpVerbs.includes(this.key)
+    ) {
+      // debugFilterStep = 'Filter - Single field - Inverse operationIds without operationIds'
+      this.remove();
+    }
+
     // Array field matching
     if (Array.isArray(node)) {
       // Filter out object matching the inverse "tags"
@@ -417,9 +425,9 @@ function openapiFilter(oaObj, options) {
         }
       }
 
-      // Filter out fields matching the inverse Tags/operationIds
-      if (inverseFilterProps.length > 0 && !inverseFilterProps.includes(node)) {
-        // debugFilterStep = 'Filter - Single field - Inverse Tags/operationIds'
+      // Filter out fields matching the inverse operationIds
+      if (inverseFilterProps.length > 0 && this.key === 'operationId' && !inverseFilterProps.includes(node)) {
+        // debugFilterStep = 'Filter - Single field - Inverse operationIds'
         this.parent.remove();
       }
 
@@ -646,7 +654,7 @@ function openapiChangeCase(oaObj, options) {
     }
   });
 
-  // Recursive traverse through OpenAPI document to non-components
+  // Recursive traverse through OpenAPI document for non-components
   traverse(jsonObj).forEach(function (node) {
     // Change components $ref names
     if (this.key === '$ref') {
@@ -702,11 +710,11 @@ function openapiChangeCase(oaObj, options) {
       // debugCasingStep = 'Casing - Single field - examples name'
       this.update(changeObjKeysCase(node, casingSet.componentsExamples));
     }
-    // Change components/schema - properties
+    // Change components/schemas - properties
     if (this.path[1] === 'schemas' && this.key === 'properties' && casingSet.properties
       && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value')
     ) {
-      // debugCasingStep = 'Casing - components/schema - properties name'
+      // debugCasingStep = 'Casing - components/schemas - properties name'
       this.update(changeObjKeysCase(node, casingSet.properties));
     }
     // Change paths > schema - properties
@@ -808,7 +816,7 @@ function changeObjKeysCase(obj, caseType) {
 }
 
 /**
- * Change object keys case in array  function
+ * Change object keys case in array function
  * @param {object} node
  * @param {string} caseType
  * @returns {*}
@@ -871,7 +879,7 @@ function changeCase(valueAsString, caseType) {
 }
 
 /**
- * Function fo escaping input to be treated as a literal string within a regular expression
+ * Function for escaping input to be treated as a literal string within a regular expression
  * @param string
  * @returns {*}
  */
