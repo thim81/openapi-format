@@ -51,7 +51,6 @@ async function run(oaFile, options) {
 
   if (!oaFile) {
     console.error('Please provide a file path for the OpenAPI document');
-    // process.exit(1)
     return;
   }
 
