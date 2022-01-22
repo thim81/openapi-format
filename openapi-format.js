@@ -157,7 +157,7 @@ function matchPath(path, url) {
  * @param {object} options OpenApi-format sort options
  * @returns {object} Sorted OpenApi document
  */
-function openapiSort(oaObj, options) {
+async function openapiSort(oaObj, options) {
   // Skip sorting, when the option "no-sort" is set
   if (options.sort === false) {
     return oaObj;
@@ -234,7 +234,7 @@ function openapiSort(oaObj, options) {
  * @param {object} options OpenApi-format filter options
  * @returns {object} Filtered OpenApi document
  */
-function openapiFilter(oaObj, options) {
+async function openapiFilter(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
   let defaultFilter = JSON.parse(fs.readFileSync(__dirname + "/defaultFilter.json", 'utf8'))
   let filterSet = Object.assign({}, defaultFilter, options.filterSet);
@@ -546,7 +546,7 @@ function openapiFilter(oaObj, options) {
   // Recurse to strip any remaining unusedComp, to a maximum depth of 10
   if (stripUnused.length > 0 && unusedComp.meta.total > 0 && options.unusedDepth <= 10) {
     options.unusedDepth++;
-    const resultObj = openapiFilter(jsonObj, options);
+    const resultObj = await openapiFilter(jsonObj, options);
     jsonObj = resultObj.data;
     unusedComp = JSON.parse(JSON.stringify(options.unusedComp));
   }
@@ -562,7 +562,7 @@ function openapiFilter(oaObj, options) {
  * @param {object} options OpenApi-format casing options
  * @returns {object} Change casing OpenApi document
  */
-function openapiChangeCase(oaObj, options) {
+async function openapiChangeCase(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
   let defaultCasing = {}; // JSON.parse(fs.readFileSync(__dirname + "/defaultFilter.json", 'utf8'))
   let casingSet = Object.assign({}, defaultCasing, options.casingSet);
@@ -766,7 +766,7 @@ function openapiChangeCase(oaObj, options) {
  * @param {object} options OpenApi-format filter options
  * @returns {object} Renamed OpenApi document
  */
-function openapiRename(oaObj, options) {
+async function openapiRename(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
 
   // OpenAPI 3

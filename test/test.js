@@ -179,25 +179,25 @@ describe('openapi-format tests', () => {
 
         // Filter OpenAPI document
         if (options.filterSet) {
-          const resFilter = openapiFormat.openapiFilter(result, options);
+          const resFilter = await openapiFormat.openapiFilter(result, options);
           if (resFilter.data) result = resFilter.data;
         }
 
         // Sort OpenAPI document
         if (options.sort === true) {
-          const resFormat = openapiFormat.openapiSort(result, options);
+          const resFormat = await openapiFormat.openapiSort(result, options);
           if (resFormat.data) result = resFormat.data;
         }
 
         // Change case OpenAPI document
         if (options.casingSet) {
-          const resFormat = openapiFormat.openapiChangeCase(result, options);
+          const resFormat = await openapiFormat.openapiChangeCase(result, options);
           if (resFormat.data) result = resFormat.data;
         }
 
         // Rename title OpenAPI document
         if (options.rename) {
-          const resRename = openapiFormat.openapiRename(result, options);
+          const resRename = await openapiFormat.openapiRename(result, options);
           if (resRename.data) result = resRename.data;
         }
 
