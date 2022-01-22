@@ -488,17 +488,17 @@ async function openapiFilter(oaObj, options) {
 
   if (stripUnused.length > 0) {
     const optFs = get(options, 'filterSet.unusedComponents', []) || [];
-    unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !get(comps, `schemas[${key}].used`)); //comps.schemas[key]?.used);
+    unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !isUsedComp(comps.schemas, key));
     if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
-    unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !get(comps, `responses[${key}].used`));//!comps.responses[key]?.used);
+    unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !isUsedComp(comps.responses, key));
     if (optFs.includes('responses')) options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
-    unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !get(comps, `parameters[${key}].used`));//!comps.parameters[key]?.used);
+    unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !isUsedComp(comps.parameters, key));
     if (optFs.includes('parameters')) options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
-    unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !get(comps, `examples[${key}].used`));//!comps.examples[key]?.used);
+    unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !isUsedComp(comps.examples, key));
     if (optFs.includes('examples')) options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
-    unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !get(comps, `requestBodies[${key}].used`));//!comps.requestBodies[key]?.used);
+    unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !isUsedComp(comps.requestBodies, key));
     if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
-    unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !get(comps, `headers[${key}].used`));//!comps.headers[key]?.used);
+    unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !isUsedComp(comps.headers, key));
     if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
     unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length
   }
@@ -901,6 +901,20 @@ function get(obj, path, defaultValue = undefined) {
 
   const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/);
   return result === undefined || result === obj ? defaultValue : result;
+}
+
+/**
+ * Validate function if component contains a used property
+ * @param obj
+ * @param prop
+ * @returns {boolean}
+ */
+function isUsedComp(obj, prop) {
+  if (!isObject(obj)) return false
+  if (!isString(prop)) return false
+  const comp = obj[prop]
+  if (comp.used && comp.used === true) return true
+  return false
 }
 
 module.exports = {
