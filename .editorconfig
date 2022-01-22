@@ -8,15 +8,17 @@ trim_trailing_whitespace = true
 # JavaScript
 [*.js]
 indent_style = space
-indent_size = 4
+indent_size = 2
 
 # JSON
 [*.json]
 indent_style = space
-indent_size = 4
+indent_size = 2
+ij_json_wrap_long_lines = false
 
 # Markdown
 [*.md]
+insert_final_newline = false
 trim_trailing_whitespace = false
 indent_style = space
 indent_size = 4

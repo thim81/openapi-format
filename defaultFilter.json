@@ -1,13 +1,13 @@
 {
-    "methods": [],
-    "inverseMethods": [],
-    "tags": [],
-    "inverseTags": [],
-    "operationIds": [],
-    "inverseOperationIds": [],
-    "operations": [],
-    "flags": [],
-    "flagValues": [],
-    "unusedComponents": [],
-    "stripFlags": []
+  "methods": [],
+  "inverseMethods": [],
+  "tags": [],
+  "inverseTags": [],
+  "operationIds": [],
+  "inverseOperationIds": [],
+  "operations": [],
+  "flags": [],
+  "flagValues": [],
+  "unusedComponents": [],
+  "stripFlags": []
 }

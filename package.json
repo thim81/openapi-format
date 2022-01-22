@@ -1,61 +1,61 @@
 {
-    "name": "openapi-format",
-    "version": "1.8.1",
-    "description": "Format an OpenAPI document by ordering, formatting and filtering fields.",
-    "keywords": [
-        "openapi",
-        "openapi3",
-        "format",
-        "sort",
-        "order",
-        "filter",
-        "rename",
-        "case",
-        "cli"
-    ],
-    "homepage": "https://github.com/thim81/openapi-format#readme",
-    "bugs": {
-        "url": "https://github.com/thim81/openapi-format/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/thim81/openapi-format.git"
-    },
-    "license": "MIT",
-    "author": "Tim Haselaars",
-    "main": "bin/cli.js",
-    "files": [
-        "README.md",
-        "CHANGELOG.md",
-        "LICENSE",
-        "openapi-format.js",
-        "util-log-output.js",
-        "util-types.js",
-        "defaultSort.json",
-        "defaultFilter.json",
-        "defaultSortComponents.json",
-        "package-lock.json"
-    ],
-    "bin": {
-        "openapi-format": "bin/cli.js"
-    },
-    "directories": {
-        "test": "test"
-    },
-    "scripts": {
-        "test": "jest --colors --verbose --reporters=default --collectCoverage --no-cache",
-        "release": "np --branch main"
-    },
-    "dependencies": {
-        "@stoplight/yaml": "^4.2.2",
-        "case-anything": "^2.1.2",
-        "commander": "^7.1.0",
-        "traverse": "^0.6.6"
-    },
-    "devDependencies": {
-        "jest": "^27.4.5"
-    },
-    "engines": {
-        "node": ">=12"
-    }
+  "name": "openapi-format",
+  "version": "1.8.1",
+  "description": "Format an OpenAPI document by ordering, formatting and filtering fields.",
+  "keywords": [
+    "openapi",
+    "openapi3",
+    "format",
+    "sort",
+    "order",
+    "filter",
+    "rename",
+    "case",
+    "cli"
+  ],
+  "homepage": "https://github.com/thim81/openapi-format#readme",
+  "bugs": {
+    "url": "https://github.com/thim81/openapi-format/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thim81/openapi-format.git"
+  },
+  "license": "MIT",
+  "author": "Tim Haselaars",
+  "main": "bin/cli.js",
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "openapi-format.js",
+    "util-log-output.js",
+    "util-types.js",
+    "defaultSort.json",
+    "defaultFilter.json",
+    "defaultSortComponents.json",
+    "package-lock.json"
+  ],
+  "bin": {
+    "openapi-format": "bin/cli.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest --colors --verbose --reporters=default --collectCoverage --no-cache",
+    "release": "np --branch main"
+  },
+  "dependencies": {
+    "@stoplight/yaml": "^4.2.2",
+    "case-anything": "^2.1.2",
+    "commander": "^7.1.0",
+    "traverse": "^0.6.6"
+  },
+  "devDependencies": {
+    "jest": "^27.4.5"
+  },
+  "engines": {
+    "node": ">=12"
+  }
 }
