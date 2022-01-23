@@ -18,7 +18,7 @@ program
   .option('-o, --output <output>', 'write the formatted OpenAPI to an output file path.')
   .option('-s, --sortFile <sortFile>', 'The file to specify custom OpenAPI fields ordering.')
   .option('-c, --casingFile <casingFile>', 'The file to specify casing rules.')
-  .option('-f, --filterFile <filterFile>', 'The file to specify filter rules .')
+  .option('-f, --filterFile <filterFile>', 'The file to specify filter rules.')
   .option('-c, --configFile <configFile>', 'The file with the OpenAPI-format CLI options.')
   .option('--no-sort', 'dont sort the OpenAPI file')
   .option('--sortComponentsFile <sortComponentsFile>', 'The file with components to sort alphabetically')
@@ -84,11 +84,12 @@ async function run(oaFile, options) {
     try {
       let sortOptions = {sortSet: {}}
       let sortFile = (options.sortFile) ? options.sortFile : __dirname + "/../defaultSort.json"
-      infoOut(`- Sort file:\t\t${options.sortFile}`) // LOG - sort file
+      let sortFileName = (options.sortFile) ? options.sortFile : "(defaultSort.json)"
+      infoOut(`- Sort file:\t\t${sortFileName}`) // LOG - sort file
       sortOptions.sortSet = sy.parse(fs.readFileSync(sortFile, 'utf8'));
       options = Object.assign({}, options, sortOptions);
     } catch (err) {
-      console.error('\x1b[31m', `Sort file error - no such file or directory "${options.sortFile}"`)
+      console.error('\x1b[31m', `Sort file error - no such file or directory "${sortFile}"`)
       if (options.verbose >= 1) {
         console.error(err)
       }
@@ -112,7 +113,7 @@ async function run(oaFile, options) {
 
   // apply components sorting by alphabet, if file is present
   if (options && options.sortComponentsFile) {
-    infoOut(`- Sort Components file:\t ${options.sortComponentsFile}`) // LOG - Sort file
+    infoOut(`- Sort Components file:\t${options.sortComponentsFile}`) // LOG - Sort file
     try {
       let sortComponentsOptions = {sortComponentsSet: {}}
       sortComponentsOptions.sortComponentsSet = sy.parse(fs.readFileSync(options.sortComponentsFile, 'utf8'));
