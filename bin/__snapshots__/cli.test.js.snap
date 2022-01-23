@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`openapi-format CLI command should output the help 1`] = `
+"Usage: cli <file> [options]
+
+Format a OpenAPI document by ordering and filtering fields.
+
+Options:
+  -o, --output <output>                      write the formatted OpenAPI to an output file path.
+  -s, --sortFile <sortFile>                  The file to specify custom OpenAPI fields ordering.
+  -c, --casingFile <casingFile>              The file to specify casing rules.
+  -f, --filterFile <filterFile>              The file to specify filter rules.
+  -c, --configFile <configFile>              The file with the OpenAPI-format CLI options.
+  --no-sort                                  dont sort the OpenAPI file
+  --sortComponentsFile <sortComponentsFile>  The file with components to sort alphabetically
+  --lineWidth <lineWidth>                    max line width of YAML output (default: -1)
+  --rename <oaTitle>                         overwrite the title in the OpenAPI document.
+  --json                                     print the file to stdout as JSON
+  --yaml                                     print the file to stdout as YAML
+  --version                                  output the version number
+  -v, --verbose                              verbosity that can be increased (default: 0)
+  -h, --help                                 display help for command
+"
+`;
+
+exports[`openapi-format CLI command should output the version 1`] = `
+"1.8.1
+"
+`;
+
+exports[`openapi-format CLI command should show unused components 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Filter file:		test/yaml-filter-unused-components/customFilter.yaml
+- Input file:		test/yaml-filter-unused-components/input.yaml
+================================================================================
+Removed unused components:
+- components/schemas		 \\"Customer\\"
+- components/schemas		 \\"Unused\\"
+- components/schemas		 \\"ErrorModel\\"
+- components/schemas		 \\"Address\\"
+- components/responses		 \\"GeneralError\\"
+- components/parameters		 \\"offsetParam\\"
+- components/parameters		 \\"limitParam\\"
+- components/examples		 \\"tshirt-unused\\"
+- components/examples		 \\"tshirt\\"
+- components/requestBodies	 \\"NewItem\\"
+- components/requestBodies	 \\"Pet\\"
+- components/requestBodies	 \\"UserArray\\"
+- components/requestBodies	 \\"UnusedArray\\"
+- components/headers		 \\"X-RateLimit-Unused\\"
+- components/headers		 \\"X-RateLimit-Limit\\"
+- components/headers		 \\"X-RateLimit-Remaining\\"
+Total components removed: 16
+[32m================================================================================[0m
+[32m✅  OpenAPI filtered & formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the casingFile 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Casing file:		test/yaml-casing/customCasing.yaml
+- Input file:		test/yaml-casing/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the filterFile 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Filter file:		test/yaml-filter-custom/customFilter.yaml
+- Input file:		test/yaml-filter-custom/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI filtered & formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the no-sort 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Input file:		test/yaml-no-sort/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the rename 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Input file:		test/yaml-rename/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the sortComponentsFile 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		(defaultSort.json)
+- Sort Components file:	test/yaml-sort-components/customSortComponents.yaml
+- Input file:		test/yaml-sort-components/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the sortFile 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		test/yaml-custom/customSort.yaml
+- Input file:		test/yaml-custom/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
