@@ -1,5 +1,15 @@
 ## unreleased
 
+## [1.9.0] - 2022-01-24
+
+- Filter - Handle components with period (.) in their name/key (#37)
+- Filter - Inverse operation IDs
+- Updated CLI output
+- Improved sort components logic
+- Async/Await implementation
+- Code formatting
+- Extended CLI tests
+
 ## [1.8.1] - 2022-01-05
 
 - Integrated "case-anything" package
