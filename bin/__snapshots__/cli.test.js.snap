@@ -3,18 +3,18 @@
 exports[`openapi-format CLI command should output the help 1`] = `
 "Usage: cli <file> [options]
 
-Format a OpenAPI document by ordering and filtering fields.
+Format an OpenAPI document by ordering, formatting and filtering fields.
 
 Options:
-  -o, --output <output>                      write the formatted OpenAPI to an output file path.
-  -s, --sortFile <sortFile>                  The file to specify custom OpenAPI fields ordering.
-  -c, --casingFile <casingFile>              The file to specify casing rules.
-  -f, --filterFile <filterFile>              The file to specify filter rules.
-  -c, --configFile <configFile>              The file with the OpenAPI-format CLI options.
-  --no-sort                                  dont sort the OpenAPI file
-  --sortComponentsFile <sortComponentsFile>  The file with components to sort alphabetically
+  -o, --output <output>                      save the formatted OpenAPI file as JSON/YAML
+  -s, --sortFile <sortFile>                  the file to specify custom OpenAPI fields ordering
+  -c, --casingFile <casingFile>              the file to specify casing rules
+  -f, --filterFile <filterFile>              the file to specify filter rules
+  -c, --configFile <configFile>              the file with the OpenAPI-format CLI options
+  --no-sort                                  don't sort the OpenAPI file
+  --sortComponentsFile <sortComponentsFile>  the file with components to sort alphabetically
   --lineWidth <lineWidth>                    max line width of YAML output (default: -1)
-  --rename <oaTitle>                         overwrite the title in the OpenAPI document.
+  --rename <oaTitle>                         overwrite the title in the OpenAPI document
   --json                                     print the file to stdout as JSON
   --yaml                                     print the file to stdout as YAML
   --version                                  output the version number
