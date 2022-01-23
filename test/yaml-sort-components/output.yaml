@@ -784,6 +784,10 @@ components:
               $ref: '#/components/schemas/User'
       description: List of user object
   securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
     petstore_auth:
       type: oauth2
       flows:
@@ -792,10 +796,6 @@ components:
           scopes:
             'write:pets': modify pets in your account
             'read:pets': read your pets
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
 tags:
   - name: pet
     description: Everything about your Pets

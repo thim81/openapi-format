@@ -174,11 +174,13 @@ async function openapiSort(oaObj, options) {
     if (typeof node === 'object') {
 
       // Components sorting by alphabet
-      if (this.parent && this.parent.key && this.parent.key && this.parent.key === 'components'
+      if (this.parent && this.parent.key && this.path[0] === 'components' && this.parent.key === 'components'
         && sortComponentsSet.length > 0 && sortComponentsSet.includes(this.key)
       ) {
         // debugStep = 'Component sorting by alphabet'
-        node = prioritySort(node, []);
+        let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
+        node = prioritySort(sortedObj, []);
+        this.update(node);
       }
 
       // Generic sorting
@@ -354,7 +356,7 @@ async function openapiFilter(oaObj, options) {
         this.parent.delete();
       }
 
-      // Filter out the top OpenApi.tags matching the inverse "tags"
+      // Filter out the top level tags matching the inverse "tags"
       if (inverseFilterArray.length > 0 && this.key === 'tags' && this.parent.parent === undefined) {
         // debugFilterStep = 'Filter - inverse top tags'
         node = node.filter(value => inverseFilterArray.includes(value.name))
@@ -368,7 +370,7 @@ async function openapiFilter(oaObj, options) {
       }
 
       // Filter out the top OpenApi.tags matching the "tags"
-      if (filterArray.length > 0 && this.key === 'tags' && this.parent.parent === undefined) {
+      if (filterArray.length > 0 && this.key === 'tags' && this.path[0] === 'tags') {
         // debugFilterStep = 'Filter - top tags'
         node = node.filter(value => !filterArray.includes(value.name))
         this.update(node);
@@ -567,7 +569,7 @@ async function openapiChangeCase(oaObj, options) {
   let defaultCasing = {}; // JSON.parse(fs.readFileSync(__dirname + "/defaultFilter.json", 'utf8'))
   let casingSet = Object.assign({}, defaultCasing, options.casingSet);
 
-  let debugCasingStep = '' // uncomment // debugFilterStep below to see which sort part is triggered
+  let debugCasingStep = '' // uncomment // debugCasingStep below to see which sort part is triggered
 
   // Initiate components tracking
   const comps = {
@@ -721,7 +723,7 @@ async function openapiChangeCase(oaObj, options) {
     if (this.path[0] === 'paths' && this.key === 'properties' && casingSet.properties
       && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value')
     ) {
-      // debugCasingStep = 'Casing - paths>schema - properties name'
+      // debugCasingStep = 'Casing - paths > schema - properties name'
       this.update(changeObjKeysCase(node, casingSet.properties));
     }
     // Change security - keys
