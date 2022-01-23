@@ -217,7 +217,7 @@ Some more details on the available filter types:
 
 ### Filter - methods/inverseMethods
 
-=> **methods**: Refers to the "Path Item Object" http://spec.openapis.org/oas/v3.0.3.html#operationObject
+=> **methods**: Refers to the [Path Item Object](http://spec.openapis.org/oas/v3.0.3.html#operationObject)
 
 This will remove all fields and attached fields that match the verbs. In the example below, this would mean that
 all `get`, `put`, `post` items would be removed from the OpenAPI document.
@@ -264,8 +264,7 @@ paths:
 
 ### Filter - operationIds
 
-=> **operationIds**: Refers to the "operationId" field from the "Operation
-  Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
+=> **operationIds**: Refers to the "operationId" field from the [Operation Object](https://spec.openapis.org/oas/v3.0.3.html#operationObject)
 
 This will remove specific fields and attached fields that match the operation ID's. In the example below, this would
 mean that the item with operationID `findPetsByStatus` would be removed from the OpenAPI document.
@@ -287,9 +286,8 @@ paths:
 
 ### Filter - operations
 
-=> **operations**: Refers to a combination of a OpenAPI method & path from the "Path
-  Object" https://spec.openapis.org/oas/v3.0.3.html#paths-object & "Path
-  item" https://spec.openapis.org/oas/v3.0.3.html#path-item-object
+=> **operations**: Refers to a combination of a OpenAPI method & path from the [Path Object](https://spec.openapis.org/oas/v3.0.3.html#paths-object) 
+& [Path item](https://spec.openapis.org/oas/v3.0.3.html#path-item-object)
 
 This will remove specific path items that match the operation definition `PUT::/pets`. In the example below, this would
 mean that the item with the path '/pets' and method 'PUT' would be removed from the OpenAPI document.
