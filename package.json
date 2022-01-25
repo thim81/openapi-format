@@ -48,12 +48,12 @@
   },
   "dependencies": {
     "@stoplight/yaml": "^4.2.2",
-    "case-anything": "^2.1.5",
+    "case-anything": "^2.1.8",
     "commander": "^7.1.0",
     "traverse": "^0.6.6"
   },
   "devDependencies": {
-    "jest": "^27.4.5"
+    "jest": "^27.4.7"
   },
   "engines": {
     "node": ">=12"
