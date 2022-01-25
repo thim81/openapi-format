@@ -765,7 +765,7 @@ async function openapiChangeCase(oaObj, options) {
  * OpenAPI rename function
  * Change the title of the OpenAPI document with a provided value.
  * @param {object} oaObj OpenApi document
- * @param {object} options OpenApi-format filter options
+ * @param {object} options OpenApi-format options
  * @returns {object} Renamed OpenApi document
  */
 async function openapiRename(oaObj, options) {
