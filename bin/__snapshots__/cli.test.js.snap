@@ -23,11 +23,6 @@ Options:
 "
 `;
 
-exports[`openapi-format CLI command should output the version 1`] = `
-"1.8.1
-"
-`;
-
 exports[`openapi-format CLI command should show unused components 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
@@ -58,11 +53,31 @@ Total components removed: 16
 "
 `;
 
+exports[`openapi-format CLI command should stop and show error 1`] = `
+[Error: Command failed: node /Users/Haselaars/Sites/openapi-format/bin/cli test/yaml-default/input.yaml --sortFile foobar
+================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		foobar
+[31m Sort file error - no such file or directory "foobar"
+]
+`;
+
 exports[`openapi-format CLI command should use the casingFile 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
 - Casing file:		test/yaml-casing/customCasing.yaml
 - Input file:		test/yaml-casing/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the default sort 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		(defaultSort.json)
+- Input file:		test/yaml-default/input.yaml
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m
