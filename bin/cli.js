@@ -73,6 +73,7 @@ async function run(oaFile, options) {
       if (options.verbose >= 1) {
         console.error(err)
       }
+      process.exit(1)
     }
   }
 
@@ -81,10 +82,10 @@ async function run(oaFile, options) {
 
   // apply ordering by priority file if present
   if (options && options.sort === true) {
+    let sortFile = (options.sortFile) ? options.sortFile : __dirname + "/../defaultSort.json"
+    let sortFileName = (options.sortFile) ? options.sortFile : "(defaultSort.json)"
     try {
       let sortOptions = {sortSet: {}}
-      let sortFile = (options.sortFile) ? options.sortFile : __dirname + "/../defaultSort.json"
-      let sortFileName = (options.sortFile) ? options.sortFile : "(defaultSort.json)"
       infoOut(`- Sort file:\t\t${sortFileName}`) // LOG - sort file
       sortOptions.sortSet = sy.parse(fs.readFileSync(sortFile, 'utf8'));
       options = Object.assign({}, options, sortOptions);
@@ -93,6 +94,7 @@ async function run(oaFile, options) {
       if (options.verbose >= 1) {
         console.error(err)
       }
+      process.exit(1)
     }
   }
 
@@ -108,6 +110,7 @@ async function run(oaFile, options) {
       if (options.verbose >= 1) {
         console.error(err)
       }
+      process.exit(1)
     }
   }
 
@@ -123,6 +126,7 @@ async function run(oaFile, options) {
       if (options.verbose >= 1) {
         console.error(err)
       }
+      process.exit(1)
     }
   }
 
@@ -138,6 +142,7 @@ async function run(oaFile, options) {
       if (options.verbose >= 1) {
         console.error(err)
       }
+      process.exit(1)
     }
   }
 

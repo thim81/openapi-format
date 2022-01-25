@@ -3,18 +3,37 @@ const fs = require("fs");
 
 describe("openapi-format CLI command", () => {
 
-  it("should output the version", async () => {
-    let result = await testUtils.cli([`--version`], '.');
-    // console.log('result', result)
-    expect(result.code).toBe(0);
-    expect(result.stderr).toMatchSnapshot();
-  });
-
   it("should output the help", async () => {
     let result = await testUtils.cli([`--help`], '.');
     // console.log('result', result)
     expect(result.code).toBe(0);
     expect(result.stderr).toMatchSnapshot();
+  });
+
+  it("should use the default sort", async () => {
+    const path = `test/yaml-default`
+    const inputFile = `${path}/input.yaml`
+    const outputFile = `${path}/output.yaml`
+    const output = (fs.readFileSync(outputFile, 'utf8'));
+
+    let result = await testUtils.cli([inputFile], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain("formatted successfully");
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
+  it("should stop and show error", async () => {
+    const path = `test/yaml-default`
+    const inputFile = `${path}/input.yaml`
+    const outputFile = `${path}/output.yaml`
+    const output = (fs.readFileSync(outputFile, 'utf8'));
+
+    let result = await testUtils.cli([inputFile, `--sortFile foobar`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(1);
+    expect(result.error).toMatchSnapshot();
   });
 
   it("should use the sortFile", async () => {
