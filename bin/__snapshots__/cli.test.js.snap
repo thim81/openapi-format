@@ -54,12 +54,11 @@ Total components removed: 16
 `;
 
 exports[`openapi-format CLI command should stop and show error 1`] = `
-[Error: Command failed: node /Users/Haselaars/Sites/openapi-format/bin/cli test/yaml-default/input.yaml --sortFile foobar
-================================================================================
+"================================================================================
 OpenAPI-Format CLI settings:
 - Sort file:		foobar
-[31m Sort file error - no such file or directory "foobar"
-]
+[31m Sort file error - no such file or directory \\"foobar\\"
+"
 `;
 
 exports[`openapi-format CLI command should use the casingFile 1`] = `
