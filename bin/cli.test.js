@@ -28,12 +28,11 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-default`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
 
     let result = await testUtils.cli([inputFile, `--sortFile foobar`], '.');
     // console.log('result', result)
     expect(result.code).toBe(1);
-    expect(result.error).toMatchSnapshot();
+    expect(result.stdout).toMatchSnapshot();
   });
 
   it("should use the sortFile", async () => {
