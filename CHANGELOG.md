@@ -1,6 +1,6 @@
 ## unreleased
 
-## [1.9.0] - 2022-01-24
+## [1.9.0] - 2022-01-25
 
 - Filter - Handle components with period (.) in their name/key (#37)
 - Filter - Inverse operation IDs
