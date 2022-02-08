@@ -227,8 +227,15 @@ describe('openapi-format tests', () => {
             }
             // Decode stringified large number value safely before writing output
             const regexDecodeLargeNumber = /: '([0-9]*\.?[0-9]+)'/g; // match > : '123456789.123456789'
-            output = output.replace(regexDecodeLargeNumber, (number) => {
-              return number.replace(/'/g, '');
+            output = output.replace(regexDecodeLargeNumber, (strNumber) => {
+              const number = strNumber.replace(/: '|'/g, '');
+              // Decode large numbers safely in javascript
+              if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+                return strNumber.replace(/'/g, '')
+              } else {
+                // Keep stringified number
+                return strNumber;
+              }
             });
 
             // Write to file
