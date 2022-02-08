@@ -17,6 +17,7 @@ Options:
   --rename <oaTitle>                         overwrite the title in the OpenAPI document
   --json                                     print the file to stdout as JSON
   --yaml                                     print the file to stdout as YAML
+  -b, --bigNumberFormat                      big number formatting fixing (default: false)
   --version                                  output the version number
   -v, --verbose                              verbosity that can be increased (default: 0)
   -h, --help                                 display help for command

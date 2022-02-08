@@ -25,7 +25,8 @@ program
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
   .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document')
   .option('--json', 'print the file to stdout as JSON')
-  .option('--yaml', 'print the file to stdout as YAML')
+  .option( '--yaml', 'print the file to stdout as YAML' )
+  .option('-b, --bigNumberFormat', 'big number formatting fixing', false)
   .version(require('../package.json').version, '--version')
   .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
   .action(run)
@@ -148,8 +149,16 @@ async function run(oaFile, options) {
 
   infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
 
+  let fileContent = fs.readFileSync( oaFile, 'utf8' );
+
+  if ( options.bigNumberFormat ) {
+    fileContent = fileContent.replace( /\b([0-9]*\.?[0-9]+)\b/g, ( number ) => {
+      return `'${ number }'`;
+    } );
+  }
+
   // Get
-  let res = sy.parse(fs.readFileSync(oaFile, 'utf8'));
+  let res = sy.parse(fileContent);
   let o = {};
 
   // Filter OpenAPI document
@@ -186,6 +195,12 @@ async function run(oaFile, options) {
   } else {
     let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
     o = sy.safeStringify(res, {lineWidth: lineWidth});
+  }
+
+  if ( options.bigNumberFormat ) {
+    o = o.replace( /'([0-9]*\.?[0-9]+)'/g, ( number ) => {
+      return number.replace( /'/g, '' );
+    } );
   }
 
   if (options.output) {
