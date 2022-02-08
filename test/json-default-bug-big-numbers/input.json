@@ -1,0 +1,52 @@
+{
+  "openapi": "3.0.2",
+  "paths": {
+    "/pet": {
+      "get": {
+        "operationId": "getPet",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Pet": {
+        "type": "object",
+        "properties": {
+          "properties": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 10
+          },
+          "name": {
+            "type": "string",
+            "example": "doggie"
+          },
+          "NumberLimitsSchema": {
+            "type": "number",
+            "maximum": 9999999999999.99999,
+            "minimum": 0,
+            "multipleOf": 0.0000000001
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    }
+  }
+}
