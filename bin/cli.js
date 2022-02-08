@@ -148,8 +148,14 @@ async function run(oaFile, options) {
 
   infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
 
+  let fileContent = fs.readFileSync( oaFile, 'utf8' );
+
+  fileContent = fileContent.replace( /\b([0-9]*\.?[0-9]+)\b/g, ( number ) => {
+    return `'${ number }'`;
+  } );
+
   // Get
-  let res = sy.parse(fs.readFileSync(oaFile, 'utf8'));
+  let res = sy.parse(fileContent);
   let o = {};
 
   // Filter OpenAPI document
@@ -187,6 +193,10 @@ async function run(oaFile, options) {
     let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
     o = sy.safeStringify(res, {lineWidth: lineWidth});
   }
+
+  o = o.replace( /'([0-9]*\.?[0-9]+)'/g, ( number ) => {
+    return number.replace( /'/g, '' );
+  } );
 
   if (options.output) {
     try {

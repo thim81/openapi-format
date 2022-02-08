@@ -112,32 +112,32 @@ openapi-format.js <input-file> -o [ouptut-file] [options]
 
 Arguments:
   infile   the OpenAPI document, can be either a .json or .yaml file
-  outfile  the output file is optional and be either a .json or .yaml file. Files that end in `.json` will be formatted 
+  outfile  the output file is optional and be either a .json or .yaml file. Files that end in `.json` will be formatted
   as JSON files that end in `.yaml` or `.yml` will be YAML format
-  
+
 
 Options:
 
-  --output, -o         Save the formated OpenAPI file as JSON/YAML             [path]
-  
-  --sortFile           The file to specify custom OpenAPI fields ordering      [path]
-  --casingFile         The file to specify casing rules                        [path]
-  --filterFile         The file to specify filter rules                        [path]
-    
-  --no-sort            Don't sort the OpenAPI file                          [boolean]
-  --sortComponentsFile The file with components to sort alphabetically         [path]
-  
-  --rename             Rename the OpenAPI title                              [string]
+  --output, -o          Save the formated OpenAPI file as JSON/YAML             [path]
 
-  --configFile         The file with the OpenAPI-format CLI options            [path]
-  
-  --lineWidth          Max line width of YAML output                         [number]
-  
-  --json               Prints the file to stdout as JSON                    [boolean]
-  --yaml               Prints the file to stdout as YAML                    [boolean]
-  
-  --help               Show help                                            [boolean]
-  --verbose            Output more details of the filter process              [count]
+  --sortFile            The file to specify custom OpenAPI fields ordering      [path]
+  --casingFile          The file to specify casing rules                        [path]
+  --filterFile          The file to specify filter rules                        [path]
+
+  --no-sort             Don't sort the OpenAPI file                          [boolean]
+  --sortComponentsFile  The file with components to sort alphabetically         [path]
+
+  --rename              Rename the OpenAPI title                              [string]
+
+  --configFile          The file with the OpenAPI-format CLI options            [path]
+
+  --lineWidth           Max line width of YAML output                         [number]
+
+  --json                Prints the file to stdout as JSON                    [boolean]
+  --yaml                Prints the file to stdout as YAML                    [boolean]
+
+  --help                Show help                                            [boolean]
+  --verbose             Output more details of the filter process              [count]
 ```
 
 ## OpenAPI format CLI options
@@ -166,7 +166,7 @@ not specified will keep their order like it is in the original OpenAPI document,
 re-ordered.
 
 The default sorting based on the defined order (listed in the table below), which is stored in
-the [defaultSort.json](https://github.com/thim81/openapi-format/blob/main/defaultSort.json) file. 
+the [defaultSort.json](https://github.com/thim81/openapi-format/blob/main/defaultSort.json) file.
 
 You can easily modify this by specifying your own ordering per key, which can be passed on to the CLI (see below for an
 example on how to do this).
@@ -286,7 +286,7 @@ paths:
 
 ### Filter - operations
 
-=> **operations**: Refers to a combination of a OpenAPI method & path from the [Path Object](https://spec.openapis.org/oas/v3.0.3.html#paths-object) 
+=> **operations**: Refers to a combination of a OpenAPI method & path from the [Path Object](https://spec.openapis.org/oas/v3.0.3.html#paths-object)
 & [Path item](https://spec.openapis.org/oas/v3.0.3.html#path-item-object)
 
 This will remove specific path items that match the operation definition `PUT::/pets`. In the example below, this would
@@ -331,7 +331,7 @@ This will target only the "GET" method and any path matching any folder behind t
 "/pets/123/buy".
 
 Method & Path wildcard matching example: `"*::/pets/*"`
-A combination of wildcards for the method and path parts is even possible. 
+A combination of wildcards for the method and path parts is even possible.
 
 ### Filter - flags
 
@@ -357,7 +357,7 @@ paths:
 
 => **flagValues**: Refers to a flag, custom property which can be set on any field in the OpenAPI document, and the combination with the value for that flag.
 
-This will remove all fields and attached fields that match the flag with the specific value. 
+This will remove all fields and attached fields that match the flag with the specific value.
 
 A `flagValues` example:
 
@@ -411,8 +411,8 @@ Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-value) and [flagV
 
 => **unusedComponents**: Refers to a list of [reusable component types]( https://spec.openapis.org/oas/v3.0.3.html#components-object), from which unused items will be removed.
 
-This option allows you to strip the OpenAPI document from any unused items of the targeted `components` types. 
-Any item in the list of OpenAPI `components` that is not referenced as `$ref`, will get marked and removed from the OpenAPI document. 
+This option allows you to strip the OpenAPI document from any unused items of the targeted `components` types.
+Any item in the list of OpenAPI `components` that is not referenced as `$ref`, will get marked and removed from the OpenAPI document.
 
 REMARK: We will recursively strip all unused components, with a maximum depth of 10 times. This means that "nested" components, that become unused, will also get removed
 
@@ -674,7 +674,7 @@ components:
 Formatting casing example:
 
 ```yaml
-componentsSchemas: kebab-case 
+componentsSchemas: kebab-case
 ```
 
 Example before:
