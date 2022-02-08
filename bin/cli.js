@@ -25,7 +25,7 @@ program
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
   .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document')
   .option('--json', 'print the file to stdout as JSON')
-  .option( '--yaml', 'print the file to stdout as YAML' )
+  .option('--yaml', 'print the file to stdout as YAML')
   .version(require('../package.json').version, '--version')
   .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
   .action(run)
