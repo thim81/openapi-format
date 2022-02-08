@@ -136,8 +136,6 @@ Options:
   --json                Prints the file to stdout as JSON                    [boolean]
   --yaml                Prints the file to stdout as YAML                    [boolean]
 
-  --bigNumberFormat, -b Big number formatting fixing                         [boolean]
-
   --help                Show help                                            [boolean]
   --verbose             Output more details of the filter process              [count]
 ```

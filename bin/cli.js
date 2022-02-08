@@ -26,7 +26,6 @@ program
   .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document')
   .option('--json', 'print the file to stdout as JSON')
   .option( '--yaml', 'print the file to stdout as YAML' )
-  .option('-b, --bigNumberFormat', 'big number formatting fixing', false)
   .version(require('../package.json').version, '--version')
   .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
   .action(run)
@@ -151,11 +150,9 @@ async function run(oaFile, options) {
 
   let fileContent = fs.readFileSync( oaFile, 'utf8' );
 
-  if ( options.bigNumberFormat ) {
-    fileContent = fileContent.replace( /\b([0-9]*\.?[0-9]+)\b/g, ( number ) => {
-      return `'${ number }'`;
-    } );
-  }
+  fileContent = fileContent.replace( /\b([0-9]*\.?[0-9]+)\b/g, ( number ) => {
+    return `'${ number }'`;
+  } );
 
   // Get
   let res = sy.parse(fileContent);
@@ -197,11 +194,9 @@ async function run(oaFile, options) {
     o = sy.safeStringify(res, {lineWidth: lineWidth});
   }
 
-  if ( options.bigNumberFormat ) {
-    o = o.replace( /'([0-9]*\.?[0-9]+)'/g, ( number ) => {
-      return number.replace( /'/g, '' );
-    } );
-  }
+  o = o.replace( /'([0-9]*\.?[0-9]+)'/g, ( number ) => {
+    return number.replace( /'/g, '' );
+  } );
 
   if (options.output) {
     try {
