@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`openapi-format CLI command should not convert large numbers 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Input file:		test/yaml-default-bug-big-numbers/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
 exports[`openapi-format CLI command should output the help 1`] = `
 "Usage: cli <file> [options]
 
