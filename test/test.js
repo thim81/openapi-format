@@ -184,7 +184,21 @@ describe('openapi-format tests', () => {
         }
 
         try {
-          output = sy.parse(fs.readFileSync(outputFilename, 'utf8'));
+          // Read output file
+          let outputContent = fs.readFileSync(outputFilename, 'utf8');
+
+          // Convert large number value safely before parsing
+          const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)\n/g;  // match > : 123456789.123456789\n
+          outputContent = outputContent.replace(regexEncodeLargeNumber, (rawInput) => {
+            const number = rawInput.replace(/: /g, '').replace(/\n/g, '');
+            // Handle large numbers safely in javascript
+            if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+              return `: '${number}'\n`;
+            } else {
+              return `: ${number}\n`;
+            }
+          });
+          output = sy.parse(outputContent);
           readOutput = true;
         } catch (ex) {
           // No options found. output = {} will be used
