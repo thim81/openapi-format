@@ -148,15 +148,24 @@ async function run(oaFile, options) {
 
   infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
 
-  let fileContent = fs.readFileSync( oaFile, 'utf8' );
+  // Read input file
+  let inputContent = fs.readFileSync( oaFile, 'utf8' );
 
-  fileContent = fileContent.replace( /\b([0-9]*\.?[0-9]+)\b/g, ( number ) => {
-    return `'${ number }'`;
-  } );
+  // Convert large number value safely before parsing
+  const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)/g;  // match > : 123456789.123456789
+  inputContent = inputContent.replace(regexEncodeLargeNumber, (rawInput) => {
+    const number = rawInput.replace(/: /g, '');
+    // Handle large numbers safely in javascript
+    if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+      return `: '${number}'`;
+    } else {
+      return `: ${number}`;
+    }
+  });
 
-  // Get
-  let res = sy.parse(fileContent);
-  let o = {};
+  // Parse input content
+  let res = sy.parse(inputContent);
+  let output = {};
 
   // Filter OpenAPI document
   if (options.filterSet) {
@@ -188,19 +197,44 @@ async function run(oaFile, options) {
   }
 
   if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
-    o = JSON.stringify(res, null, 2);
-  } else {
-    let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
-    o = sy.safeStringify(res, {lineWidth: lineWidth});
-  }
+    // Convert OpenAPI object to JSON string
+    output = JSON.stringify(res, null, 2);
 
-  o = o.replace( /'([0-9]*\.?[0-9]+)'/g, ( number ) => {
-    return number.replace( /'/g, '' );
-  } );
+    // Decode stringified large number JSON values safely before writing output
+    const regexDecodeJsonLargeNumber = /: "([0-9]*\.?[0-9]+)"/g; // match > : "123456789.123456789"
+    output = output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
+      const number = strNumber.replace(/: "|"/g, '');
+      // Decode large numbers safely in javascript
+      if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+        return strNumber.replace(/"/g, '')
+      } else {
+        // Keep stringified number
+        return strNumber;
+      }
+    });
+  } else {
+    // Convert OpenAPI object to YAML string
+    let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
+    output = sy.safeStringify(res, {lineWidth: lineWidth});
+
+    // Decode stringified large number YAML values safely before writing output
+    const regexDecodeYamlLargeNumber = /: '([0-9]*\.?[0-9]+)'/g; // match > : '123456789.123456789'
+    output = output.replace(regexDecodeYamlLargeNumber, (strNumber) => {
+      const number = strNumber.replace(/: '|'/g, '');
+      // Decode large numbers safely in javascript
+      if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+        return strNumber.replace(/'/g, '')
+      } else {
+        // Keep stringified number
+        return strNumber;
+      }
+    });
+  }
 
   if (options.output) {
     try {
-      fs.writeFileSync(options.output, o, 'utf8');
+      // Write OpenAPI string to file
+      fs.writeFileSync(options.output, output, 'utf8');
       infoOut(`- Output file:\t\t${options.output}`) // LOG - config file
     } catch (err) {
       console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`)
@@ -209,7 +243,7 @@ async function run(oaFile, options) {
       }
     }
   } else {
-    console.log(o);
+    console.log(output);
   }
 
   if (outputLogOptions) { //&& options.verbose > 2) {

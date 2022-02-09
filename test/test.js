@@ -12,7 +12,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-casing-component-names']
+// const tests = ['json-default-bug-big-numbers']
 // destroyOutput = true
 
 describe('openapi-format tests', () => {
@@ -31,6 +31,7 @@ describe('openapi-format tests', () => {
         let filterOptions = {filterSet: {}};
         let casingOptions = {casingSet: {}};
         let inputFilename = null;
+        let inputContent = null;
         let input = null;
 
         try {
@@ -133,7 +134,7 @@ describe('openapi-format tests', () => {
         try {
           // Load input.yaml
           inputFilename = path.join(__dirname, test, 'input.yaml');
-          input = sy.parse(fs.readFileSync(inputFilename, 'utf8'));
+          inputContent = fs.readFileSync(inputFilename, 'utf8');
           // input = sy.parseWithPointers(fs.readFileSync(inputFilename, 'utf8'), {
           //     ignoreDuplicateKeys: false,
           //     mergeKeys: true,
@@ -146,8 +147,23 @@ describe('openapi-format tests', () => {
           inputFilename = path.join(__dirname, test, 'input.json');
           // input = jy.load(fs.readFileSync(inputFilename, 'utf8'));
           // input = jy.load(fs.readFileSync(inputFilename, 'utf8'), { schema:jy.JSON_SCHEMA, json: true });
-          input = sy.parse(fs.readFileSync(inputFilename, 'utf8'));
+          inputContent = fs.readFileSync(inputFilename, 'utf8');
         }
+
+        // Convert large number value safely before parsing
+        const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)/g;  // match > : 123456789.123456789
+        inputContent = inputContent.replace(regexEncodeLargeNumber, (rawInput) => {
+          const number = rawInput.replace(/: /g, '');
+          // Handle large numbers safely in javascript
+          if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+            return `: '${number}'`;
+          } else {
+            return `: ${number}`;
+          }
+        });
+
+        // Parse input content
+        input = sy.parse(inputContent);
 
         // DEBUG
         // console.log('options', options)
@@ -168,7 +184,21 @@ describe('openapi-format tests', () => {
         }
 
         try {
-          output = sy.parse(fs.readFileSync(outputFilename, 'utf8'));
+          // Read output file
+          let outputContent = fs.readFileSync(outputFilename, 'utf8');
+
+          // Convert large number value safely before parsing
+          const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)/g;  // match > : 123456789.123456789
+          outputContent = outputContent.replace(regexEncodeLargeNumber, (rawInput) => {
+            const number = rawInput.replace(/: /g, '');
+            // Handle large numbers safely in javascript
+            if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+              return `: "${number}"`;
+            } else {
+              return `: ${number}`;
+            }
+          });
+          output = sy.parse(outputContent);
           readOutput = true;
         } catch (ex) {
           // No options found. output = {} will be used
@@ -204,11 +234,41 @@ describe('openapi-format tests', () => {
         try {
           if (!readOutput) {
             if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
+              // Convert OpenAPI object to JSON string
               output = JSON.stringify(result, null, 2);
+
+              // Decode stringified large number JSON values safely before writing output
+              const regexDecodeJsonLargeNumber = /: "([0-9]*\.?[0-9]+)"/g; // match > : "123456789.123456789"
+              output = output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
+                const number = strNumber.replace(/: "|"/g, '');
+                // Decode large numbers safely in javascript
+                if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+                  return strNumber.replace(/"/g, '')
+                } else {
+                  // Keep stringified number
+                  return strNumber;
+                }
+              });
             } else {
+              // Convert OpenAPI object to YAML string
               let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
               output = sy.safeStringify(result, {lineWidth: lineWidth});
+
+              // Decode stringified large number YAML values safely before writing output
+              const regexDecodeYamlLargeNumber = /: '([0-9]*\.?[0-9]+)'/g; // match > : '123456789.123456789'
+              output = output.replace(regexDecodeYamlLargeNumber, (strNumber) => {
+                const number = strNumber.replace(/: '|'/g, '');
+                // Decode large numbers safely in javascript
+                if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+                  return strNumber.replace(/'/g, '')
+                } else {
+                  // Keep stringified number
+                  return strNumber;
+                }
+              });
             }
+
+            // Write OpenAPI string to file
             fs.writeFileSync(outputFilename, output, 'utf8');
           }
         } catch (error) {

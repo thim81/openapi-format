@@ -138,6 +138,34 @@ describe("openapi-format CLI command", () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
+  it("should not convert large numbers in YAML", async () => {
+    const path = `test/yaml-default-bug-big-numbers`
+    const inputFile = `${path}/input.yaml`
+    const outputFile = `${path}/output.yaml`
+    const output = (fs.readFileSync(outputFile, 'utf8'));
+
+    let result = await testUtils.cli([inputFile, `--no-sort`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain("formatted successfully");
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
+  it("should not convert large numbers in JSON", async () => {
+    const path = `test/json-default-bug-big-numbers`
+    const inputFile = `${path}/input.json`
+    const outputFile = `${path}/output.json`
+    const output = (fs.readFileSync(outputFile, 'utf8'));
+
+    let result = await testUtils.cli([inputFile, `--json`, `--no-sort`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain("formatted successfully");
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
 })
 
 /**
