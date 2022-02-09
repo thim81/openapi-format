@@ -1,5 +1,10 @@
 ## unreleased
 
+## [1.9.1] - 2022-02-09
+
+- Bumped dependencies
+- Handle large numbers more safely in YAML/JSON (#41 / #42)
+
 ## [1.9.0] - 2022-01-25
 
 - Filter - Handle components with period (.) in their name/key (#37)
