@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.9.2] - 2022-02-10
+
+- Improved the matching of large numbers in YAML/JSON to prevent unwanted conversions
+
 ## [1.9.1] - 2022-02-09
 
 - Bumped dependencies
