@@ -1,4 +1,7 @@
 openapi: 3.0.2
+info:
+  title: Test
+  version: 0.0.1
 paths:
   /pet:
     get:
@@ -17,13 +20,14 @@ components:
       properties:
         properties:
           type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
         id:
           type: integer
           format: int64
           example: 10
         name:
           type: string
-          example: doggie
+          example: 123456789012345678901234567890
         NumberLimitsSchema:
           type: number
           maximum: 9999999999999.99999
