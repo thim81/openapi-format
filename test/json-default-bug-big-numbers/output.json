@@ -1,5 +1,9 @@
 {
   "openapi": "3.0.2",
+  "info": {
+    "title": "Test",
+    "version": "1.0.0"
+  },
   "paths": {
     "/pet": {
       "get": {
@@ -25,7 +29,8 @@
         "type": "object",
         "properties": {
           "properties": {
-            "type": "string"
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
           },
           "id": {
             "type": "integer",
@@ -34,7 +39,7 @@
           },
           "name": {
             "type": "string",
-            "example": "doggie"
+            "example": "123e4567"
           },
           "NumberLimitsSchema": {
             "type": "number",

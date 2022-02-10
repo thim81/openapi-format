@@ -12,7 +12,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['json-default-bug-big-numbers']
+// const tests = ['yaml-default-bug-big-numbers']
 // destroyOutput = true
 
 describe('openapi-format tests', () => {
@@ -151,14 +151,16 @@ describe('openapi-format tests', () => {
         }
 
         // Convert large number value safely before parsing
-        const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)/g;  // match > : 123456789.123456789
+        const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)(,|\n)/g;  // match > : 123456789.123456789
         inputContent = inputContent.replace(regexEncodeLargeNumber, (rawInput) => {
-          const number = rawInput.replace(/: /g, '');
+          const endChar = (rawInput.endsWith(',') ? ',' : '\n');
+          const rgx = new RegExp(endChar, "g");
+          const number = rawInput.replace(/: /g, '').replace(rgx, '');
           // Handle large numbers safely in javascript
           if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
-            return `: '${number}'`;
+            return `: '${number}'${endChar}`;
           } else {
-            return `: ${number}`;
+            return `: ${number}${endChar}`;
           }
         });
 

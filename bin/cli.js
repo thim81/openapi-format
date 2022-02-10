@@ -44,10 +44,10 @@ program
 
 async function run(oaFile, options) {
   // General variables
-  let outputLogOptions = ''
-  let outputLogFiltered = ''
+  let outputLogOptions = '';
+  let outputLogFiltered = '';
   let cliLog = {};
-  const consoleLine = process.stdout.columns ? '='.repeat(process.stdout.columns) : '='.repeat(80)
+  const consoleLine = process.stdout.columns ? '='.repeat(process.stdout.columns) : '='.repeat(80);
 
   if (!oaFile) {
     console.error('Please provide a file path for the OpenAPI document');
@@ -152,14 +152,16 @@ async function run(oaFile, options) {
   let inputContent = fs.readFileSync( oaFile, 'utf8' );
 
   // Convert large number value safely before parsing
-  const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)/g;  // match > : 123456789.123456789
+  const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)(,|\n)/g;  // match > : 123456789.123456789
   inputContent = inputContent.replace(regexEncodeLargeNumber, (rawInput) => {
-    const number = rawInput.replace(/: /g, '');
+    const endChar = (rawInput.endsWith(',') ? ',' : '\n');
+    const rgx = new RegExp(endChar, "g");
+    const number = rawInput.replace(/: /g, '').replace(rgx, '');
     // Handle large numbers safely in javascript
     if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
-      return `: '${number}'`;
+      return `: '${number}'${endChar}`;
     } else {
-      return `: ${number}`;
+      return `: ${number}${endChar}`;
     }
   });
 
