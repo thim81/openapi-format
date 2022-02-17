@@ -137,6 +137,7 @@ Options:
   --yaml                Prints the file to stdout as YAML                    [boolean]
 
   --help                Show help                                            [boolean]
+  --version             Output the version number                            
   --verbose             Output more details of the filter process              [count]
 ```
 
@@ -156,6 +157,7 @@ Options:
 | --lineWidth           |               | max line width of YAML output                                               | number       | -1 (Infinity)               | optional  |
 | --json                |               | prints the file to stdout as JSON                                           |              | FALSE                       | optional  |
 | --yaml                |               | prints the file to stdout as YAML                                           |              | FALSE                       | optional  |
+| --version |                           | output the version number                                                   |              |                             | optional  |
 | --verbose             | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                             | optional  |
 | --help                | h             | display help for command                                                    |              |                             | optional  |
 
