@@ -1,6 +1,6 @@
 ## unreleased
 
-## [1.9.3] - 2022-03-17
+## [1.10.0] - 2022-03-17
 
 - Bugfix for unwanted conversion of numbers in strings(#47)
 - Filter - Handle components with period (.) in their name/key (#37)
