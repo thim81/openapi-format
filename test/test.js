@@ -158,7 +158,7 @@ describe('openapi-format tests', () => {
           const number = rawInput.replace(/: /g, '').replace(rgx, '');
           // Handle large numbers safely in javascript
           if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
-            return `: '${number}'${endChar}`;
+            return `: '${number}==='${endChar}`;
           } else {
             return `: ${number}${endChar}`;
           }
@@ -240,12 +240,12 @@ describe('openapi-format tests', () => {
               output = JSON.stringify(result, null, 2);
 
               // Decode stringified large number JSON values safely before writing output
-              const regexDecodeJsonLargeNumber = /: "([0-9]*\.?[0-9]+)"/g; // match > : "123456789.123456789"
+              const regexDecodeJsonLargeNumber = /: ([0-9]*\.?[0-9]+)===/g; // match > : 123456789.123456789===
               output = output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
                 const number = strNumber.replace(/: "|"/g, '');
                 // Decode large numbers safely in javascript
-                if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
-                  return strNumber.replace(/"/g, '')
+                if (number.endsWith('===') || number.replace('.', '').length > 15) {
+                  return strNumber.replace('===', '').replace(/"/g, '')
                 } else {
                   // Keep stringified number
                   return strNumber;
@@ -257,12 +257,12 @@ describe('openapi-format tests', () => {
               output = sy.safeStringify(result, {lineWidth: lineWidth});
 
               // Decode stringified large number YAML values safely before writing output
-              const regexDecodeYamlLargeNumber = /: '([0-9]*\.?[0-9]+)'/g; // match > : '123456789.123456789'
+              const regexDecodeYamlLargeNumber = /: ([0-9]*\.?[0-9]+)===/g; // match > : 123456789.123456789===
               output = output.replace(regexDecodeYamlLargeNumber, (strNumber) => {
                 const number = strNumber.replace(/: '|'/g, '');
                 // Decode large numbers safely in javascript
-                if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
-                  return strNumber.replace(/'/g, '')
+                if (number.endsWith('===') || number.replace('.', '').length > 15) {
+                  return strNumber.replace('===', '').replace(/'/g, '')
                 } else {
                   // Keep stringified number
                   return strNumber;
