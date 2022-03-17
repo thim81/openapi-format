@@ -195,7 +195,7 @@ describe('openapi-format tests', () => {
             const number = rawInput.replace(/: /g, '');
             // Handle large numbers safely in javascript
             if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
-              return `: "${number}"`;
+              return `: "${number}==="`;
             } else {
               return `: ${number}`;
             }
@@ -240,7 +240,7 @@ describe('openapi-format tests', () => {
               output = JSON.stringify(result, null, 2);
 
               // Decode stringified large number JSON values safely before writing output
-              const regexDecodeJsonLargeNumber = /: ([0-9]*\.?[0-9]+)===/g; // match > : 123456789.123456789===
+              const regexDecodeJsonLargeNumber = /: "([0-9]*\.?[0-9]+)==="/g; // match > : "123456789.123456789"===
               output = output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
                 const number = strNumber.replace(/: "|"/g, '');
                 // Decode large numbers safely in javascript
