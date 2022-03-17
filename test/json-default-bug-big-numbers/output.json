@@ -26,6 +26,7 @@
   "components": {
     "schemas": {
       "Pet": {
+        "title": "500.1",
         "type": "object",
         "properties": {
           "properties": {
@@ -36,6 +37,10 @@
             "type": "integer",
             "format": "int64",
             "example": 10
+          },
+          "title": {
+            "type": "string",
+            "example": "500.1"
           },
           "name": {
             "type": "string",

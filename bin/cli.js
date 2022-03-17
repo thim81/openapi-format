@@ -149,7 +149,7 @@ async function run(oaFile, options) {
   infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
 
   // Read input file
-  let inputContent = fs.readFileSync( oaFile, 'utf8' );
+  let inputContent = fs.readFileSync(oaFile, 'utf8');
 
   // Convert large number value safely before parsing
   const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)(,|\n)/g;  // match > : 123456789.123456789
@@ -159,7 +159,7 @@ async function run(oaFile, options) {
     const number = rawInput.replace(/: /g, '').replace(rgx, '');
     // Handle large numbers safely in javascript
     if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
-      return `: '${number}'${endChar}`;
+      return `: '${number}==='${endChar}`;
     } else {
       return `: ${number}${endChar}`;
     }
@@ -203,12 +203,12 @@ async function run(oaFile, options) {
     output = JSON.stringify(res, null, 2);
 
     // Decode stringified large number JSON values safely before writing output
-    const regexDecodeJsonLargeNumber = /: "([0-9]*\.?[0-9]+)"/g; // match > : "123456789.123456789"
+    const regexDecodeJsonLargeNumber = /: "([0-9]*\.?[0-9]+)==="/g; // match > : "123456789.123456789"===
     output = output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
       const number = strNumber.replace(/: "|"/g, '');
       // Decode large numbers safely in javascript
-      if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
-        return strNumber.replace(/"/g, '')
+      if (number.endsWith('===') || number.replace('.', '').length > 15) {
+        return strNumber.replace('===', '').replace(/"/g, '')
       } else {
         // Keep stringified number
         return strNumber;
@@ -220,12 +220,12 @@ async function run(oaFile, options) {
     output = sy.safeStringify(res, {lineWidth: lineWidth});
 
     // Decode stringified large number YAML values safely before writing output
-    const regexDecodeYamlLargeNumber = /: '([0-9]*\.?[0-9]+)'/g; // match > : '123456789.123456789'
+    const regexDecodeYamlLargeNumber = /: ([0-9]*\.?[0-9]+)===/g; // match > : 123456789.123456789===
     output = output.replace(regexDecodeYamlLargeNumber, (strNumber) => {
       const number = strNumber.replace(/: '|'/g, '');
       // Decode large numbers safely in javascript
-      if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
-        return strNumber.replace(/'/g, '')
+      if (number.endsWith('===') || number.replace('.', '').length > 15) {
+        return strNumber.replace('===', '').replace(/'/g, '')
       } else {
         // Keep stringified number
         return strNumber;
