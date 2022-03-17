@@ -60,6 +60,7 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on tags
 - [x] Filter OpenAPI files based on operationID's
 - [x] Filter OpenAPI files based on operations definition
+- [x] Filter OpenAPI files based on response content-types
 - [x] Strip flags from OpenAPI files
 - [x] Strip unused components from OpenAPI files
 - [x] Rename the OpenAPI title
@@ -200,22 +201,22 @@ matching item from the OpenAPI document. You can combine multiple types to filte
 For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
 extended options for filtering OpenAPI documents.
 
-| Type                | Description                                | Type  | Examples                                  |
-|---------------------|--------------------------------------------|-------|-------------------------------------------|
-| methods             | OpenAPI methods.                           | array | ['get','post','put']                      |
-| inverseMethods      | OpenAPI methods that will be kept          | array | ['get','post','put']                      |
-| tags                | OpenAPI tags                               | array | ['pet','user']                            |
-| inverseTags         | OpenAPI tags that will be kept             | array | ['pet','user']                            |
-| operationIds        | OpenAPI operation ID's                     | array | ['findPetsByStatus','updatePet']          |
-| inverseOperationIds | OpenAPI operation ID's that will be kept   | array | ['findPetsByStatus','updatePet']          |
-| operations          | OpenAPI operations                         | array | ['GET::/pets','PUT::/pets']               |
-| flags               | Custom flags                               | array | ['x-exclude','x-internal']                |
-| flagValues          | Custom flags with a specific value         | array | ['x-version: 1.0','x-version: 3.0']       |
-| unusedComponents    | Unused components                          | array | ['examples','schemas']                    |
-| stripFlags          | Custom flags that will be stripped         | array | ['x-exclude','x-internal']                |
-| textReplace         | Search & replace values to replace         | array | [{'searchFor':'Pet','replaceWith':'Dog'}] |
-| responseContent | Content types                              | array | ['application/json','application/html']   |
-| inverseResponseContent | Content types that will keep               | array | ['application/ld+json']                   |
+| Type                   | Description                                | Type  | Examples                                  |
+|------------------------|--------------------------------------------|-------|-------------------------------------------|
+| methods                | OpenAPI methods.                           | array | ['get','post','put']                      |
+| inverseMethods         | OpenAPI methods that will be kept          | array | ['get','post','put']                      |
+| tags                   | OpenAPI tags                               | array | ['pet','user']                            |
+| inverseTags            | OpenAPI tags that will be kept             | array | ['pet','user']                            |
+| operationIds           | OpenAPI operation ID's                     | array | ['findPetsByStatus','updatePet']          |
+| inverseOperationIds    | OpenAPI operation ID's that will be kept   | array | ['findPetsByStatus','updatePet']          |
+| operations             | OpenAPI operations                         | array | ['GET::/pets','PUT::/pets']               |
+| flags                  | Custom flags                               | array | ['x-exclude','x-internal']                |
+| flagValues             | Custom flags with a specific value         | array | ['x-version: 1.0','x-version: 3.0']       |
+| responseContent        | Response Content types                     | array | ['application/json','application/html']   |
+| inverseResponseContent | Response Content types that will kept      | array | ['application/ld+json']                   |
+| unusedComponents       | Unused components                          | array | ['examples','schemas']                    |
+| stripFlags             | Custom flags that will be stripped         | array | ['x-exclude','x-internal']                |
+| textReplace            | Search & replace values to replace         | array | [{'searchFor':'Pet','replaceWith':'Dog'}] |
 
 Some more details on the available filter types:
 
@@ -411,75 +412,6 @@ paths:
 
 Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-value) and [flagValues for array values](test/yaml-filter-custom-flagsvalue-array) for a practical example.
 
-### Filter - unusedComponents
-
-=> **unusedComponents**: Refers to a list of [reusable component types]( https://spec.openapis.org/oas/v3.0.3.html#components-object), from which unused items will be removed.
-
-This option allows you to strip the OpenAPI document from any unused items of the targeted `components` types.
-Any item in the list of OpenAPI `components` that is not referenced as `$ref`, will get marked and removed from the OpenAPI document.
-
-REMARK: We will recursively strip all unused components, with a maximum depth of 10 times. This means that "nested" components, that become unused, will also get removed
-
-Supported component types that can be marked as "unused":
-- schemas
-- parameters
-- examples
-- headers
-- requestBodies
-- responses
-
-### Filter - textReplace
-
-=> **textReplace**: "search & replace" option to replace text in the OpenAPI specification
-
-The `textReplace` provides a "search & replace" method, that will search for a text/word/characters in the OpenAPI description, summary, URL fields and replace it with another text/word/characters.
-This is very useful to replace data in the OpenAPI specification.
-
-A `textReplace` example:
-
-```yaml
-textReplace:
-    - searchFor: 'Pets'
-      replaceWith: 'Dogs'
-    - searchFor: 'swagger.io'
-      replaceWith: 'openapis.org'
-```
-
-This will replace all "Pets" with "Dogs" & "swagger.io" with "openapi.org" in the OpenAPI document.
-
-### Filter - stripFlags
-
-=> **stripFlags**: Refers to a list of custom properties that can be set on any field in the OpenAPI document.
-
-The `stripFlags` will remove only the flags, the linked parent and properties will remain. In the example below, this would mean that all
-flags `x-exclude` itself would be stripped from the OpenAPI document.
-
-Example before:
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        get:
-          x-exclude: true
-          summary: Finds Pets by status
-```
-
-Example after:
-
-```yaml
-openapi: 3.0.0
-info:
-    title: API
-    version: 1.0.0
-paths:
-    /pets:
-        get:
-          summary: Finds Pets by status
-```
 ### Filter - responseContent/inverseResponseContent
 
 => **ResponseContent**: Refers to the [Response Object's content](https://spec.openapis.org/oas/v3.0.3.html#response-object)
@@ -551,8 +483,77 @@ paths:
           description: Invalid input
 ```
 
-
 => **inverseResponseContent**: This option does the inverse filtering, by keeping only the content with media types defined and remove all other content.
+
+### Filter - unusedComponents
+
+=> **unusedComponents**: Refers to a list of [reusable component types]( https://spec.openapis.org/oas/v3.0.3.html#components-object), from which unused items will be removed.
+
+This option allows you to strip the OpenAPI document from any unused items of the targeted `components` types.
+Any item in the list of OpenAPI `components` that is not referenced as `$ref`, will get marked and removed from the OpenAPI document.
+
+REMARK: We will recursively strip all unused components, with a maximum depth of 10 times. This means that "nested" components, that become unused, will also get removed
+
+Supported component types that can be marked as "unused":
+- schemas
+- parameters
+- examples
+- headers
+- requestBodies
+- responses
+
+### Filter - textReplace
+
+=> **textReplace**: "search & replace" option to replace text in the OpenAPI specification
+
+The `textReplace` provides a "search & replace" method, that will search for a text/word/characters in the OpenAPI description, summary, URL fields and replace it with another text/word/characters.
+This is very useful to replace data in the OpenAPI specification.
+
+A `textReplace` example:
+
+```yaml
+textReplace:
+    - searchFor: 'Pets'
+      replaceWith: 'Dogs'
+    - searchFor: 'swagger.io'
+      replaceWith: 'openapis.org'
+```
+
+This will replace all "Pets" with "Dogs" & "swagger.io" with "openapi.org" in the OpenAPI document.
+
+### Filter - stripFlags
+
+=> **stripFlags**: Refers to a list of custom properties that can be set on any field in the OpenAPI document.
+
+The `stripFlags` will remove only the flags, the linked parent and properties will remain. In the example below, this would mean that all
+flags `x-exclude` itself would be stripped from the OpenAPI document.
+
+Example before:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+          x-exclude: true
+          summary: Finds Pets by status
+```
+
+Example after:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        get:
+          summary: Finds Pets by status
+```
 
 ## OpenAPI formatting configuration options
 
