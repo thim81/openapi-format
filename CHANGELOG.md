@@ -2,8 +2,8 @@
 
 ## [1.10.0] - 2022-03-17
 
-- Bugfix for unwanted conversion of numbers in strings(#47)
-- Filter - Handle components with period (.) in their name/key (#37)
+- Bugfix for unwanted conversion of numbers in strings (#47)
+- Filter - added responseContent and inverseResponseContent filters (#48)
 
 ## [1.9.2] - 2022-02-10
 
