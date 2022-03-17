@@ -1,5 +1,10 @@
 ## unreleased
 
+## [1.9.3] - 2022-03-17
+
+- Bugfix for unwanted conversion of numbers in strings(#47)
+- Filter - Handle components with period (.) in their name/key (#37)
+
 ## [1.9.2] - 2022-02-10
 
 - Improved the matching of large numbers in YAML/JSON to prevent unwanted conversions
