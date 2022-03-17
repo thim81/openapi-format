@@ -249,11 +249,13 @@ async function openapiFilter(oaObj, options) {
   const filterArray = [...filterSet.tags];
   const filterOperations = [...filterSet.operations];
   const filterProps = [...filterSet.operationIds, ...filterSet.flags, ...fixedFlags];
+  const filterResponseContent = [...filterSet.responseContent];
 
   // Inverse object filters
   const inverseFilterKeys = [...filterSet.inverseMethods];
   const inverseFilterProps = [...filterSet.inverseOperationIds];
   const inverseFilterArray = [...filterSet.inverseTags];
+  const inverseFilterResponseContent = [...filterSet.inverseResponseContent];
 
   const stripFlags = [...filterSet.stripFlags];
   const stripUnused = [...filterSet.unusedComponents];
@@ -325,6 +327,22 @@ async function openapiFilter(oaObj, options) {
         const compHeader = node.replace('#/components/headers/', '');
         comps.headers[compHeader] = {...comps.headers[compHeader], used: true};
       }
+    }
+
+    // Filter out object matching the "response content"
+    if (filterResponseContent.length > 0 && filterResponseContent.includes(this.key) 
+      && this.parent && this.parent.key === 'content'
+      && this.parent.parent && this.parent.parent.parent && this.parent.parent.parent.key === 'responses') {
+      // debugFilterStep = 'Filter - response content'
+      this.remove();
+    }
+
+    // Filter out object matching the inverse "response content"
+    if (inverseFilterResponseContent.length > 0 && !inverseFilterResponseContent.includes(this.key) 
+      && this.parent && this.parent.key === 'content'
+      && this.parent.parent && this.parent.parent.parent && this.parent.parent.parent.key === 'responses') {
+      // debugFilterStep = 'Filter - inverse response content'
+      this.remove();
     }
 
     // Filter out object matching the inverse "methods"

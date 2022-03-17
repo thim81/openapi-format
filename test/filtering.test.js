@@ -234,4 +234,26 @@ describe('openapi-format CLI filtering tests', () => {
       expect(outputAfter).toStrictEqual(outputBefore);
     });
   })
+
+  describe('yaml-filter-response-content', () => {
+    it('yaml-filter-res[pmse=content - should match expected output', async () => {
+      const testName = 'yaml-filter-response-content'
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName)
+      // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain("formatted successfully");
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  })
+
+  describe('yaml-filter-inverse-response-content', () => {
+    it('yaml-filter-inverse-response-content - should match expected output', async () => {
+      const testName = 'yaml-filter-inverse-response-content'
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName)
+      // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain("formatted successfully");
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  })
 });

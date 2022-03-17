@@ -9,5 +9,7 @@
   "flags": [],
   "flagValues": [],
   "unusedComponents": [],
-  "stripFlags": []
+  "stripFlags": [],
+  "responseContent": [],
+  "inverseResponseContent": []
 }
