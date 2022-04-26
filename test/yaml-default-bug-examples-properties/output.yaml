@@ -804,6 +804,24 @@ components:
             - tag1
             - tag 2
       summary: A payload example for a notification
+    sample-mobile-sdk-custom-event-batch:
+      value:
+        - id: 0149531b-fac2-476f-ab71-f29bc9030582d
+          source: sdc/mobile/sdk/device/6fa2d7d5-b374-4c42-8e1f-e05bac6136b4
+          type: sdc.mobile.sdk.events.custom
+          time: '2022-03-15T14:17:32.7430000Z'
+          specversion: '1.0'
+          dataschema: '#/sdc/events/mobilesdk/customevent/v1'
+          datacontenttype: application/json
+          subject: /reference/788c7647-1bc1-43db-b25d-13d8544bc1de
+          sdkversion: 2.7.1
+          sdktype: ios_library_plotprojects
+          sdkdevice: be958275ae9e4d50ada7eb724c7d34a2
+          sdkos: ios
+          data:
+            name: EVENT_DEFINITION_1
+            properties:
+              last_chapter: chapter1
   requestBodies:
     Pet:
       content:
