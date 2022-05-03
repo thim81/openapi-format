@@ -1,5 +1,11 @@
 ## unreleased
 
+## [1.10.1] - 2022-05-03
+
+- Bugfix for unwanted conversion of numbers in x-tags (#52)
+- Bugfix for components.examples.properties distortion (#54)
+- Bumped minimist version to v1.2.6
+
 ## [1.10.0] - 2022-03-17
 
 - Bugfix for unwanted conversion of numbers in strings (#47)
