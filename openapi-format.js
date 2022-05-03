@@ -196,7 +196,7 @@ async function openapiSort(oaObj, options) {
           this.update(sortedObj);
 
         } else if ((this.key === 'responses' || this.key === 'schemas' || this.key === 'properties')
-          && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value')
+          && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value' && this.path[1] !== 'examples')
         ) {
           // debugStep = 'Generic sorting - responses/schemas/properties'
           // Deep sort list of properties
@@ -330,7 +330,7 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Filter out object matching the "response content"
-    if (filterResponseContent.length > 0 && filterResponseContent.includes(this.key) 
+    if (filterResponseContent.length > 0 && filterResponseContent.includes(this.key)
       && this.parent && this.parent.key === 'content'
       && this.parent.parent && this.parent.parent.parent && this.parent.parent.parent.key === 'responses') {
       // debugFilterStep = 'Filter - response content'
@@ -338,7 +338,7 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Filter out object matching the inverse "response content"
-    if (inverseFilterResponseContent.length > 0 && !inverseFilterResponseContent.includes(this.key) 
+    if (inverseFilterResponseContent.length > 0 && !inverseFilterResponseContent.includes(this.key)
       && this.parent && this.parent.key === 'content'
       && this.parent.parent && this.parent.parent.parent && this.parent.parent.parent.key === 'responses') {
       // debugFilterStep = 'Filter - inverse response content'

@@ -12,7 +12,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-default-bug-big-numbers']
+// const tests = ['yaml-default-bug-examples-value']
 // destroyOutput = true
 
 describe('openapi-format tests', () => {
@@ -151,7 +151,7 @@ describe('openapi-format tests', () => {
         }
 
         // Convert large number value safely before parsing
-        const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)(,|\n)/g;  // match > : 123456789.123456789
+        const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])(,|\n)/g;  // match > : 123456789.123456789
         inputContent = inputContent.replace(regexEncodeLargeNumber, (rawInput) => {
           const endChar = (rawInput.endsWith(',') ? ',' : '\n');
           const rgx = new RegExp(endChar, "g");
@@ -190,7 +190,7 @@ describe('openapi-format tests', () => {
           let outputContent = fs.readFileSync(outputFilename, 'utf8');
 
           // Convert large number value safely before parsing
-          const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)/g;  // match > : 123456789.123456789
+          const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])/g;  // match > : 123456789.123456789
           outputContent = outputContent.replace(regexEncodeLargeNumber, (rawInput) => {
             const number = rawInput.replace(/: /g, '');
             // Handle large numbers safely in javascript
@@ -240,7 +240,7 @@ describe('openapi-format tests', () => {
               output = JSON.stringify(result, null, 2);
 
               // Decode stringified large number JSON values safely before writing output
-              const regexDecodeJsonLargeNumber = /: "([0-9]*\.?[0-9]+)==="/g; // match > : "123456789.123456789"===
+              const regexDecodeJsonLargeNumber = /: "([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])==="/g; // match > : "123456789.123456789"===
               output = output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
                 const number = strNumber.replace(/: "|"/g, '');
                 // Decode large numbers safely in javascript
@@ -257,7 +257,7 @@ describe('openapi-format tests', () => {
               output = sy.safeStringify(result, {lineWidth: lineWidth});
 
               // Decode stringified large number YAML values safely before writing output
-              const regexDecodeYamlLargeNumber = /: ([0-9]*\.?[0-9]+)===/g; // match > : 123456789.123456789===
+              const regexDecodeYamlLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])===/g; // match > : 123456789.123456789===
               output = output.replace(regexDecodeYamlLargeNumber, (strNumber) => {
                 const number = strNumber.replace(/: '|'/g, '');
                 // Decode large numbers safely in javascript

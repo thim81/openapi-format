@@ -152,7 +152,7 @@ async function run(oaFile, options) {
   let inputContent = fs.readFileSync(oaFile, 'utf8');
 
   // Convert large number value safely before parsing
-  const regexEncodeLargeNumber = /: ([0-9]*\.?[0-9]+)(,|\n)/g;  // match > : 123456789.123456789
+  const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])(,|\n)/g;  // match > : 123456789.123456789
   inputContent = inputContent.replace(regexEncodeLargeNumber, (rawInput) => {
     const endChar = (rawInput.endsWith(',') ? ',' : '\n');
     const rgx = new RegExp(endChar, "g");
@@ -203,7 +203,7 @@ async function run(oaFile, options) {
     output = JSON.stringify(res, null, 2);
 
     // Decode stringified large number JSON values safely before writing output
-    const regexDecodeJsonLargeNumber = /: "([0-9]*\.?[0-9]+)==="/g; // match > : "123456789.123456789"===
+    const regexDecodeJsonLargeNumber = /: "([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])==="/g; // match > : "123456789.123456789"===
     output = output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
       const number = strNumber.replace(/: "|"/g, '');
       // Decode large numbers safely in javascript
@@ -220,7 +220,7 @@ async function run(oaFile, options) {
     output = sy.safeStringify(res, {lineWidth: lineWidth});
 
     // Decode stringified large number YAML values safely before writing output
-    const regexDecodeYamlLargeNumber = /: ([0-9]*\.?[0-9]+)===/g; // match > : 123456789.123456789===
+    const regexDecodeYamlLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])===/g; // match > : 123456789.123456789===
     output = output.replace(regexDecodeYamlLargeNumber, (strNumber) => {
       const number = strNumber.replace(/: '|'/g, '');
       // Decode large numbers safely in javascript
