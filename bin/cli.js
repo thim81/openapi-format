@@ -158,7 +158,7 @@ async function run(oaFile, options) {
     const rgx = new RegExp(endChar, "g");
     const number = rawInput.replace(/: /g, '').replace(rgx, '');
     // Handle large numbers safely in javascript
-    if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+    if (Number(number).toString().includes('e') || number.replace('.', '').length > 15) {
       return `: '${number}==='${endChar}`;
     } else {
       return `: ${number}${endChar}`;

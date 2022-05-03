@@ -1,0 +1,32 @@
+openapi: 3.0.2
+info:
+  version: 1.0.6-SNAPSHOT
+  title: Swagger Petstore - OpenAPI 3.0
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  - url: /v3
+paths:
+  /pet:
+    get:
+      operationId: getPets
+      summary: Get all pet from the store
+      description: Get all pet from the store
+      responses:
+        '200':
+          description: Successful operation
+      x-typescript-params: |-
+        {
+          id: 'id_example',
+          payment: {
+            currency: 'USD',
+            currency_rate: 0.69,
+            total_amount: 49.99,
+            reference: '123456',
+            payment_method: 'Credit Card',
+            payment_method_reference: '123456'
+        }

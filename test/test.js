@@ -12,7 +12,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-default-bug-examples-value']
+// const tests = ['yaml-default-bug-numbers-x-tag']
 // destroyOutput = true
 
 describe('openapi-format tests', () => {
@@ -157,7 +157,7 @@ describe('openapi-format tests', () => {
           const rgx = new RegExp(endChar, "g");
           const number = rawInput.replace(/: /g, '').replace(rgx, '');
           // Handle large numbers safely in javascript
-          if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+          if (Number(number).toString().includes('e') || number.replace('.', '').length > 15) {
             return `: '${number}==='${endChar}`;
           } else {
             return `: ${number}${endChar}`;
@@ -194,7 +194,7 @@ describe('openapi-format tests', () => {
           outputContent = outputContent.replace(regexEncodeLargeNumber, (rawInput) => {
             const number = rawInput.replace(/: /g, '');
             // Handle large numbers safely in javascript
-            if (!Number.isSafeInteger(Number(number)) || number.replace('.', '').length > 15) {
+            if (Number(number).toString().includes('e') || number.replace('.', '').length > 15) {
               return `: "${number}==="`;
             } else {
               return `: ${number}`;

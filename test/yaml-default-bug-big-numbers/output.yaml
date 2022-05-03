@@ -26,6 +26,10 @@ components:
           type: integer
           format: int64
           example: 10
+        rate:
+          type: integer
+          format: int64
+          example: 0.61
         title:
           type: string
           example: 500.1
