@@ -169,6 +169,17 @@ describe('openapi-format CLI filtering tests', () => {
     });
   })
 
+  describe('yaml-filter-inverse-operationids-free-form', () => {
+    it('yaml-filter-inverse-operationids-free-form - should match expected output', async () => {
+      const testName = 'yaml-filter-inverse-operationids-free-form'
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName)
+      // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain("formatted successfully");
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  })
+
   describe('yaml-filter-inverse-tags', () => {
     it('yaml-filter-inverse-tags - should match expected output', async () => {
       const testName = 'yaml-filter-inverse-tags'

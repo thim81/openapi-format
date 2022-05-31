@@ -1,0 +1,9 @@
+#methods:
+#  - get
+#flags:
+#  - x-visibility
+flagValues: []
+tags: []
+inverseOperationIds:
+  - GetCatIndicesWithIndex
+
