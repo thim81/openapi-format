@@ -1,0 +1,75 @@
+openapi: 3.0.2
+info:
+  title: OpenSearch
+  version: '2021-11-23'
+paths:
+  '/_cat/indices/{index}':
+    get:
+      description: 'Returns information about indices: number of primaries and replicas, document counts, disk size, etc.'
+      operationId: GetCatIndicesWithIndex
+      parameters:
+        - name: index
+          in: path
+          schema:
+            type: string
+            pattern: '^[^+_\-\.][^\\, /*?"<>| ,#\nA-Z]+$'
+          required: true
+          example: books
+        - name: bytes
+          in: query
+          schema:
+            type: number
+            nullable: true
+        - name: expand_wildcards
+          in: query
+          schema:
+            $ref: '#/components/schemas/ExpandWildcards'
+        - name: health
+          in: query
+          schema:
+            $ref: '#/components/schemas/HealthStatus'
+        - name: include_unloaded_segments
+          in: query
+          schema:
+            type: boolean
+            nullable: true
+        - name: pri
+          in: query
+          schema:
+            type: boolean
+            nullable: true
+        - name: master_timeout
+          in: query
+          schema:
+            type: string
+            pattern: '^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$'
+        - name: timeout
+          in: query
+          schema:
+            type: string
+            pattern: '^([0-9]+)(?:d|h|m|s|ms|micros|nanos)$'
+      responses:
+        '200':
+          description: GetCatIndicesWithIndex 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCatIndicesWithIndexOutputPayload'
+components:
+  schemas:
+    ExpandWildcards:
+      type: string
+      enum:
+        - all
+        - open
+        - closed
+        - hidden
+        - none
+    GetCatIndicesOutputPayload: {}
+    GetCatIndicesWithIndexOutputPayload: {}
+    HealthStatus:
+      type: string
+      enum:
+        - green
+        - yellow
+        - red
