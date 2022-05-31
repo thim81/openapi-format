@@ -341,6 +341,10 @@
             "format": "int64",
             "example": 10
           },
+          "primaryColor": {
+            "type": "string",
+            "example": null
+          },
           "name": {
             "type": "string",
             "example": "doggie"

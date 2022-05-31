@@ -4,6 +4,17 @@ const testUtils = require('./__utils__/test-utils')
 
 describe('openapi-format CLI filtering tests', () => {
 
+  describe('json-filter-inverse-operationids', () => {
+    it('json-filter-inverse-operationids - should match expected output', async () => {
+      const testName = 'json-filter-inverse-operationids'
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName, 'json', 'json')
+      // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain("formatted successfully");
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  })
+
   describe('json-filter-markdown-comments', () => {
     it('json-filter-markdown-comments - should match expected output', async () => {
       const testName = 'json-filter-markdown-comments'
