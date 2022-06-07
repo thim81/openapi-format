@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.10.2] - 2022-06-07
+
+- Bugfix for unwanted removal of free-form objects in component schemas (#57)
+
 ## [1.10.1] - 2022-05-03
 
 - Bugfix for unwanted conversion of numbers in x-tags (#52)
