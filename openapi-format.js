@@ -359,7 +359,7 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Filter out fields without operationIds, when Inverse operationIds is set
-    if (inverseFilterProps.length > 0 && this.path[0] === 'paths' && node.operationId === undefined
+    if (node !== null && inverseFilterProps.length > 0 && this.path[0] === 'paths' && node.operationId === undefined
       && httpVerbs.includes(this.key)
     ) {
       // debugFilterStep = 'Filter - Single field - Inverse operationIds without operationIds'

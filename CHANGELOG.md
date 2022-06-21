@@ -1,5 +1,7 @@
 ## unreleased
 
+- Bugfix for handling null values with inverse filtering (#56)
+
 ## [1.10.2] - 2022-06-07
 
 - Bugfix for unwanted removal of free-form objects in component schemas (#57)
