@@ -1,5 +1,7 @@
 ## unreleased
 
+- Bugfix for handling null values with inverse filtering (#56)
+
 ## [1.10.1] - 2022-05-03
 
 - Bugfix for unwanted conversion of numbers in x-tags (#52)
