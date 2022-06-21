@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.10.3] - 2022-06-21
+
 - Bugfix for handling null values with inverse filtering (#56)
 
 ## [1.10.2] - 2022-06-07
