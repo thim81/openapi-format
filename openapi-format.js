@@ -576,6 +576,34 @@ async function openapiFilter(oaObj, options) {
 }
 
 /**
+ * Determines whether Change casing should be performed based on whether the parameters are set or not.
+ * @param casingSet The casing options.
+ * @returns {*}
+ */
+function changeComponentParametersCasingEnabled(casingSet){
+  return casingSet && (
+    casingSet.componentsParametersHeader ||
+    casingSet.componentsParametersPath ||
+    casingSet.componentsParametersQuery ||
+    casingSet.componentsParametersCookie
+  )
+}
+
+/**
+ * Determines whether Change casing should be performed based on whether the parameters are set or not.
+ * @param casingSet The casing options.
+ * @returns {*}
+ */
+function changeParametersCasingEnabled(casingSet){
+  return casingSet && (
+    casingSet.parametersHeader ||
+    casingSet.parametersPath ||
+    casingSet.parametersQuery ||
+    casingSet.parametersCookie
+  )
+}
+
+/**
  * OpenAPI Change Case function
  * Traverse through all keys and based on the key name, change the case the props according to the casing configuration.
  * @param {object} oaObj OpenApi document
@@ -588,6 +616,22 @@ async function openapiChangeCase(oaObj, options) {
   let casingSet = Object.assign({}, defaultCasing, options.casingSet);
 
   let debugCasingStep = '' // uncomment // debugCasingStep below to see which sort part is triggered
+
+  // Could add a default for all types pretty easily.
+  const changeCasingKeyPlans = {
+    'query': casingSet.componentsParametersQuery,
+    'path': casingSet.componentsParametersPath,
+    'header': casingSet.componentsParametersHeader,
+    'cookie': casingSet.componentsParametersCookie
+  }
+
+  // Could add a default for all types pretty easily.
+  const changeCasingNamePlans = {
+    'query': casingSet.parametersQuery,
+    'path': casingSet.parametersPath,
+    'header': casingSet.parametersHeader,
+    'cookie': casingSet.parametersCookie
+  }
 
   // Initiate components tracking
   const comps = {
@@ -613,47 +657,32 @@ async function openapiChangeCase(oaObj, options) {
         // debugCasingStep = 'Casing - components/headers - names
         this.update(changeObjKeysCase(node, casingSet.componentsHeaders));
       }
-      // Change components/parameters - in:query/in:headers/in:path - key
-      if (this.path[1] === 'parameters' && this.path.length === 2 && casingSet.componentsParametersHeader) {
+      // Change components/parameters - in:query/in:headers/in:path/in:cookie - key
+      if (this.path[1] === 'parameters' && this.path.length === 2 && changeComponentParametersCasingEnabled(casingSet)) {
         const orgObj = JSON.parse(JSON.stringify(node));
         let replacedItems = Object.keys(orgObj).map((key) => {
-          if (orgObj[key].in && orgObj[key].in === 'query' && casingSet.componentsParametersQuery) {
-            debugCasingStep = 'Casing - components/parameters - in:query - key'
-            const newKey = changeCase(key, casingSet.componentsParametersQuery);
-            comps.parameters[key] = newKey
-            return {[newKey]: orgObj[key]};
-          }
-          if (orgObj[key].in && orgObj[key].in === 'path' && casingSet.componentsParametersPath) {
-            debugCasingStep = 'Casing - components/parameters - in:path - key'
-            const newKey = changeCase(key, casingSet.componentsParametersPath);
-            comps.parameters[key] = newKey
-            return {[newKey]: orgObj[key]};
-          }
-          if (orgObj[key].in && orgObj[key].in === 'header' && casingSet.componentsParametersHeader) {
-            debugCasingStep = 'Casing - components/parameters - in:header - key'
-            const newKey = changeCase(key, casingSet.componentsParametersHeader);
-            comps.parameters[key] = newKey
-            return {[newKey]: orgObj[key]};
+          const parameterFoundIn = orgObj[key].in
+          if (orgObj[key].in && changeCasingKeyPlans.hasOwnProperty(parameterFoundIn)){
+            const changeCasingKeyPlan = changeCasingKeyPlans[parameterFoundIn]
+            if (changeCasingKeyPlan){
+              debugCasingStep = `Casing - components/parameters - in:${parameterFoundIn} - key`
+              const newKey = changeCase(key, changeCasingKeyPlan);
+              comps.parameters[key] = newKey
+              return {[newKey]: orgObj[key]};
+            }
           }
         });
         this.update(Object.assign({}, ...replacedItems));
       }
-      // Change components/parameters - query/header name
+      // Change components/parameters - query/header/path/cookie name
       if (this.path[1] === 'parameters' && this.path.length === 3) {
-        if (node.in && node.in === 'query' && node.name && casingSet.parametersQuery) {
-          debugCasingStep = 'Casing - path > parameters/query - name'
-          node.name = changeCase(node.name, casingSet.parametersQuery);
-          this.update(node);
-        }
-        if (node.in && node.in === 'header' && node.name && casingSet.parametersHeader) {
-          debugCasingStep = 'Casing - path > parameters/headers - name'
-          node.name = changeCase(node.name, casingSet.parametersHeader);
-          this.update(node);
-        }
-        if (node.in && node.in === 'path' && node.name && casingSet.parametersPath) {
-          debugCasingStep = 'Casing - path > parameters/path - name'
-          node.name = changeCase(node.name, casingSet.parametersPath);
-          this.update(node);
+        if (node.in && changeCasingNamePlans.hasOwnProperty(node.in)){
+          const changeCasingNamePlan = changeCasingNamePlans[node.in]
+          if (changeCasingNamePlan){
+            debugCasingStep = `Casing - path > parameters/${node.in} - name`
+            node.name =  changeCase(node.name, changeCasingNamePlan);
+            this.update(node);
+          }
         }
       }
       // Change components/responses - names
@@ -751,23 +780,18 @@ async function openapiChangeCase(oaObj, options) {
     }
     // Change parameters - name
     if (this.path[0] === 'paths' && this.key === 'parameters'
-      && (casingSet.parametersQuery || casingSet.parametersHeader || casingSet.parametersPath)) {
+      && changeParametersCasingEnabled(casingSet)) {
       // debugCasingStep = 'Casing - components > parameters - name'
 
       // Loop over parameters array
       let params = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
       for (let i = 0; i < params.length; i++) {
-        if (params[i].in && params[i].in === 'query' && params[i].name && casingSet.parametersQuery) {
-          // debugCasingStep = 'Casing - path > parameters/query- name'
-          params[i].name = changeCase(params[i].name, casingSet.parametersQuery)
-        }
-        if (params[i].in && params[i].in === 'header' && params[i].name && casingSet.parametersHeader) {
-          // debugCasingStep = 'Casing - path > parameters/headers - name'
-          params[i].name = changeCase(params[i].name, casingSet.parametersHeader)
-        }
-        if (params[i].in && params[i].in === 'path' && params[i].name && casingSet.parametersPath) {
-          // debugCasingStep = 'Casing - path > parameters/path - name'
-          params[i].name = changeCase(params[i].name, casingSet.parametersPath)
+        if (params[i].in && changeCasingNamePlans.hasOwnProperty(params[i].in)){
+          const changeCasingNamePlan = changeCasingNamePlans[params[i].in]
+          if (changeCasingNamePlan) {
+            // debugCasingStep = 'Casing - path > parameters/query- name'
+            params[i].name = changeCase(params[i].name, changeCasingNamePlan)
+          }
         }
       }
       this.update(params);

@@ -533,6 +533,13 @@ components:
       schema:
         type: integer
         format: int32
+    X-Good-Cookie:
+      name: X-Good-Cookie
+      description: Yummy cookie to eat
+      in: cookie
+      schema:
+        type: string
+      example: So Yummy
     X-RateLimit-Limit:
       name: X-RateLimit-Limit
       description: Request limit per hour

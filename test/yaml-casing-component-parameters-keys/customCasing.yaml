@@ -1,3 +1,8 @@
+# Component Parameter Keys
 componentsParametersHeader: kebab-case
 componentsParametersQuery: snake_case
 componentsParametersPath: kebab-case
+componentsParametersCookie: PascalCase
+
+# Component Parameter Names
+parametersCookie: PascalCase
