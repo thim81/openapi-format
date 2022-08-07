@@ -566,22 +566,24 @@ The openapi-format CLI formatting option can assist with keeping the field names
 The desired casing can be defined per OpenAPI key/element (see list below).
 The keys that are not specified will keep their casing like it is in the original OpenAPI document, so only for defined fields, the casing will be changed.
 
-| Key                        | Description                                                                               | OpenAPI reference                                                         |
-| -------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| operationId                | Changes operation ID's that are part of the Operations Object                             | [operation-object](https://spec.openapis.org/oas/v3.0.3.html#operation-object)|
-| properties                 | Changes property keys of the schemas of the inline response/requestBody & components      | [schemaObject](https://spec.openapis.org/oas/v3.0.3.html#schemaObject) |
-| parametersPath             | Changes the path name of the parameters inline & models in the components                 | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
-| parametersHeader           | Changes the header name of the parameters inline & models in the components               | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
-| parametersQuery            | Changes the query name of the parameters inline & models in the components                | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
-| componentsParametersPath   | Changes the key of the path models in the components parameters sections & "$ref" links   | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsParametersQuery  | Changes the key of the query models in the components parameters sections & "$ref" links  | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsParametersHeader | Changes the key of the header models in the components parameters sections & "$ref" links | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsSchemas          | Changes the key of the schema models in the components sections & "$ref" links            | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsExamples         | Changes the key of the example models in the components sections & "$ref" links           | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsHeaders          | Changes the key of the header models in the components sections & "$ref" links            | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsResponses        | Changes the key of the response models in the components sections & "$ref" links          | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsRequestBodies    | Changes the key of the request body models in the components sections & "$ref" links      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
-| componentsSecuritySchemes  | Changes the key of the security schemes in the components sections & "$ref" links         | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| Key                        | Description                                                                                          | OpenAPI reference                                                         |
+|----------------------------|------------------------------------------------------------------------------------------------------| ------------------------------------------------------------------------- |
+| operationId                | Changes operation ID's that are part of the Operations Object                                        | [operation-object](https://spec.openapis.org/oas/v3.0.3.html#operation-object)|
+| properties                 | Changes property keys of the schemas of the inline response/requestBody & components                 | [schemaObject](https://spec.openapis.org/oas/v3.0.3.html#schemaObject) |
+| parametersCookie           | Changes the cookie name of the parameters inline & models in the components                          | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| parametersPath             | Changes the path name of the parameters inline & models in the components                            | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| parametersHeader           | Changes the header name of the parameters inline & models in the components                          | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| parametersQuery            | Changes the query name of the parameters inline & models in the components                           | [parameter-object](https://spec.openapis.org/oas/v3.0.3.html#parameter-object) |
+| componentsParametersCookie | Changes the key of the cookie models in the components parameters sections & "$ref" links            | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsParametersPath   | Changes the key of the path models in the components parameters sections & "$ref" links              | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsParametersQuery  | Changes the key of the query models in the components parameters sections & "$ref" links             | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsParametersHeader | Changes the key of the header models in the components parameters sections & "$ref" links            | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsSchemas          | Changes the key of the schema models in the components sections & "$ref" links                       | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsExamples         | Changes the key of the example models in the components sections & "$ref" links                      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsHeaders          | Changes the key of the header models in the components sections & "$ref" links                       | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsResponses        | Changes the key of the response models in the components sections & "$ref" links                     | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsRequestBodies    | Changes the key of the request body models in the components sections & "$ref" links                 | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
+| componentsSecuritySchemes  | Changes the key of the security schemes in the components sections & "$ref" links                    | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object) |
 
 ### Casing options
 
@@ -691,7 +693,7 @@ components:
 
 ### Format casing - component keys
 
-=> **componentsSchemas / componentsExamples / componentsParametersHeader / componentsParametersQuery / componentsParametersQuery / componentsParametersPath / componentsHeaders / componentsResponses / componentsRequestBodies / componentsSecuritySchemes**: Refers to all the model objects that are defined in the components section of the OpenAPI document.
+=> **componentsSchemas / componentsExamples / componentsParametersCookie / componentsParametersHeader / componentsParametersQuery / componentsParametersQuery / componentsParametersPath / componentsHeaders / componentsResponses / componentsRequestBodies / componentsSecuritySchemes**: Refers to all the model objects that are defined in the components section of the OpenAPI document.
 
 Formatting casing example:
 
@@ -747,7 +749,7 @@ components:
 
 ### Format casing - parameter names
 
-=> **componentsParametersPath / componentsParametersQuery / componentsParametersHeader**: Refers to "name" in the Parameters types: Path, Query or Header, which can be defined inline in the Path or as a reference in the components of the OpenAPI document.
+=> **componentsParametersCookie / componentsParametersPath / componentsParametersQuery / componentsParametersHeader**: Refers to "name" in the Parameters types: Path, Query or Header, which can be defined inline in the Path or as a reference in the components of the OpenAPI document.
 
 Formatting casing example:
 
