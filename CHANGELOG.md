@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.11.0] - 2022-08-07
+
+- Added support for parameters in Cookies (#61)
+
 ## [1.10.3] - 2022-06-21
 
 - Bugfix for handling null values with inverse filtering (#56)
