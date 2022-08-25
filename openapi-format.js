@@ -484,6 +484,18 @@ async function openapiFilter(oaObj, options) {
         const oaFilteredTags = oaTags.filter(item => !filterProps.some(i => (Object.keys(item || {}).includes(i))));
         this.update(oaFilteredTags);
       }
+
+      if (filterFlagValues.length > 0) {
+        // debugFilterStep = 'Filter - tag - flagValues'
+        // Deep filter array of tag/x-tagGroup
+        let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
+        for (let i = 0; i < filterFlagValues.length; i++) {
+          let [key, value] = Object.entries(filterFlagValues[i])[0]
+          oaTags = oaTags.filter(item => item[key] !== value)
+        }
+
+        this.update(oaTags);
+      }
     }
 
     // Filter out markdown comments in description fields
