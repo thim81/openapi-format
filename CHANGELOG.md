@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.12.0] - 2022-08-25
+
 - Filter - FlagValues within tags (#63)
 
 ## [1.11.0] - 2022-08-07
