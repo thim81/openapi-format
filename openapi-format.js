@@ -477,18 +477,20 @@ async function openapiFilter(oaObj, options) {
 
     // Filter out OpenApi.tags & OpenApi.x-tagGroups matching the flags
     if ((this.key === 'tags' || this.key === 'x-tagGroups') && this.parent.key === undefined && Array.isArray(node)) {
+      let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
+
       if (filterProps.length > 0) {
         // debugFilterStep = 'Filter - tag/x-tagGroup - flags'
         // Deep filter array of tag/x-tagGroup
-        let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
-        const oaFilteredTags = oaTags.filter(item => !filterProps.some(i => (Object.keys(item || {}).includes(i))));
-        this.update(oaFilteredTags);
+        oaTags = oaTags.filter(item => !filterProps.some(i => (Object.keys(item || {}).includes(i))));
+        this.update(oaTags);
+        // const oaFilteredTags = oaTags.filter(item => !filterProps.some(i => (Object.keys(item || {}).includes(i))));
+        // this.update(oaFilteredTags);
       }
 
       if (filterFlagValues.length > 0) {
         // debugFilterStep = 'Filter - tag - flagValues'
         // Deep filter array of tag/x-tagGroup
-        let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
         for (let i = 0; i < filterFlagValues.length; i++) {
           let [key, value] = Object.entries(filterFlagValues[i])[0]
           oaTags = oaTags.filter(item => item[key] !== value)
