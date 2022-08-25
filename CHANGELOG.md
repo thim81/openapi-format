@@ -1,5 +1,7 @@
 ## unreleased
 
+- Filter - Bugfix for a combination of flags & flagValues
+
 ## [1.12.0] - 2022-08-25
 
 - Filter - FlagValues within tags (#63)

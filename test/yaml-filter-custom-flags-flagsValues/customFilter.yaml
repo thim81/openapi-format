@@ -1,0 +1,12 @@
+#methods:
+#  - get
+flags:
+  - x-visibility
+flagValues:
+    - x-release: preview
+    - x-release: dev
+tags: []
+#operationIds:
+#  - addPet
+#  - findPetsByStatus
+
