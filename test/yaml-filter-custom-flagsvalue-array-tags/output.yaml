@@ -1,0 +1,6 @@
+openapi: 3.0.2
+tags:
+  - name: user
+    description: Everything about your user
+  - name: group
+    description: Everything about groups

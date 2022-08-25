@@ -1,0 +1,16 @@
+openapi: 3.0.2
+tags:
+  - name: pet
+    x-release: dev
+    description: Everything about your Pets
+  - name: store
+    x-release: preview
+    description: Everything about your store
+  - name: user
+    description: Everything about your user
+  - name: group
+    description: Everything about groups
+  - name: types
+    x-release: preview
+    description: Everything about types
+
