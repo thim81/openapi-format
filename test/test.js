@@ -227,7 +227,7 @@ describe('openapi-format tests', () => {
           if (resFormat.data) result = resFormat.data;
         }
 
-        // Convert the OpenAPI document to OpenApi 3.1
+        // Convert the OpenAPI document to OpenAPI 3.1
         if ((options.convertTo || options.convertToVersion) && (options.convertTo === "3.1" || options.convertToVersion === 3.1)) {
           const resVersion = await openapiFormat.openapiConvertVersion(result, options);
           if (resVersion.data) result = resVersion.data

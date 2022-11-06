@@ -31,9 +31,9 @@ const {
 /**
  * OpenAPI sort function
  * Traverse through all keys and based on the key name, sort the props according the preferred order.
- * @param {object} oaObj OpenApi document
- * @param {object} options OpenApi-format sort options
- * @returns {object} Sorted OpenApi document
+ * @param {object} oaObj OpenAPI document
+ * @param {object} options OpenAPI-format sort options
+ * @returns {object} Sorted OpenAPI document
  */
 async function openapiSort(oaObj, options) {
   // Skip sorting, when the option "no-sort" is set
@@ -110,9 +110,9 @@ async function openapiSort(oaObj, options) {
 /**
  * OpenAPI filter function
  * Traverse through all keys and based on the key name, filter the props according to the filter configuration.
- * @param {object} oaObj OpenApi document
- * @param {object} options OpenApi-format filter options
- * @returns {object} Filtered OpenApi document
+ * @param {object} oaObj OpenAPI document
+ * @param {object} options OpenAPI-format filter options
+ * @returns {object} Filtered OpenAPI document
  */
 async function openapiFilter(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
@@ -265,7 +265,7 @@ async function openapiFilter(oaObj, options) {
         this.parent.delete();
       }
 
-      // Filter out the top OpenApi.tags matching the "tags"
+      // Filter out the top OpenAPI.tags matching the "tags"
       if (filterArray.length > 0 && this.key === 'tags' && this.path[0] === 'tags') {
         // debugFilterStep = 'Filter - top tags'
         node = node.filter(value => !filterArray.includes(value.name))
@@ -353,7 +353,7 @@ async function openapiFilter(oaObj, options) {
       }
     }
 
-    // Filter out OpenApi.tags & OpenApi.x-tagGroups matching the flags
+    // Filter out OpenAPI.tags & OpenAPI.x-tagGroups matching the flags
     if ((this.key === 'tags' || this.key === 'x-tagGroups') && this.parent.key === undefined && Array.isArray(node)) {
       let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
 
@@ -425,7 +425,7 @@ async function openapiFilter(oaObj, options) {
       }
     }
 
-    // Filter out OpenApi.tags & OpenApi.x-tagGroups matching the fixedFlags
+    // Filter out OpenAPI.tags & OpenAPI.x-tagGroups matching the fixedFlags
     if ((this.key === 'tags' || this.key === 'x-tagGroups') && this.parent.key === undefined && Array.isArray(node)) {
       if (fixedFlags.length > 0) {
         // debugFilterStep = 'Filter - tag/x-tagGroup - fixed flags'
@@ -470,9 +470,9 @@ async function openapiFilter(oaObj, options) {
 /**
  * OpenAPI Change Case function
  * Traverse through all keys and based on the key name, change the case the props according to the casing configuration.
- * @param {object} oaObj OpenApi document
- * @param {object} options OpenApi-format casing options
- * @returns {object} Change casing OpenApi document
+ * @param {object} oaObj OpenAPI document
+ * @param {object} options OpenAPI-format casing options
+ * @returns {object} Change casing OpenAPI document
  */
 async function openapiChangeCase(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
@@ -669,10 +669,10 @@ async function openapiChangeCase(oaObj, options) {
 
 /**
  * OpenAPI convert version function
- * Convert OpenApi from version 3.0 to 3.1
- * @param {object} oaObj OpenApi document
- * @param {object} options OpenApi-format convert options
- * @returns {object} converted OpenApi document
+ * Convert OpenAPI from version 3.0 to 3.1
+ * @param {object} oaObj OpenAPI document
+ * @param {object} options OpenAPI-format convert options
+ * @returns {object} converted OpenAPI document
  */
 async function openapiConvertVersion(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
@@ -734,9 +734,9 @@ async function openapiConvertVersion(oaObj, options) {
 /**
  * OpenAPI rename function
  * Change the title of the OpenAPI document with a provided value.
- * @param {object} oaObj OpenApi document
- * @param {object} options OpenApi-format options
- * @returns {object} Renamed OpenApi document
+ * @param {object} oaObj OpenAPI document
+ * @param {object} options OpenAPI-format options
+ * @returns {object} Renamed OpenAPI document
  */
 async function openapiRename(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
