@@ -12,7 +12,7 @@ const tests = fs.readdirSync(__dirname).filter(file => {
 });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-default-bug-numbers-x-tag']
+// const tests = ['yaml-convert-3.1']
 // destroyOutput = true
 
 describe('openapi-format tests', () => {
@@ -228,7 +228,7 @@ describe('openapi-format tests', () => {
         }
 
         // Convert the OpenAPI document to OpenAPI 3.1
-        if ((options.convertTo || options.convertToVersion) && (options.convertTo === "3.1" || options.convertToVersion === 3.1)) {
+        if ((options.convertTo && options.convertTo.toString() === "3.1") || (options.convertToVersion && options.convertToVersion === 3.1)) {
           const resVersion = await openapiFormat.openapiConvertVersion(result, options);
           if (resVersion.data) result = resVersion.data
         }

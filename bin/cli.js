@@ -193,7 +193,7 @@ async function run(oaFile, options) {
   }
 
   // Convert the OpenAPI document to OpenAPI 3.1
-  if ((options.convertTo || options.convertToVersion) && (options.convertTo === "3.1" || options.convertToVersion === 3.1)) {
+  if ((options.convertTo && options.convertTo.toString() === "3.1") || (options.convertToVersion && options.convertToVersion === 3.1)) {
     const resVersion = await openapiFormat.openapiConvertVersion(res, options);
     if (resVersion.data) res = resVersion.data
     debugOut(`- OAS version converted to: "${options.convertTo}"`, options.verbose) // LOG - Conversion title

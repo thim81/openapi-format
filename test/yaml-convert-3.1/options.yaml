@@ -1,4 +1,4 @@
 verbose: true
 output: output.yaml
 no-sort: true
-convertToVersion: 3.1
+convertTo: 3.1
