@@ -20,6 +20,13 @@ const {
   get,
   isUsedComp
 } = require("./util-filter");
+const {
+  convertNullable,
+  convertExclusive,
+  convertExample,
+  convertImageBase64,
+  convertMultiPartBinary
+} = require("./util-convert");
 
 /**
  * OpenAPI sort function
@@ -432,7 +439,7 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Remove empty objects
-    if (node && Object.keys(node).length === 0 && node.constructor === Object && !['security','schemas'].includes(this.parent.key)) {
+    if (node && Object.keys(node).length === 0 && node.constructor === Object && !['security', 'schemas'].includes(this.parent.key)) {
       debugFilterStep = 'Filter - Remove empty objects'
       this.delete();
     }
@@ -519,9 +526,9 @@ async function openapiChangeCase(oaObj, options) {
         const orgObj = JSON.parse(JSON.stringify(node));
         let replacedItems = Object.keys(orgObj).map((key) => {
           const parameterFoundIn = orgObj[key].in
-          if (orgObj[key].in && changeCasingKeyPlans.hasOwnProperty(parameterFoundIn)){
+          if (orgObj[key].in && changeCasingKeyPlans.hasOwnProperty(parameterFoundIn)) {
             const changeCasingKeyPlan = changeCasingKeyPlans[parameterFoundIn]
-            if (changeCasingKeyPlan){
+            if (changeCasingKeyPlan) {
               debugCasingStep = `Casing - components/parameters - in:${parameterFoundIn} - key`
               const newKey = changeCase(key, changeCasingKeyPlan);
               comps.parameters[key] = newKey
@@ -533,11 +540,11 @@ async function openapiChangeCase(oaObj, options) {
       }
       // Change components/parameters - query/header/path/cookie name
       if (this.path[1] === 'parameters' && this.path.length === 3) {
-        if (node.in && changeCasingNamePlans.hasOwnProperty(node.in)){
+        if (node.in && changeCasingNamePlans.hasOwnProperty(node.in)) {
           const changeCasingNamePlan = changeCasingNamePlans[node.in]
-          if (changeCasingNamePlan){
+          if (changeCasingNamePlan) {
             debugCasingStep = `Casing - path > parameters/${node.in} - name`
-            node.name =  changeCase(node.name, changeCasingNamePlan);
+            node.name = changeCase(node.name, changeCasingNamePlan);
             this.update(node);
           }
         }
@@ -643,7 +650,7 @@ async function openapiChangeCase(oaObj, options) {
       // Loop over parameters array
       let params = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
       for (let i = 0; i < params.length; i++) {
-        if (params[i].in && changeCasingNamePlans.hasOwnProperty(params[i].in)){
+        if (params[i].in && changeCasingNamePlans.hasOwnProperty(params[i].in)) {
           const changeCasingNamePlan = changeCasingNamePlans[params[i].in]
           if (changeCasingNamePlan) {
             // debugCasingStep = 'Casing - path > parameters/query- name'
@@ -654,6 +661,70 @@ async function openapiChangeCase(oaObj, options) {
       this.update(params);
     }
 
+  });
+
+  // Return result object
+  return {data: jsonObj, resultData: {}}
+}
+
+/**
+ * OpenAPI convert version function
+ * Convert OpenApi from version 3.0 to 3.1
+ * @param {object} oaObj OpenApi document
+ * @param {object} options OpenApi-format convert options
+ * @returns {object} converted OpenApi document
+ */
+async function openapiConvertVersion(oaObj, options) {
+  let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
+
+  let debugConvertVersionStep = '' // uncomment // debugConvertVersionStep below to see which sort part is triggered
+
+  // Change components/schemas - names
+  jsonObj.openapi = "3.1.0"
+
+  // Recursive traverse through OpenAPI document for deprecated 3.0 properties
+  traverse(jsonObj).forEach(function (node) {
+    if (typeof node === 'object') {
+      // Change components/schemas - properties
+      if (node.type) {
+        // Change type > nullable
+        node = convertNullable(node);
+
+        // Change type > example
+        node = convertExample(node);
+
+        // Change type > exclusiveMinimum/exclusiveMaximum
+        node = convertExclusive(node);
+
+        this.update(node);
+      }
+
+      // Change components/schemas - schema
+      if (node.schema) {
+
+        // File Upload Payloads
+        if ((get(this, 'parent.key') && this.parent.key === 'content')
+          && (get(this, 'parent.parent.key') && this.parent.parent.key === 'requestBody')) {
+
+          // Remove schema for application/octet-stream
+          if (this.key === 'application/octet-stream') {
+            this.update({})
+          }
+
+          // Convert schema for images
+          if (this.key && this.key.startsWith('image/')) {
+            node = convertImageBase64(node)
+            this.update(node)
+          }
+        }
+      }
+
+      // Convert schema for multipart file uploads with a binary file
+      if (get(this, 'parent.parent.parent.key') && this.parent.parent.parent.key === 'multipart/form-data') {
+        node = convertMultiPartBinary(node)
+        this.update(node)
+      }
+    }
   });
 
   // Return result object
@@ -683,6 +754,7 @@ module.exports = {
   openapiFilter: openapiFilter,
   openapiSort: openapiSort,
   openapiChangeCase: openapiChangeCase,
+  openapiConvertVersion: openapiConvertVersion,
   openapiRename: openapiRename,
   changeCase: changeCase
 };

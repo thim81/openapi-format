@@ -92,6 +92,27 @@ OpenAPI-Format CLI settings:
 "
 `;
 
+exports[`openapi-format CLI command should use the convert version 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Input file:		test/yaml-convert-3.1/input.yaml
+- OAS version converted to: \\"3.1\\"
+================================================================================
+
+OpenAPI-Format CLI options:
+|-----------|-------|
+| sort      | false |
+| lineWidth | -1    |
+| convertTo | 3.1   |
+| verbose   | 3     |
+|-----------|-------|
+
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
 exports[`openapi-format CLI command should use the default sort 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:

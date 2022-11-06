@@ -166,6 +166,21 @@ describe("openapi-format CLI command", () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
+  it("should use the convert version", async () => {
+    const path = `test/yaml-convert-3.1`
+    const inputFile = `${path}/input.yaml`
+    const outputFile = `${path}/output.yaml`
+    const output = (fs.readFileSync(outputFile, 'utf8'));
+
+    let result = await testUtils.cli([inputFile, `--convertTo "3.1"`, `--no-sort`, `-vvv`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain("formatted successfully");
+    expect(result.stdout).toContain('OAS version converted to: "3.1"');
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
 })
 
 /**
