@@ -5,150 +5,21 @@ const fs = require('fs');
 const traverse = require('traverse');
 const {isString, isArray, isObject} = require("./util-types");
 const {
-  adaCase,
-  camelCase,
-  capitalCase,
-  cobolCase,
-  constantCase,
-  dotNotation,
-  kebabCase,
-  lowerCase,
-  pascalCase,
-  snakeCase,
-  spaceCase,
-  trainCase,
-  upperCase
-} = require("case-anything");
-
-/**
- * Sort Object by Key or list of names
- * @param object
- * @param sortWith
- * @returns {*}
- */
-function sortObjectByKeyNameList(object, sortWith) {
-  let keys, sortFn;
-
-  if (typeof sortWith === 'function') {
-    sortFn = sortWith;
-  } else {
-    keys = sortWith;
-  }
-
-  let objectKeys = Object.keys(object);
-  return (keys || []).concat(objectKeys.sort(sortFn)).reduce(function (total, key) {
-    if (objectKeys.indexOf(key) !== -1) {
-      total[key] = object[key];
-    }
-    return total;
-  }, {});
-}
-
-/**
- * Compare function - Sort with Priority logic, keep order for non-priority items
- * @param priorityArr
- * @returns {(function(*=, *=): (number|number))|*}
- */
-function propComparator(priorityArr) {
-  return function (a, b) {
-    if (a === b) {
-      return 0;
-    }
-    if (!Array.isArray(priorityArr)) {
-      return 0;
-    }
-    const ia = priorityArr.indexOf(a);
-    const ib = priorityArr.indexOf(b);
-    if (ia !== -1) {
-      return ib !== -1 ? ia - ib : -1;
-    }
-    return ib !== -1 || a > b ? 1 : a < b ? -1 : 0;
-  }
-}
-
-/**
- * Priority sort function
- * @param jsonProp
- * @param sortPriority
- * @param options
- * @returns {*}
- */
-function prioritySort(jsonProp, sortPriority, options) {
-  return sortObjectByKeyNameList(jsonProp, propComparator(sortPriority))
-}
-
-/**
- * A check if the OpenApi operation item matches a target definition .
- * @param {object} operationPath the OpenApi path item to match
- * @param {object} operationMethod the OpenApi metho item to match
- * @param {string} target the entered operation definition that is a combination of the method & path, like GET::/lists
- * @returns {boolean} matching information
- */
-function isMatchOperationItem(operationPath, operationMethod, target) {
-  if (operationPath && operationMethod && target) {
-    const targetSplit = target.split('::');
-    if (targetSplit[0] && targetSplit[1]) {
-      let targetMethod = [targetSplit[0].toLowerCase()]
-      const targetPath = targetSplit[1].toLowerCase();
-      // Wildcard support
-      if (targetMethod.includes('*')) {
-        // These are the methods supported in the PathItem schema
-        // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#pathItemObject
-        targetMethod = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
-      }
-      return ((operationMethod && targetMethod.includes(operationMethod.toLowerCase())) &&
-        (operationPath && matchPath(targetPath, operationPath.toLowerCase())));
-    }
-  }
-  return false;
-}
-
-/**
- * Converts a string path to a Regular Expression.
- * Transforms path parameters into named RegExp groups.
- * @param {*} path the path pattern to match
- * @returns {RegExp} Return a regex
- * @no-unit-tests
- */
-function pathToRegExp(path) {
-  const pattern = path
-    // Escape literal dots
-    .replace(/\./g, '\\.')
-    // Escape literal slashes
-    .replace(/\//g, '/')
-    // Escape literal question marks
-    .replace(/\?/g, '\\?')
-    // Ignore trailing slashes
-    .replace(/\/+$/, '')
-    // Replace wildcard with any zero-to-any character sequence
-    .replace(/\*+/g, '.*')
-    // Replace parameters with named capturing groups
-    .replace(/:([^\d|^\/][a-zA-Z0-9_]*(?=(?:\/|\\.)|$))/g, (_, paramName) => `(?<${paramName}>[^\/]+?)`)
-    // Allow optional trailing slash
-    .concat('(\\/|$)');
-  return new RegExp(pattern, 'gi');
-}
-
-/**
- * Matches a given url against a path, with Wildcard support (based on the node-match-path package)
- * @param {*} path the path pattern to match
- * @param {*} url the entered URL is being evaluated for matching
- * @returns {boolean} matching information
- */
-function matchPath(path, url) {
-  const expression = path instanceof RegExp ? path : pathToRegExp(path),
-    match = expression.exec(url) || false;
-  // Matches in strict mode: match string should equal to input (url)
-  // Otherwise loose matches will be considered truthy:
-  // match('/messages/:id', '/messages/123/users') // true
-  // eslint-disable-next-line one-var,no-implicit-coercion
-  const matches = path instanceof RegExp ? !!match : !!match && match[0] === match.input;
-  return matches;
-  // return {
-  //   matches,
-  //   params: match && matches ? match.groups || null : null
-  // };
-}
+  prioritySort,
+  isMatchOperationItem,
+} = require("./util-sort");
+const {
+  changeComponentParametersCasingEnabled,
+  changeParametersCasingEnabled,
+  changeCase,
+  changeArrayObjKeysCase,
+  changeObjKeysCase
+} = require("./util-casing");
+const {
+  valueReplace,
+  get,
+  isUsedComp
+} = require("./util-filter");
 
 /**
  * OpenAPI sort function
@@ -590,34 +461,6 @@ async function openapiFilter(oaObj, options) {
 }
 
 /**
- * Determines whether Change casing should be performed based on whether the parameters are set or not.
- * @param casingSet The casing options.
- * @returns {*}
- */
-function changeComponentParametersCasingEnabled(casingSet){
-  return casingSet && (
-    casingSet.componentsParametersHeader ||
-    casingSet.componentsParametersPath ||
-    casingSet.componentsParametersQuery ||
-    casingSet.componentsParametersCookie
-  )
-}
-
-/**
- * Determines whether Change casing should be performed based on whether the parameters are set or not.
- * @param casingSet The casing options.
- * @returns {*}
- */
-function changeParametersCasingEnabled(casingSet){
-  return casingSet && (
-    casingSet.parametersHeader ||
-    casingSet.parametersPath ||
-    casingSet.parametersQuery ||
-    casingSet.parametersCookie
-  )
-}
-
-/**
  * OpenAPI Change Case function
  * Traverse through all keys and based on the key name, change the case the props according to the casing configuration.
  * @param {object} oaObj OpenApi document
@@ -834,145 +677,6 @@ async function openapiRename(oaObj, options) {
 
   // Return result object
   return {data: jsonObj, resultData: {}}
-}
-
-/**
- * Value replacement function
- * @param {string} valueAsString
- * @param {array} replacements
- * @returns {*}
- */
-function valueReplace(valueAsString, replacements) {
-  if (!isString(valueAsString)) return valueAsString
-  if (!isArray(replacements)) return valueAsString
-
-  replacements.map(({searchFor, replaceWith}) => {
-    const pattern = searchFor.replace(/"/g, '\\\\"')
-    const replacement = replaceWith.replace(/"/g, '\\"')
-    valueAsString = valueAsString.replace(new RegExp(escapeRegExp(pattern), 'g'), replacement);
-    return valueAsString
-  })
-
-  return valueAsString
-}
-
-/**
- * Change Object keys case function
- * @param {object} obj
- * @param {string} caseType
- * @returns {*}
- */
-function changeObjKeysCase(obj, caseType) {
-  if (!isObject(obj)) return obj
-
-  const orgObj = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
-  let replacedItems = Object.keys(orgObj).map((key) => {
-    const newKey = changeCase(key, caseType);
-    return {[newKey]: orgObj[key]};
-  });
-  return Object.assign({}, ...replacedItems)
-}
-
-/**
- * Change object keys case in array function
- * @param {object} node
- * @param {string} caseType
- * @returns {*}
- */
-function changeArrayObjKeysCase(node, caseType) {
-  if (!isArray(node)) return node
-
-  const casedNode = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
-  for (let i = 0; i < casedNode.length; i++) {
-    casedNode[i] = changeObjKeysCase(casedNode[i], caseType)
-  }
-  return casedNode
-}
-
-/**
- * Change case function
- * @param {string} valueAsString
- * @param {string} caseType
- * @returns {string}
- */
-function changeCase(valueAsString, caseType) {
-  if (!isString(valueAsString) || valueAsString === "") return valueAsString
-  const keepChars = ['$', '@']
-  const normCaseType = camelCase(caseType)
-
-  switch (normCaseType) {
-    case "camelCase":
-      return camelCase(valueAsString, {keep: keepChars})
-    case "pascalCase":
-    case "upperCamelCase":
-      return pascalCase(valueAsString, {keep: keepChars})
-    case "kebabCase":
-    case "kebapCase":
-      return kebabCase(valueAsString, {keep: keepChars})
-    case "trainCase":
-    case "capitalKebabCase":
-    case "capitalKebapCase":
-      return trainCase(valueAsString, {keep: keepChars})
-    case "snakeCase":
-      return snakeCase(valueAsString, {keep: keepChars})
-    case "adaCase":
-      return adaCase(valueAsString, {keep: keepChars})
-    case "constantCase":
-      return constantCase(valueAsString, {keep: keepChars})
-    case "cobolCase":
-      return cobolCase(valueAsString, {keep: keepChars})
-    case "dotNotation":
-      return dotNotation(valueAsString, {keep: keepChars})
-    case "spaceCase":
-      return spaceCase(valueAsString, {keep: keepChars})
-    case "capitalCase":
-      return capitalCase(valueAsString, {keep: keepChars})
-    case "lowerCase":
-      return lowerCase(valueAsString, {keep: keepChars})
-    case "upperCase":
-      return upperCase(valueAsString, {keep: keepChars})
-    default:
-      return valueAsString
-  }
-}
-
-/**
- * Function for escaping input to be treated as a literal string within a regular expression
- * @param string
- * @returns {*}
- */
-function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-/**
- * Alternative optional chaining function, to provide support for NodeJS 12
- * TODO replace this with native ?. optional chaining once NodeJS12 is deprecated.
- * @param obj object
- * @param path path to access the properties
- * @param defaultValue
- * @returns {T}
- */
-function get(obj, path, defaultValue = undefined) {
-  const travel = regexp => String.prototype.split.call(path, regexp)
-    .filter(Boolean).reduce((res, key) => res !== null && res !== undefined ? res[key] : res, obj);
-
-  const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/);
-  return result === undefined || result === obj ? defaultValue : result;
-}
-
-/**
- * Validate function if component contains a used property
- * @param obj
- * @param prop
- * @returns {boolean}
- */
-function isUsedComp(obj, prop) {
-  if (!isObject(obj)) return false
-  if (!isString(prop)) return false
-  const comp = obj[prop]
-  if (comp.used && comp.used === true) return true
-  return false
 }
 
 module.exports = {
