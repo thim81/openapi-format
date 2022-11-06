@@ -1,5 +1,7 @@
 ## unreleased
 
+- Added the CLI option to convert the OpenAPI 3.0 document to OpenAPI version 3.1
+
 ## [1.12.1] - 2022-08-25
 
 - Filter - Bugfix for a combination of flags & flagValues
