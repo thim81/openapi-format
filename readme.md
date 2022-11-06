@@ -71,7 +71,7 @@ Postman collections, test suites, ...
 - [x] Use as a Module
 - [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
-- [ ] Support for OpenAPI 3.1
+- [x] Support for OpenAPI 3.1 (beta)
 
 ## Installation
 
@@ -129,6 +129,8 @@ Options:
   --sortComponentsFile  The file with components to sort alphabetically         [path]
 
   --rename              Rename the OpenAPI title                              [string]
+  
+  --convertTo           convert the OpenAPI document to OpenAPI version 3.1   [string]
 
   --configFile          The file with the OpenAPI-format CLI options            [path]
 
@@ -557,8 +559,6 @@ paths:
 
 ## OpenAPI formatting configuration options
 
-🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
-
 Tools like [spectral](https://github.com/stoplightio/spectral) or [speccy](https://speccy.io/), or any of the [linting tools](https://nordicapis.com/8-openapi-linters/), provide a manner to validate & lint OpenAPI specifications to be uniform. The linting tool informs about the incorrect usage of OpenAPI properties & inconsistent field names.
 This is very useful and helps to guard the quality of the OpenAPI specification. They inform which fields to correct so that the specification will comply with all the defined linting rules.
 
@@ -906,6 +906,38 @@ which results in
     "openapi": "3.0.2",
     "info": {
         "title": "OpenAPI Petstore - OpenAPI 3.0",
+```
+
+## CLI convertTo usage
+
+🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
+
+- Format & convert the OpenAPI document to OpenAPI version 3.1
+
+openapi-format can help you to upgrade your current OpenAPI 3.0.x document to the latest version OpenAPI 3.1.
+
+```shell
+$ openapi-format openapi.json -o openapi.json --convertTo "3.1"
+```
+
+which results in all the changes described in the [migration guide from Phil Sturgeon](https://www.openapis.org/blog/2021/02/16/migrating-from-openapi-3-0-to-3-1-0)
+
+- before
+
+```json
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Petstore - OpenAPI",
+```
+
+- after
+
+```json
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "OpenAPI Petstore - OpenAPI",
 ```
 
 ## CLI configuration usage
