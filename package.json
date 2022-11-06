@@ -43,7 +43,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jest --colors --verbose --reporters=default --collectCoverage --no-cache",
+    "test": "jest --colors --verbose --reporters=default --collectCoverage --no-cache --maxWorkers=2",
     "release": "np --branch main"
   },
   "dependencies": {
