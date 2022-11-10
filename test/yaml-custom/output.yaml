@@ -9,7 +9,7 @@ info:
     Some useful links:
     - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
     - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
-  version: 1.0.6-SNAPSHOT
+  version: 1.0.6
   title: Swagger Petstore - OpenAPI 3.0
   termsOfService: 'http://swagger.io/terms/'
   contact:
@@ -480,6 +480,8 @@ paths:
               schema:
                 type: integer
                 format: int32
+                enum:
+                  - 1
             X-Expires-After:
               description: date in UTC when token expires
               schema:
@@ -518,7 +520,7 @@ paths:
             type: string
           name: username
           in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
+          description: The name that needs to be fetched. Use user1 for testing.
       responses:
         '200':
           description: successful operation
@@ -674,6 +676,8 @@ components:
           type: integer
           format: int64
           example: 10
+          exclusiveMinimum: true
+          minimum: 7
         username:
           type: string
           example: theUser
@@ -697,6 +701,8 @@ components:
           type: integer
           format: int32
           example: 1
+          exclusiveMaximum: true
+          maximum: 7
       x-swagger-router-model: io.swagger.petstore.model.User
       xml:
         name: user
@@ -718,9 +724,11 @@ components:
           type: integer
           format: int64
           example: 10
+          nullable: true
         name:
           type: string
           example: doggie
+          nullable: true
         category:
           $ref: '#/components/schemas/Category'
         photoUrls:
