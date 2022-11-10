@@ -1,4 +1,4 @@
-openapi: 3.0.2
+openapi: 3.1.0
 info:
   description: |-
     This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
@@ -9,7 +9,7 @@ info:
     Some useful links:
     - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
     - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
-  version: 1.0.6-SNAPSHOT
+  version: 1.0.6
   title: Swagger Petstore - OpenAPI 3.0
   termsOfService: 'http://swagger.io/terms/'
   contact:
@@ -480,6 +480,7 @@ paths:
               schema:
                 type: integer
                 format: int32
+                const: 1
             X-Expires-After:
               description: date in UTC when token expires
               schema:
@@ -518,7 +519,7 @@ paths:
             type: string
           name: username
           in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
+          description: The name that needs to be fetched. Use user1 for testing.
       responses:
         '200':
           description: successful operation
@@ -593,26 +594,30 @@ components:
         id:
           type: integer
           format: int64
-          example: 10
+          examples:
+            - 10
         petId:
           type: integer
           format: int64
-          example: 198772
+          examples:
+            - 198772
         quantity:
           type: integer
           format: int32
-          example: 7
+          examples:
+            - 7
         shipDate:
           type: string
           format: date-time
         status:
           description: Order Status
           type: string
-          example: approved
           enum:
             - placed
             - approved
             - delivered
+          examples:
+            - approved
         complete:
           type: boolean
       x-swagger-router-model: io.swagger.petstore.model.Order
@@ -624,10 +629,12 @@ components:
         id:
           type: integer
           format: int64
-          example: 100000
+          examples:
+            - 100000
         username:
           type: string
-          example: fehguy
+          examples:
+            - fehguy
         address:
           type: array
           items:
@@ -642,16 +649,20 @@ components:
       properties:
         street:
           type: string
-          example: 437 Lytton
+          examples:
+            - 437 Lytton
         city:
           type: string
-          example: Palo Alto
+          examples:
+            - Palo Alto
         state:
           type: string
-          example: CA
+          examples:
+            - CA
         zip:
           type: string
-          example: 94301
+          examples:
+            - 94301
       xml:
         name: address
     Category:
@@ -660,10 +671,12 @@ components:
         id:
           type: integer
           format: int64
-          example: 1
+          examples:
+            - 1
         name:
           type: string
-          example: Dogs
+          examples:
+            - Dogs
       x-swagger-router-model: io.swagger.petstore.model.Category
       xml:
         name: category
@@ -673,30 +686,40 @@ components:
         id:
           type: integer
           format: int64
-          example: 10
+          examples:
+            - 10
+          exclusiveMinimum: 7
         username:
           type: string
-          example: theUser
+          examples:
+            - theUser
         firstName:
           type: string
-          example: John
+          examples:
+            - John
         lastName:
           type: string
-          example: James
+          examples:
+            - James
         email:
           type: string
-          example: john@email.com
+          examples:
+            - john@email.com
         password:
           type: string
-          example: 12345
+          examples:
+            - 12345
         phone:
           type: string
-          example: 12345
+          examples:
+            - 12345
         userStatus:
           description: User Status
           type: integer
           format: int32
-          example: 1
+          examples:
+            - 1
+          exclusiveMaximum: 7
       x-swagger-router-model: io.swagger.petstore.model.User
       xml:
         name: user
@@ -715,12 +738,18 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type:
+            - integer
+            - 'null'
           format: int64
-          example: 10
+          examples:
+            - 10
         name:
-          type: string
-          example: doggie
+          type:
+            - string
+            - 'null'
+          examples:
+            - doggie
         category:
           $ref: '#/components/schemas/Category'
         photoUrls:
