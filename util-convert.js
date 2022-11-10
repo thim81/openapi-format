@@ -71,6 +71,23 @@ function convertExample(obj) {
 }
 
 /**
+ * Convert single enum property to const
+ * @param {object} obj
+ * @returns {*}
+ */
+function convertConst(obj) {
+  if (!isObject(obj)) return obj
+  const dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
+  if (dto.enum !== undefined && dto.enum.length === 1) {
+    // Set 3.1 const
+    dto['const'] =  dto.enum[0]
+    // Remove 3.0 enum
+    delete dto.enum
+  }
+  return dto
+}
+
+/**
  * Convert Uploading an image with base64 encoding
  * @param {object} obj
  * @returns {*}
@@ -110,6 +127,7 @@ module.exports = {
   convertNullable: convertNullable,
   convertExample: convertExample,
   convertExclusive: convertExclusive,
+  convertConst: convertConst,
   convertImageBase64: convertImageBase64,
   convertMultiPartBinary: convertMultiPartBinary
 };

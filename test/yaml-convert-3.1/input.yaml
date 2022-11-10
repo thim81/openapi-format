@@ -11,7 +11,7 @@ info:
     Some useful links:
     - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
     - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
-  version: 1.0.6-SNAPSHOT
+  version: 1.0.6
   title: Swagger Petstore - OpenAPI 3.0
   termsOfService: 'http://swagger.io/terms/'
   contact:
@@ -504,6 +504,8 @@ paths:
               schema:
                 type: integer
                 format: int32
+                enum:
+                  - 1
             X-Expires-After:
               description: date in UTC when token expires
               schema:
@@ -539,7 +541,7 @@ paths:
       parameters:
         - name: username
           in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
+          description: 'The name that needs to be fetched. Use user1 for testing.'
           required: true
           schema:
             type: string

@@ -25,7 +25,7 @@ const {
   convertExclusive,
   convertExample,
   convertImageBase64,
-  convertMultiPartBinary
+  convertMultiPartBinary, convertConst
 } = require("./util-convert");
 
 /**
@@ -695,6 +695,9 @@ async function openapiConvertVersion(oaObj, options) {
 
         // Change type > exclusiveMinimum/exclusiveMaximum
         node = convertExclusive(node);
+
+        // Change type > single enum
+        node = convertConst(node);
 
         this.update(node);
       }
