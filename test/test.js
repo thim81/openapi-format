@@ -7,12 +7,12 @@ const sy = require('@stoplight/yaml');
 const openapiFormat = require('../openapi-format.js');
 
 let destroyOutput = false;
-const tests = fs.readdirSync(__dirname).filter(file => {
-  return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_'));
-});
+// const tests = fs.readdirSync(__dirname).filter(file => {
+//   return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_'));
+// });
 
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-convert-3.1']
+const tests = ['yaml-convert-3.1']
 // destroyOutput = true
 
 describe('openapi-format tests', () => {

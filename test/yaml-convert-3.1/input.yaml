@@ -502,10 +502,10 @@ paths:
             X-Rate-Limit:
               description: calls per hour allowed by the user
               schema:
-                type: integer
-                format: int32
                 enum:
                   - 1
+                type: integer
+                format: int32
             X-Expires-After:
               description: date in UTC when token expires
               schema:

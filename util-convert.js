@@ -1,4 +1,43 @@
-const {isObject} = require("./util-types");
+const {isObject, isArray, isNumber, isString} = require("./util-types");
+
+/**
+ * Add property to object at certain position
+ * @param obj
+ * @param key
+ * @param value
+ * @param index
+ * @returns {{}}
+ */
+function setInObject(obj, key, value, index) {
+  // Create a temp object and index variable
+  const dto = {}
+  let i = 0
+  const ordering = Object.keys(obj)
+
+  // Loop through the original object
+  for (let prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      // If the indexes match, add the new item
+      if (i === index && isNumber(index) && key && value) {
+        dto[key] = value
+      }
+      // Add the current item in the loop to the temp obj
+      dto[prop] = obj[prop]
+
+      // Add/overwrite item
+      if (isString(index) && i === ordering.indexOf(index) && key && value) {
+        dto[key] = value
+      }
+      // Increase the count
+      i++
+    }
+  }
+  // If no index, add to the end
+  if (!index && key) {
+    Object.assign(dto, {[key]: value})
+  }
+  return dto
+}
 
 /**
  * Convert nullable property to type
@@ -7,47 +46,58 @@ const {isObject} = require("./util-types");
  */
 function convertNullable(obj) {
   if (!isObject(obj)) return obj
-  const dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
-  if (dto.nullable !== undefined) {
-    const types = [dto.type.toString()]
-    if (dto.nullable === true) {
-      types.push('null')
-    }
+  if (obj.nullable === undefined) return obj
+
+  let dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
+  const types = [dto.type.toString()]
+  if (dto.nullable === true) {
+    types.push('null')
+  }
+  // Update 3.1 type
+  dto = setInObject(dto, 'type', types, 'type')
+  // Remove 3.0 prop
+  delete dto.nullable
+  return dto
+}
+
+/**
+ * Convert exclusiveMinimum property
+ * @param {object} obj
+ * @returns {*}
+ */
+function convertExclusiveMinimum(obj) {
+  if (!isObject(obj)) return obj
+  if (obj.exclusiveMinimum === undefined || obj.minimum === undefined) return obj
+
+  let dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
+  if (dto.exclusiveMinimum === true) {
+    dto = setInObject(dto, 'exclusiveMinimum', dto.minimum, 'exclusiveMinimum')
+    // dto.exclusiveMinimum = dto.minimum
+    delete dto.minimum
+  } else {
     // Remove 3.0 prop
-    delete dto.nullable
-    // Update 3.1 type
-    dto.type = types
+    delete dto.exclusiveMinimum
   }
   return dto
 }
 
 /**
- * Convert exclusiveMinimum/exclusiveMaximum property
+ * Convert exclusiveMinimum property
  * @param {object} obj
  * @returns {*}
  */
-function convertExclusive(obj) {
+function convertExclusiveMaximum(obj) {
   if (!isObject(obj)) return obj
-  const dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
+  if (obj.exclusiveMaximum === undefined || obj.maximum === undefined) return obj
 
-  if (dto.exclusiveMinimum !== undefined && dto.minimum !== undefined) {
-    if (dto.exclusiveMinimum === true) {
-      dto.exclusiveMinimum = dto.minimum
-      delete dto.minimum
-    } else {
-      // Remove 3.0 prop
-      delete dto.exclusiveMinimum
-    }
-  }
-
-  if (dto.exclusiveMaximum !== undefined && dto.maximum !== undefined) {
-    if (dto.exclusiveMaximum === true) {
-      dto.exclusiveMaximum = dto.maximum
-      delete dto.maximum
-    } else {
-      // Remove 3.0 prop
-      delete dto.exclusiveMaximum
-    }
+  let dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
+  if (dto.exclusiveMaximum === true) {
+    dto = setInObject(dto, 'exclusiveMaximum', dto.maximum, 'exclusiveMaximum')
+    // dto.exclusiveMaximum = dto.maximum
+    delete dto.maximum
+  } else {
+    // Remove 3.0 prop
+    delete dto.exclusiveMaximum
   }
   return dto
 }
@@ -78,9 +128,9 @@ function convertExample(obj) {
 function convertConst(obj) {
   if (!isObject(obj)) return obj
   const dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
-  if (dto.enum !== undefined && dto.enum.length === 1) {
+  if (dto.enum !== undefined && isArray(dto.enum) && dto.enum.length === 1) {
     // Set 3.1 const
-    dto['const'] =  dto.enum[0]
+    dto['const'] = dto.enum[0]
     // Remove 3.0 enum
     delete dto.enum
   }
@@ -126,7 +176,8 @@ function convertMultiPartBinary(obj) {
 module.exports = {
   convertNullable: convertNullable,
   convertExample: convertExample,
-  convertExclusive: convertExclusive,
+  convertExclusiveMinimum: convertExclusiveMinimum,
+  convertExclusiveMaximum: convertExclusiveMaximum,
   convertConst: convertConst,
   convertImageBase64: convertImageBase64,
   convertMultiPartBinary: convertMultiPartBinary
