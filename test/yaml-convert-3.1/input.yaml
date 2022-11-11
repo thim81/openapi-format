@@ -623,9 +623,9 @@ components:
           format: int64
           example: 198772
         quantity:
+          example: 7
           type: integer
           format: int32
-          example: 7
         shipDate:
           type: string
           format: date-time
@@ -697,9 +697,9 @@ components:
         id:
           type: integer
           format: int64
-          example: 10
           minimum: 7
           exclusiveMinimum: true
+          example: 10
         username:
           type: string
           example: theUser
