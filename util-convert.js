@@ -72,7 +72,6 @@ function convertExclusiveMinimum(obj) {
   let dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
   if (dto.exclusiveMinimum === true) {
     dto = setInObject(dto, 'exclusiveMinimum', dto.minimum, 'exclusiveMinimum')
-    // dto.exclusiveMinimum = dto.minimum
     delete dto.minimum
   } else {
     // Remove 3.0 prop
@@ -93,7 +92,6 @@ function convertExclusiveMaximum(obj) {
   let dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
   if (dto.exclusiveMaximum === true) {
     dto = setInObject(dto, 'exclusiveMaximum', dto.maximum, 'exclusiveMaximum')
-    // dto.exclusiveMaximum = dto.maximum
     delete dto.maximum
   } else {
     // Remove 3.0 prop
@@ -109,14 +107,14 @@ function convertExclusiveMaximum(obj) {
  */
 function convertExample(obj) {
   if (!isObject(obj)) return obj
-  const dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
-  if (dto.example !== undefined) {
-    const examples = [dto.example]
-    // Remove 3.0 example
-    delete dto.example
-    // Set 3.1 examples
-    dto.examples = examples
-  }
+  if (obj.example === undefined) return obj
+
+  let dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
+  const examples = [dto.example]
+  // Set 3.1 examples
+  dto = setInObject(dto, 'examples', examples, 'example')
+  // Remove 3.0 example
+  delete dto.example
   return dto
 }
 
@@ -127,13 +125,13 @@ function convertExample(obj) {
  */
 function convertConst(obj) {
   if (!isObject(obj)) return obj
-  const dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
-  if (dto.enum !== undefined && isArray(dto.enum) && dto.enum.length === 1) {
-    // Set 3.1 const
-    dto['const'] = dto.enum[0]
-    // Remove 3.0 enum
-    delete dto.enum
-  }
+  if (obj.enum === undefined || !isArray(obj.enum) || obj.enum.length > 1) return obj
+
+  let dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
+  // Set 3.1 const
+  dto = setInObject(dto, 'const', dto.enum[0], 'enum')
+  // Remove 3.0 enum
+  delete dto.enum
   return dto
 }
 
@@ -144,14 +142,13 @@ function convertConst(obj) {
  */
 function convertImageBase64(obj) {
   if (!isObject(obj)) return obj
-  const dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
-  if (dto.schema && dto.schema.format === 'base64') {
-    // Set 3.1 contentEncoding
-    dto.schema.contentEncoding = dto.schema.format
-    // Remove 3.0 format
-    delete dto.schema.format
+  if (!obj.schema || !obj.schema.format || obj.schema.format !== 'base64') return obj
 
-  }
+  let dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
+  // Set 3.1 contentEncoding
+  dto.schema = setInObject(dto.schema, 'contentEncoding', dto.schema.format, 'format')
+  // Remove 3.0 format
+  delete dto.schema.format
   return dto
 }
 
@@ -162,18 +159,18 @@ function convertImageBase64(obj) {
  */
 function convertMultiPartBinary(obj) {
   if (!isObject(obj)) return obj
-  const dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
-  if (dto && dto.format === 'binary') {
-    // Set 3.1 contentMediaType
-    dto.contentMediaType = 'application/octet-stream'
-    // Remove 3.0 binary format
-    delete dto.format
+  if (obj.format !== 'binary') return obj
 
-  }
+  let dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
+  // Set 3.1 contentMediaType
+  dto = setInObject(dto, 'contentMediaType', 'application/octet-stream', 'format')
+  // Remove 3.0 binary format
+  delete dto.format
   return dto
 }
 
 module.exports = {
+  setInObject: setInObject,
   convertNullable: convertNullable,
   convertExample: convertExample,
   convertExclusiveMinimum: convertExclusiveMinimum,

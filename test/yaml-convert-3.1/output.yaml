@@ -499,9 +499,9 @@ paths:
             X-Rate-Limit:
               description: calls per hour allowed by the user
               schema:
+                const: 1
                 type: integer
                 format: int32
-                const: 1
             X-Expires-After:
               description: date in UTC when token expires
               schema:
@@ -705,9 +705,9 @@ components:
         id:
           type: integer
           format: int64
-          exclusiveMinimum: 7
           examples:
             - 10
+          exclusiveMinimum: 7
         username:
           type: string
           examples:
@@ -735,10 +735,10 @@ components:
         userStatus:
           type: integer
           format: int32
-          exclusiveMaximum: 7
-          description: User Status
           examples:
             - 1
+          exclusiveMaximum: 7
+          description: User Status
       xml:
         name: user
       type: object
