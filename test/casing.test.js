@@ -112,5 +112,8 @@ describe('openapi-format CLI casing tests', () => {
     it('casing should match UPPER CASE', async () => {
       expect(of.changeCase(str, 'UPPER CASE')).toBe('OPENAPI FORMAT');
     });
+    it('casing should not match', async () => {
+      expect(of.changeCase(str, 'foo bar')).toBe('openapi-format');
+    });
   });
 });
