@@ -30,6 +30,7 @@ The openapi-format CLI has the option to convert the OpenAPI 3.0 document to an 
 * [CLI sort usage](#cli-sort-usage)
 * [CLI filter usage](#cli-filter-usage)
 * [CLI rename usage](#cli-rename-usage)
+* [CLI convertTo usage](#cli-convertto-usage)
 * [CLI configuration usage](#cli-configuration-usage)
 * [Credits](#credits)
 
@@ -904,7 +905,7 @@ $ openapi-format openapi.json -o openapi.json --rename "OpenAPI Petstore - OpenA
 
 which results in
 
-- before
+**before**
 
 ```json
 {
@@ -913,7 +914,7 @@ which results in
         "title": "Petstore - OpenAPI 3.0",
 ```
 
-- after
+**after**
 
 ```json
 {
@@ -936,7 +937,7 @@ $ openapi-format openapi.json -o openapi.json --convertTo "3.1"
 
 which results in all the changes described in the [migration guide from Phil Sturgeon](https://www.openapis.org/blog/2021/02/16/migrating-from-openapi-3-0-to-3-1-0)
 
-- before
+**before**
 
 ```json
 {
@@ -945,7 +946,7 @@ which results in all the changes described in the [migration guide from Phil Stu
         "title": "Petstore - OpenAPI",
 ```
 
-- after
+**after**
 
 ```json
 {
