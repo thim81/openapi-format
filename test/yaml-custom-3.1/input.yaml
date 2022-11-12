@@ -1,4 +1,4 @@
-openapi: 3.0.2
+openapi: 3.1.0
 servers:
   - url: /v3
 info:
@@ -22,9 +22,6 @@ info:
 tags:
   - name: pet
     description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
 paths:
   /pet:
     post:
@@ -489,10 +486,9 @@ paths:
             X-Rate-Limit:
               description: calls per hour allowed by the user
               schema:
+                const: 1
                 type: integer
                 format: int32
-                enum:
-                  - 1
             X-Expires-After:
               description: date in UTC when token expires
               schema:
@@ -528,7 +524,7 @@ paths:
       parameters:
         - name: username
           in: path
-          description: 'The name that needs to be fetched. Use user1 for testing.'
+          description: The name that needs to be fetched. Use user1 for testing.
           required: true
           schema:
             type: string
@@ -604,15 +600,18 @@ components:
         id:
           type: integer
           format: int64
-          example: 10
+          examples:
+            - 10
         petId:
           type: integer
           format: int64
-          example: 198772
+          examples:
+            - 198772
         quantity:
           type: integer
           format: int32
-          example: 7
+          examples:
+            - 7
         shipDate:
           type: string
           format: date-time
@@ -623,7 +622,8 @@ components:
             - placed
             - approved
             - delivered
-          example: approved
+          examples:
+            - approved
         complete:
           type: boolean
       xml:
@@ -634,10 +634,12 @@ components:
         id:
           type: integer
           format: int64
-          example: 100000
+          examples:
+            - 100000
         username:
           type: string
-          example: fehguy
+          examples:
+            - fehguy
         address:
           type: array
           items:
@@ -652,16 +654,20 @@ components:
       properties:
         street:
           type: string
-          example: 437 Lytton
+          examples:
+            - 437 Lytton
         city:
           type: string
-          example: Palo Alto
+          examples:
+            - Palo Alto
         state:
           type: string
-          example: CA
+          examples:
+            - CA
         zip:
           type: string
-          example: 94301
+          examples:
+            - 94301
       xml:
         name: address
       type: object
@@ -671,10 +677,12 @@ components:
         id:
           type: integer
           format: int64
-          example: 1
+          examples:
+            - 1
         name:
           type: string
-          example: Dogs
+          examples:
+            - Dogs
       xml:
         name: category
       type: object
@@ -684,33 +692,39 @@ components:
         id:
           type: integer
           format: int64
-          example: 10
-          minimum: 7
-          exclusiveMinimum: true
+          exclusiveMinimum: 7
+          examples:
+            - 10
         username:
           type: string
-          example: theUser
+          examples:
+            - theUser
         firstName:
           type: string
-          example: John
+          examples:
+            - John
         lastName:
           type: string
-          example: James
+          examples:
+            - James
         email:
           type: string
-          example: john@email.com
+          examples:
+            - john@email.com
         password:
           type: string
-          example: 12345
+          examples:
+            - 12345
         phone:
           type: string
-          example: 12345
+          examples:
+            - 12345
         userStatus:
           type: integer
           format: int32
-          example: 1
-          maximum: 7
-          exclusiveMaximum: true
+          examples:
+            - 1
+          exclusiveMaximum: 7
           description: User Status
       xml:
         name: user
@@ -733,14 +747,18 @@ components:
         - photoUrls
       properties:
         id:
-          type: integer
+          type:
+            - integer
+            - 'null'
           format: int64
-          example: 10
-          nullable: true
+          examples:
+            - 10
         name:
-          type: string
-          example: doggie
-          nullable: true
+          type:
+            - string
+            - 'null'
+          examples:
+            - doggie
         category:
           $ref: '#/components/schemas/Category'
         photoUrls:

@@ -24,6 +24,7 @@ program
   .option('--sortComponentsFile <sortComponentsFile>', 'the file with components to sort alphabetically')
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
   .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document')
+  .option('--convertTo <oaVersion>', 'convert the OpenAPI document to OpenAPI version 3.1')
   .option('--json', 'print the file to stdout as JSON')
   .option('--yaml', 'print the file to stdout as YAML')
   .version(require('../package.json').version, '--version')
@@ -189,6 +190,13 @@ async function run(oaFile, options) {
   if (options.casingSet) {
     const resFormat = await openapiFormat.openapiChangeCase(res, options);
     if (resFormat.data) res = resFormat.data
+  }
+
+  // Convert the OpenAPI document to OpenAPI 3.1
+  if ((options.convertTo && options.convertTo.toString() === "3.1") || (options.convertToVersion && options.convertToVersion === 3.1)) {
+    const resVersion = await openapiFormat.openapiConvertVersion(res, options);
+    if (resVersion.data) res = resVersion.data
+    debugOut(`- OAS version converted to: "${options.convertTo}"`, options.verbose) // LOG - Conversion title
   }
 
   // Rename title OpenAPI document

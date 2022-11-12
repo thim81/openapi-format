@@ -22,9 +22,6 @@ info:
 tags:
   - name: pet
     description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
 paths:
   /pet:
     post:
@@ -62,6 +59,10 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Pet'
+          image/png:
+            schema:
+              type: string
+              format: base64
     put:
       tags:
         - pet
@@ -101,6 +102,15 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Pet'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: integer
+                fileName:
+                  type: string
+                  format: binary
   /pet/findByStatus:
     get:
       tags:
@@ -489,10 +499,10 @@ paths:
             X-Rate-Limit:
               description: calls per hour allowed by the user
               schema:
-                type: integer
-                format: int32
                 enum:
                   - 1
+                type: integer
+                format: int32
             X-Expires-After:
               description: date in UTC when token expires
               schema:
@@ -593,6 +603,22 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
+x-webhooks:
+  feedPets:
+    post:
+      summary: Send bits to feed one or more pets
+      operationId: feed-pets
+      tags:
+        - Post operations
+      requestBody:
+        description: Information about a new pet in the system
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pet"
+      responses:
+        "200":
+          description: Return a 200 status to indicate that the data was received successfully
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
@@ -610,9 +636,9 @@ components:
           format: int64
           example: 198772
         quantity:
+          example: 7
           type: integer
           format: int32
-          example: 7
         shipDate:
           type: string
           format: date-time
@@ -684,9 +710,9 @@ components:
         id:
           type: integer
           format: int64
-          example: 10
           minimum: 7
           exclusiveMinimum: true
+          example: 10
         username:
           type: string
           example: theUser
@@ -790,6 +816,10 @@ components:
         application/xml:
           schema:
             $ref: '#/components/schemas/Pet'
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
       description: Pet object that needs to be added to the store
     UserArray:
       content:

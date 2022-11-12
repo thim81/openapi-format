@@ -1,5 +1,7 @@
 ## unreleased
 
+- Added the CLI option to convert the OpenAPI 3.0 document to OpenAPI version 3.1
+
 ## [1.12.1] - 2022-08-25
 
 - Filter - Bugfix for a combination of flags & flagValues
@@ -106,7 +108,7 @@ For more details on this new feature: https://github.com/thim81/openapi-format#o
 
 ## [1.4.1] - 2021-10-05
 
-- Implemented the missing functionality for removal of OpenApi.x-tagGroups matching flags
+- Implemented the missing functionality for removal of OpenAPI.x-tagGroups matching flags
 
 ## [1.4.0] - 2021-10-02
 
@@ -169,7 +171,7 @@ Released on 14 June 2021
 
 ### Added
 
-- Filter - Added support to filter out OpenApi.tags matching the flags
+- Filter - Added support to filter out OpenAPI.tags matching the flags
 - Filter - Added support for clean-up of path items without operations
 - Bug fix - openapi-format not taken into account the customSort file
 

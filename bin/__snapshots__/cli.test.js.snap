@@ -35,6 +35,7 @@ Options:
   --sortComponentsFile <sortComponentsFile>  the file with components to sort alphabetically
   --lineWidth <lineWidth>                    max line width of YAML output (default: -1)
   --rename <oaTitle>                         overwrite the title in the OpenAPI document
+  --convertTo <oaVersion>                    convert the OpenAPI document to OpenAPI version 3.1
   --json                                     print the file to stdout as JSON
   --yaml                                     print the file to stdout as YAML
   --version                                  output the version number
@@ -86,6 +87,27 @@ exports[`openapi-format CLI command should use the casingFile 1`] = `
 OpenAPI-Format CLI settings:
 - Casing file:		test/yaml-casing/customCasing.yaml
 - Input file:		test/yaml-casing/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the convert version 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Input file:		test/yaml-convert-3.1/input.yaml
+- OAS version converted to: \\"3.1\\"
+================================================================================
+
+OpenAPI-Format CLI options:
+|-----------|-------|
+| sort      | false |
+| lineWidth | -1    |
+| convertTo | 3.1   |
+| verbose   | 3     |
+|-----------|-------|
+
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m

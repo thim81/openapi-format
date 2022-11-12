@@ -13,6 +13,8 @@ can output the file with clean indenting, to either JSON or YAML.
 Next to the ordering & formatting, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
 flags, tags, methods, operationID's and even unused components.
 
+The openapi-format CLI has the option to convert an OpenAPI 3.0 document to an OpenAPI version 3.1.
+
 ## Table of content
 * [Use-cases](#use-cases)
 * [Features](#features)
@@ -28,6 +30,7 @@ flags, tags, methods, operationID's and even unused components.
 * [CLI sort usage](#cli-sort-usage)
 * [CLI filter usage](#cli-filter-usage)
 * [CLI rename usage](#cli-rename-usage)
+* [CLI convertTo usage](#cli-convertto-usage)
 * [CLI configuration usage](#cli-configuration-usage)
 * [Credits](#credits)
 
@@ -63,6 +66,7 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on response content-types
 - [x] Strip flags from OpenAPI files
 - [x] Strip unused components from OpenAPI files
+- [x] Convert OpenAPI 3.0 documents to OpenAPI 3.1 
 - [x] Rename the OpenAPI title
 - [x] Support OpenAPI documents in JSON format
 - [x] Support OpenAPI documents in YAML format
@@ -71,7 +75,7 @@ Postman collections, test suites, ...
 - [x] Use as a Module
 - [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
-- [ ] Support for OpenAPI 3.1
+- [x] Support for OpenAPI 3.1 (beta)
 
 ## Installation
 
@@ -129,6 +133,8 @@ Options:
   --sortComponentsFile  The file with components to sort alphabetically         [path]
 
   --rename              Rename the OpenAPI title                              [string]
+  
+  --convertTo           convert the OpenAPI document to OpenAPI version 3.1   [string]
 
   --configFile          The file with the OpenAPI-format CLI options            [path]
 
@@ -144,23 +150,24 @@ Options:
 
 ## OpenAPI format CLI options
 
-| Parameter             | Alias         | Description                                                                 | Input type   | Default                     | Info      |
-|-----------------------|---------------|-----------------------------------------------------------------------------|--------------|-----------------------------|-----------|
-| file                  |               | the original OpenAPI file                                                   | path to file |                             | required  |
-| --output              | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                             | optional  |
-| --sortFile            | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json            | optional  |
-| --filterFile          | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional  |
-| --casingFile          | -c            | the file to specify casing setting                                          | path to file |                             | optional  |
-| --no-sort             |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                       | optional  |
-| --sortComponentsFile  |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json  | optional  |
-| --rename              |               | rename the OpenAPI title                                                    | string       |                             | optional  |
-| --configFile          | -c            | the file with all the format config options                                 | path to file |                             | optional  |
-| --lineWidth           |               | max line width of YAML output                                               | number       | -1 (Infinity)               | optional  |
-| --json                |               | prints the file to stdout as JSON                                           |              | FALSE                       | optional  |
-| --yaml                |               | prints the file to stdout as YAML                                           |              | FALSE                       | optional  |
-| --version |                           | output the version number                                                   |              |                             | optional  |
-| --verbose             | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                             | optional  |
-| --help                | h             | display help for command                                                    |              |                             | optional  |
+| Parameter            | Alias         | Description                                                                 | Input type   | Default                     | Info      |
+|----------------------|---------------|-----------------------------------------------------------------------------|--------------|-----------------------------|-----------|
+| file                 |               | the original OpenAPI file                                                   | path to file |                             | required  |
+| --output             | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                             | optional  |
+| --sortFile           | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json            | optional  |
+| --filterFile         | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional  |
+| --casingFile         | -c            | the file to specify casing setting                                          | path to file |                             | optional  |
+| --no-sort            |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                       | optional  |
+| --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json  | optional  |
+| --rename             |               | rename the OpenAPI title                                                    | string       |                             | optional  |
+| --convertTo          |               | convert the OpenAPI document to OpenAPI version 3.1                         | string       |                             | optional  |
+| --configFile         | -c            | the file with all the format config options                                 | path to file |                             | optional  |
+| --lineWidth          |               | max line width of YAML output                                               | number       | -1 (Infinity)               | optional  |
+| --json               |               | prints the file to stdout as JSON                                           |              | FALSE                       | optional  |
+| --yaml               |               | prints the file to stdout as YAML                                           |              | FALSE                       | optional  |
+| --version            |               | output the version number                                                   |              |                             | optional  |
+| --verbose            | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                             | optional  |
+| --help               | h             | display help for command                                                    |              |                             | optional  |
 
 ## OpenAPI sort configuration options
 
@@ -557,8 +564,6 @@ paths:
 
 ## OpenAPI formatting configuration options
 
-🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
-
 Tools like [spectral](https://github.com/stoplightio/spectral) or [speccy](https://speccy.io/), or any of the [linting tools](https://nordicapis.com/8-openapi-linters/), provide a manner to validate & lint OpenAPI specifications to be uniform. The linting tool informs about the incorrect usage of OpenAPI properties & inconsistent field names.
 This is very useful and helps to guard the quality of the OpenAPI specification. They inform which fields to correct so that the specification will comply with all the defined linting rules.
 
@@ -840,6 +845,16 @@ $ openapi-format openapi.json -o openapi-formatted.json --no-sort
 This should keep the OpenAPI fields in the same order. This can be needed, when you only want to do a filtering or
 rename action.
 
+- Convert the OpenAPI 3.0 document to OpenAPI 3.1 but skip the sorting and save it as a new YAML file
+
+```shell
+$ openapi-format openapi.yaml -o openapi-3.1.yaml --no-sort --convertTo "3.1"
+```
+
+This will convert the OpenAPI 3.0 document into version 3.1 of OpenAPI, without any ordering or filtering.
+During the conversion, openapi-format will transform all OpenAPI 3.0 properties into the OpenAPI 3.1 properties, as described in the [migration guide from
+Phil Sturgeon](https://www.openapis.org/blog/2021/02/16/migrating-from-openapi-3-0-to-3-1-0).
+
 - Format an OpenAPI document, including sorting all elements in the components section
 
 ```shell
@@ -890,7 +905,7 @@ $ openapi-format openapi.json -o openapi.json --rename "OpenAPI Petstore - OpenA
 
 which results in
 
-- before
+**before**
 
 ```json
 {
@@ -899,13 +914,45 @@ which results in
         "title": "Petstore - OpenAPI 3.0",
 ```
 
-- after
+**after**
 
 ```json
 {
     "openapi": "3.0.2",
     "info": {
         "title": "OpenAPI Petstore - OpenAPI 3.0",
+```
+
+## CLI convertTo usage
+
+> 🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
+
+- Format & convert the OpenAPI document to OpenAPI version 3.1
+
+openapi-format can help you to upgrade your current OpenAPI 3.0.x document to the latest version OpenAPI 3.1.
+
+```shell
+$ openapi-format openapi.json -o openapi.json --convertTo "3.1"
+```
+
+which results in all the changes described in the [migration guide from Phil Sturgeon](https://www.openapis.org/blog/2021/02/16/migrating-from-openapi-3-0-to-3-1-0)
+
+**before**
+
+```json
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Petstore - OpenAPI",
+```
+
+**after**
+
+```json
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "OpenAPI Petstore - OpenAPI",
 ```
 
 ## CLI configuration usage

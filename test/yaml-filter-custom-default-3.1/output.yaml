@@ -1,6 +1,4 @@
-openapi: 3.0.2
-servers:
-  - url: /v3
+openapi: 3.1.0
 info:
   description: |-
     This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
@@ -19,63 +17,44 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-tags:
-  - name: pet
-    description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
+servers:
+  - url: /v3
 paths:
   /pet:
-    post:
-      tags:
-        - pet
-      summary: Add a new pet to the store
-      description: Add a new pet to the store
-      operationId: addPet
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-        '405':
-          description: Invalid input
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+    put:
+      operationId: updatePet
+      summary: Update an existing pet
+      description: Update an existing pet by Id
       requestBody:
-        description: Create a new pet in the store
-        required: true
+        description: Update an existent pet in the store
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
             schema:
               $ref: '#/components/schemas/Pet'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Pet'
-    put:
-      tags:
-        - pet
-      summary: Update an existing pet
-      description: Update an existing pet by Id
-      operationId: updatePet
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: integer
+                fileName:
+                  type: string
+                  contentMediaType: application/octet-stream
+        required: true
       responses:
         '200':
           description: Successful operation
           content:
-            application/xml:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Pet'
         '400':
@@ -88,86 +67,33 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-      requestBody:
-        description: Update an existent pet in the store
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Pet'
-  /pet/findByStatus:
-    get:
       tags:
         - pet
-      summary: Finds Pets by status
-      description: Multiple status values can be provided with comma separated strings
-      operationId: findPetsByStatus
-      parameters:
-        - name: status
-          in: query
-          description: Status values that need to be considered for filter
-          required: false
-          explode: true
-          schema:
-            type: string
-            enum:
-              - available
-              - pending
-              - sold
-            default: available
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid status value
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
   /pet/findByTags:
     get:
-      tags:
-        - pet
+      operationId: findPetsByTags
       summary: Finds Pets by tags
       description: 'Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.'
-      operationId: findPetsByTags
       parameters:
         - name: tags
           in: query
           description: Tags to filter by
           required: false
-          explode: true
           schema:
             type: array
             items:
               type: string
+          explode: true
       responses:
         '200':
           description: successful operation
           content:
-            application/xml:
+            application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Pet'
-            application/json:
+            application/xml:
               schema:
                 type: array
                 items:
@@ -178,13 +104,13 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-  '/pet/{petId}':
-    get:
       tags:
         - pet
+  '/pet/{petId}':
+    get:
+      operationId: getPetById
       summary: Find pet by ID
       description: Returns a single pet
-      operationId: getPetById
       parameters:
         - name: petId
           in: path
@@ -197,10 +123,10 @@ paths:
         '200':
           description: successful operation
           content:
-            application/xml:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Pet'
         '400':
@@ -212,12 +138,12 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-    post:
       tags:
         - pet
+    post:
+      operationId: updatePetWithForm
       summary: Updates a pet in the store with form data
       description: ''
-      operationId: updatePetWithForm
       parameters:
         - name: petId
           in: path
@@ -243,12 +169,12 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-    delete:
       tags:
         - pet
+    delete:
+      operationId: deletePet
       summary: Deletes a pet
       description: ''
-      operationId: deletePet
       parameters:
         - name: api_key
           in: header
@@ -270,13 +196,13 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-  '/pet/{petId}/uploadImage':
-    post:
       tags:
         - pet
+  '/pet/{petId}/uploadImage':
+    post:
+      operationId: uploadFile
       summary: uploads an image
       description: ''
-      operationId: uploadFile
       parameters:
         - name: petId
           in: path
@@ -291,6 +217,12 @@ paths:
           required: false
           schema:
             type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
       responses:
         '200':
           description: successful operation
@@ -302,20 +234,13 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-      requestBody:
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
+      tags:
+        - pet
   /store/inventory:
     get:
-      tags:
-        - store
+      operationId: getInventory
       summary: Returns pet inventories by status
       description: Returns a map of status codes to quantities
-      operationId: getInventory
-      x-swagger-router-controller: OrderController
       responses:
         '200':
           description: successful operation
@@ -328,14 +253,25 @@ paths:
                   format: int32
       security:
         - api_key: []
-  /store/order:
-    post:
       tags:
         - store
+      x-swagger-router-controller: OrderController
+  /store/order:
+    post:
+      operationId: placeOrder
       summary: Place an order for a pet
       description: Place a new order in the store
-      operationId: placeOrder
-      x-swagger-router-controller: OrderController
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Order'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Order'
       responses:
         '200':
           description: successful operation
@@ -345,25 +281,14 @@ paths:
                 $ref: '#/components/schemas/Order'
         '405':
           description: Invalid input
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Order'
-  '/store/order/{orderId}':
-    get:
       tags:
         - store
-      summary: Find purchase order by ID
       x-swagger-router-controller: OrderController
-      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
+  '/store/order/{orderId}':
+    get:
       operationId: getOrderById
+      summary: Find purchase order by ID
+      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
       parameters:
         - name: orderId
           in: path
@@ -376,23 +301,23 @@ paths:
         '200':
           description: successful operation
           content:
-            application/xml:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Order'
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Order'
         '400':
           description: Invalid ID supplied
         '404':
           description: Order not found
-    delete:
       tags:
         - store
-      summary: Delete purchase order by ID
       x-swagger-router-controller: OrderController
-      description: For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
+    delete:
       operationId: deleteOrder
+      summary: Delete purchase order by ID
+      description: For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
       parameters:
         - name: orderId
           in: path
@@ -406,55 +331,43 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Order not found
+      tags:
+        - store
+      x-swagger-router-controller: OrderController
   /user:
     post:
-      tags:
-        - user
+      operationId: createUser
       summary: Create user
       description: This can only be done by the logged in user.
-      operationId: createUser
-      responses:
-        default:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
       requestBody:
+        description: Created user object
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
             schema:
               $ref: '#/components/schemas/User'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/User'
-        description: Created user object
-  /user/createWithList:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: Creates list of users with given input array
-      x-swagger-router-controller: UserController
-      operationId: createUsersWithListInput
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
       responses:
-        '200':
-          description: Successful operation
+        default:
+          description: successful operation
           content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-        default:
-          description: successful operation
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+      tags:
+        - user
+  /user/createWithList:
+    post:
+      operationId: createUsersWithListInput
+      summary: Creates list of users with given input array
+      description: Creates list of users with given input array
       requestBody:
         content:
           application/json:
@@ -462,13 +375,26 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/User'
-  /user/login:
-    get:
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: successful operation
       tags:
         - user
+      x-swagger-router-controller: UserController
+  /user/login:
+    get:
+      operationId: loginUser
       summary: Logs user into the system
       description: ''
-      operationId: loginUser
       parameters:
         - name: username
           in: query
@@ -491,44 +417,43 @@ paths:
               schema:
                 type: integer
                 format: int32
-                enum:
-                  - 1
+                const: 1
             X-Expires-After:
               description: date in UTC when token expires
               schema:
                 type: string
                 format: date-time
           content:
-            application/xml:
+            application/json:
               schema:
                 type: string
-            application/json:
+            application/xml:
               schema:
                 type: string
         '400':
           description: Invalid username/password supplied
-  /user/logout:
-    get:
       tags:
         - user
+  /user/logout:
+    get:
+      operationId: logoutUser
       summary: Logs out current logged in user session
       description: ''
-      operationId: logoutUser
       parameters: []
       responses:
         default:
           description: successful operation
-  '/user/{username}':
-    get:
       tags:
         - user
+  '/user/{username}':
+    get:
+      operationId: getUserByName
       summary: Get user by user name
       description: ''
-      operationId: getUserByName
       parameters:
         - name: username
           in: path
-          description: 'The name that needs to be fetched. Use user1 for testing.'
+          description: 'The name that needs to be fetched. Use user1 for testing. '
           required: true
           schema:
             type: string
@@ -536,23 +461,22 @@ paths:
         '200':
           description: successful operation
           content:
-            application/xml:
+            application/json:
               schema:
                 $ref: '#/components/schemas/User'
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/User'
         '400':
           description: Invalid username supplied
         '404':
           description: User not found
-    put:
       tags:
         - user
-      summary: Update user
-      x-swagger-router-controller: UserController
-      description: This can only be done by the logged in user.
+    put:
       operationId: updateUser
+      summary: Update user
+      description: This can only be done by the logged in user.
       parameters:
         - name: username
           in: path
@@ -560,27 +484,28 @@ paths:
           required: true
           schema:
             type: string
-      responses:
-        default:
-          description: successful operation
       requestBody:
         description: Update an existent user in the store
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/User'
-    delete:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
       tags:
         - user
+      x-swagger-router-controller: UserController
+    delete:
+      operationId: deleteUser
       summary: Delete user
       description: This can only be done by the logged in user.
-      operationId: deleteUser
       parameters:
         - name: username
           in: path
@@ -593,51 +518,57 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
-externalDocs:
-  description: Find out more about Swagger
-  url: 'http://swagger.io'
+      tags:
+        - user
 components:
   schemas:
     Order:
-      x-swagger-router-model: io.swagger.petstore.model.Order
+      type: object
       properties:
         id:
           type: integer
           format: int64
-          example: 10
+          examples:
+            - 10
         petId:
           type: integer
           format: int64
-          example: 198772
+          examples:
+            - 198772
         quantity:
           type: integer
           format: int32
-          example: 7
+          examples:
+            - 7
         shipDate:
           type: string
           format: date-time
         status:
-          type: string
           description: Order Status
+          type: string
           enum:
             - placed
             - approved
             - delivered
-          example: approved
+          examples:
+            - approved
         complete:
           type: boolean
+      x-swagger-router-model: io.swagger.petstore.model.Order
       xml:
         name: order
-      type: object
     Customer:
+      type: object
       properties:
         id:
           type: integer
           format: int64
-          example: 100000
+          examples:
+            - 100000
         username:
           type: string
-          example: fehguy
+          examples:
+            - fehguy
         address:
           type: array
           items:
@@ -647,129 +578,143 @@ components:
             name: addresses
       xml:
         name: customer
-      type: object
     Address:
+      type: object
       properties:
         street:
           type: string
-          example: 437 Lytton
+          examples:
+            - 437 Lytton
         city:
           type: string
-          example: Palo Alto
+          examples:
+            - Palo Alto
         state:
           type: string
-          example: CA
+          examples:
+            - CA
         zip:
           type: string
-          example: 94301
+          examples:
+            - 94301
       xml:
         name: address
-      type: object
     Category:
-      x-swagger-router-model: io.swagger.petstore.model.Category
+      type: object
       properties:
         id:
           type: integer
           format: int64
-          example: 1
+          examples:
+            - 1
         name:
           type: string
-          example: Dogs
+          examples:
+            - Dogs
+      x-swagger-router-model: io.swagger.petstore.model.Category
       xml:
         name: category
-      type: object
     User:
-      x-swagger-router-model: io.swagger.petstore.model.User
+      type: object
       properties:
         id:
           type: integer
           format: int64
-          example: 10
-          minimum: 7
-          exclusiveMinimum: true
+          examples:
+            - 10
+          exclusiveMinimum: 7
         username:
           type: string
-          example: theUser
+          examples:
+            - theUser
         firstName:
           type: string
-          example: John
+          examples:
+            - John
         lastName:
           type: string
-          example: James
+          examples:
+            - James
         email:
           type: string
-          example: john@email.com
+          examples:
+            - john@email.com
         password:
           type: string
-          example: 12345
+          examples:
+            - 12345
         phone:
           type: string
-          example: 12345
+          examples:
+            - 12345
         userStatus:
+          description: User Status
           type: integer
           format: int32
-          example: 1
-          maximum: 7
-          exclusiveMaximum: true
-          description: User Status
+          examples:
+            - 1
+          exclusiveMaximum: 7
+      x-swagger-router-model: io.swagger.petstore.model.User
       xml:
         name: user
-      type: object
     Tag:
-      x-swagger-router-model: io.swagger.petstore.model.Tag
+      type: object
       properties:
         id:
           type: integer
           format: int64
         name:
           type: string
+      x-swagger-router-model: io.swagger.petstore.model.Tag
       xml:
         name: tag
-      type: object
     Pet:
-      x-swagger-router-model: io.swagger.petstore.model.Pet
-      required:
-        - name
-        - photoUrls
+      type: object
       properties:
         id:
-          type: integer
+          type:
+            - integer
+            - 'null'
           format: int64
-          example: 10
-          nullable: true
+          examples:
+            - 10
         name:
-          type: string
-          example: doggie
-          nullable: true
+          type:
+            - string
+            - 'null'
+          examples:
+            - doggie
         category:
           $ref: '#/components/schemas/Category'
         photoUrls:
           type: array
-          xml:
-            wrapped: true
           items:
             type: string
             xml:
               name: photoUrl
-        tags:
-          type: array
           xml:
             wrapped: true
+        tags:
+          type: array
           items:
             $ref: '#/components/schemas/Tag'
-            xml:
-              name: tag
+          xml:
+            wrapped: true
         status:
-          type: string
           description: pet status in the store
+          type: string
           enum:
             - available
             - pending
             - sold
+      required:
+        - name
+        - photoUrls
+      x-swagger-router-model: io.swagger.petstore.model.Pet
       xml:
         name: pet
-      type: object
     ApiResponse:
+      type: object
       properties:
         code:
           type: integer
@@ -780,13 +725,16 @@ components:
           type: string
       xml:
         name: '##default'
-      type: object
   requestBodies:
     Pet:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Pet'
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
         application/xml:
           schema:
             $ref: '#/components/schemas/Pet'
@@ -812,3 +760,10 @@ components:
       type: apiKey
       name: api_key
       in: header
+tags:
+  - name: pet
+    description: Everything about your Pets
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
+webhooks: {}

@@ -1,6 +1,7 @@
 'use strict';
 
 const testUtils = require('./__utils__/test-utils')
+const {isMatchOperationItem} = require("../util-sort");
 
 describe('openapi-format CLI sorting tests', () => {
 
@@ -199,6 +200,13 @@ describe('openapi-format CLI sorting tests', () => {
       expect(result.code).toBe(0);
       expect(result.stdout).toContain("formatted successfully");
       expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  })
+
+  describe('util-sort', () => {
+    it('isMatchOperationItem - should return false', async () => {
+      const res = isMatchOperationItem(null, null, null)
+      expect(res).toEqual(false);
     });
   })
 });
