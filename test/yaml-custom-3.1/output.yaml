@@ -827,9 +827,6 @@ components:
 tags:
   - name: pet
     description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: 'http://swagger.io'
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
