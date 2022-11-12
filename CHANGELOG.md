@@ -1,6 +1,9 @@
 ## unreleased
 
-- Added the CLI option to convert the OpenAPI 3.0 document to OpenAPI version 3.1
+## [1.13.0] - 2022-11-12
+
+- Extended openapi-format to support ordering, formatting and filtering for OpenAPI 3.1 documents
+- Added the CLI option to convert an OpenAPI 3.0 document to an OpenAPI version 3.1
 
 ## [1.12.1] - 2022-08-25
 
