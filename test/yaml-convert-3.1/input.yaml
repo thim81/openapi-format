@@ -606,6 +606,22 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
+x-webhooks:
+  feedPets:
+    post:
+      summary: Send bits to feed one or more pets
+      operationId: feed-pets
+      tags:
+        - Post operations
+      requestBody:
+        description: Information about a new pet in the system
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pet"
+      responses:
+        "200":
+          description: Return a 200 status to indicate that the data was received successfully
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'

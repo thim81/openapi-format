@@ -24,7 +24,7 @@ const {
   convertNullable,
   convertExample,
   convertImageBase64,
-  convertMultiPartBinary, convertConst, convertExclusiveMinimum, convertExclusiveMaximum
+  convertMultiPartBinary, convertConst, convertExclusiveMinimum, convertExclusiveMaximum, setInObject
 } = require("./util-convert");
 
 /**
@@ -676,10 +676,17 @@ async function openapiChangeCase(oaObj, options) {
 async function openapiConvertVersion(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
 
-  let debugConvertVersionStep = '' // uncomment // debugConvertVersionStep below to see which sort part is triggered
+  // let debugConvertVersionStep = '' // uncomment // debugConvertVersionStep below to see which sort part is triggered
 
-  // Change components/schemas - names
+  // Change OpenAPI version
   jsonObj.openapi = "3.1.0"
+
+  // Change x-webhooks to webhooks
+  if (jsonObj['x-webhooks']) {
+    jsonObj = setInObject(jsonObj,'webhooks', jsonObj['x-webhooks'] ,'x-webhooks')
+    // jsonObj.webhooks = jsonObj['x-webhooks']
+    delete jsonObj['x-webhooks']
+  }
 
   // Recursive traverse through OpenAPI document for deprecated 3.0 properties
   traverse(jsonObj).forEach(function (node) {
@@ -706,7 +713,6 @@ async function openapiConvertVersion(oaObj, options) {
 
       // Change components/schemas - schema
       if (node.schema) {
-
         // File Upload Payloads
         if ((get(this, 'parent.key') && this.parent.key === 'content')
           && (get(this, 'parent.parent.key') && this.parent.parent.key === 'requestBody')) {
