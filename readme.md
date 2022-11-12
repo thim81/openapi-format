@@ -13,7 +13,7 @@ can output the file with clean indenting, to either JSON or YAML.
 Next to the ordering & formatting, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
 flags, tags, methods, operationID's and even unused components.
 
-The openapi-format CLI has the option to convert the OpenAPI 3.0 document to an OpenAPI version 3.1.
+The openapi-format CLI has the option to convert an OpenAPI 3.0 document to an OpenAPI version 3.1.
 
 ## Table of content
 * [Use-cases](#use-cases)
