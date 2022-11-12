@@ -13,6 +13,8 @@ can output the file with clean indenting, to either JSON or YAML.
 Next to the ordering & formatting, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
 flags, tags, methods, operationID's and even unused components.
 
+The openapi-format CLI has the option to convert the OpenAPI 3.0 document to an OpenAPI version 3.1.
+
 ## Table of content
 * [Use-cases](#use-cases)
 * [Features](#features)
@@ -63,6 +65,7 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on response content-types
 - [x] Strip flags from OpenAPI files
 - [x] Strip unused components from OpenAPI files
+- [x] Convert OpenAPI 3.0 documents to OpenAPI 3.1 
 - [x] Rename the OpenAPI title
 - [x] Support OpenAPI documents in JSON format
 - [x] Support OpenAPI documents in YAML format
@@ -839,6 +842,16 @@ $ openapi-format openapi.json -o openapi-formatted.json --no-sort
 
 This should keep the OpenAPI fields in the same order. This can be needed, when you only want to do a filtering or
 rename action.
+
+- Convert the OpenAPI 3.0 document to OpenAPI 3.1 but skip the sorting and save it as a new YAML file
+
+```shell
+$ openapi-format openapi.yaml -o openapi-3.1.yaml --no-sort --convertTo "3.1"
+```
+
+This will convert the OpenAPI 3.0 document into version 3.1 of OpenAPI, without any ordering or filtering.
+During the conversion, openapi-format will transform all OpenAPI 3.0 properties into the OpenAPI 3.1 properties, as described in the [migration guide from
+Phil Sturgeon](https://www.openapis.org/blog/2021/02/16/migrating-from-openapi-3-0-to-3-1-0).
 
 - Format an OpenAPI document, including sorting all elements in the components section
 
