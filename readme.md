@@ -925,7 +925,7 @@ which results in
 
 ## CLI convertTo usage
 
-🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
+> 🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
 
 - Format & convert the OpenAPI document to OpenAPI version 3.1
 
