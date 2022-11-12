@@ -35,8 +35,8 @@
     "util-log-output.js",
     "util-sort.js",
     "util-types.js",
-    "defaultSort.json",
     "defaultFilter.json",
+    "defaultSort.json",
     "defaultSortComponents.json",
     "package-lock.json"
   ],
