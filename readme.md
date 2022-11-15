@@ -932,7 +932,7 @@ which results in
 openapi-format can help you to upgrade your current OpenAPI 3.0.x document to the latest version OpenAPI 3.1.
 
 ```shell
-$ openapi-format openapi.json -o openapi.json --convertTo "3.1"
+$ openapi-format openapi.json -o openapi-3.1.json --convertTo "3.1"
 ```
 
 which results in all the changes described in the [migration guide from Phil Sturgeon](https://www.openapis.org/blog/2021/02/16/migrating-from-openapi-3-0-to-3-1-0)
