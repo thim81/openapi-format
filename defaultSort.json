@@ -6,7 +6,7 @@
   "patch": ["operationId", "summary", "description", "parameters", "requestBody", "responses"],
   "delete": ["operationId", "summary", "description", "parameters", "requestBody", "responses"],
   "parameters": ["name", "in", "description", "required", "schema"],
-  "requestBody": ["description", "headers", "content", "links"],
+  "requestBody": ["description", "required", "content"],
   "responses": ["description", "headers", "content", "links"],
   "content": [],
   "components": ["parameters", "schemas"],
