@@ -1,5 +1,7 @@
 ## unreleased
 
+- Build openapi-format as a Docker image
+
 ## [1.13.0] - 2022-11-12
 
 - Extended openapi-format to support ordering, formatting and filtering for OpenAPI 3.1 documents
