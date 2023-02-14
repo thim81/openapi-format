@@ -438,8 +438,8 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Remove empty objects
-    if (node && Object.keys(node).length === 0 && node.constructor === Object && !['security', 'schemas'].includes(this.parent.key)) {
-      debugFilterStep = 'Filter - Remove empty objects'
+    if (node && Object.keys(node).length === 0 && node.constructor === Object && !['security', 'schemas', 'default'].includes(this.parent.key)) {
+      // debugFilterStep = 'Filter - Remove empty objects'
       this.delete();
     }
     // Remove path items without operations
