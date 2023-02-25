@@ -1,5 +1,10 @@
 ## unreleased
 
+## [1.13.1] - 2023-02-25
+
+- Prevent removal of empty objects in default examples (#72)
+- Update defaultSort.json, requestBody according to the spec (#69)
+- Bumped dependencies @stoplight/yaml, traverse
 - Build openapi-format as a Docker image
 
 ## [1.13.0] - 2022-11-12
