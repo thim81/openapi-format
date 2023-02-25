@@ -24,6 +24,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Pet'
+          examples:
+            example1:
+              key1: {}
+              key2:
+                key: {}
+            example2:
+              key1: {}
+              key2:
+                key: {}
       responses:
         '200':
           description: Successful operation
@@ -76,8 +85,13 @@ components:
             - sold
       example:
         default:
-          key1: value1
-          key: {}
+          key1:
+            key: {}
+          key2: {}
+        key:
+          key1: {}
+          key2:
+            key: {}
       required:
         - name
         - photoUrls

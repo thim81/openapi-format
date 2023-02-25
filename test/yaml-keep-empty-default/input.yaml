@@ -24,6 +24,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Pet'
+          examples:
+            example1:
+              key1: { } # should be kept
+              key2:
+                key: { } # should be kept
+            example2:
+              key1: { } # should be kept
+              key2:
+                key: { } # should be kept
       responses:
         '200':
           description: Successful operation
@@ -76,8 +85,13 @@ components:
             - sold
       example:
         default:
-          key1: "value1"
-          key: { }
+          key1:
+            key: { } # should be kept
+          key2: { } # should be kept
+        key:
+          key1: { } # should be kept
+          key2:
+            key: { } # should be kept
       required:
         - name
         - photoUrls
