@@ -26,6 +26,7 @@
         "description": "Add a new pet to the store",
         "requestBody": {
           "description": "Create a new pet in the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -42,8 +43,7 @@
                 "$ref": "#/components/schemas/Pet"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -83,6 +83,7 @@
         "description": "Update an existing pet by Id",
         "requestBody": {
           "description": "Update an existent pet in the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -99,8 +100,7 @@
                 "$ref": "#/components/schemas/Pet"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {

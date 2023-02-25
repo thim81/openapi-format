@@ -52,10 +52,10 @@
     "release": "np --branch main"
   },
   "dependencies": {
-    "@stoplight/yaml": "^4.2.2",
+    "@stoplight/yaml": "^4.2.3",
     "case-anything": "^2.1.10",
     "commander": "^7.1.0",
-    "traverse": "^0.6.6"
+    "traverse": "^0.6.7"
   },
   "devDependencies": {
     "jest": "^27.4.7"
