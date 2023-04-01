@@ -1,8 +1,7 @@
 ## unreleased
 
-## [1.14.0] - 2023-04-01
-
 - Extended the CLI to support remote OpenAPI documents
+- Label Dockerfile (#75)
 
 ## [1.13.1] - 2023-02-25
 
