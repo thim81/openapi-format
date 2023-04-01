@@ -2,6 +2,7 @@
 
 const testUtils = require('./__utils__/test-utils')
 const of = require('./../openapi-format')
+const { describe, it, expect } = require('@jest/globals');
 
 describe('openapi-format CLI casing tests', () => {
 

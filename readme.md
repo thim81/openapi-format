@@ -116,8 +116,8 @@ $ npx openapi-format your-openapi-file.yaml
 openapi-format.js <input-file> -o [ouptut-file] [options]
 
 Arguments:
-  infile   the OpenAPI document, can be either a .json or .yaml file
-  outfile  the output file is optional and be either a .json or .yaml file. Files that end in `.json` will be formatted
+  infile   the OpenAPI document can be a local or remote file in JSON or YAML format
+  outfile  the output file is optional and can be either a .json or .yaml file. Files that end in `.json` will be formatted
   as JSON files that end in `.yaml` or `.yml` will be YAML format
 
 
@@ -152,7 +152,7 @@ Options:
 
 | Parameter            | Alias         | Description                                                                 | Input type   | Default                     | Info      |
 |----------------------|---------------|-----------------------------------------------------------------------------|--------------|-----------------------------|-----------|
-| file                 |               | the original OpenAPI file                                                   | path to file |                             | required  |
+| file                 |               | the OpenAPI document can be a local or remote file in JSON or YAML format   | path to file |                             | required  |
 | --output             | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                             | optional  |
 | --sortFile           | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json            | optional  |
 | --filterFile         | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional  |
@@ -810,6 +810,12 @@ components:
 
 ```shell
 $ openapi-format openapi.json -o openapi-formatted.json
+```
+
+- Format a remote spec with the default sorting and saves it as a new JSON file
+
+```shell
+$ openapi-format https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/api-with-examples.json -o openapi-formatted.json
 ```
 
 - Format an OpenAPI JSON document with the default sorting and saves it as a new YAML file

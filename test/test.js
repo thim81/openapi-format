@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const sy = require('@stoplight/yaml');
+const { describe, it, expect } = require('@jest/globals');
 
 const openapiFormat = require('../openapi-format.js');
 
