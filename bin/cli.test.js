@@ -1,5 +1,6 @@
 const testUtils = require('../test/__utils__/test-utils')
 const fs = require("fs");
+const { describe, it, expect } = require('@jest/globals');
 
 describe("openapi-format CLI command", () => {
 
@@ -8,6 +9,34 @@ describe("openapi-format CLI command", () => {
     // console.log('result', result)
     expect(result.code).toBe(0);
     expect(result.stderr).toMatchSnapshot();
+  });
+
+  it("should use a local file with the default sort", async () => {
+    const path = `test/yaml-default`
+    const inputFile = `${path}/input.yaml`
+    const outputFile = `${path}/output.yaml`
+    const output = (fs.readFileSync(outputFile, 'utf8'));
+
+    let result = await testUtils.cli([inputFile], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain("formatted successfully");
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
+  it("should use a remote file with default sort", async () => {
+    const path = `test/yaml-default`
+    const inputFile = `https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/input.yaml`
+    const outputFile = `${path}/output.yaml`
+    const output = (fs.readFileSync(outputFile, 'utf8'));
+
+    let result = await testUtils.cli([inputFile], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain("formatted successfully");
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
   it("should use the default sort", async () => {
@@ -30,6 +59,28 @@ describe("openapi-format CLI command", () => {
     const outputFile = `${path}/output.yaml`
 
     let result = await testUtils.cli([inputFile, `--sortFile foobar`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(1);
+    expect(result.stdout).toMatchSnapshot();
+  });
+
+  it("should stop and show error about local file", async () => {
+    const path = `test/yaml-default`
+    const inputFile = `${path}/foo.yaml`
+    const outputFile = `${path}/output.yaml`
+
+    let result = await testUtils.cli([inputFile], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(1);
+    expect(result.stdout).toMatchSnapshot();
+  });
+
+  it("should stop and show error about remote file", async () => {
+    const path = `test/yaml-default`
+    const inputFile = `https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/foo.yaml`
+    const outputFile = `${path}/output.yaml`
+
+    let result = await testUtils.cli([inputFile], '.');
     // console.log('result', result)
     expect(result.code).toBe(1);
     expect(result.stdout).toMatchSnapshot();

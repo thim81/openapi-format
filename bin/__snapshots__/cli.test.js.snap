@@ -82,6 +82,46 @@ OpenAPI-Format CLI settings:
 "
 `;
 
+exports[`openapi-format CLI command should stop and show error about local file 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		(defaultSort.json)
+- Input file:		test/yaml-default/foo.yaml
+[31m Input file error - Failed to read file: test/yaml-default/foo.yaml
+"
+`;
+
+exports[`openapi-format CLI command should stop and show error about remote file 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		(defaultSort.json)
+- Input file:		https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/foo.yaml
+[31m Input file error - Failed to download file: 404 Not Found
+"
+`;
+
+exports[`openapi-format CLI command should use a local file with the default sort 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		(defaultSort.json)
+- Input file:		test/yaml-default/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use a remote file with default sort 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		(defaultSort.json)
+- Input file:		https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
 exports[`openapi-format CLI command should use the casingFile 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:

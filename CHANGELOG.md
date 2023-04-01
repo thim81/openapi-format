@@ -1,5 +1,8 @@
 ## unreleased
 
+- Extended the CLI to support remote OpenAPI documents
+- Label Dockerfile (#75)
+
 ## [1.13.1] - 2023-02-25
 
 - Prevent removal of empty objects in default examples (#72)

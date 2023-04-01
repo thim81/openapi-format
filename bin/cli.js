@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const https = require("https");
 const sy = require('@stoplight/yaml');
 const openapiFormat = require('../openapi-format')
 const program = require('commander');
@@ -150,7 +151,7 @@ async function run(oaFile, options) {
   infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
 
   // Read input file
-  let inputContent = fs.readFileSync(oaFile, 'utf8');
+  let inputContent = await processFile(oaFile);
 
   // Convert large number value safely before parsing
   const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])(,|\n)/g;  // match > : 123456789.123456789
@@ -292,3 +293,37 @@ async function run(oaFile, options) {
   infoOut(`\x1b[32m✅  OpenAPI ${outputLogFiltered}formatted successfully\x1b[0m`, 99); // LOG - success message
   infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
 }
+
+async function processFile(filePath) {
+  let inputContent;
+  if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+    inputContent = await new Promise((resolve, reject) => {
+      https.get(filePath, (res) => {
+        if (res.statusCode < 200 || res.statusCode >= 300) {
+          console.error('\x1b[31m', `Input file error - Failed to download file: ${res.statusCode} ${res.statusMessage}`);
+          process.exit(1);
+        }
+        const chunks = [];
+        res.on('data', (chunk) => {
+          chunks.push(chunk);
+        });
+        res.on('end', () => {
+          resolve(Buffer.concat(chunks).toString());
+        });
+        res.on('error', (err) => {
+          console.error('\x1b[31m', `Input file error - Failed to download file: ${err.message}`);
+          process.exit(1);
+        });
+      });
+    });
+  } else {
+    try {
+      inputContent = fs.readFileSync(filePath, 'utf8');
+    } catch (err) {
+      console.error('\x1b[31m', `Input file error - Failed to read file: ${filePath}`);
+      process.exit(1);
+    }
+  }
+  return inputContent;
+}
+

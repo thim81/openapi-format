@@ -1,6 +1,7 @@
 'use strict';
 
 const testUtils = require('./__utils__/test-utils')
+const { describe, it, expect } = require('@jest/globals');
 
 describe('openapi-format CLI filtering tests', () => {
 
