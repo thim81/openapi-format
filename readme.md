@@ -76,6 +76,7 @@ Postman collections, test suites, ...
 - [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
 - [x] Support for OpenAPI 3.1 (beta)
+- [ ] Online playground (coming soon)
 
 ## Installation
 
