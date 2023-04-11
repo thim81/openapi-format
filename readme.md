@@ -118,9 +118,7 @@ openapi-format.js <input-file> -o [output-file] [options]
 
 Arguments:
   input-file   the OpenAPI document can be a local or remote file in JSON or YAML format
-  output-file  the output file is optional and can be either a .json or .yaml file. Files that end in `.json` will be formatted
-  as JSON files that end in `.yaml` or `.yml` will be YAML format
-
+  output-file  the output file is optional and can be either a .json or .yaml file. 
 
 Options:
 
