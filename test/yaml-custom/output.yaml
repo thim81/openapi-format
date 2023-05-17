@@ -101,11 +101,11 @@ paths:
         - required: false
           schema:
             type: string
+            default: available
             enum:
               - available
               - pending
               - sold
-            default: available
           name: status
           in: query
           description: Status values that need to be considered for filter
