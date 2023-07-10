@@ -63,7 +63,7 @@ async function openapiSort(oaObj, options) {
     }
 
     // Generic sorting
-    if (!Array.isArray(node) && sortSet.hasOwnProperty(this.key) && Array.isArray(sortSet[this.key])) {
+    if (sortSet.hasOwnProperty(this.key) && Array.isArray(sortSet[this.key])) {
 
       if (this.path[0] === 'components' && this.path[1] === 'examples' && this.path[3] === 'value') {
           // debugStep = 'Generic sorting - skip nested components>examples'

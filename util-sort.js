@@ -29,11 +29,11 @@ function sortObjectByKeyNameList(object, sortWith) {
  * @returns {(function(*=, *=): (number|number))|*}
  */
 function propComparator(priorityArr) {
+  if (!Array.isArray(priorityArr)) {
+    return function (a, b) { return 0 }
+  }
   return function (a, b) {
     if (a === b) {
-      return 0;
-    }
-    if (!Array.isArray(priorityArr)) {
       return 0;
     }
     const ia = priorityArr.indexOf(a);
@@ -46,14 +46,63 @@ function propComparator(priorityArr) {
 }
 
 /**
+ * Sort array by property value of items
+ * @param array
+ * @param sortWith
+ * @rturns {*}
+ */
+function sortArrayByItemProps(array, sortWith) {
+  const sortedArray = Array.from(array);
+  sortedArray.sort(sortWith);
+  return sortedArray;
+}
+
+/**
+ * Compare objects by their property values
+ * @param priorityArr
+ * @returns {(function(*=, *=): (number|number))|*}
+ */
+function objComparator(priorityArr) {
+  if (!Array.isArray(priorityArr)) {
+    return function (a, b) { return 0 }
+  }
+  return function (a, b) {
+    if (a === b) {
+      return 0;
+    }
+    for (const key of priorityArr) {
+      if (key in a) {
+        if (key in b) {
+          if (a[key] > b[key]) {
+            return 1;
+          } else if (a[key] < b[key]) {
+            return -1;
+          }
+        } else {
+          return 1;
+        }
+      } else if (key in b) {
+        return -1;
+      }
+    }
+    return 0;
+  }
+}
+
+/**
  * Priority sort function
+ * Sort object properties by keys and arrays of objects by key of the items
  * @param jsonProp
  * @param sortPriority
  * @param options
  * @returns {*}
  */
 function prioritySort(jsonProp, sortPriority, options) {
-  return sortObjectByKeyNameList(jsonProp, propComparator(sortPriority))
+  if (Array.isArray(jsonProp)) {
+    return sortArrayByItemProps(jsonProp, objComparator(sortPriority))
+  } else {
+    return sortObjectByKeyNameList(jsonProp, propComparator(sortPriority))
+  }
 }
 
 /**
