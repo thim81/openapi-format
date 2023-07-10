@@ -50,6 +50,17 @@ describe('openapi-format CLI sorting tests', () => {
     });
   })
 
+  describe('json-sort-properties', () => {
+    it('json-sort-properties - should match expected output', async () => {
+      const testName = 'json-sort-properties'
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName, 'json', 'json')
+      // console.log('result',result)
+      expect(outputAfter).toStrictEqual(outputBefore);
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain("formatted successfully");
+    });
+  })
+
   describe('json-no-sort', () => {
     it('json-no-sort - should match expected output', async () => {
       const testName = 'json-no-sort'
