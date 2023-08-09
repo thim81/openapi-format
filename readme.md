@@ -158,7 +158,7 @@ Options:
 | --filterFile         | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional  |
 | --casingFile         | -c            | the file to specify casing setting                                          | path to file |                             | optional  |
 | --no-sort            |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                       | optional  |
-| --keepEmptySchema    |               | don't remove empty schema object                                            | boolean      | FALSE                      | optional |
+| --keepEmptySchema    |               | don't remove empty schema object                                            | boolean      | FALSE                       | optional  |
 | --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json  | optional  |
 | --rename             |               | rename the OpenAPI title                                                    | string       |                             | optional  |
 | --convertTo          |               | convert the OpenAPI document to OpenAPI version 3.1                         | string       |                             | optional  |
