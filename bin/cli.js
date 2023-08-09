@@ -22,6 +22,7 @@ program
   .option('-f, --filterFile <filterFile>', 'the file to specify filter rules')
   .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options')
   .option('--no-sort', `don't sort the OpenAPI file`)
+  .option('--keepEmptySchema', `don't remove empty schema object`)
   .option('--sortComponentsFile <sortComponentsFile>', 'the file with components to sort alphabetically')
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
   .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document')

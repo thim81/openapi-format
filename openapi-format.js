@@ -442,6 +442,7 @@ async function openapiFilter(oaObj, options) {
       && !['security', 'schemas', 'default'].includes(this.parent.key)
       && ((this.key === "examples" || this.key === "example")
         || !this.path.includes('example') && !this.path.includes('examples'))
+      && (!(options['keepEmptySchema'] && this.key === 'schema'))
     ) {
       // debugFilterStep = 'Filter - Remove empty objects'
       this.delete();
