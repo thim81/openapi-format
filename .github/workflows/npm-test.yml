@@ -1,5 +1,11 @@
 name: Node Tests CI
-on: [ push ]
+on:
+  push:
+    branches:
+      - '*' # Trigger on all branches
+  pull_request:
+    branches:
+      - '*' # Trigger on all branches
 jobs:
   test:
     runs-on: ubuntu-latest
