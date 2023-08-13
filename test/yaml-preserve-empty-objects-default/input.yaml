@@ -26,20 +26,19 @@ paths:
               $ref: '#/components/schemas/Pet'
           examples:
             example1:
-              key1: {}
+              key1: { } # should be kept
               key2:
-                key: {}
+                key: { } # should be kept
             example2:
-              key1: {}
+              key1: { } # should be kept
               key2:
-                key: {}
+                key: { } # should be kept
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
+              schema: { } # should not be kept
         '405':
           description: Invalid input
       security:
@@ -86,12 +85,12 @@ components:
       example:
         default:
           key1:
-            key: {}
-          key2: {}
+            key: { } # should be kept
+          key2: { } # should be kept
         key:
-          key1: {}
+          key1: { } # should be kept
           key2:
-            key: {}
+            key: { } # should be kept
       required:
         - name
         - photoUrls

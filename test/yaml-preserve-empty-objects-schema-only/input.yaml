@@ -44,6 +44,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
+            examples:
+              example1:
+                key1: { } # should not be kept
+                key2:
+                  key: { } # should not be kept
+              example2:
+                key1: { } # should not be kept
+                key2:
+                  key: { } # should not be kept
         '405':
           description: Invalid input
       security:
@@ -301,7 +310,7 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-      requestBody: {} # should be removed
+      requestBody: {} # should not be kept
   /store/inventory:
     get:
       tags:

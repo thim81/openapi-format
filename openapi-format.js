@@ -438,15 +438,42 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Remove empty objects
-    if (node && Object.keys(node).length === 0 && node.constructor === Object
-      && !['security', 'schemas', 'default'].includes(this.parent.key)
-      && ((this.key === "examples" || this.key === "example")
-        || !this.path.includes('example') && !this.path.includes('examples'))
-      && (!(options['keepEmptySchema'] && this.key === 'schema'))
-    ) {
-      // debugFilterStep = 'Filter - Remove empty objects'
-      this.delete();
+    if (node && Object.keys(node).length === 0 && node.constructor === Object) {
+      // Remove empty objects - preserveEmptyObjects: undefined
+      if (
+        (typeof filterSet.preserveEmptyObjects === 'undefined') &&
+        (!['security', 'schemas', 'default'].includes(this.parent.key)
+          && ((this.key === "examples" || this.key === "example")
+            || !this.path.includes('example') && !this.path.includes('examples'))
+        )
+      ) {
+        // debugFilterStep = 'Filter - Remove empty objects'
+        this.delete();
+      }
+
+      // Remove empty objects - preserveEmptyObjects: false
+      if (
+        (filterSet.preserveEmptyObjects === false) &&
+        (!['security', 'schemas', 'default'].includes(this.parent.key))
+      ) {
+        // debugFilterStep = 'Filter - Remove empty objects'
+        this.delete();
+      }
+
+      // Remove empty objects - preserveEmptyObjects: [...]
+      if (
+        (Array.isArray(filterSet.preserveEmptyObjects)) &&
+        (
+          (!['security', 'schemas', 'default'].includes(this.parent.key)) &&
+          !filterSet.preserveEmptyObjects.includes(this.key)
+            || !filterSet.preserveEmptyObjects.some(v => this.path.includes(v))
+        )
+      ) {
+        // debugFilterStep = 'Filter - Remove empty objects'
+        this.delete();
+      }
     }
+
     // Remove path items without operations
     if (this.parent && this.parent.key === 'paths' && !httpVerbs.some(i => this.keys.includes(i))) {
       // debugFilterStep = 'Filter - Remove empty paths'

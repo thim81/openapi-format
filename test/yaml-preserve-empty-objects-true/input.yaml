@@ -38,8 +38,7 @@ paths:
           description: Successful operation
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
+              schema: { } # should be kept
         '405':
           description: Invalid input
       security:

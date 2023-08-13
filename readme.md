@@ -129,7 +129,6 @@ Options:
   --filterFile          The file to specify filter rules                        [path]
 
   --no-sort             Don't sort the OpenAPI file                          [boolean]
-  --keepEmptySchema     Don't remove empty schema object                     [boolean]
   --sortComponentsFile  The file with components to sort alphabetically         [path]
 
   --rename              Rename the OpenAPI title                              [string]
@@ -158,7 +157,6 @@ Options:
 | --filterFile         | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional  |
 | --casingFile         | -c            | the file to specify casing setting                                          | path to file |                             | optional  |
 | --no-sort            |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                       | optional  |
-| --keepEmptySchema    |               | don't remove empty schema object                                            | boolean      | FALSE                       | optional  |
 | --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json  | optional  |
 | --rename             |               | rename the OpenAPI title                                                    | string       |                             | optional  |
 | --convertTo          |               | convert the OpenAPI document to OpenAPI version 3.1                         | string       |                             | optional  |
@@ -561,6 +559,49 @@ paths:
     /pets:
         get:
           summary: Finds Pets by status
+```
+
+### Filter - preserveEmptyObjects
+
+=> **preserveEmptyObjects**: Refers to any properties of your OpenAPI document, from which empty object values would be kept.
+
+The `preserveEmptyObjects` will preserve all empty objects if set to `true`.
+
+You can also pass a list of keys from which preserve empty objects. For instance a `['schema']` value would only prevent removal of empty objects having for key `schema`.
+
+REMARK: Please note that openapi-format default behavior is to remove all empty objects from your document, except for examples.
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        post:
+          requestBody:
+            description: Create a new pet in the store
+            required: true
+            content:
+              application/json:
+                schema: {}
+```
+
+Example after (with `preserveEmptyObjects: false`):
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+    /pets:
+        post:
+          requestBody:
+            description: Create a new pet in the store
+            required: true
+            content:
+              application/json: {}
 ```
 
 ## OpenAPI formatting configuration options
