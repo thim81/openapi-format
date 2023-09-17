@@ -51,22 +51,22 @@ OpenAPI-Format CLI settings:
 - Input file:		test/yaml-filter-unused-components/input.yaml
 ================================================================================
 Removed unused components:
-- components/schemas		 \\"Customer\\"
-- components/schemas		 \\"Unused\\"
-- components/schemas		 \\"ErrorModel\\"
-- components/schemas		 \\"Address\\"
-- components/responses		 \\"GeneralError\\"
-- components/parameters		 \\"offsetParam\\"
-- components/parameters		 \\"limitParam\\"
-- components/examples		 \\"tshirt-unused\\"
-- components/examples		 \\"tshirt\\"
-- components/requestBodies	 \\"NewItem\\"
-- components/requestBodies	 \\"Pet\\"
-- components/requestBodies	 \\"UserArray\\"
-- components/requestBodies	 \\"UnusedArray\\"
-- components/headers		 \\"X-RateLimit-Unused\\"
-- components/headers		 \\"X-RateLimit-Limit\\"
-- components/headers		 \\"X-RateLimit-Remaining\\"
+- components/schemas		 "Customer"
+- components/schemas		 "Unused"
+- components/schemas		 "ErrorModel"
+- components/schemas		 "Address"
+- components/responses		 "GeneralError"
+- components/parameters		 "offsetParam"
+- components/parameters		 "limitParam"
+- components/examples		 "tshirt-unused"
+- components/examples		 "tshirt"
+- components/requestBodies	 "NewItem"
+- components/requestBodies	 "Pet"
+- components/requestBodies	 "UserArray"
+- components/requestBodies	 "UnusedArray"
+- components/headers		 "X-RateLimit-Unused"
+- components/headers		 "X-RateLimit-Limit"
+- components/headers		 "X-RateLimit-Remaining"
 Total components removed: 16
 [32m================================================================================[0m
 [32m✅  OpenAPI filtered & formatted successfully[0m
@@ -78,7 +78,7 @@ exports[`openapi-format CLI command should stop and show error 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
 - Sort file:		foobar
-[31m Sort file error - no such file or directory \\"foobar\\"
+[31m Sort file error - no such file or directory "foobar"
 "
 `;
 
@@ -137,7 +137,7 @@ exports[`openapi-format CLI command should use the convert version 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
 - Input file:		test/yaml-convert-3.1/input.yaml
-- OAS version converted to: \\"3.1\\"
+- OAS version converted to: "3.1"
 ================================================================================
 
 OpenAPI-Format CLI options:
