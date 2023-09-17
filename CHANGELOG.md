@@ -1,6 +1,7 @@
 ## unreleased
 
 - Casing - Added support for casing of the required properties (#77)
+- Sort - Sort inline path parameters (#82)
 
 ## [1.14.0] - 2023-04-11
 

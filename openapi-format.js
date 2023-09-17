@@ -6,7 +6,7 @@ const traverse = require('traverse');
 const {isString, isArray, isObject} = require("./util-types");
 const {
   prioritySort,
-  isMatchOperationItem,
+  isMatchOperationItem, arraySort,
 } = require("./util-sort");
 const {
   changeComponentParametersCasingEnabled,
@@ -58,6 +58,14 @@ async function openapiSort(oaObj, options) {
         let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
         node = prioritySort(sortedObj, []);
         this.update(node);
+      }
+
+      // Inline parameters sorting by alphabet
+      if (this.path[0] !== 'components' && this.parent && this.parent.key && this.key === 'parameters' && Array.isArray(node)) {
+        // debugStep = 'Sorting inline parameters'
+        let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the node
+        node = arraySort(sortedObj, 'name');
+        this.update( node);
       }
 
       // Generic sorting

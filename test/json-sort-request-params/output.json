@@ -1,0 +1,31 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "version": "1.0.6-SNAPSHOT",
+    "title": "OpenAPI 3.0"
+  },
+  "paths": {
+    "/api/products": {
+      "get": {
+        "summary": "Get the list of existing products.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The limit to apply to the paginated query."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The offset to apply to the paginated query."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}
