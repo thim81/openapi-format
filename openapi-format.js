@@ -539,17 +539,17 @@ async function openapiChangeCase(oaObj, options) {
     if (this.path[0] === 'components') {
       // Change components/schemas - names
       if (this.path[1] === 'schemas' && this.path.length === 2 && casingSet.componentsSchemas) {
-        // debugCasingStep = 'Casing - components/schemas - names
+        // debugCasingStep = 'Casing - components/schemas - names'
         this.update(changeObjKeysCase(node, casingSet.componentsSchemas));
       }
       // Change components/examples - names
       if (this.path[1] === 'examples' && this.path.length === 2 && casingSet.componentsExamples) {
-        // debugCasingStep = 'Casing - components/examples - names
+        // debugCasingStep = 'Casing - components/examples - names'
         this.update(changeObjKeysCase(node, casingSet.componentsExamples));
       }
       // Change components/headers - names
       if (this.path[1] === 'headers' && this.path.length === 2 && casingSet.componentsHeaders) {
-        // debugCasingStep = 'Casing - components/headers - names
+        // debugCasingStep = 'Casing - components/headers - names'
         this.update(changeObjKeysCase(node, casingSet.componentsHeaders));
       }
       // Change components/parameters - in:query/in:headers/in:path/in:cookie - key
@@ -560,7 +560,7 @@ async function openapiChangeCase(oaObj, options) {
           if (orgObj[key].in && changeCasingKeyPlans.hasOwnProperty(parameterFoundIn)) {
             const changeCasingKeyPlan = changeCasingKeyPlans[parameterFoundIn]
             if (changeCasingKeyPlan) {
-              debugCasingStep = `Casing - components/parameters - in:${parameterFoundIn} - key`
+              // debugCasingStep = `Casing - components/parameters - in:${parameterFoundIn} - key`
               const newKey = changeCase(key, changeCasingKeyPlan);
               comps.parameters[key] = newKey
               return {[newKey]: orgObj[key]};
@@ -574,7 +574,7 @@ async function openapiChangeCase(oaObj, options) {
         if (node.in && changeCasingNamePlans.hasOwnProperty(node.in)) {
           const changeCasingNamePlan = changeCasingNamePlans[node.in]
           if (changeCasingNamePlan) {
-            debugCasingStep = `Casing - path > parameters/${node.in} - name`
+            // debugCasingStep = `Casing - path > parameters/${node.in} - name`
             node.name = changeCase(node.name, changeCasingNamePlan);
             this.update(node);
           }
@@ -582,17 +582,17 @@ async function openapiChangeCase(oaObj, options) {
       }
       // Change components/responses - names
       if (this.path[1] === 'responses' && this.path.length === 2 && casingSet.componentsResponses) {
-        // debugCasingStep = 'Casing - components/responses - names
+        // debugCasingStep = 'Casing - components/responses - names'
         this.update(changeObjKeysCase(node, casingSet.componentsResponses));
       }
       // Change components/requestBodies - names
       if (this.path[1] === 'requestBodies' && this.path.length === 2 && casingSet.componentsRequestBodies) {
-        // debugCasingStep = 'Casing - components/requestBodies - names
+        // debugCasingStep = 'Casing - components/requestBodies - names'
         this.update(changeObjKeysCase(node, casingSet.componentsRequestBodies));
       }
       // Change components/securitySchemes - names
       if (this.path[1] === 'securitySchemes' && this.path.length === 2 && casingSet.componentsSecuritySchemes) {
-        // debugCasingStep = 'Casing - components/securitySchemes - names
+        // debugCasingStep = 'Casing - components/securitySchemes - names'
         this.update(changeObjKeysCase(node, casingSet.componentsSecuritySchemes));
       }
     }
@@ -660,6 +660,11 @@ async function openapiChangeCase(oaObj, options) {
     ) {
       // debugCasingStep = 'Casing - components/schemas - properties name'
       this.update(changeObjKeysCase(node, casingSet.properties));
+    }
+    // Change components/schemas - required properties
+    if (this.path[1] === 'schemas' && this.parent.key === 'required' && casingSet.properties) {
+      // debugCasingStep = 'Casing - components/schemas - required properties'
+      this.update(changeCase(node, casingSet.properties));
     }
     // Change paths > schema - properties
     if (this.path[0] === 'paths' && this.key === 'properties' && casingSet.properties

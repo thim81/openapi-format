@@ -563,7 +563,7 @@ components:
             - sold
       required:
         - name
-        - photoUrls
+        - photo_urls
       x-swagger-router-model: io.swagger.petstore.model.Pet
       xml:
         name: pet

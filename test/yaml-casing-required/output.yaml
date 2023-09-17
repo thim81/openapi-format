@@ -1,0 +1,18 @@
+openapi: 3.0.3
+components:
+  schemas:
+    UserModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10
+        email_address:
+          type: string
+          example: john@doe.com
+        first_name:
+          type: string
+          example: John
+      required:
+        - id
+        - email_address

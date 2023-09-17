@@ -72,6 +72,17 @@ describe('openapi-format CLI casing tests', () => {
     });
   })
 
+  describe('yaml-casing-required-properties', () => {
+    it('yaml-casing-properties - should match expected output', async () => {
+      const testName = 'yaml-casing-required'
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName)
+      // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain("formatted successfully");
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  })
+
   describe('convert casing', () => {
     const str = 'openapi-format'
     it('casing should match camelCase', async () => {

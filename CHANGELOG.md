@@ -1,5 +1,7 @@
 ## unreleased
 
+- Casing - Added support for casing of the required properties (#77)
+
 ## [1.14.0] - 2023-04-11
 
 - Extended the CLI to support remote OpenAPI documents
