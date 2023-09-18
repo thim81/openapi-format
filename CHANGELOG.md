@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.14.1] - 2023-09-18
+
 - Casing - Added support for casing of the required properties (#77)
 
 ## [1.14.0] - 2023-04-11
