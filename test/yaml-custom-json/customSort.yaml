@@ -42,7 +42,7 @@ delete:
     - parameters
     - requestBody
     - responses
-parameters:
+parameters[*]:
     - required
     - schema
     - name
@@ -53,7 +53,7 @@ requestBody:
     - headers
     - content
     - links
-responses:
+responses[*]:
     - description
     - headers
     - content
@@ -62,7 +62,7 @@ content: []
 components:
     - parameters
     - schemas
-Schema:
+schema:
     - description
     - type
     - items
@@ -70,7 +70,7 @@ Schema:
     - format
     - example
     - default
-schemas:
+schemas[*]:
     - description
     - type
     - items
@@ -78,7 +78,7 @@ schemas:
     - format
     - example
     - default
-properties:
+properties[*]:
     - description
     - type
     - items

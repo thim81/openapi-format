@@ -48,52 +48,41 @@ async function openapiSort(oaObj, options) {
   // Recursive traverse through OpenAPI document
   traverse(jsonObj).forEach(function (node) {
 
-    if (typeof node === 'object') {
+    if (typeof node !== 'object') {
+      return;
+    }
 
-      // Components sorting by alphabet
-      if (this.parent && this.parent.key && this.path[0] === 'components' && this.parent.key === 'components'
-        && sortComponentsSet.length > 0 && sortComponentsSet.includes(this.key)
-      ) {
-        // debugStep = 'Component sorting by alphabet'
-        let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
-        node = prioritySort(sortedObj, []);
-        this.update(node);
+    // Components sorting by alphabet
+    if (this.parent && this.parent.key && this.path[0] === 'components' && this.parent.key === 'components'
+      && sortComponentsSet.length > 0 && sortComponentsSet.includes(this.key)
+    ) {
+      // debugStep = 'Component sorting by alphabet'
+      let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
+      node = prioritySort(sortedObj, []);
+      this.update(node);
+    }
+
+    // Generic sorting
+    if (sortSet.hasOwnProperty(this.key) && Array.isArray(sortSet[this.key])) {
+
+      if (this.path[0] === 'components' && this.path[1] === 'examples' && this.path[3] === 'value') {
+          // debugStep = 'Generic sorting - skip nested components>examples'
+          // Skip nested components>examples values
+      } else {
+        // debugStep = 'Generic sorting - properties'
+        // Sort list of properties
+        this.update(prioritySort(node, sortSet[this.key]));
       }
+    }
 
-      // Generic sorting
-      if (sortSet.hasOwnProperty(this.key) && Array.isArray(sortSet[this.key])) {
+    if (!this.parent || (this.path[0] === 'components' && this.path[1] === 'examples' && this.path[3] === 'value')) {
+      return;
+    }
 
-        if (Array.isArray(node)) {
-          // debugStep = 'Generic sorting - array'
-          // Deep sort array of properties
-          let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
-          for (let i = 0; i < sortedObj.length; i++) {
-            sortedObj[i] = prioritySort(sortedObj[i], sortSet[this.key]);
-          }
-          this.update(sortedObj);
-
-        } else if ((this.key === 'responses' || this.key === 'schemas' || this.key === 'properties')
-          && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value' && this.path[1] !== 'examples')
-        ) {
-          // debugStep = 'Generic sorting - responses/schemas/properties'
-          // Deep sort list of properties
-          let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the object
-          for (let keyRes in sortedObj) {
-            sortedObj[keyRes] = prioritySort(sortedObj[keyRes], sortSet[this.key]);
-          }
-          this.update(sortedObj);
-        } else {
-          if (this.path[0] === 'components' && this.path[1] === 'examples' && this.path[3] === 'value') {
-            // debugStep = 'Generic sorting - skip nested components>examples'
-            // Skip nested components>examples values
-          } else {
-            // debugStep = 'Generic sorting - properties'
-            // Sort list of properties
-            this.update(prioritySort(node, sortSet[this.key]));
-          }
-
-        }
-      }
+    // Nested sorting
+    let globKey = this.parent.key + "[*]";
+    if (sortSet.hasOwnProperty(globKey) && Array.isArray(sortSet[globKey])) {
+      this.update(prioritySort(node, sortSet[globKey]));
     }
   });
 
