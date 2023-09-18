@@ -49,7 +49,7 @@
   },
   "scripts": {
     "test": "jest --colors --verbose --reporters=default --collectCoverage --no-cache --maxWorkers=2",
-    "release": "np --branch main"
+    "release": "npx np --branch main"
   },
   "dependencies": {
     "@stoplight/yaml": "^4.2.3",
