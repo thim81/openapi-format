@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.14.2] - 2023-10-29
+
 - Bugfix for components.example distortion (#91)
 
 ## [1.14.1] - 2023-09-18
