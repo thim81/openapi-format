@@ -323,14 +323,6 @@
         "description": "",
         "parameters": [
           {
-            "schema": {
-              "type": "string"
-            },
-            "name": "name",
-            "in": "query",
-            "description": "Name of pet that needs to be updated"
-          },
-          {
             "required": true,
             "schema": {
               "type": "integer",
@@ -339,6 +331,14 @@
             "name": "petId",
             "in": "path",
             "description": "ID of pet that needs to be updated"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "name",
+            "in": "query",
+            "description": "Name of pet that needs to be updated"
           },
           {
             "schema": {
@@ -416,15 +416,6 @@
         "description": "",
         "parameters": [
           {
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "name": "additionalMetadata",
-            "in": "query",
-            "description": "Additional Metadata"
-          },
-          {
             "required": true,
             "schema": {
               "type": "integer",
@@ -433,6 +424,15 @@
             "name": "petId",
             "in": "path",
             "description": "ID of pet to update"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "additionalMetadata",
+            "in": "query",
+            "description": "Additional Metadata"
           }
         ],
         "requestBody": {
@@ -720,18 +720,18 @@
             "schema": {
               "type": "string"
             },
-            "name": "password",
+            "name": "username",
             "in": "query",
-            "description": "The password for login in clear text"
+            "description": "The user name for login"
           },
           {
             "required": false,
             "schema": {
               "type": "string"
             },
-            "name": "username",
+            "name": "password",
             "in": "query",
-            "description": "The user name for login"
+            "description": "The password for login in clear text"
           }
         ],
         "responses": {
