@@ -1,0 +1,3 @@
+verbose: true
+sortComponentsFile: customSortComponents.yaml
+output: output.json

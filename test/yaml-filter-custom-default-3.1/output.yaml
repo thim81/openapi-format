@@ -27,6 +27,7 @@ paths:
       description: Update an existing pet by Id
       requestBody:
         description: Update an existent pet in the store
+        required: true
         content:
           application/json:
             schema:
@@ -46,7 +47,6 @@ paths:
                 fileName:
                   type: string
                   contentMediaType: application/octet-stream
-        required: true
       responses:
         '200':
           description: Successful operation

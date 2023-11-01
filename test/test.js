@@ -7,14 +7,14 @@ const { describe, it, expect } = require('@jest/globals');
 
 const openapiFormat = require('../openapi-format.js');
 
-let destroyOutput = false;
-const tests = fs.readdirSync(__dirname).filter(file => {
-  return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_'));
-});
-
 // SELECTIVE TESTING DEBUG
-// const tests = ['yaml-convert-3.1']
-// destroyOutput = true
+const localTesting = false;
+const destroyOutput = false;
+
+// Load tests
+const tests = !localTesting  ? fs.readdirSync(__dirname).filter(file => {
+  return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_'));
+}) : ['json-sort-request-params'];
 
 describe('openapi-format tests', () => {
   tests.forEach((test) => {

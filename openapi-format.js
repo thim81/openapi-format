@@ -6,7 +6,7 @@ const traverse = require('traverse');
 const {isString, isArray, isObject} = require("./util-types");
 const {
   prioritySort,
-  isMatchOperationItem,
+  isMatchOperationItem, arraySort,
 } = require("./util-sort");
 const {
   changeComponentParametersCasingEnabled,
@@ -60,11 +60,20 @@ async function openapiSort(oaObj, options) {
         this.update(node);
       }
 
+      // Inline parameters sorting by alphabet
+      if (this.path[0] !== 'components' && Array.isArray(node) && sortComponentsSet.length > 0
+        && sortComponentsSet.includes(this.key)) {
+        // debugStep = 'Sorting inline parameters'
+        let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the node
+        node = arraySort(sortedObj, 'name');
+        this.update(node);
+      }
+
       // Generic sorting
       if (sortSet.hasOwnProperty(this.key) && Array.isArray(sortSet[this.key])) {
 
         if (Array.isArray(node)) {
-          if(this.parent && this.parent.key === 'example' && this.path[0] === 'components') {
+          if (this.parent && this.parent.key === 'example' && this.path[0] === 'components') {
             // debugStep = 'Generic sorting - skip nested components>example array'
             // Skip nested components>example values
           } else {
@@ -471,7 +480,7 @@ async function openapiFilter(oaObj, options) {
         (
           (!['security', 'schemas', 'default'].includes(this.parent.key)) &&
           !filterSet.preserveEmptyObjects.includes(this.key)
-            || !filterSet.preserveEmptyObjects.some(v => this.path.includes(v))
+          || !filterSet.preserveEmptyObjects.some(v => this.path.includes(v))
         )
       ) {
         // debugFilterStep = 'Filter - Remove empty objects'
@@ -725,7 +734,7 @@ async function openapiConvertVersion(oaObj, options) {
 
   // Change x-webhooks to webhooks
   if (jsonObj['x-webhooks']) {
-    jsonObj = setInObject(jsonObj,'webhooks', jsonObj['x-webhooks'] ,'x-webhooks')
+    jsonObj = setInObject(jsonObj, 'webhooks', jsonObj['x-webhooks'], 'x-webhooks')
     // jsonObj.webhooks = jsonObj['x-webhooks']
     delete jsonObj['x-webhooks']
   }

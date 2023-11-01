@@ -1,8 +1,8 @@
 'use strict';
 
 const testUtils = require('./__utils__/test-utils')
-const {isMatchOperationItem} = require("../util-sort");
-const { describe, it, expect } = require('@jest/globals');
+const {isMatchOperationItem, arraySort} = require("../util-sort");
+const {describe, it, expect} = require('@jest/globals');
 
 describe('openapi-format CLI sorting tests', () => {
 
@@ -75,6 +75,17 @@ describe('openapi-format CLI sorting tests', () => {
   describe('json-sort-components', () => {
     it('json-sort-components - should match expected output', async () => {
       const testName = 'json-sort-components'
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName, 'json', 'json')
+      // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain("formatted successfully");
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  })
+
+  describe('json-sort-request-params', () => {
+    it('json-sort-request-params - should match expected output', async () => {
+      const testName = 'json-sort-request-params'
       const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName, 'json', 'json')
       // console.log('result',result)
       expect(result.code).toBe(0);
@@ -209,5 +220,76 @@ describe('openapi-format CLI sorting tests', () => {
       const res = isMatchOperationItem(null, null, null)
       expect(res).toEqual(false);
     });
+
+    it('arraySort - should sort an array of objects in ascending order', () => {
+      const inputArray = [
+        {
+          "name": "banana",
+          "quantity": 10
+        },
+        {
+          "name": "apple",
+          "quantity": 5
+        },
+        {
+          "name": "cherry",
+          "quantity": 8
+        }
+      ];
+
+      const expectedSortedArray = [
+        {
+          "name": "apple",
+          "quantity": 5
+        },
+        {
+          "name": "banana",
+          "quantity": 10
+        },
+        {
+          "name": "cherry",
+          "quantity": 8
+        }
+      ];
+
+      const sortedArray = arraySort(inputArray, "name");
+
+      expect(sortedArray).toEqual(expectedSortedArray);
+    });
+
+    it('arraySort - should handle case-insensitive sorting', () => {
+      const inputArray = [
+        {
+          "name": "Apple",
+          "quantity": 10
+        },
+        {
+          "name": "banana",
+          "quantity": 5
+        },
+        {
+          "name": "cherry",
+          "quantity": 8
+        }
+      ];
+
+      const expectedSortedArray = [
+        {
+          "name": "Apple",
+          "quantity": 10
+        },
+        {
+          "name": "banana",
+          "quantity": 5
+        },
+        {
+          "name": "cherry",
+          "quantity": 8
+        }
+      ];
+
+      const sortedArray = arraySort(inputArray, "name");
+      expect(sortedArray).toEqual(expectedSortedArray);
+    })
   })
 });

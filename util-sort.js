@@ -57,6 +57,27 @@ function prioritySort(jsonProp, sortPriority, options) {
 }
 
 /**
+ * Sort array of objects by property name
+ * @param arr
+ * @param propertyName
+ * @returns {*}
+ */
+function arraySort(arr, propertyName) {
+  return arr.sort((a, b) => {
+    const propA = a[propertyName].toLowerCase();
+    const propB = b[propertyName].toLowerCase();
+
+    if (propA < propB) {
+      return -1;
+    }
+    if (propA > propB) {
+      return 1;
+    }
+    return 0;
+  });
+}
+
+/**
  * A check if the OpenAPI operation item matches a target definition .
  * @param {object} operationPath the OpenAPI path item to match
  * @param {object} operationMethod the OpenAPI method item to match
@@ -132,6 +153,7 @@ function matchPath(path, url) {
 module.exports = {
   sortObjectByKeyNameList:sortObjectByKeyNameList,
   propComparator:propComparator,
+  arraySort: arraySort,
   prioritySort:prioritySort,
   isMatchOperationItem:isMatchOperationItem,
   pathToRegExp:pathToRegExp,
