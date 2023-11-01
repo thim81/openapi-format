@@ -1,5 +1,11 @@
 ## unreleased
 
+## [1.14.2] - 2023-10-29
+
+- Bugfix for components.example distortion (#91)
+
+## [1.14.1] - 2023-09-18
+
 - Casing - Added support for casing of the required properties (#77)
 - Sort - Sort inline path parameters (#82)
 

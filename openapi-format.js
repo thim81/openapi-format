@@ -72,13 +72,18 @@ async function openapiSort(oaObj, options) {
       if (sortSet.hasOwnProperty(this.key) && Array.isArray(sortSet[this.key])) {
 
         if (Array.isArray(node)) {
-          // debugStep = 'Generic sorting - array'
-          // Deep sort array of properties
-          let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
-          for (let i = 0; i < sortedObj.length; i++) {
-            sortedObj[i] = prioritySort(sortedObj[i], sortSet[this.key]);
+          if(this.parent && this.parent.key === 'example' && this.path[0] === 'components') {
+            // debugStep = 'Generic sorting - skip nested components>example array'
+            // Skip nested components>example values
+          } else {
+            // debugStep = 'Generic sorting - array'
+            // Deep sort array of properties
+            let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
+            for (let i = 0; i < sortedObj.length; i++) {
+              sortedObj[i] = prioritySort(sortedObj[i], sortSet[this.key]);
+            }
+            this.update(sortedObj);
           }
-          this.update(sortedObj);
 
         } else if ((this.key === 'responses' || this.key === 'schemas' || this.key === 'properties')
           && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value' && this.path[1] !== 'examples')
