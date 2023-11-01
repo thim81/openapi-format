@@ -2461,10 +2461,10 @@
                     "id": {
                       "type": "integer",
                       "format": "int64",
-                      "exclusiveMinimum": 7,
                       "examples": [
                         10
-                      ]
+                      ],
+                      "exclusiveMinimum": 7
                     },
                     "username": {
                       "type": "string",
@@ -2505,11 +2505,11 @@
                     "userStatus": {
                       "type": "integer",
                       "format": "int32",
-                      "exclusiveMaximum": 7,
-                      "description": "User Status",
                       "examples": [
                         1
-                      ]
+                      ],
+                      "exclusiveMaximum": 7,
+                      "description": "User Status"
                     }
                   },
                   "xml": {
@@ -2525,10 +2525,10 @@
                     "id": {
                       "type": "integer",
                       "format": "int64",
-                      "exclusiveMinimum": 7,
                       "examples": [
                         10
-                      ]
+                      ],
+                      "exclusiveMinimum": 7
                     },
                     "username": {
                       "type": "string",
@@ -2569,11 +2569,11 @@
                     "userStatus": {
                       "type": "integer",
                       "format": "int32",
-                      "exclusiveMaximum": 7,
-                      "description": "User Status",
                       "examples": [
                         1
-                      ]
+                      ],
+                      "exclusiveMaximum": 7,
+                      "description": "User Status"
                     }
                   },
                   "xml": {
@@ -2594,10 +2594,10 @@
                   "id": {
                     "type": "integer",
                     "format": "int64",
-                    "exclusiveMinimum": 7,
                     "examples": [
                       10
-                    ]
+                    ],
+                    "exclusiveMinimum": 7
                   },
                   "username": {
                     "type": "string",
@@ -2638,11 +2638,11 @@
                   "userStatus": {
                     "type": "integer",
                     "format": "int32",
-                    "exclusiveMaximum": 7,
-                    "description": "User Status",
                     "examples": [
                       1
-                    ]
+                    ],
+                    "exclusiveMaximum": 7,
+                    "description": "User Status"
                   }
                 },
                 "xml": {
@@ -2658,10 +2658,10 @@
                   "id": {
                     "type": "integer",
                     "format": "int64",
-                    "exclusiveMinimum": 7,
                     "examples": [
                       10
-                    ]
+                    ],
+                    "exclusiveMinimum": 7
                   },
                   "username": {
                     "type": "string",
@@ -2702,11 +2702,11 @@
                   "userStatus": {
                     "type": "integer",
                     "format": "int32",
-                    "exclusiveMaximum": 7,
-                    "description": "User Status",
                     "examples": [
                       1
-                    ]
+                    ],
+                    "exclusiveMaximum": 7,
+                    "description": "User Status"
                   }
                 },
                 "xml": {
@@ -2722,10 +2722,10 @@
                   "id": {
                     "type": "integer",
                     "format": "int64",
-                    "exclusiveMinimum": 7,
                     "examples": [
                       10
-                    ]
+                    ],
+                    "exclusiveMinimum": 7
                   },
                   "username": {
                     "type": "string",
@@ -2766,11 +2766,11 @@
                   "userStatus": {
                     "type": "integer",
                     "format": "int32",
-                    "exclusiveMaximum": 7,
-                    "description": "User Status",
                     "examples": [
                       1
-                    ]
+                    ],
+                    "exclusiveMaximum": 7,
+                    "description": "User Status"
                   }
                 },
                 "xml": {
@@ -2804,10 +2804,10 @@
                     "id": {
                       "type": "integer",
                       "format": "int64",
-                      "exclusiveMinimum": 7,
                       "examples": [
                         10
-                      ]
+                      ],
+                      "exclusiveMinimum": 7
                     },
                     "username": {
                       "type": "string",
@@ -2848,11 +2848,11 @@
                     "userStatus": {
                       "type": "integer",
                       "format": "int32",
-                      "exclusiveMaximum": 7,
-                      "description": "User Status",
                       "examples": [
                         1
-                      ]
+                      ],
+                      "exclusiveMaximum": 7,
+                      "description": "User Status"
                     }
                   },
                   "xml": {
@@ -2868,10 +2868,10 @@
                     "id": {
                       "type": "integer",
                       "format": "int64",
-                      "exclusiveMinimum": 7,
                       "examples": [
                         10
-                      ]
+                      ],
+                      "exclusiveMinimum": 7
                     },
                     "username": {
                       "type": "string",
@@ -2912,11 +2912,11 @@
                     "userStatus": {
                       "type": "integer",
                       "format": "int32",
-                      "exclusiveMaximum": 7,
-                      "description": "User Status",
                       "examples": [
                         1
-                      ]
+                      ],
+                      "exclusiveMaximum": 7,
+                      "description": "User Status"
                     }
                   },
                   "xml": {
@@ -2942,10 +2942,10 @@
                     "id": {
                       "type": "integer",
                       "format": "int64",
-                      "exclusiveMinimum": 7,
                       "examples": [
                         10
-                      ]
+                      ],
+                      "exclusiveMinimum": 7
                     },
                     "username": {
                       "type": "string",
@@ -2986,11 +2986,11 @@
                     "userStatus": {
                       "type": "integer",
                       "format": "int32",
-                      "exclusiveMaximum": 7,
-                      "description": "User Status",
                       "examples": [
                         1
-                      ]
+                      ],
+                      "exclusiveMaximum": 7,
+                      "description": "User Status"
                     }
                   },
                   "xml": {
@@ -3116,10 +3116,10 @@
                     "id": {
                       "type": "integer",
                       "format": "int64",
-                      "exclusiveMinimum": 7,
                       "examples": [
                         10
-                      ]
+                      ],
+                      "exclusiveMinimum": 7
                     },
                     "username": {
                       "type": "string",
@@ -3160,11 +3160,11 @@
                     "userStatus": {
                       "type": "integer",
                       "format": "int32",
-                      "exclusiveMaximum": 7,
-                      "description": "User Status",
                       "examples": [
                         1
-                      ]
+                      ],
+                      "exclusiveMaximum": 7,
+                      "description": "User Status"
                     }
                   },
                   "xml": {
@@ -3180,10 +3180,10 @@
                     "id": {
                       "type": "integer",
                       "format": "int64",
-                      "exclusiveMinimum": 7,
                       "examples": [
                         10
-                      ]
+                      ],
+                      "exclusiveMinimum": 7
                     },
                     "username": {
                       "type": "string",
@@ -3224,11 +3224,11 @@
                     "userStatus": {
                       "type": "integer",
                       "format": "int32",
-                      "exclusiveMaximum": 7,
-                      "description": "User Status",
                       "examples": [
                         1
-                      ]
+                      ],
+                      "exclusiveMaximum": 7,
+                      "description": "User Status"
                     }
                   },
                   "xml": {
@@ -3281,10 +3281,10 @@
                   "id": {
                     "type": "integer",
                     "format": "int64",
-                    "exclusiveMinimum": 7,
                     "examples": [
                       10
-                    ]
+                    ],
+                    "exclusiveMinimum": 7
                   },
                   "username": {
                     "type": "string",
@@ -3325,11 +3325,11 @@
                   "userStatus": {
                     "type": "integer",
                     "format": "int32",
-                    "exclusiveMaximum": 7,
-                    "description": "User Status",
                     "examples": [
                       1
-                    ]
+                    ],
+                    "exclusiveMaximum": 7,
+                    "description": "User Status"
                   }
                 },
                 "xml": {
@@ -3345,10 +3345,10 @@
                   "id": {
                     "type": "integer",
                     "format": "int64",
-                    "exclusiveMinimum": 7,
                     "examples": [
                       10
-                    ]
+                    ],
+                    "exclusiveMinimum": 7
                   },
                   "username": {
                     "type": "string",
@@ -3389,11 +3389,11 @@
                   "userStatus": {
                     "type": "integer",
                     "format": "int32",
-                    "exclusiveMaximum": 7,
-                    "description": "User Status",
                     "examples": [
                       1
-                    ]
+                    ],
+                    "exclusiveMaximum": 7,
+                    "description": "User Status"
                   }
                 },
                 "xml": {
@@ -3409,10 +3409,10 @@
                   "id": {
                     "type": "integer",
                     "format": "int64",
-                    "exclusiveMinimum": 7,
                     "examples": [
                       10
-                    ]
+                    ],
+                    "exclusiveMinimum": 7
                   },
                   "username": {
                     "type": "string",
@@ -3453,11 +3453,11 @@
                   "userStatus": {
                     "type": "integer",
                     "format": "int32",
-                    "exclusiveMaximum": 7,
-                    "description": "User Status",
                     "examples": [
                       1
-                    ]
+                    ],
+                    "exclusiveMaximum": 7,
+                    "description": "User Status"
                   }
                 },
                 "xml": {
@@ -3673,10 +3673,10 @@
           "id": {
             "type": "integer",
             "format": "int64",
-            "exclusiveMinimum": 7,
             "examples": [
               10
-            ]
+            ],
+            "exclusiveMinimum": 7
           },
           "username": {
             "type": "string",
@@ -3717,11 +3717,11 @@
           "userStatus": {
             "type": "integer",
             "format": "int32",
-            "exclusiveMaximum": 7,
-            "description": "User Status",
             "examples": [
               1
-            ]
+            ],
+            "exclusiveMaximum": 7,
+            "description": "User Status"
           }
         },
         "xml": {
@@ -4082,10 +4082,10 @@
                   "id": {
                     "type": "integer",
                     "format": "int64",
-                    "exclusiveMinimum": 7,
                     "examples": [
                       10
-                    ]
+                    ],
+                    "exclusiveMinimum": 7
                   },
                   "username": {
                     "type": "string",
@@ -4126,11 +4126,11 @@
                   "userStatus": {
                     "type": "integer",
                     "format": "int32",
-                    "exclusiveMaximum": 7,
-                    "description": "User Status",
                     "examples": [
                       1
-                    ]
+                    ],
+                    "exclusiveMaximum": 7,
+                    "description": "User Status"
                   }
                 },
                 "xml": {
