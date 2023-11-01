@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.15.0] - 2023-11-01
+
 - Sort - Sort inline parameters by alphabet (#82)
 
 ## [1.14.2] - 2023-10-29
