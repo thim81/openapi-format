@@ -1,6 +1,6 @@
 ## unreleased
 
-- Sort - Sort inline path parameters (#82)
+- Sort - Sort inline parameters by alphabet (#82)
 
 ## [1.14.2] - 2023-10-29
 
@@ -87,8 +87,9 @@
 ## [1.8.0] - 2021-12-27
 
 - new feature - Formatting - Change casing of OpenAPI elements
-  - Support common casing (camelCase, PascalCase, kebap-case, snake_case, ...)
-  - Format the casing of fields & model names/keys for: properties, operationId, query params, path variables, headers, components
+    - Support common casing (camelCase, PascalCase, kebap-case, snake_case, ...)
+    - Format the casing of fields & model names/keys for: properties, operationId, query params, path variables,
+      headers, components
 
 For more details on this new feature: https://github.com/thim81/openapi-format#openapi-formatting-configuration-options
 
