@@ -64,8 +64,8 @@ function prioritySort(jsonProp, sortPriority, options) {
  */
 function arraySort(arr, propertyName) {
   return arr.sort((a, b) => {
-    const propA = a[propertyName].toLowerCase();
-    const propB = b[propertyName].toLowerCase();
+    const propA = a[propertyName] ? a[propertyName].toLowerCase() : '';
+    const propB = b[propertyName] ? b[propertyName].toLowerCase() : '';
 
     if (propA < propB) {
       return -1;
