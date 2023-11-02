@@ -291,5 +291,35 @@ describe('openapi-format CLI sorting tests', () => {
       const sortedArray = arraySort(inputArray, "name");
       expect(sortedArray).toEqual(expectedSortedArray);
     })
+
+    it('arraySort - handle missing propertyName', () => {
+      const inputArray = [
+        {
+          "quantity": 10
+        },
+        {
+          "quantity": 5
+        },
+        {
+          "quantity": 8
+        }
+      ];
+
+      const expectedSortedArray = [
+        {
+          "quantity": 10
+        },
+        {
+          "quantity": 5
+        },
+        {
+          "quantity": 8
+        }
+      ];
+
+      const sortedArray = arraySort(inputArray, "name");
+      expect(sortedArray).toEqual(expectedSortedArray);
+    })
+
   })
 });
