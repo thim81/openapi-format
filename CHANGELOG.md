@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.15.1] - 2023-11-02
+
 - Sort - Prevent error if name doesn't exist (#94)
 
 ## [1.15.0] - 2023-11-01
