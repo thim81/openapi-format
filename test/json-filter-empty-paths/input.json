@@ -1,0 +1,14 @@
+{
+  "paths": {
+    "/to-remove": {},
+    "/to-keep": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

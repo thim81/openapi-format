@@ -489,7 +489,7 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Remove path items without operations
-    if (this.parent && this.parent.key === 'paths' && this.level === 2 && !httpVerbs.some(i => this.keys.includes(i))) {
+    if (this.parent && this.parent.key === 'paths' && !httpVerbs.some(i => this.keys.includes(i))) {
       // debugFilterStep = 'Filter - Remove empty paths'
       this.delete();
     }
