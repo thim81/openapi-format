@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.15.2] - 2023-11-02
+
+- Bugfix to only remove OpenAPI path items without operations (#96)
+
 ## [1.15.1] - 2023-11-02
 
 - Sort - Prevent error if name doesn't exist (#94)
