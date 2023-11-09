@@ -1,2 +1,3 @@
 verbose: true
 output: output.json
+filterFile: customFilter.yaml
