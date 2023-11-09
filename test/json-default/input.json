@@ -29,6 +29,7 @@
     }
   ],
   "paths": {
+    "/to-remove": {},
     "/pet": {
       "post": {
         "tags": [
@@ -405,6 +406,10 @@
           "name": {
             "type": "string",
             "example": "doggie"
+          },
+          "paths": {
+            "type": "string",
+            "example": "path"
           },
           "category": {
             "$ref": "#/components/schemas/Category"
