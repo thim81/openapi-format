@@ -1,6 +1,6 @@
 ## unreleased
 
-## [1.15.2] - 2023-11-02
+## [1.15.2] - 2023-11-09
 
 - Bugfix to only remove OpenAPI path items without operations (#96)
 
