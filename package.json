@@ -15,16 +15,33 @@
     "cli"
   ],
   "homepage": "https://github.com/thim81/openapi-format#readme",
-  "bugs": {
-    "url": "https://github.com/thim81/openapi-format/issues"
-  },
+  "bugs": "https://github.com/thim81/openapi-format/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thim81/openapi-format.git"
   },
   "license": "MIT",
   "author": "Tim Haselaars",
-  "main": "bin/cli.js",
+  "main": "openapi-format.js",
+  "bin": {
+    "openapi-format": "bin/cli.js"
+  },
+  "scripts": {
+    "test": "jest --colors --verbose --reporters=default --collectCoverage --no-cache --maxWorkers=2",
+    "release": "npx np --branch main"
+  },
+  "dependencies": {
+    "@stoplight/yaml": "^4.2.3",
+    "case-anything": "2.1.10",
+    "commander": "^7.1.0",
+    "traverse": "^0.6.8"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1"
+  },
+  "engines": {
+    "node": ">=12"
+  },
   "files": [
     "README.md",
     "CHANGELOG.md",
@@ -41,26 +58,7 @@
     "defaultSortComponents.json",
     "package-lock.json"
   ],
-  "bin": {
-    "openapi-format": "bin/cli.js"
-  },
   "directories": {
     "test": "test"
-  },
-  "scripts": {
-    "test": "jest --colors --verbose --reporters=default --collectCoverage --no-cache --maxWorkers=2",
-    "release": "npx np --branch main"
-  },
-  "dependencies": {
-    "@stoplight/yaml": "^4.2.3",
-    "case-anything": "^2.1.10",
-    "commander": "^7.1.0",
-    "traverse": "^0.6.7"
-  },
-  "devDependencies": {
-    "jest": "^27.5.1"
-  },
-  "engines": {
-    "node": ">=12"
   }
 }
