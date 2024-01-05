@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.15.3] - 2024-01-05
+
+- Bumped dependencies traverse and node-version of the Github actions
+
 ## [1.15.2] - 2023-11-09
 
 - Bugfix to only remove OpenAPI path items without operations (#96)
