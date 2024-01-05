@@ -801,7 +801,7 @@ components:
 Formatting casing example:
 
 ```yaml
-componentsSchemas: kebab-case
+componentsParametersPath: kebab-case
 ```
 
 Example before:
