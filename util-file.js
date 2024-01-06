@@ -12,9 +12,9 @@ async function parseFile(filePath) {
 
     let fileContent;
     if (isRemoteFile) {
-      fileContent = getRemoteFile(filePath);
+      fileContent = await getRemoteFile(filePath);
     } else {
-      fileContent = getLocalFile(filePath);
+      fileContent = await getLocalFile(filePath);
     }
 
     // Convert large number value safely before parsing
@@ -56,6 +56,7 @@ async function writeFile(filePath, data, options = {}) {
     fs.writeFileSync(filePath, output, 'utf8');
     // console.log(`- Output file:\t\t${outputFilePath}`);
   } catch (err) {
+    // console.log('err', err)
     throw err
     // throw new Error(`Error writing file "${filePath}": ${err.message}`);
   }
