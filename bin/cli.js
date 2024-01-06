@@ -6,6 +6,7 @@ const sy = require('@stoplight/yaml');
 const openapiFormat = require('../openapi-format')
 const program = require('commander');
 const {infoTable, infoOut, logOut, debugOut} = require("../util-log-output");
+const {writeFile, parseFile} = require("../util-file");
 
 // CLI Helper - change verbosity
 function increaseVerbosity(dummyValue, previous) {
@@ -46,6 +47,11 @@ program
 
 async function run(oaFile, options) {
   // General variables
+  options.casingFile = undefined;
+  options.sortComponentsFile = undefined;
+  options.filterFile = undefined;
+  options.sortFile = undefined;
+  options.convertTo = undefined;
   let outputLogOptions = '';
   let outputLogFiltered = '';
   let cliLog = {};
@@ -63,7 +69,7 @@ async function run(oaFile, options) {
   if (options && options.configFile) {
     try {
       let configFileOptions = {}
-      configFileOptions = sy.parse(fs.readFileSync(options.configFile, 'utf8'));
+      configFileOptions = parseFile(options.configFile);
       if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
         configFileOptions.sort = !(configFileOptions['no-sort'])
         delete configFileOptions['no-sort'];
@@ -89,7 +95,7 @@ async function run(oaFile, options) {
     try {
       let sortOptions = {sortSet: {}}
       infoOut(`- Sort file:\t\t${sortFileName}`) // LOG - sort file
-      sortOptions.sortSet = sy.parse(fs.readFileSync(sortFile, 'utf8'));
+      sortOptions.sortSet = parseFile(sortFile);
       options = Object.assign({}, options, sortOptions);
     } catch (err) {
       console.error('\x1b[31m', `Sort file error - no such file or directory "${sortFile}"`)
@@ -105,7 +111,7 @@ async function run(oaFile, options) {
     infoOut(`- Filter file:\t\t${options.filterFile}`) // LOG - Filter file
     try {
       let filterOptions = {filterSet: {}}
-      filterOptions.filterSet = sy.parse(fs.readFileSync(options.filterFile, 'utf8'));
+      filterOptions.filterSet = parseFile(options.filterFile);
       options = Object.assign({}, options, filterOptions);
     } catch (err) {
       console.error('\x1b[31m', `Filter file error - no such file or directory "${options.filterFile}"`)
@@ -121,7 +127,7 @@ async function run(oaFile, options) {
     infoOut(`- Sort Components file:\t${options.sortComponentsFile}`) // LOG - Sort file
     try {
       let sortComponentsOptions = {sortComponentsSet: {}}
-      sortComponentsOptions.sortComponentsSet = sy.parse(fs.readFileSync(options.sortComponentsFile, 'utf8'));
+      sortComponentsOptions.sortComponentsSet = parseFile(options.sortComponentsFile);
       options = Object.assign({}, options, sortComponentsOptions);
     } catch (err) {
       console.error('\x1b[31m', `Sort Components file error - no such file or directory "${options.sortComponentsFile}"`)
@@ -137,7 +143,7 @@ async function run(oaFile, options) {
     infoOut(`- Casing file:\t\t${options.casingFile}`) // LOG - Casing file
     try {
       let casingOptions = {casingSet: {}}
-      casingOptions.casingSet = sy.parse(fs.readFileSync(options.casingFile, 'utf8'));
+      casingOptions.casingSet = parseFile(options.casingFile);
       options = Object.assign({}, options, casingOptions);
     } catch (err) {
       console.error('\x1b[31m', `Casing file error - no such file or directory "${options.casingFile}"`)
@@ -207,45 +213,10 @@ async function run(oaFile, options) {
     debugOut(`- OAS.title renamed to: "${options.rename}"`, options.verbose) // LOG - Rename title
   }
 
-  if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
-    // Convert OpenAPI object to JSON string
-    output = JSON.stringify(res, null, 2);
-
-    // Decode stringified large number JSON values safely before writing output
-    const regexDecodeJsonLargeNumber = /: "([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])==="/g; // match > : "123456789.123456789"===
-    output = output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
-      const number = strNumber.replace(/: "|"/g, '');
-      // Decode large numbers safely in javascript
-      if (number.endsWith('===') || number.replace('.', '').length > 15) {
-        return strNumber.replace('===', '').replace(/"/g, '')
-      } else {
-        // Keep stringified number
-        return strNumber;
-      }
-    });
-  } else {
-    // Convert OpenAPI object to YAML string
-    let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
-    output = sy.safeStringify(res, {lineWidth: lineWidth});
-
-    // Decode stringified large number YAML values safely before writing output
-    const regexDecodeYamlLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])===/g; // match > : 123456789.123456789===
-    output = output.replace(regexDecodeYamlLargeNumber, (strNumber) => {
-      const number = strNumber.replace(/: '|'/g, '');
-      // Decode large numbers safely in javascript
-      if (number.endsWith('===') || number.replace('.', '').length > 15) {
-        return strNumber.replace('===', '').replace(/'/g, '')
-      } else {
-        // Keep stringified number
-        return strNumber;
-      }
-    });
-  }
-
   if (options.output) {
     try {
       // Write OpenAPI string to file
-      fs.writeFileSync(options.output, output, 'utf8');
+      writeFile(options.output, output)
       infoOut(`- Output file:\t\t${options.output}`) // LOG - config file
     } catch (err) {
       console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`)

@@ -49,6 +49,7 @@
     "openapi-format.js",
     "util-casing.js",
     "util-convert.js",
+    "util-file.js",
     "util-filter.js",
     "util-log-output.js",
     "util-sort.js",

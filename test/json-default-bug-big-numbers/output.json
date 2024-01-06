@@ -29,6 +29,12 @@
         "title": "500.1",
         "type": "object",
         "properties": {
+          "NumberLimitsSchema": {
+            "type": "number",
+            "maximum": 9999999999999.99999,
+            "minimum": 0,
+            "multipleOf": 0.0000000001
+          },
           "properties": {
             "type": "string",
             "example": "123e4567-e89b-12d3-a456-426614174000"
@@ -45,12 +51,6 @@
           "name": {
             "type": "string",
             "example": "123e4567"
-          },
-          "NumberLimitsSchema": {
-            "type": "number",
-            "maximum": 9999999999999.99999,
-            "minimum": 0,
-            "multipleOf": 0.0000000001
           }
         },
         "required": [
