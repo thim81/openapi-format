@@ -35,7 +35,7 @@ async function stringify(obj, options = {}) {
   try {
     let output;
     // Default to YAML format
-    const toYaml = options.format !== 'json' || (options.json && options.json !== true);
+    const toYaml = options.format !== 'json' && (!options.hasOwnProperty('json') || options.json !== true);
 
     if (toYaml) {
       // Convert Object to YAML string

@@ -7,6 +7,7 @@ const { describe, it, expect } = require('@jest/globals');
 
 const openapiFormat = require('../openapi-format.js');
 const {await parseFile} = require("../openapi-format");
+const {stringify} = require("../util-file");
 
 // SELECTIVE TESTING DEBUG
 const localTesting = false;
@@ -154,21 +155,6 @@ describe('openapi-format tests', () => {
         }
 
         try {
-          // Read output file
-          // let outputContent = fs.readFileSync(outputFilename, 'utf8');
-          //
-          // // Convert large number value safely before parsing
-          // const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])/g;  // match > : 123456789.123456789
-          // outputContent = outputContent.replace(regexEncodeLargeNumber, (rawInput) => {
-          //   const number = rawInput.replace(/: /g, '');
-          //   // Handle large numbers safely in javascript
-          //   if (Number(number).toString().includes('e') || number.replace('.', '').length > 15) {
-          //     return `: "${number}==="`;
-          //   } else {
-          //     return `: ${number}`;
-          //   }
-          // });
-          // output = sy.parse(outputContent);
           output = await parseFile(outputFilename);
           readOutput = true;
         } catch (ex) {
@@ -212,37 +198,10 @@ describe('openapi-format tests', () => {
           if (!readOutput) {
             if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
               // Convert OpenAPI object to JSON string
-              output = JSON.stringify(result, null, 2);
-
-              // Decode stringified large number JSON values safely before writing output
-              const regexDecodeJsonLargeNumber = /: "([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])==="/g; // match > : "123456789.123456789"===
-              output = output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
-                const number = strNumber.replace(/: "|"/g, '');
-                // Decode large numbers safely in javascript
-                if (number.endsWith('===') || number.replace('.', '').length > 15) {
-                  return strNumber.replace('===', '').replace(/"/g, '')
-                } else {
-                  // Keep stringified number
-                  return strNumber;
-                }
-              });
+              output = stringify(result, {format:'json'});
             } else {
               // Convert OpenAPI object to YAML string
-              let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
-              output = sy.safeStringify(result, {lineWidth: lineWidth});
-
-              // Decode stringified large number YAML values safely before writing output
-              const regexDecodeYamlLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])===/g; // match > : 123456789.123456789===
-              output = output.replace(regexDecodeYamlLargeNumber, (strNumber) => {
-                const number = strNumber.replace(/: '|'/g, '');
-                // Decode large numbers safely in javascript
-                if (number.endsWith('===') || number.replace('.', '').length > 15) {
-                  return strNumber.replace('===', '').replace(/'/g, '')
-                } else {
-                  // Keep stringified number
-                  return strNumber;
-                }
-              });
+              output = stringify(result, {format:'yaml'});
             }
 
             // Write OpenAPI string to file

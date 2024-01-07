@@ -6,7 +6,7 @@ const {
   decodeLargeNumbers,
   encodeLargeNumbers,
   getRemoteFile,
-  getLocalFile
+  getLocalFile, stringify
 } = require("../util-file");
 const yaml = require('@stoplight/yaml');
 
@@ -89,6 +89,58 @@ describe('writeFile function', () => {
     const options = {};
     const invalidOutputFile = '/invalid-directory/invalid-file.yaml';
     expect(async () => await writeFile(invalidOutputFile, data, options)).rejects.toThrowError('ENOENT');
+  });
+});
+
+describe('stringify function', () => {
+  test('should stringify object to YAML format', async () => {
+    const obj = {key: 'value'};
+    const options = {format: 'yaml', lineWidth: 80};
+
+    const result = await stringify(obj, options);
+
+    const expectedYAML = yaml.safeStringify(obj, {lineWidth: 80});
+    expect(result).toEqual(expectedYAML);
+  });
+
+  test('should stringify object to JSON format', async () => {
+    const obj = {key: 'value'};
+    const options = {format: 'json'};
+
+    const result = await stringify(obj, options);
+
+    const expectedJSON = JSON.stringify(obj, null, 2);
+    expect(result).toEqual(expectedJSON);
+  });
+
+  test('should default to YAML format when format is not explicitly set to JSON', async () => {
+    const obj = {key: 'value'};
+    const options = {otherOption: 'someValue'};
+
+    const result = await stringify(obj, options);
+
+    const expectedYAML = yaml.safeStringify(obj, {lineWidth: Infinity});
+    expect(result).toEqual(expectedYAML);
+  });
+
+  test('should handle large numbers in YAML format', async () => {
+    const obj = {largeNumber: 9007199254740991};
+    const options = {format: 'yaml'};
+
+    const result = await stringify(obj, options);
+
+    const expectedYAML = yaml.safeStringify(obj, {lineWidth: Infinity});
+    expect(result).toEqual(expectedYAML);
+  });
+
+  test('should handle large numbers in JSON format', async () => {
+    const obj = {largeNumber: 9007199254740991};
+    const options = {format: 'json'};
+
+    const result = await stringify(obj, options);
+
+    const expectedJSON = JSON.stringify(obj, null, 2);
+    expect(result).toEqual(expectedJSON);
   });
 });
 
