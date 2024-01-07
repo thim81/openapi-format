@@ -201,7 +201,7 @@ async function run(oaFile, options) {
   if (options.output) {
     try {
       // Write OpenAPI string to file
-      await openapiFormat.writeFile(options.output, resObj)
+      await openapiFormat.writeFile(options.output, resObj, options)
       infoOut(`- Output file:\t\t${options.output}`) // LOG - config file
     } catch (err) {
       console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`)
