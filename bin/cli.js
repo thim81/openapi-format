@@ -145,14 +145,14 @@ async function run(oaFile, options) {
     }
   }
 
-  let res = {};
+  let resObj = {};
   let output = {};
 
   try {
     infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
 
     // Parse input content
-    res = await openapiFormat.parseFile(oaFile);
+    resObj = await openapiFormat.parseFile(oaFile);
   } catch (err) {
     if (err.code !== 'ENOENT') {
       console.error('\x1b[31m', `Input file error - Failed to download file: ${err.message}`);
@@ -164,44 +164,44 @@ async function run(oaFile, options) {
 
   // Filter OpenAPI document
   if (options.filterSet) {
-    const resFilter = await openapiFormat.openapiFilter(res, options);
+    const resFilter = await openapiFormat.openapiFilter(resObj, options);
     if (resFilter.resultData && resFilter.resultData.unusedComp) {
       cliLog.unusedComp = resFilter.resultData.unusedComp
     }
     outputLogFiltered = `filtered & `;
-    res = resFilter.data;
+    resObj = resFilter.data;
   }
 
   // Format & Order OpenAPI document
   if (options.sort === true) {
-    const resFormat = await openapiFormat.openapiSort(res, options);
-    if (resFormat.data) res = resFormat.data
+    const resFormat = await openapiFormat.openapiSort(resObj, options);
+    if (resFormat.data) resObj = resFormat.data
   }
 
   // Change case OpenAPI document
   if (options.casingSet) {
-    const resFormat = await openapiFormat.openapiChangeCase(res, options);
-    if (resFormat.data) res = resFormat.data
+    const resFormat = await openapiFormat.openapiChangeCase(resObj, options);
+    if (resFormat.data) resObj = resFormat.data
   }
 
   // Convert the OpenAPI document to OpenAPI 3.1
   if ((options.convertTo && options.convertTo.toString() === "3.1") || (options.convertToVersion && options.convertToVersion === 3.1)) {
-    const resVersion = await openapiFormat.openapiConvertVersion(res, options);
-    if (resVersion.data) res = resVersion.data
+    const resVersion = await openapiFormat.openapiConvertVersion(resObj, options);
+    if (resVersion.data) resObj = resVersion.data
     debugOut(`- OAS version converted to: "${options.convertTo}"`, options.verbose) // LOG - Conversion title
   }
 
   // Rename title OpenAPI document
   if (options.rename) {
-    const resRename = await openapiFormat.openapiRename(res, options);
-    if (resRename.data) res = resRename.data
+    const resRename = await openapiFormat.openapiRename(resObj, options);
+    if (resRename.data) resObj = resRename.data
     debugOut(`- OAS.title renamed to: "${options.rename}"`, options.verbose) // LOG - Rename title
   }
 
   if (options.output) {
     try {
       // Write OpenAPI string to file
-      await openapiFormat.writeFile(options.output, output)
+      await openapiFormat.writeFile(options.output, resObj)
       infoOut(`- Output file:\t\t${options.output}`) // LOG - config file
     } catch (err) {
       console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`)
@@ -211,7 +211,7 @@ async function run(oaFile, options) {
     }
   } else {
     // Stringify OpenAPI object
-    output = await openapiFormat.stringify(res, options);
+    output = await openapiFormat.stringify(resObj, options);
     // Print OpenAPI string to stdout
     console.log(output);
   }
