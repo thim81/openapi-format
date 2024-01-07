@@ -26,7 +26,7 @@ const {
   convertImageBase64,
   convertMultiPartBinary, convertConst, convertExclusiveMinimum, convertExclusiveMaximum, setInObject
 } = require("./util-convert");
-const {parseFile, writeFile} = require("./util-file");
+const {parseFile, writeFile, stringify} = require("./util-file");
 
 /**
  * OpenAPI sort function
@@ -130,7 +130,7 @@ async function openapiSort(oaObj, options) {
  */
 async function openapiFilter(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-  let defaultFilter = parseFile(__dirname + "/defaultFilter.json");
+  let defaultFilter = await parseFile(__dirname + "/defaultFilter.json");
   let filterSet = Object.assign({}, defaultFilter, options.filterSet);
   const httpVerbs = ["get", "post", "put", "patch", "delete"];
   const fixedFlags = ["x-openapi-format-filter"]
@@ -820,6 +820,7 @@ module.exports = {
   openapiConvertVersion: openapiConvertVersion,
   openapiRename: openapiRename,
   parseFile: parseFile,
+  stringify: stringify,
   writeFile: writeFile,
   changeCase: changeCase
 };

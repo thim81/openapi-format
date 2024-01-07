@@ -2,6 +2,7 @@ const fs = require("fs");
 const sy = require("@stoplight/yaml");
 const {exec} = require("child_process");
 const path = require("path");
+const {parseFile} = require("../../util-file");
 
 async function loadTest(folder, inputType = 'yaml', outType = 'yaml') {
   let input, outputBefore, outputAfter = {}
@@ -12,21 +13,13 @@ async function loadTest(folder, inputType = 'yaml', outType = 'yaml') {
   const outputPath = `./test/${folder}/${outputFile}`
 
   try {
-    if (outType === 'json') {
-      input = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
-    } else {
-      input = sy.parse(fs.readFileSync(inputPath, 'utf8'));
-    }
+    input = await parseFile(inputPath)
   } catch (err) {
     // File not found = {} will be used
   }
 
   try {
-    if (outType === 'json') {
-      outputBefore = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
-    } else {
-      outputBefore = sy.parse(fs.readFileSync(outputPath, 'utf8'));
-    }
+    outputBefore = await parseFile(outputPath)
   } catch (err) {
     // File not found = {} will be used
   }
@@ -34,11 +27,7 @@ async function loadTest(folder, inputType = 'yaml', outType = 'yaml') {
   let result = await cli([`${inputFile}`, `--configFile options.yaml`], testPath);
 
   try {
-    if (outType === 'json') {
-      outputAfter = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
-    } else {
-      outputAfter = sy.parse(fs.readFileSync(outputPath, 'utf8'));
-    }
+    outputAfter = await parseFile(outputPath)
   } catch (err) {
     //
   }

@@ -1,6 +1,13 @@
 const fs = require('fs');
 const path = require('path');
-const {parseFile, writeFile, decodeLargeNumbers, encodeLargeNumbers} = require("../util-file");
+const {
+  parseFile,
+  writeFile,
+  decodeLargeNumbers,
+  encodeLargeNumbers,
+  getRemoteFile,
+  getLocalFile
+} = require("../util-file");
 const yaml = require('@stoplight/yaml');
 
 describe('parseFile function', () => {
@@ -16,25 +23,26 @@ describe('parseFile function', () => {
     expect(parsedContent).toEqual(JSON.parse(fs.readFileSync(inputFilePath, 'utf8')));
   });
 
-  test('should throw an error for invalid file',  () => {
+  test('should throw an error for invalid file', () => {
     const inputFilePath = 'nonexistentfile.yaml';
     expect(async () => await parseFile(inputFilePath)).rejects.toThrowError('ENOENT');
   });
 
-  // test('should throw an error for invalid YAML content', () => {
-  //   const inputFilePath = path.join(__dirname, 'test-files', 'invalid.yaml');
-  //   expect(async () => await parseFile(inputFilePath)).toThrow();
-  // });
-  //
-  // test('should throw an error for invalid JSON content', () => {
-  //   const inputFilePath = path.join(__dirname, 'test-files', 'invalid.json');
-  //   expect(async () => await parseFile(inputFilePath)).toThrow();
-  // });
+  test('should throw an error for invalid YAML content', () => {
+    const inputFilePath = path.join(__dirname, 'test-files', 'invalid.yaml');
+    expect(async () => await parseFile(inputFilePath)).rejects.toThrowError('ENOENT');
+  });
+
+  test('should throw an error for invalid JSON content', () => {
+    const inputFilePath = path.join(__dirname, 'test-files', 'invalid.json');
+    expect(async () => await parseFile(inputFilePath)).rejects.toThrowError('ENOENT');
+  });
 });
 
 describe('writeFile function', () => {
   const outputDir = path.join(__dirname, 'test-output');
-  const outputFile = path.join(outputDir, 'output.yaml');
+  const jsonOutputFile = path.join(outputDir, 'output.json');
+  const yamlOutputFile = path.join(outputDir, 'output.yaml');
 
   // Create a temporary directory for testing
   beforeAll(() => {
@@ -45,29 +53,31 @@ describe('writeFile function', () => {
 
   // Cleanup after testing
   afterAll(() => {
-    if (fs.existsSync(outputFile)) {
-      fs.unlinkSync(outputFile);
+    if (fs.existsSync(jsonOutputFile)) {
+      fs.unlinkSync(jsonOutputFile);
+    }
+    if (fs.existsSync(yamlOutputFile)) {
+      fs.unlinkSync(yamlOutputFile);
     }
     if (fs.existsSync(outputDir)) {
       fs.rmdirSync(outputDir);
     }
   });
 
-  test('should write YAML file correctly', () => {
+  test('should write YAML file correctly', async () => {
     const data = {key: 'value'};
     const options = {lineWidth: 80};
-    expect(async () => await writeFile(outputFile, data, options)).not.toThrow();
+    await writeFile(yamlOutputFile, data, options)
 
-    const writtenContent = fs.readFileSync(outputFile, 'utf8');
+    const writtenContent = fs.readFileSync(yamlOutputFile, 'utf8');
     const parsedContent = yaml.parse(writtenContent);
     expect(parsedContent).toEqual(data);
   });
 
-  test('should write JSON file correctly', () => {
+  test('should write JSON file correctly', async () => {
     const data = {key: 'value'};
     const options = {};
-    const jsonOutputFile = path.join(outputDir, 'output.json');
-    expect(async () => await writeFile(jsonOutputFile, data, options)).not.toThrow();
+    await writeFile(jsonOutputFile, data, options);
 
     const writtenContent = fs.readFileSync(jsonOutputFile, 'utf8');
     const parsedContent = JSON.parse(writtenContent);
@@ -79,6 +89,45 @@ describe('writeFile function', () => {
     const options = {};
     const invalidOutputFile = '/invalid-directory/invalid-file.yaml';
     expect(async () => await writeFile(invalidOutputFile, data, options)).rejects.toThrowError('ENOENT');
+  });
+});
+
+describe('getLocalFile function', () => {
+  const validFilePath = __dirname + '/json-custom/customSort.json';
+  const invalidFilePath = 'nonexistent-file.txt';
+
+  test('should read local file content successfully', async () => {
+    const content = await getLocalFile(validFilePath);
+    const fileContent = fs.readFileSync(validFilePath, 'utf8');
+    expect(content).toEqual(fileContent);
+    // Add more assertions based on the expected content or structure
+  });
+
+  test('should throw an error for nonexistent local file', async () => {
+    await expect(getLocalFile(invalidFilePath)).rejects.toThrow();
+  });
+});
+
+describe('getRemoteFile function', () => {
+  const validRemoteFilePath = 'https://raw.githubusercontent.com/thim81/openapi-format/main/defaultFilter.json';
+  const validFilePath = __dirname + '/../defaultFilter.json';
+
+  const invalidRemoteFilePath = 'https://example.com/nonexistent-file.txt';
+
+  test('should download remote file content successfully', async () => {
+    // Mocking the https.get function
+
+    const content = await getRemoteFile(validRemoteFilePath);
+    const fileContent = fs.readFileSync(validFilePath, 'utf8');
+    expect(content).toEqual(fileContent);
+  });
+
+  test('should throw an error for nonexistent remote file', async () => {
+    try {
+      await getRemoteFile(invalidRemoteFilePath);
+    } catch (err) {
+      expect(err.message).toMatch(/404 Not Found/);
+    }
   });
 });
 

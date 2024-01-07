@@ -30,6 +30,35 @@ async function parseFile(filePath) {
   }
 }
 
+// Function to stringify data to JSON/YAML content
+async function stringify(obj, options = {}) {
+  try {
+    let output;
+    // Default to YAML format
+    const toYaml = options.format !== 'json' || (options.json && options.json !== true);
+
+    if (toYaml) {
+      // Convert Object to YAML string
+      const lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
+      output = yaml.safeStringify(obj, {lineWidth});
+
+      // Decode large number YAML values safely before writing output
+      output = decodeLargeNumbers(output);
+    } else {
+      // Convert Object to JSON string
+      output = JSON.stringify(obj, null, 2);
+
+      // Decode large number JSON values safely before writing output
+      output = decodeLargeNumbers(output, true);
+    }
+
+    // Return the stringify output
+    return output;
+  } catch (err) {
+    // Handle errors or rethrow
+    throw err;
+  }
+}
 
 // Function to write JSON/YAML file
 async function writeFile(filePath, data, options = {}) {
@@ -39,24 +68,20 @@ async function writeFile(filePath, data, options = {}) {
 
     if (isYamlFile) {
       // Convert Object to YAML string
-      const lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
-      output = yaml.safeStringify(data, {lineWidth});
+      options.format = 'yaml';
+      output = await stringify(data, options);
 
-      // Decode large number YAML values safely before writing output
-      output = decodeLargeNumbers(output);
     } else {
       // Convert Object to JSON string
-      output = JSON.stringify(data, null, 2);
-
-      // Decode large number JSON values safely before writing output
-      output = decodeLargeNumbers(output, true);
+      options.format = 'json';
+      output = await stringify(data, options);
     }
 
     // Write output file
     fs.writeFileSync(filePath, output, 'utf8');
     // console.log(`- Output file:\t\t${outputFilePath}`);
   } catch (err) {
-    // console.log('err', err)
+    console.log('err', err)
     throw err
     // throw new Error(`Error writing file "${filePath}": ${err.message}`);
   }
@@ -77,7 +102,7 @@ async function getRemoteFile(filePath) {
   const inputContent = await new Promise((resolve, reject) => {
     https.get(filePath, (res) => {
       if (res.statusCode < 200 || res.statusCode >= 300) {
-        throw new Error(`Input file error - Failed to download file: ${res.statusCode} ${res.statusMessage}`);
+        reject(new Error(`${res.statusCode} ${res.statusMessage}`));
       }
       const chunks = [];
       res.on('data', (chunk) => {
@@ -87,7 +112,7 @@ async function getRemoteFile(filePath) {
         resolve(Buffer.concat(chunks).toString());
       });
       res.on('error', (err) => {
-        throw new Error(`Input file error - Failed to download file: ${err.message}`);
+        reject(new Error(`${err.message}`));
       });
     });
   });
@@ -122,7 +147,7 @@ function decodeLargeNumbers(output, isJson = false) {
       if (number.endsWith('===') || number.replace('.', '').length > 15) {
         return strNumber.replace('===', '').replace(/"/g, '')
       } else {
-        // Keep orginal number
+        // Keep original number
         return strNumber;
       }
     });
@@ -145,7 +170,10 @@ function decodeLargeNumbers(output, isJson = false) {
 
 module.exports = {
   parseFile,
+  stringify,
   writeFile,
   encodeLargeNumbers,
   decodeLargeNumbers,
+  getLocalFile,
+  getRemoteFile,
 };

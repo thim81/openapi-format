@@ -1,6 +1,7 @@
 const testUtils = require('../test/__utils__/test-utils')
 const fs = require("fs");
 const { describe, it, expect } = require('@jest/globals');
+const { getLocalFile, getRemoteFile, parseFile} = require("../util-file");
 
 describe("openapi-format CLI command", () => {
 
@@ -15,7 +16,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-default`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
 
     let result = await testUtils.cli([inputFile], '.');
     // console.log('result', result)
@@ -29,7 +30,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-default`
     const inputFile = `https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile, 'utf8');
 
     let result = await testUtils.cli([inputFile], '.');
     // console.log('result', result)
@@ -43,7 +44,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-default`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
 
     let result = await testUtils.cli([inputFile], '.');
     // console.log('result', result)
@@ -56,7 +57,6 @@ describe("openapi-format CLI command", () => {
   it("should stop and show error", async () => {
     const path = `test/yaml-default`
     const inputFile = `${path}/input.yaml`
-    const outputFile = `${path}/output.yaml`
 
     let result = await testUtils.cli([inputFile, `--sortFile foobar`], '.');
     // console.log('result', result)
@@ -67,7 +67,6 @@ describe("openapi-format CLI command", () => {
   it("should stop and show error about local file", async () => {
     const path = `test/yaml-default`
     const inputFile = `${path}/foo.yaml`
-    const outputFile = `${path}/output.yaml`
 
     let result = await testUtils.cli([inputFile], '.');
     // console.log('result', result)
@@ -76,9 +75,7 @@ describe("openapi-format CLI command", () => {
   });
 
   it("should stop and show error about remote file", async () => {
-    const path = `test/yaml-default`
     const inputFile = `https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/foo.yaml`
-    const outputFile = `${path}/output.yaml`
 
     let result = await testUtils.cli([inputFile], '.');
     // console.log('result', result)
@@ -90,7 +87,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-custom`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
     const setting = `${path}/customSort.yaml`
 
     let result = await testUtils.cli([inputFile, `--sortFile ${setting}`], '.');
@@ -105,7 +102,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-casing`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
     const setting = `${path}/customCasing.yaml`
 
     let result = await testUtils.cli([inputFile, `--casingFile ${setting}`, `--no-sort`], '.');
@@ -120,7 +117,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-filter-custom`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
     const setting = `${path}/customFilter.yaml`
 
     let result = await testUtils.cli([inputFile, `--filterFile ${setting}`, `--no-sort`], '.');
@@ -135,7 +132,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-sort-components`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
     const setting = `${path}/customSortComponents.yaml`
 
     let result = await testUtils.cli([inputFile, `--sortComponentsFile ${setting}`], '.');
@@ -164,7 +161,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-filter-unused-components`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
     const setting = `${path}/customFilter.yaml`
 
     let result = await testUtils.cli([inputFile, `--filterFile ${setting}`, `--no-sort`, `-v`], '.');
@@ -179,7 +176,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-rename`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
 
     let result = await testUtils.cli([inputFile, `--rename "OpenAPI Petstore - OpenAPI 3.0"`, `--no-sort`], '.');
     // console.log('result', result)
@@ -193,7 +190,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-default-bug-big-numbers`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
 
     let result = await testUtils.cli([inputFile, `--no-sort`], '.');
     // console.log('result', result)
@@ -207,7 +204,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/json-default-bug-big-numbers`
     const inputFile = `${path}/input.json`
     const outputFile = `${path}/output.json`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
 
     let result = await testUtils.cli([inputFile, `--json`, `--no-sort`], '.');
     // console.log('result', result)
@@ -221,7 +218,7 @@ describe("openapi-format CLI command", () => {
     const path = `test/yaml-convert-3.1`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
-    const output = (fs.readFileSync(outputFile, 'utf8'));
+    const output = await getLocalFile(outputFile);
 
     let result = await testUtils.cli([inputFile, `--convertTo "3.1"`, `--no-sort`, `-vvv`], '.');
     // console.log('result', result)
@@ -240,5 +237,6 @@ describe("openapi-format CLI command", () => {
  * @returns {*|string}
  */
 function sanitize(str) {
+  if(!str) return str
   return str.replace(/^\s+|\s+$/g, '').trim();
 }

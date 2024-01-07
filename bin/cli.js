@@ -1,12 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const https = require("https");
-const sy = require('@stoplight/yaml');
 const openapiFormat = require('../openapi-format')
 const program = require('commander');
 const {infoTable, infoOut, logOut, debugOut} = require("../util-log-output");
-const {writeFile, parseFile} = require("../util-file");
 
 // CLI Helper - change verbosity
 function increaseVerbosity(dummyValue, previous) {
@@ -47,11 +43,6 @@ program
 
 async function run(oaFile, options) {
   // General variables
-  options.casingFile = undefined;
-  options.sortComponentsFile = undefined;
-  options.filterFile = undefined;
-  options.sortFile = undefined;
-  options.convertTo = undefined;
   let outputLogOptions = '';
   let outputLogFiltered = '';
   let cliLog = {};
@@ -69,7 +60,7 @@ async function run(oaFile, options) {
   if (options && options.configFile) {
     try {
       let configFileOptions = {}
-      configFileOptions = parseFile(options.configFile);
+      configFileOptions = await openapiFormat.parseFile(options.configFile);
       if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
         configFileOptions.sort = !(configFileOptions['no-sort'])
         delete configFileOptions['no-sort'];
@@ -95,7 +86,7 @@ async function run(oaFile, options) {
     try {
       let sortOptions = {sortSet: {}}
       infoOut(`- Sort file:\t\t${sortFileName}`) // LOG - sort file
-      sortOptions.sortSet = parseFile(sortFile);
+      sortOptions.sortSet = await openapiFormat.parseFile(sortFile);
       options = Object.assign({}, options, sortOptions);
     } catch (err) {
       console.error('\x1b[31m', `Sort file error - no such file or directory "${sortFile}"`)
@@ -111,7 +102,7 @@ async function run(oaFile, options) {
     infoOut(`- Filter file:\t\t${options.filterFile}`) // LOG - Filter file
     try {
       let filterOptions = {filterSet: {}}
-      filterOptions.filterSet = parseFile(options.filterFile);
+      filterOptions.filterSet = await openapiFormat.parseFile(options.filterFile);
       options = Object.assign({}, options, filterOptions);
     } catch (err) {
       console.error('\x1b[31m', `Filter file error - no such file or directory "${options.filterFile}"`)
@@ -127,7 +118,7 @@ async function run(oaFile, options) {
     infoOut(`- Sort Components file:\t${options.sortComponentsFile}`) // LOG - Sort file
     try {
       let sortComponentsOptions = {sortComponentsSet: {}}
-      sortComponentsOptions.sortComponentsSet = parseFile(options.sortComponentsFile);
+      sortComponentsOptions.sortComponentsSet = await openapiFormat.parseFile(options.sortComponentsFile);
       options = Object.assign({}, options, sortComponentsOptions);
     } catch (err) {
       console.error('\x1b[31m', `Sort Components file error - no such file or directory "${options.sortComponentsFile}"`)
@@ -143,7 +134,7 @@ async function run(oaFile, options) {
     infoOut(`- Casing file:\t\t${options.casingFile}`) // LOG - Casing file
     try {
       let casingOptions = {casingSet: {}}
-      casingOptions.casingSet = parseFile(options.casingFile);
+      casingOptions.casingSet = await openapiFormat.parseFile(options.casingFile);
       options = Object.assign({}, options, casingOptions);
     } catch (err) {
       console.error('\x1b[31m', `Casing file error - no such file or directory "${options.casingFile}"`)
@@ -154,28 +145,22 @@ async function run(oaFile, options) {
     }
   }
 
-  infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
-
-  // Read input file
-  let inputContent = await processFile(oaFile);
-
-  // Convert large number value safely before parsing
-  const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])(,|\n)/g;  // match > : 123456789.123456789
-  inputContent = inputContent.replace(regexEncodeLargeNumber, (rawInput) => {
-    const endChar = (rawInput.endsWith(',') ? ',' : '\n');
-    const rgx = new RegExp(endChar, "g");
-    const number = rawInput.replace(/: /g, '').replace(rgx, '');
-    // Handle large numbers safely in javascript
-    if (Number(number).toString().includes('e') || number.replace('.', '').length > 15) {
-      return `: '${number}==='${endChar}`;
-    } else {
-      return `: ${number}${endChar}`;
-    }
-  });
-
-  // Parse input content
-  let res = sy.parse(inputContent);
+  let res = {};
   let output = {};
+
+  try {
+    infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
+
+    // Parse input content
+    res = await openapiFormat.parseFile(oaFile);
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      console.error('\x1b[31m', `Input file error - Failed to download file: ${err.message}`);
+      process.exit(1);
+    }
+    console.error('\x1b[31m', `Input file error - Failed to read file: ${oaFile}`);
+    process.exit(1);
+  }
 
   // Filter OpenAPI document
   if (options.filterSet) {
@@ -216,7 +201,7 @@ async function run(oaFile, options) {
   if (options.output) {
     try {
       // Write OpenAPI string to file
-      writeFile(options.output, output)
+      await openapiFormat.writeFile(options.output, output)
       infoOut(`- Output file:\t\t${options.output}`) // LOG - config file
     } catch (err) {
       console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`)
@@ -225,6 +210,9 @@ async function run(oaFile, options) {
       }
     }
   } else {
+    // Stringify OpenAPI object
+    output = await openapiFormat.stringify(res, options);
+    // Print OpenAPI string to stdout
     console.log(output);
   }
 
@@ -264,37 +252,3 @@ async function run(oaFile, options) {
   infoOut(`\x1b[32m✅  OpenAPI ${outputLogFiltered}formatted successfully\x1b[0m`, 99); // LOG - success message
   infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
 }
-
-async function processFile(filePath) {
-  let inputContent;
-  if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
-    inputContent = await new Promise((resolve, reject) => {
-      https.get(filePath, (res) => {
-        if (res.statusCode < 200 || res.statusCode >= 300) {
-          console.error('\x1b[31m', `Input file error - Failed to download file: ${res.statusCode} ${res.statusMessage}`);
-          process.exit(1);
-        }
-        const chunks = [];
-        res.on('data', (chunk) => {
-          chunks.push(chunk);
-        });
-        res.on('end', () => {
-          resolve(Buffer.concat(chunks).toString());
-        });
-        res.on('error', (err) => {
-          console.error('\x1b[31m', `Input file error - Failed to download file: ${err.message}`);
-          process.exit(1);
-        });
-      });
-    });
-  } else {
-    try {
-      inputContent = fs.readFileSync(filePath, 'utf8');
-    } catch (err) {
-      console.error('\x1b[31m', `Input file error - Failed to read file: ${filePath}`);
-      process.exit(1);
-    }
-  }
-  return inputContent;
-}
-
