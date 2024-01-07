@@ -26,6 +26,20 @@ describe('openapi-format CLI file tests', () => {
       expect(parsedContent).toEqual(JSON.parse(fs.readFileSync(inputFilePath, 'utf8')));
     });
 
+    test('should parse remote YAML file correctly', async () => {
+      const remoteFilePath = 'https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/input.yaml';
+      const inputFilePath = path.join(__dirname, 'yaml-default/input.yaml');
+      const parsedContent = await parseFile(remoteFilePath);
+      expect(parsedContent).toEqual(yaml.parse(fs.readFileSync(inputFilePath, 'utf8')));
+    });
+
+    test('should parse remote JSON file correctly', async () => {
+      const remoteFilePath = 'https://raw.githubusercontent.com/thim81/openapi-format/main/test/json-default/input.json';
+      const inputFilePath = path.join(__dirname, 'json-default/input.json');
+      const parsedContent = await parseFile(remoteFilePath);
+      expect(parsedContent).toEqual(JSON.parse(fs.readFileSync(inputFilePath, 'utf8')));
+    });
+
     test('should throw an error for invalid file', () => {
       const inputFilePath = 'nonexistentfile.yaml';
       expect(async () => await parseFile(inputFilePath)).rejects.toThrowError('ENOENT');
