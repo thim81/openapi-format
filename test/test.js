@@ -3,18 +3,17 @@
 const fs = require('fs');
 const path = require('path');
 const sy = require('@stoplight/yaml');
-const { describe, it, expect } = require('@jest/globals');
+const {describe, it, expect} = require('@jest/globals');
 
 const openapiFormat = require('../openapi-format.js');
-const {await parseFile} = require("../openapi-format");
-const {stringify} = require("../util-file");
+const {parseFile, stringify} = require("../openapi-format");
 
 // SELECTIVE TESTING DEBUG
 const localTesting = false;
 const destroyOutput = false;
 
 // Load tests
-const tests = !localTesting  ? fs.readdirSync(__dirname).filter(file => {
+const tests = !localTesting ? fs.readdirSync(__dirname).filter(file => {
   return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_'));
 }) : ['json-sort-request-params'];
 
@@ -198,10 +197,10 @@ describe('openapi-format tests', () => {
           if (!readOutput) {
             if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
               // Convert OpenAPI object to JSON string
-              output = stringify(result, {format:'json'});
+              output = stringify(result, {format: 'json'});
             } else {
               // Convert OpenAPI object to YAML string
-              output = stringify(result, {format:'yaml'});
+              output = stringify(result, {format: 'yaml'});
             }
 
             // Write OpenAPI string to file
