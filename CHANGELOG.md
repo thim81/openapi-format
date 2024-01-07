@@ -1,5 +1,8 @@
 ## unreleased
 
+- Refactored the file handling
+- Added additional tests
+
 ## [1.15.3] - 2024-01-05
 
 - Bumped dependencies traverse and node-version of the Github actions
