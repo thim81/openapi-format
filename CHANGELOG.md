@@ -1,5 +1,6 @@
 ## unreleased
 
+- Added support for local or remote files for any config file
 - Refactored the file handling
 - Added additional tests
 
