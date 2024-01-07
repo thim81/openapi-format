@@ -4,7 +4,11 @@ const fs = require('fs');
 const yaml = require('@stoplight/yaml');
 const https = require("https");
 
-// Function to parse JSON/YAML file
+/**
+ * Parse a JSON/YAML file and returns the parsed object
+ * @param filePath Path to the JSON/YAML file.
+ * @returns {Promise<unknown>} Parsed data object.
+ */
 async function parseFile(filePath) {
   try {
     const isRemoteFile = filePath.startsWith('http://') || filePath.startsWith('https://');
@@ -25,12 +29,16 @@ async function parseFile(filePath) {
       ? yaml.parse(encodedContent)
       : JSON.parse(encodedContent);
   } catch (err) {
-    // console.error('\x1b[31m', `Error parsing file "${inputFilePath}": ${err.message}`);
-    throw err; // Re-throw the error to let the calling code handle it if needed
+    throw err;
   }
 }
 
-// Function to stringify data to JSON/YAML content
+/**
+ * Converts an data object to a JSON/YAML string representation.
+ * @param obj Data object.
+ * @param options Stringify options
+ * @returns {Promise<*>} Stringified data.
+ */
 async function stringify(obj, options = {}) {
   try {
     let output;
@@ -60,7 +68,13 @@ async function stringify(obj, options = {}) {
   }
 }
 
-// Function to write JSON/YAML file
+/**
+ * Writes an object to a JSON/YAML file.
+ * @param filePath Path to the output file.
+ * @param data Data object.
+ * @param options Write options
+ * @returns {Promise<void>}
+ */
 async function writeFile(filePath, data, options = {}) {
   try {
     let output;
@@ -87,7 +101,11 @@ async function writeFile(filePath, data, options = {}) {
   }
 }
 
-// Read local file
+/**
+ * Reads a local file and returns the content
+ * @param filePath Path to the file.
+ * @returns {Promise<string>} File content.
+ */
 async function getLocalFile(filePath) {
   try {
     const inputContent = fs.readFileSync(filePath, 'utf8');
@@ -98,6 +116,11 @@ async function getLocalFile(filePath) {
   }
 }
 
+/**
+ * Reads a remote file and returns the content
+ * @param filePath Remote path to the file.
+ * @returns {Promise<string>} File content.
+ */
 async function getRemoteFile(filePath) {
   const inputContent = await new Promise((resolve, reject) => {
     https.get(filePath, (res) => {
@@ -119,7 +142,11 @@ async function getRemoteFile(filePath) {
   return inputContent;
 }
 
-// Convert large number value safely before parsing
+/**
+ * Convert large number value safely before parsing
+ * @param inputContent Input content.
+ * @returns {*} Encoded content.
+ */
 function encodeLargeNumbers(inputContent) {
   // Convert large number value safely before parsing
   const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])(,|\n)/g;  // match > : 123456789.123456789
@@ -136,7 +163,12 @@ function encodeLargeNumbers(inputContent) {
   });
 }
 
-// Decode large number YAML/JSON values safely before writing output
+/**
+ * Decode large number YAML/JSON values safely before writing output
+ * @param output YAML/JSON Output content.
+ * @param isJson Indicate if the output is JSON.
+ * @returns {*} Decoded content.
+ */
 function decodeLargeNumbers(output, isJson = false) {
   if (isJson) {
     // Decode large number JSON values safely before writing output
