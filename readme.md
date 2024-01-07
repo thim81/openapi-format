@@ -71,7 +71,7 @@ Postman collections, test suites, ...
 - [x] Support OpenAPI documents in JSON format
 - [x] Support OpenAPI documents in YAML format
 - [x] Format via CLI
-- [x] Format via config files
+- [x] Format via local or remote config files
 - [x] Use as a Module
 - [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
