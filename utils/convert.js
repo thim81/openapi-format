@@ -1,4 +1,4 @@
-const {isObject, isArray, isNumber, isString} = require("./util-types");
+const {isObject, isArray, isNumber, isString} = require("./types");
 
 /**
  * Add property to object at certain position

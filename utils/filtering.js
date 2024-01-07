@@ -1,4 +1,4 @@
-const {isString, isArray, isObject} = require("./util-types");
+const {isString, isArray, isObject} = require("./types");
 
 /**
  * Value replacement function
@@ -28,7 +28,6 @@ function valueReplace(valueAsString, replacements) {
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
-
 
 /**
  * Alternative optional chaining function, to provide support for NodeJS 12

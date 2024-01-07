@@ -3,29 +3,30 @@
 
 const fs = require('fs');
 const traverse = require('traverse');
-const {isString, isArray, isObject} = require("./util-types");
+const {isString, isArray, isObject} = require("./utils/types");
 const {
   prioritySort,
   isMatchOperationItem, arraySort,
-} = require("./util-sort");
+} = require("./utils/sorting");
 const {
   changeComponentParametersCasingEnabled,
   changeParametersCasingEnabled,
   changeCase,
   changeArrayObjKeysCase,
   changeObjKeysCase
-} = require("./util-casing");
+} = require("./utils/casing");
 const {
   valueReplace,
   get,
   isUsedComp
-} = require("./util-filter");
+} = require("./utils/filtering");
 const {
   convertNullable,
   convertExample,
   convertImageBase64,
   convertMultiPartBinary, convertConst, convertExclusiveMinimum, convertExclusiveMaximum, setInObject
-} = require("./util-convert");
+} = require("./utils/convert");
+const {parseFile, writeFile, stringify} = require("./utils/file");
 
 /**
  * OpenAPI sort function
@@ -129,7 +130,7 @@ async function openapiSort(oaObj, options) {
  */
 async function openapiFilter(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-  let defaultFilter = JSON.parse(fs.readFileSync(__dirname + "/defaultFilter.json", 'utf8'))
+  let defaultFilter = await parseFile(__dirname + "/defaultFilter.json");
   let filterSet = Object.assign({}, defaultFilter, options.filterSet);
   const httpVerbs = ["get", "post", "put", "patch", "delete"];
   const fixedFlags = ["x-openapi-format-filter"]
@@ -818,5 +819,8 @@ module.exports = {
   openapiChangeCase: openapiChangeCase,
   openapiConvertVersion: openapiConvertVersion,
   openapiRename: openapiRename,
+  parseFile: parseFile,
+  stringify: stringify,
+  writeFile: writeFile,
   changeCase: changeCase
 };

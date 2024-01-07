@@ -1,11 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const https = require("https");
-const sy = require('@stoplight/yaml');
 const openapiFormat = require('../openapi-format')
 const program = require('commander');
-const {infoTable, infoOut, logOut, debugOut} = require("../util-log-output");
+const {infoTable, infoOut, logOut, debugOut} = require("../utils/logging");
 
 // CLI Helper - change verbosity
 function increaseVerbosity(dummyValue, previous) {
@@ -63,7 +60,7 @@ async function run(oaFile, options) {
   if (options && options.configFile) {
     try {
       let configFileOptions = {}
-      configFileOptions = sy.parse(fs.readFileSync(options.configFile, 'utf8'));
+      configFileOptions = await openapiFormat.parseFile(options.configFile);
       if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
         configFileOptions.sort = !(configFileOptions['no-sort'])
         delete configFileOptions['no-sort'];
@@ -89,7 +86,7 @@ async function run(oaFile, options) {
     try {
       let sortOptions = {sortSet: {}}
       infoOut(`- Sort file:\t\t${sortFileName}`) // LOG - sort file
-      sortOptions.sortSet = sy.parse(fs.readFileSync(sortFile, 'utf8'));
+      sortOptions.sortSet = await openapiFormat.parseFile(sortFile);
       options = Object.assign({}, options, sortOptions);
     } catch (err) {
       console.error('\x1b[31m', `Sort file error - no such file or directory "${sortFile}"`)
@@ -105,7 +102,7 @@ async function run(oaFile, options) {
     infoOut(`- Filter file:\t\t${options.filterFile}`) // LOG - Filter file
     try {
       let filterOptions = {filterSet: {}}
-      filterOptions.filterSet = sy.parse(fs.readFileSync(options.filterFile, 'utf8'));
+      filterOptions.filterSet = await openapiFormat.parseFile(options.filterFile);
       options = Object.assign({}, options, filterOptions);
     } catch (err) {
       console.error('\x1b[31m', `Filter file error - no such file or directory "${options.filterFile}"`)
@@ -121,7 +118,7 @@ async function run(oaFile, options) {
     infoOut(`- Sort Components file:\t${options.sortComponentsFile}`) // LOG - Sort file
     try {
       let sortComponentsOptions = {sortComponentsSet: {}}
-      sortComponentsOptions.sortComponentsSet = sy.parse(fs.readFileSync(options.sortComponentsFile, 'utf8'));
+      sortComponentsOptions.sortComponentsSet = await openapiFormat.parseFile(options.sortComponentsFile);
       options = Object.assign({}, options, sortComponentsOptions);
     } catch (err) {
       console.error('\x1b[31m', `Sort Components file error - no such file or directory "${options.sortComponentsFile}"`)
@@ -137,7 +134,7 @@ async function run(oaFile, options) {
     infoOut(`- Casing file:\t\t${options.casingFile}`) // LOG - Casing file
     try {
       let casingOptions = {casingSet: {}}
-      casingOptions.casingSet = sy.parse(fs.readFileSync(options.casingFile, 'utf8'));
+      casingOptions.casingSet = await openapiFormat.parseFile(options.casingFile);
       options = Object.assign({}, options, casingOptions);
     } catch (err) {
       console.error('\x1b[31m', `Casing file error - no such file or directory "${options.casingFile}"`)
@@ -148,104 +145,63 @@ async function run(oaFile, options) {
     }
   }
 
-  infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
-
-  // Read input file
-  let inputContent = await processFile(oaFile);
-
-  // Convert large number value safely before parsing
-  const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])(,|\n)/g;  // match > : 123456789.123456789
-  inputContent = inputContent.replace(regexEncodeLargeNumber, (rawInput) => {
-    const endChar = (rawInput.endsWith(',') ? ',' : '\n');
-    const rgx = new RegExp(endChar, "g");
-    const number = rawInput.replace(/: /g, '').replace(rgx, '');
-    // Handle large numbers safely in javascript
-    if (Number(number).toString().includes('e') || number.replace('.', '').length > 15) {
-      return `: '${number}==='${endChar}`;
-    } else {
-      return `: ${number}${endChar}`;
-    }
-  });
-
-  // Parse input content
-  let res = sy.parse(inputContent);
+  let resObj = {};
   let output = {};
+
+  try {
+    infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
+
+    // Parse input content
+    resObj = await openapiFormat.parseFile(oaFile);
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      console.error('\x1b[31m', `Input file error - Failed to download file: ${err.message}`);
+      process.exit(1);
+    }
+    console.error('\x1b[31m', `Input file error - Failed to read file: ${oaFile}`);
+    process.exit(1);
+  }
 
   // Filter OpenAPI document
   if (options.filterSet) {
-    const resFilter = await openapiFormat.openapiFilter(res, options);
+    const resFilter = await openapiFormat.openapiFilter(resObj, options);
     if (resFilter.resultData && resFilter.resultData.unusedComp) {
       cliLog.unusedComp = resFilter.resultData.unusedComp
     }
     outputLogFiltered = `filtered & `;
-    res = resFilter.data;
+    resObj = resFilter.data;
   }
 
   // Format & Order OpenAPI document
   if (options.sort === true) {
-    const resFormat = await openapiFormat.openapiSort(res, options);
-    if (resFormat.data) res = resFormat.data
+    const resFormat = await openapiFormat.openapiSort(resObj, options);
+    if (resFormat.data) resObj = resFormat.data
   }
 
   // Change case OpenAPI document
   if (options.casingSet) {
-    const resFormat = await openapiFormat.openapiChangeCase(res, options);
-    if (resFormat.data) res = resFormat.data
+    const resFormat = await openapiFormat.openapiChangeCase(resObj, options);
+    if (resFormat.data) resObj = resFormat.data
   }
 
   // Convert the OpenAPI document to OpenAPI 3.1
   if ((options.convertTo && options.convertTo.toString() === "3.1") || (options.convertToVersion && options.convertToVersion === 3.1)) {
-    const resVersion = await openapiFormat.openapiConvertVersion(res, options);
-    if (resVersion.data) res = resVersion.data
+    const resVersion = await openapiFormat.openapiConvertVersion(resObj, options);
+    if (resVersion.data) resObj = resVersion.data
     debugOut(`- OAS version converted to: "${options.convertTo}"`, options.verbose) // LOG - Conversion title
   }
 
   // Rename title OpenAPI document
   if (options.rename) {
-    const resRename = await openapiFormat.openapiRename(res, options);
-    if (resRename.data) res = resRename.data
+    const resRename = await openapiFormat.openapiRename(resObj, options);
+    if (resRename.data) resObj = resRename.data
     debugOut(`- OAS.title renamed to: "${options.rename}"`, options.verbose) // LOG - Rename title
-  }
-
-  if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
-    // Convert OpenAPI object to JSON string
-    output = JSON.stringify(res, null, 2);
-
-    // Decode stringified large number JSON values safely before writing output
-    const regexDecodeJsonLargeNumber = /: "([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])==="/g; // match > : "123456789.123456789"===
-    output = output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
-      const number = strNumber.replace(/: "|"/g, '');
-      // Decode large numbers safely in javascript
-      if (number.endsWith('===') || number.replace('.', '').length > 15) {
-        return strNumber.replace('===', '').replace(/"/g, '')
-      } else {
-        // Keep stringified number
-        return strNumber;
-      }
-    });
-  } else {
-    // Convert OpenAPI object to YAML string
-    let lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
-    output = sy.safeStringify(res, {lineWidth: lineWidth});
-
-    // Decode stringified large number YAML values safely before writing output
-    const regexDecodeYamlLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])===/g; // match > : 123456789.123456789===
-    output = output.replace(regexDecodeYamlLargeNumber, (strNumber) => {
-      const number = strNumber.replace(/: '|'/g, '');
-      // Decode large numbers safely in javascript
-      if (number.endsWith('===') || number.replace('.', '').length > 15) {
-        return strNumber.replace('===', '').replace(/'/g, '')
-      } else {
-        // Keep stringified number
-        return strNumber;
-      }
-    });
   }
 
   if (options.output) {
     try {
       // Write OpenAPI string to file
-      fs.writeFileSync(options.output, output, 'utf8');
+      await openapiFormat.writeFile(options.output, resObj)
       infoOut(`- Output file:\t\t${options.output}`) // LOG - config file
     } catch (err) {
       console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`)
@@ -254,6 +210,9 @@ async function run(oaFile, options) {
       }
     }
   } else {
+    // Stringify OpenAPI object
+    output = await openapiFormat.stringify(resObj, options);
+    // Print OpenAPI string to stdout
     console.log(output);
   }
 
@@ -293,37 +252,3 @@ async function run(oaFile, options) {
   infoOut(`\x1b[32m✅  OpenAPI ${outputLogFiltered}formatted successfully\x1b[0m`, 99); // LOG - success message
   infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
 }
-
-async function processFile(filePath) {
-  let inputContent;
-  if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
-    inputContent = await new Promise((resolve, reject) => {
-      https.get(filePath, (res) => {
-        if (res.statusCode < 200 || res.statusCode >= 300) {
-          console.error('\x1b[31m', `Input file error - Failed to download file: ${res.statusCode} ${res.statusMessage}`);
-          process.exit(1);
-        }
-        const chunks = [];
-        res.on('data', (chunk) => {
-          chunks.push(chunk);
-        });
-        res.on('end', () => {
-          resolve(Buffer.concat(chunks).toString());
-        });
-        res.on('error', (err) => {
-          console.error('\x1b[31m', `Input file error - Failed to download file: ${err.message}`);
-          process.exit(1);
-        });
-      });
-    });
-  } else {
-    try {
-      inputContent = fs.readFileSync(filePath, 'utf8');
-    } catch (err) {
-      console.error('\x1b[31m', `Input file error - Failed to read file: ${filePath}`);
-      process.exit(1);
-    }
-  }
-  return inputContent;
-}
-
