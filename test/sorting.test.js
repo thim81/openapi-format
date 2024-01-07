@@ -1,7 +1,7 @@
 'use strict';
 
 const testUtils = require('./__utils__/test-utils')
-const {isMatchOperationItem, arraySort} = require("../util-sort");
+const {isMatchOperationItem, arraySort} = require("../utils/sorting");
 const {describe, it, expect} = require('@jest/globals');
 
 describe('openapi-format CLI sorting tests', () => {

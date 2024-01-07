@@ -1,4 +1,4 @@
-const {isObject, isArray, isString} = require("./util-types");
+const {isObject, isArray, isString} = require("./types");
 const {
   camelCase,
   pascalCase,

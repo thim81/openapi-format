@@ -7,7 +7,7 @@ const {
   encodeLargeNumbers,
   getRemoteFile,
   getLocalFile, stringify
-} = require("../util-file");
+} = require("../utils/file");
 const yaml = require('@stoplight/yaml');
 const {describe} = require("@jest/globals");
 

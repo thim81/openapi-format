@@ -3,30 +3,30 @@
 
 const fs = require('fs');
 const traverse = require('traverse');
-const {isString, isArray, isObject} = require("./util-types");
+const {isString, isArray, isObject} = require("./utils/types");
 const {
   prioritySort,
   isMatchOperationItem, arraySort,
-} = require("./util-sort");
+} = require("./utils/sorting");
 const {
   changeComponentParametersCasingEnabled,
   changeParametersCasingEnabled,
   changeCase,
   changeArrayObjKeysCase,
   changeObjKeysCase
-} = require("./util-casing");
+} = require("./utils/casing");
 const {
   valueReplace,
   get,
   isUsedComp
-} = require("./util-filter");
+} = require("./utils/filtering");
 const {
   convertNullable,
   convertExample,
   convertImageBase64,
   convertMultiPartBinary, convertConst, convertExclusiveMinimum, convertExclusiveMaximum, setInObject
-} = require("./util-convert");
-const {parseFile, writeFile, stringify} = require("./util-file");
+} = require("./utils/convert");
+const {parseFile, writeFile, stringify} = require("./utils/file");
 
 /**
  * OpenAPI sort function

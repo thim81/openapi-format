@@ -5,7 +5,7 @@ const of = require('./../openapi-format')
 const {
   convertNullable, convertExclusiveMinimum, convertExclusiveMaximum, convertExample, convertConst,
   convertImageBase64, convertMultiPartBinary, setInObject
-} = require("../util-convert");
+} = require("../utils/convert");
 const { describe, it, expect } = require('@jest/globals');
 
 describe('openapi-format CLI converting tests', () => {

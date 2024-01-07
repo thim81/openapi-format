@@ -1,7 +1,7 @@
 const testUtils = require('../test/__utils__/test-utils')
 const fs = require("fs");
 const { describe, it, expect } = require('@jest/globals');
-const { getLocalFile, getRemoteFile, parseFile} = require("../util-file");
+const { getLocalFile, getRemoteFile, parseFile} = require("../utils/file");
 
 describe("openapi-format CLI command", () => {
 

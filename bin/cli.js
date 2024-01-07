@@ -2,7 +2,7 @@
 
 const openapiFormat = require('../openapi-format')
 const program = require('commander');
-const {infoTable, infoOut, logOut, debugOut} = require("../util-log-output");
+const {infoTable, infoOut, logOut, debugOut} = require("../utils/logging");
 
 // CLI Helper - change verbosity
 function increaseVerbosity(dummyValue, previous) {
