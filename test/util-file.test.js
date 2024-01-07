@@ -167,8 +167,6 @@ describe('getRemoteFile function', () => {
   const invalidRemoteFilePath = 'https://example.com/nonexistent-file.txt';
 
   test('should download remote file content successfully', async () => {
-    // Mocking the https.get function
-
     const content = await getRemoteFile(validRemoteFilePath);
     const fileContent = fs.readFileSync(validFilePath, 'utf8');
     expect(content).toEqual(fileContent);
