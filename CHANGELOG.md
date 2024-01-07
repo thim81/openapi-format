@@ -1,12 +1,14 @@
 ## unreleased
 
+## [1.15.4] - 2024-01-07
+
 - Added support for local or remote files for any config file
 - Refactored the file handling
 - Added additional tests
 
 ## [1.15.3] - 2024-01-05
 
-- Bumped dependencies traverse and node-version of the Github actions
+- Bumped dependencies traverse and node-version of the GitHub actions
 
 ## [1.15.2] - 2023-11-09
 
