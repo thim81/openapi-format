@@ -127,5 +127,8 @@ describe('openapi-format CLI casing tests', () => {
     it('casing should not match', async () => {
       expect(of.changeCase(str, 'foo bar')).toBe('openapi-format');
     });
+    it('casing should keep custom characters', async () => {
+      expect(of.changeCase('{{openapi-format}}', 'snake_case', ['{{', '}}'])).toBe('{{openapi_format}}');
+    });
   });
 });
