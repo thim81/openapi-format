@@ -130,5 +130,11 @@ describe('openapi-format CLI casing tests', () => {
     it('casing should keep custom characters', async () => {
       expect(of.changeCase('{{openapi-format}}', 'snake_case', ['{{', '}}'])).toBe('{{openapi_format}}');
     });
+    it('casing should keep default @$ characters', async () => {
+      expect(of.changeCase('@openapi-format$}}', 'snake_case', )).toBe('@openapi_format$');
+    });
+    it('casing should remove all custom characters', async () => {
+      expect(of.changeCase('@openapi-$format}}', 'snake_case', [])).toBe('openapi_format');
+    });
   });
 });
