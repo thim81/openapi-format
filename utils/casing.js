@@ -79,13 +79,14 @@ function changeArrayObjKeysCase(node, caseType) {
 
 /**
  * Change case function
- * @param {string} valueAsString
- * @param {string} caseType
+ * @param {string} valueAsString The value to change
+ * @param {string} caseType The case type to change to
+ * @param {string[]} customKeepChars Custom characters to keep
  * @returns {string}
  */
-function changeCase(valueAsString, caseType) {
+function changeCase(valueAsString, caseType, customKeepChars = null) {
   if (!isString(valueAsString) || valueAsString === "") return valueAsString
-  const keepChars = ['$', '@']
+  const keepChars = customKeepChars || ['$', '@']
   const normCaseType = camelCase(caseType)
 
   switch (normCaseType) {

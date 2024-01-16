@@ -1,0 +1,24 @@
+openapi: 3.0.2
+paths:
+  /payment_requests:
+    post:
+      operationId: CreatePaymentRequest
+      summary: Create Payment Request
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+          x-internal-field: true
+        - $ref: '#/components/parameters/BusinessID'
+          x-internal-field: true
+        - $ref: '#/components/parameters/CallbackURL'
+        - $ref: '#/components/parameters/ServiceID'
+          x-internal-field: true
+
+components:
+  schemas:
+    Pet:
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        category:
+          $ref: '#/components/schemas/Category'
+          x-internal-field: true

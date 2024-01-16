@@ -1,5 +1,7 @@
 ## unreleased
 
+- Filter - Flags for $ref items (#103)
+
 ## [1.15.4] - 2024-01-07
 
 - Added support for local or remote files for any config file

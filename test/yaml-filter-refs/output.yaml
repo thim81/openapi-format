@@ -1,0 +1,14 @@
+openapi: 3.0.2
+paths:
+  /payment_requests:
+    post:
+      operationId: CreatePaymentRequest
+      summary: Create Payment Request
+      parameters:
+        - $ref: '#/components/parameters/CallbackURL'
+components:
+  schemas:
+    Pet:
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
