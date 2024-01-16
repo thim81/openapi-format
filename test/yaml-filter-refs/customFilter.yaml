@@ -1,0 +1,10 @@
+#methods:
+#  - get
+flags:
+  - x-internal-field
+flagValues: []
+tags: []
+#operationIds:
+#  - addPet
+#  - findPetsByStatus
+

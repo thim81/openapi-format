@@ -313,8 +313,15 @@ async function openapiFilter(oaObj, options) {
     if (typeof node !== 'object' && !Array.isArray(node)) {
       // Filter out fields matching the flags
       if (filterProps.length > 0 && filterProps.includes(this.key)) {
-        // debugFilterStep = 'Filter - Single field - flags'
-        this.parent.remove();
+        if (this.parent && this.parent.parent && Array.isArray(this.parent.parent.node)) {
+          // debugFilterStep = 'Filter - Array - flags'
+          const arrayItem = this.parent.parent.node
+          const filteredArray = arrayItem.filter(item => !item[this.key]);
+          this.parent.parent.update(filteredArray)
+        } else {
+          // debugFilterStep = 'Filter - Single field - flags'
+          this.parent.remove();
+        }
       }
 
       // Filter out fields matching the flagValues
