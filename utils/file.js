@@ -2,7 +2,8 @@
 
 const fs = require('fs');
 const yaml = require('@stoplight/yaml');
-const https = require("https");
+const http = require('http');
+const https = require('https');
 
 /**
  * Parse a JSON/YAML file and returns the parsed object
@@ -122,8 +123,10 @@ async function getLocalFile(filePath) {
  * @returns {Promise<string>} File content.
  */
 async function getRemoteFile(filePath) {
+  const protocol = filePath.startsWith('https://') ? https : http;
+
   const inputContent = await new Promise((resolve, reject) => {
-    https.get(filePath, (res) => {
+    protocol.get(filePath, (res) => {
       if (res.statusCode < 200 || res.statusCode >= 300) {
         reject(new Error(`${res.statusCode} ${res.statusMessage}`));
       }
