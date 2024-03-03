@@ -217,6 +217,7 @@ extended options for filtering OpenAPI documents.
 | inverseOperationIds    | OpenAPI operation ID's that will be kept    | array | ['findPetsByStatus','updatePet']          |
 | operations             | OpenAPI operations                          | array | ['GET::/pets','PUT::/pets']               |
 | flags                  | Custom flags                                | array | ['x-exclude','x-internal']                |
+| inverseFlags           | Custom flags that will kept                 | array | ['x-exclude','x-internal']                |
 | flagValues             | Custom flags with a specific value          | array | ['x-version: 1.0','x-version: 3.0']       |
 | inverseFlagValues      | Custom flags with a value that will be kept | array | ['x-version: 1.0','x-version: 3.0']       |
 | responseContent        | Response Content types                      | array | ['application/json','application/html']   |
@@ -345,7 +346,7 @@ This will target only the "GET" method and any path matching any folder behind t
 Method & Path wildcard matching example: `"*::/pets/*"`
 A combination of wildcards for the method and path parts is even possible.
 
-### Filter - flags
+### Filter - flags/inverseFlags
 
 => **flags**: Refers to a custom property that can be set on any field in the OpenAPI document.
 
@@ -364,6 +365,8 @@ paths:
         get:
             x-exclude: true
 ```
+
+=> **inverseFlags**: This option does the inverse filtering, by keeping only the operations, components, tags, x-tagGroups that match the flag(s). This is a very aggressive option to keep only the items that are needed.
 
 ### Filter - flagValues/inverseFlagValues
 
