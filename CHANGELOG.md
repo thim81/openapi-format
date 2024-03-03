@@ -1,5 +1,7 @@
 ## unreleased
 
+- Support http & https remote files
+
 ## [1.16.0] - 2024-01-16
 
 - Filter - Flags for $ref items (#103)
