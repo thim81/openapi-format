@@ -1,5 +1,6 @@
 ## unreleased
 
+- Filter - Added inverse filtering for flags for operations, components, tags, x-tagGroups
 - Filter - Added inverse filtering for flagValues for operations, components, tags, x-tagGroups
 - Support http & https remote files
 
