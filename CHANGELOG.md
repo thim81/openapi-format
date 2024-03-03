@@ -1,5 +1,6 @@
 ## unreleased
 
+- Filter - Added inverse filtering for flagValues via `inverseFlagValues`
 - Support http & https remote files
 
 ## [1.16.0] - 2024-01-16

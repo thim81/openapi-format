@@ -8,6 +8,7 @@
   "operations": [],
   "flags": [],
   "flagValues": [],
+  "inverseFlagValues": [],
   "unusedComponents": [],
   "stripFlags": [],
   "responseContent": [],
