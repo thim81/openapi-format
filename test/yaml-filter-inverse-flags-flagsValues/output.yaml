@@ -27,6 +27,7 @@ x-tagGroups:
   - name: Pet Store
     x-release: preview
     tags:
+      - pet
       - store
 paths:
   /pet:
