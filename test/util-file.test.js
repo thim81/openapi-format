@@ -178,10 +178,11 @@ describe('openapi-format CLI file tests', () => {
   });
 
   describe('getRemoteFile function', () => {
-    const validRemoteFilePath = 'https://raw.githubusercontent.com/thim81/openapi-format/main/defaultFilter.json';
-    const validFilePath = __dirname + '/../defaultFilter.json';
+    const validRemoteFilePath = 'https://raw.githubusercontent.com/thim81/openapi-format/main/defaultSort.json';
+    const validFilePath = __dirname + '/../defaultSort.json';
 
-    const invalidRemoteFilePath = 'https://example.com/nonexistent-file.txt';
+    const invalidRemoteFileHttp = 'http://example.com/nonexistent-file.txt';
+    const invalidRemoteFileHttps = 'https://example.com/nonexistent-file.txt';
 
     test('should download remote file content successfully', async () => {
       const content = await getRemoteFile(validRemoteFilePath);
@@ -189,9 +190,23 @@ describe('openapi-format CLI file tests', () => {
       expect(content).toEqual(fileContent);
     });
 
-    test('should throw an error for nonexistent remote file', async () => {
+    test('should download remote file content successfully', async () => {
+      const content = await getRemoteFile(validRemoteFilePath);
+      const fileContent = fs.readFileSync(validFilePath, 'utf8');
+      expect(content).toEqual(fileContent);
+    });
+
+    test('should throw an error for https nonexistent remote file', async () => {
       try {
-        await getRemoteFile(invalidRemoteFilePath);
+        await getRemoteFile(invalidRemoteFileHttps);
+      } catch (err) {
+        expect(err.message).toMatch(/404 Not Found/);
+      }
+    });
+
+    test('should throw an error for http nonexistent remote file', async () => {
+      try {
+        await getRemoteFile(invalidRemoteFileHttp);
       } catch (err) {
         expect(err.message).toMatch(/404 Not Found/);
       }
