@@ -1,6 +1,8 @@
 ## unreleased
 
-- Support http & https remote files
+## [1.16.1] - 2024-03-06
+
+- Bugfix to support http & https remote files
 
 ## [1.16.0] - 2024-01-16
 
