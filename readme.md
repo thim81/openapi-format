@@ -207,22 +207,24 @@ matching item from the OpenAPI document. You can combine multiple types to filte
 For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
 extended options for filtering OpenAPI documents.
 
-| Type                   | Description                                | Type  | Examples                                  |
-|------------------------|--------------------------------------------|-------|-------------------------------------------|
-| methods                | OpenAPI methods.                           | array | ['get','post','put']                      |
-| inverseMethods         | OpenAPI methods that will be kept          | array | ['get','post','put']                      |
-| tags                   | OpenAPI tags                               | array | ['pet','user']                            |
-| inverseTags            | OpenAPI tags that will be kept             | array | ['pet','user']                            |
-| operationIds           | OpenAPI operation ID's                     | array | ['findPetsByStatus','updatePet']          |
-| inverseOperationIds    | OpenAPI operation ID's that will be kept   | array | ['findPetsByStatus','updatePet']          |
-| operations             | OpenAPI operations                         | array | ['GET::/pets','PUT::/pets']               |
-| flags                  | Custom flags                               | array | ['x-exclude','x-internal']                |
-| flagValues             | Custom flags with a specific value         | array | ['x-version: 1.0','x-version: 3.0']       |
-| responseContent        | Response Content types                     | array | ['application/json','application/html']   |
-| inverseResponseContent | Response Content types that will kept      | array | ['application/ld+json']                   |
-| unusedComponents       | Unused components                          | array | ['examples','schemas']                    |
-| stripFlags             | Custom flags that will be stripped         | array | ['x-exclude','x-internal']                |
-| textReplace            | Search & replace values to replace         | array | [{'searchFor':'Pet','replaceWith':'Dog'}] |
+| Type                   | Description                                 | Type  | Examples                                  |
+|------------------------|---------------------------------------------|-------|-------------------------------------------|
+| methods                | OpenAPI methods.                            | array | ['get','post','put']                      |
+| inverseMethods         | OpenAPI methods that will be kept           | array | ['get','post','put']                      |
+| tags                   | OpenAPI tags                                | array | ['pet','user']                            |
+| inverseTags            | OpenAPI tags that will be kept              | array | ['pet','user']                            |
+| operationIds           | OpenAPI operation ID's                      | array | ['findPetsByStatus','updatePet']          |
+| inverseOperationIds    | OpenAPI operation ID's that will be kept    | array | ['findPetsByStatus','updatePet']          |
+| operations             | OpenAPI operations                          | array | ['GET::/pets','PUT::/pets']               |
+| flags                  | Custom flags                                | array | ['x-exclude','x-internal']                |
+| inverseFlags           | Custom flags that will kept                 | array | ['x-exclude','x-internal']                |
+| flagValues             | Custom flags with a specific value          | array | ['x-version: 1.0','x-version: 3.0']       |
+| inverseFlagValues      | Custom flags with a value that will be kept | array | ['x-version: 1.0','x-version: 3.0']       |
+| responseContent        | Response Content types                      | array | ['application/json','application/html']   |
+| inverseResponseContent | Response Content types that will kept       | array | ['application/ld+json']                   |
+| unusedComponents       | Unused components                           | array | ['examples','schemas']                    |
+| stripFlags             | Custom flags that will be stripped          | array | ['x-exclude','x-internal']                |
+| textReplace            | Search & replace values to replace          | array | [{'searchFor':'Pet','replaceWith':'Dog'}] |
 
 Some more details on the available filter types:
 
@@ -344,7 +346,7 @@ This will target only the "GET" method and any path matching any folder behind t
 Method & Path wildcard matching example: `"*::/pets/*"`
 A combination of wildcards for the method and path parts is even possible.
 
-### Filter - flags
+### Filter - flags/inverseFlags
 
 => **flags**: Refers to a custom property that can be set on any field in the OpenAPI document.
 
@@ -364,7 +366,9 @@ paths:
             x-exclude: true
 ```
 
-### Filter - flagValues
+=> **inverseFlags**: This option does the inverse filtering, by keeping only the operations, components, tags, x-tagGroups that match the flag(s). This is a very aggressive option to keep only the items that are needed.
+
+### Filter - flagValues/inverseFlagValues
 
 => **flagValues**: Refers to a flag, custom property which can be set on any field in the OpenAPI document, and the combination with the value for that flag.
 
@@ -417,6 +421,8 @@ paths:
 ```
 
 Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-value) and [flagValues for array values](test/yaml-filter-custom-flagsvalue-array) for a practical example.
+
+=> **inverseFlagValues**: This option does the inverse filtering, by keeping only the operations, components, tags, x-tagGroups that match the flag with the specific value. This is a very aggressive option to keep only the items that are needed.
 
 ### Filter - responseContent/inverseResponseContent
 

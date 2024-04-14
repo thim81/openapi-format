@@ -147,6 +147,7 @@ async function openapiFilter(oaObj, options) {
   const inverseFilterKeys = [...filterSet.inverseMethods];
   const inverseFilterProps = [...filterSet.inverseOperationIds];
   const inverseFilterArray = [...filterSet.inverseTags];
+  const inverseFilterFlags = [...filterSet.inverseFlags];
   const inverseFilterResponseContent = [...filterSet.inverseResponseContent];
 
   const stripFlags = [...filterSet.stripFlags];
@@ -157,6 +158,10 @@ async function openapiFilter(oaObj, options) {
   const filterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.flagValues));
   const filterFlagValues = [...filterSet.flagValues];
   const filterFlagHash = filterFlagValues.map(o => (JSON.stringify(o)));
+
+  // Convert invert flag values to flags
+  const inverseFilterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.inverseFlagValues));
+  const inverseFilterFlagValues = [...filterSet.inverseFlagValues];
 
   // Initiate components tracking
   const comps = {
@@ -307,6 +312,41 @@ async function openapiFilter(oaObj, options) {
           }
         }
       }
+
+      // Keep fields matching the inverseFlags array
+      if (inverseFilterFlags.length > 0 && (this.path[0] === 'tags' || this.path[0] === 'x-tagGroups') && this.level === 1) {
+        let oaTags = JSON.parse(JSON.stringify(node));
+
+        oaTags = oaTags.filter(itmObj => {
+          return inverseFilterFlags.some(flagKey => {
+            return itmObj.hasOwnProperty(flagKey);
+          });
+        });
+
+        // Update the node with the filtered array
+        node = oaTags;
+        this.update(node);
+      }
+
+      // Keep the fields matching the inverseFlagValues array
+      if (inverseFilterFlagValuesKeys.length > 0 && (this.path[0] === 'tags' || this.path[0] === 'x-tagGroups') && this.level === 1) {
+        let oaTags = JSON.parse(JSON.stringify(node));
+
+        oaTags = oaTags.filter(itmObj => {
+          // keep the item in the array if any of the inverseFilterFlags is a property of itmObj with a matching value
+          return inverseFilterFlagValues.some(flagObj => {
+            const flagKey = Object.keys(flagObj)[0];  // Get the key of the flagObj
+            const flagValue = flagObj[flagKey];  // Get the value of the flagObj
+
+            // Check if the key exists in itmObj and if its value matches the value in flagObj
+            return itmObj.hasOwnProperty(flagKey) && itmObj[flagKey] === flagValue;
+          });
+        });
+
+        // Update the node with the filtered array
+        node = oaTags;
+        this.update(node);
+      }
     }
 
     // Single field matching
@@ -371,6 +411,37 @@ async function openapiFilter(oaObj, options) {
     if (inverseFilterArray.length > 0 && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
       if ((node.tags === undefined || !inverseFilterArray.some(i => node.tags.includes(i)))) {
         this.delete();
+      }
+    }
+
+    // Keep fields matching the inverseFlags
+    if (inverseFilterFlags.length > 0
+      && ((this.path[0] === 'paths' && this.level === 3) || (this.path[0] === 'components' && this.level === 3))) {
+      const itmObj = node;
+      const matchesInverseFlag = inverseFilterFlags.some(flagKey => {
+        return itmObj.hasOwnProperty(flagKey);
+      });
+
+      if (!matchesInverseFlag) {
+        // debugFilterStep = 'Filter - Single field - inverseFlags'
+        this.remove();
+      }
+    }
+
+    // Keep fields matching the inverseFlagValues
+    if (inverseFilterFlagValuesKeys.length > 0 && ((this.path[0] === 'paths' && this.level === 3) || (this.path[0] === 'components' && this.level === 3))) {
+      const itmObj = node;
+      const matchesInverseFlag = inverseFilterFlagValues.some(flagObj => {
+        const flagKey = Object.keys(flagObj)[0];  // Get the key of the flagObj
+        const flagValue = flagObj[flagKey];  // Get the value of the flagObj
+
+        // Check if the key exists in itmObj and if its value matches the value in flagObj
+        return itmObj.hasOwnProperty(flagKey) && itmObj[flagKey] === flagValue;
+      });
+
+      if (!matchesInverseFlag) {
+        // debugFilterStep = 'Filter - Single field - inverseFlagValues - single value'
+        this.remove();
       }
     }
 
