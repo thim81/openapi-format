@@ -181,8 +181,8 @@ describe('openapi-format CLI file tests', () => {
     const validRemoteFilePath = 'https://raw.githubusercontent.com/thim81/openapi-format/main/defaultSort.json';
     const validFilePath = __dirname + '/../defaultSort.json';
 
-    const invalidRemoteFileHttp = 'http://example.com/nonexistent-file.txt';
-    const invalidRemoteFileHttps = 'https://example.com/nonexistent-file.txt';
+    const invalidRemoteFileHttp = 'http://google.com/nonexistent-file.txt';
+    const invalidRemoteFileHttps = 'https://google.com/nonexistent-file.txt';
 
     test('should download remote file content successfully', async () => {
       const content = await getRemoteFile(validRemoteFilePath);
