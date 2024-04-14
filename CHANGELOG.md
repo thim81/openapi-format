@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.17.0] - 2024-04-14
+
 - Filter - Added inverse filtering for flags for operations, components, tags, x-tagGroups
 - Filter - Added inverse filtering for flagValues for operations, components, tags, x-tagGroups
 
