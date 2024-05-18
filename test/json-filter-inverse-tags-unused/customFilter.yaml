@@ -1,0 +1,10 @@
+inverseTags:
+  - components
+unusedComponents:
+  - schemas
+  - parameters
+  - examples
+  - headers
+  - requestBodies
+  - responses
+preserveEmptyObjects: true
