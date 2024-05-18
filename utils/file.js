@@ -47,9 +47,13 @@ async function stringify(obj, options = {}) {
     const toYaml = options.format !== 'json' && (!options.hasOwnProperty('json') || options.json !== true);
 
     if (toYaml) {
+      // Set YAML options
+      const yamlOptions = {}
+      yamlOptions.lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
+
       // Convert Object to YAML string
-      const lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
-      output = yaml.safeStringify(obj, {lineWidth});
+      output = yaml.safeStringify(obj, yamlOptions);
+      output = addQuotesToRefInString(output);
 
       // Decode large number YAML values safely before writing output
       output = decodeLargeNumbers(output);
@@ -203,6 +207,15 @@ function decodeLargeNumbers(output, isJson = false) {
   }
 }
 
+/**
+ * Add quotes to $ref in string
+ * @param yamlString YAML string.
+ * @returns {*} YAML string with quotes.
+ */
+function addQuotesToRefInString(yamlString) {
+  return yamlString.replace(/(\$ref:\s*)([^"'\s]+)/g, '$1"$2"');
+}
+
 module.exports = {
   parseFile,
   stringify,
@@ -211,4 +224,5 @@ module.exports = {
   decodeLargeNumbers,
   getLocalFile,
   getRemoteFile,
+  addQuotesToRefInString
 };

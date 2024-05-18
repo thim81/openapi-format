@@ -6,7 +6,7 @@ const {
   decodeLargeNumbers,
   encodeLargeNumbers,
   getRemoteFile,
-  getLocalFile, stringify
+  getLocalFile, stringify, addQuotesToRefInString
 } = require("../utils/file");
 const yaml = require('@stoplight/yaml');
 const {describe} = require("@jest/globals");
@@ -315,5 +315,25 @@ describe('openapi-format CLI file tests', () => {
     });
   });
 
+  describe('addQuotesToRefInString function', () => {
+    test('should add " quotes to $ref in string', () => {
+      const input = '$ref: #/components/schemas/Example';
+      const output = addQuotesToRefInString(input);
+      expect(output).toBe('$ref: "#/components/schemas/Example"');
+    })
+
+    test('should keep double quotes to $ref in string', () => {
+      const input = '$ref: "#/components/schemas/Example"';
+      const output = addQuotesToRefInString(input);
+      expect(output).toBe('$ref: "#/components/schemas/Example"');
+    })
+
+    test('should keep single quotes to $ref in string', () => {
+      const input = "$ref: '#/components/schemas/Example'";
+      const output = addQuotesToRefInString(input);
+      expect(output).toBe("$ref: '#/components/schemas/Example'");
+    })
+
+  })
 });
 
