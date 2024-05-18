@@ -34,7 +34,7 @@
     "@stoplight/yaml": "^4.3.0",
     "case-anything": "2.1.10",
     "commander": "^7.1.0",
-    "traverse": "^0.6.8"
+    "traverse": "^0.6.9"
   },
   "devDependencies": {
     "jest": "^27.5.1"

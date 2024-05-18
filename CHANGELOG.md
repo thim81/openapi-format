@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.17.1] - 2024-05-18
+
+- Bugfix to keep quotes for $ref values (#108)
+
 ## [1.17.0] - 2024-04-14
 
 - Filter - Added inverse filtering for flags for operations, components, tags, x-tagGroups
