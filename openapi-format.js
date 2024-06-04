@@ -26,7 +26,7 @@ const {
   convertImageBase64,
   convertMultiPartBinary, convertConst, convertExclusiveMinimum, convertExclusiveMaximum, setInObject
 } = require("./utils/convert");
-const {parseFile, writeFile, stringify} = require("./utils/file");
+const {parseFile, writeFile, stringify, detectFormat, parseString} = require("./utils/file");
 
 /**
  * OpenAPI sort function
@@ -42,8 +42,8 @@ async function openapiSort(oaObj, options) {
   }
 
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-  let sortSet = options.sortSet || JSON.parse(fs.readFileSync(__dirname + "/defaultSort.json", 'utf8'));
-  let sortComponentsSet = options.sortComponentsSet || JSON.parse(fs.readFileSync(__dirname + "/defaultSortComponents.json", 'utf8'));
+  let sortSet = options.sortSet || await parseFile(__dirname + "/defaultSort.json");
+  let sortComponentsSet = options.sortComponentsSet || await parseFile(__dirname + "/defaultSortComponents.json");
   let debugStep = '' // uncomment // debugStep below to see which sort part is triggered
 
   // Recursive traverse through OpenAPI document
@@ -130,14 +130,14 @@ async function openapiSort(oaObj, options) {
  */
 async function openapiFilter(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-  let defaultFilter = await parseFile(__dirname + "/defaultFilter.json");
+  let defaultFilter = options.defaultFilter || await parseFile(__dirname + "/defaultFilter.json");
   let filterSet = Object.assign({}, defaultFilter, options.filterSet);
   const httpVerbs = ["get", "post", "put", "patch", "delete"];
   const fixedFlags = ["x-openapi-format-filter"]
   options.unusedDepth = options.unusedDepth || 0;
 
   // Merge object filters
-  const filterKeys = [...filterSet.methods];
+  const filterKeys = [...filterSet.methods].map(method => method.toLowerCase())
   const filterArray = [...filterSet.tags];
   const filterOperations = [...filterSet.operations];
   const filterProps = [...filterSet.operationIds, ...filterSet.flags, ...fixedFlags];
@@ -898,7 +898,9 @@ module.exports = {
   openapiConvertVersion: openapiConvertVersion,
   openapiRename: openapiRename,
   parseFile: parseFile,
+  parseString: parseString,
   stringify: stringify,
   writeFile: writeFile,
+  detectFormat: detectFormat,
   changeCase: changeCase
 };
