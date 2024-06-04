@@ -18,14 +18,7 @@ async function parseString(str, options = {}) {
   // Default to YAML format
   const toYaml = options.format !== 'json' && (!options.hasOwnProperty('json') || options.json !== true);
 
-  if (!toYaml) {
-    try {
-      // Try parsing as JSON
-      return JSON.parse(encodedContent);
-    } catch (jsonError) {
-      return jsonError;
-    }
-  } else {
+  if (toYaml) {
     try {
       const obj = yaml.parse(encodedContent);
       if (typeof obj === 'object') {
@@ -35,6 +28,13 @@ async function parseString(str, options = {}) {
       }
     } catch (yamlError) {
       return yamlError;
+    }
+  } else {
+    try {
+      // Try parsing as JSON
+      return JSON.parse(encodedContent);
+    } catch (jsonError) {
+      return jsonError;
     }
   }
 }
