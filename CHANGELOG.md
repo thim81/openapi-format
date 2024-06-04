@@ -1,5 +1,9 @@
 ## unreleased
 
+- Allow setting defaults via options
+- Added support for uppercased filter methods
+- Added parseString, detectFormat, isJson, isYaml functions
+
 ## [1.17.1] - 2024-05-18
 
 - Bugfix to keep quotes for $ref values (#108)
