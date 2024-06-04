@@ -180,18 +180,18 @@ describe('openapi-format CLI file tests', () => {
       expect(result).toEqual({name: 'John', age: 30});
     });
 
-    it.skip('should return YAML parsing error if YAML parsing fail', async () => {
-      const yamlString = '{"name":"John","age":30,}'; // Invalid YAML
-      const result = await parseString(yamlString, {format: 'yaml'});
+    it('should return YAML parsing error if YAML parsing fail', async () => {
+      const invalidString = '#name 1John\nage 30#'; // Invalid YAML
+      const result = await parseString(invalidString, {format: 'yaml'});
       expect(result).toBeInstanceOf(SyntaxError);
     });
   });
 
   describe('isJSON', () => {
-    it('should return parsed object for valid JSON string', async () => {
+    it('should return true for valid JSON string', async () => {
       const jsonString = '{"name":"John","age":30}';
       const result = await isJSON(jsonString);
-      expect(result).toEqual({name: 'John', age: 30});
+      expect(result).toEqual(true);
     });
 
     it('should return false for invalid JSON string', async () => {
@@ -208,9 +208,9 @@ describe('openapi-format CLI file tests', () => {
       expect(result).toBe(true);
     });
 
-    it.skip('should return false for invalid YAML string', async () => {
-      const yamlString = '{"name":"John","age":30,}';
-      const result = await isYaml(yamlString);
+    it('should return false for invalid YAML string', async () => {
+      const invalidString = '#name 1John\nage 30#';
+      const result = await isYaml(invalidString);
       expect(result).toBe(false);
     });
   });
@@ -229,7 +229,7 @@ describe('openapi-format CLI file tests', () => {
     });
 
     it('should return "unknown" for invalid string', async () => {
-      const invalidString = 'name: John\nage: 30:'; // Invalid format
+      const invalidString = '#name 1John\nage 30#'; // Invalid format
       const result = await detectFormat(invalidString);
       expect(result).toBe('unknown');
     });

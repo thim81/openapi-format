@@ -27,7 +27,12 @@ async function parseString(str, options = {}) {
     }
   } else {
     try {
-      return yaml.parse(encodedContent);
+      const obj = yaml.parse(encodedContent);
+      if (typeof obj === 'object') {
+        return obj
+      } else {
+        return SyntaxError('Invalid YAML');
+      }
     } catch (yamlError) {
       return yamlError;
     }
@@ -45,8 +50,8 @@ async function isJSON(str) {
 
 async function isYaml(str) {
   try {
-    yaml.parse(str);
-    return true
+    const rest = yaml.parse(str);
+    return (typeof rest === 'object')
   } catch (e) {
     return false;
   }
