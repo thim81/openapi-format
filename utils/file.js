@@ -6,6 +6,68 @@ const http = require('http');
 const https = require('https');
 
 /**
+ * Converts a string object to a JSON/YAML object.
+ * @param str String.
+ * @param options Parse options
+ * @returns {Promise<*>} Object data.
+ */
+async function parseString(str, options = {}) {
+  // Convert large number value safely before parsing
+  const encodedContent = encodeLargeNumbers(str);
+
+  // Default to YAML format
+  const toYaml = options.format !== 'json' && (!options.hasOwnProperty('json') || options.json !== true);
+
+  if (toYaml) {
+    try {
+      const obj = yaml.parse(encodedContent);
+      if (typeof obj === 'object') {
+        return obj
+      } else {
+        return SyntaxError('Invalid YAML');
+      }
+    } catch (yamlError) {
+      return yamlError;
+    }
+  } else {
+    try {
+      // Try parsing as JSON
+      return JSON.parse(encodedContent);
+    } catch (jsonError) {
+      return jsonError;
+    }
+  }
+}
+
+async function isJSON(str) {
+  try {
+    JSON.parse(str);
+    return true
+  } catch (e) {
+    return false;
+  }
+}
+
+async function isYaml(str) {
+  try {
+    const rest = yaml.parse(str);
+    return (typeof rest === 'object')
+  } catch (e) {
+    return false;
+  }
+}
+
+async function detectFormat(str) {
+  if (await isJSON(str) !== false) {
+    return 'json';
+  } else if (await isYaml(str) !== false) {
+    return 'yaml';
+  } else {
+    return 'unknown';
+  }
+}
+
+/**
  * Parse a JSON/YAML file and returns the parsed object
  * @param filePath Path to the JSON/YAML file.
  * @returns {Promise<unknown>} Parsed data object.
@@ -13,7 +75,7 @@ const https = require('https');
 async function parseFile(filePath) {
   try {
     const isRemoteFile = filePath.startsWith('http://') || filePath.startsWith('https://');
-    const isYamlFile = filePath.endsWith('.yaml') || filePath.endsWith('.yml');
+    // const isYamlFile = filePath.endsWith('.yaml') || filePath.endsWith('.yml');
 
     let fileContent;
     if (isRemoteFile) {
@@ -22,13 +84,9 @@ async function parseFile(filePath) {
       fileContent = await getLocalFile(filePath);
     }
 
-    // Convert large number value safely before parsing
-    const encodedContent = encodeLargeNumbers(fileContent);
+    // Encode & Parse file content
+    return parseString(fileContent)
 
-    // Parse file content
-    return isYamlFile
-      ? yaml.parse(encodedContent)
-      : JSON.parse(encodedContent);
   } catch (err) {
     throw err;
   }
@@ -217,7 +275,11 @@ function addQuotesToRefInString(yamlString) {
 }
 
 module.exports = {
+  parseString,
   parseFile,
+  isJSON,
+  isYaml,
+  detectFormat,
   stringify,
   writeFile,
   encodeLargeNumbers,
