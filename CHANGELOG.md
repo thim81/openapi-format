@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.17.2] - 2024-06-05
+
 - Allow setting defaults via options
 - Added support for uppercased filter methods
 - Added parseString, detectFormat, isJson, isYaml functions
