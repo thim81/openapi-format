@@ -76,7 +76,13 @@ Postman collections, test suites, ...
 - [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
 - [x] Support for OpenAPI 3.1 (beta)
-- [ ] Online playground (coming soon)
+- [x] Online playground (https://openapi-format-playground.vercel.app/)
+
+## Online playground
+
+The [OpenAPI-Format Playground](https://openapi-format-playground.vercel.app/) is a web-based tool for formatting and sorting OpenAPI documents, powered by the openapi-format CLI.
+
+More info about the features and usage, can be found in the [readme](https://github.com/thim81/openapi-format-playground?tab=readme-ov-file#features).
 
 ## Installation
 
