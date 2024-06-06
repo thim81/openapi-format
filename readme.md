@@ -18,6 +18,7 @@ The openapi-format CLI has the option to convert an OpenAPI 3.0 document to an O
 ## Table of content
 * [Use-cases](#use-cases)
 * [Features](#features)
+* [Online playground](#online-playground)
 * [Installation](#installation)
     + [Local Installation (recommended)](#local-installation-recommended)
     + [Global Installation](#global-installation)
