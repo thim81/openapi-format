@@ -137,31 +137,31 @@ async function openapiFilter(oaObj, options) {
   options.unusedDepth = options.unusedDepth || 0;
 
   // Merge object filters
-  const filterKeys = [...filterSet.methods].map(method => method.toLowerCase())
-  const filterArray = [...filterSet.tags];
-  const filterOperations = [...filterSet.operations];
-  const filterProps = [...filterSet.operationIds, ...filterSet.flags, ...fixedFlags];
-  const filterResponseContent = [...filterSet.responseContent];
+  const filterKeys = (filterSet.methods ?? []).filter(method => method != null).map(method => method.toLowerCase());
+  const filterArray = [...(filterSet.tags ?? [])];
+  const filterOperations = [...(filterSet.operations ?? [])];
+  const filterProps = [...(filterSet.operationIds ?? []), ...(filterSet.flags ?? []), ...(fixedFlags ?? [])];
+  const filterResponseContent = [...(filterSet.responseContent ?? [])];
 
   // Inverse object filters
-  const inverseFilterKeys = [...filterSet.inverseMethods];
-  const inverseFilterProps = [...filterSet.inverseOperationIds];
-  const inverseFilterArray = [...filterSet.inverseTags];
-  const inverseFilterFlags = [...filterSet.inverseFlags];
-  const inverseFilterResponseContent = [...filterSet.inverseResponseContent];
+  const inverseFilterKeys = [...(filterSet.inverseMethods ?? [])];
+  const inverseFilterProps = [...(filterSet.inverseOperationIds ?? [])];
+  const inverseFilterArray = [...(filterSet.inverseTags ?? [])];
+  const inverseFilterFlags = [...(filterSet.inverseFlags ?? [])];
+  const inverseFilterResponseContent = [...(filterSet.inverseResponseContent ?? [])];
 
-  const stripFlags = [...filterSet.stripFlags];
-  const stripUnused = [...filterSet.unusedComponents];
+  const stripFlags = [...(filterSet.stripFlags ?? [])];
+  const stripUnused = [...(filterSet.unusedComponents ?? [])];
   const textReplace = filterSet.textReplace || [];
 
   // Convert flag values to flags
-  const filterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.flagValues));
-  const filterFlagValues = [...filterSet.flagValues];
+  const filterFlagValuesKeys = Object.keys(Object.assign({}, ...(filterSet.flagValues ?? [])));
+  const filterFlagValues = [...(filterSet.flagValues ?? [])];
   const filterFlagHash = filterFlagValues.map(o => (JSON.stringify(o)));
 
   // Convert invert flag values to flags
-  const inverseFilterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.inverseFlagValues));
-  const inverseFilterFlagValues = [...filterSet.inverseFlagValues];
+  const inverseFilterFlagValuesKeys = Object.keys(Object.assign({}, ...(filterSet.inverseFlagValues ?? [])));
+  const inverseFilterFlagValues = [...(filterSet.inverseFlagValues ?? [])];
 
   // Initiate components tracking
   const comps = {
