@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.18.0] - 2024-06-06
+
 - Bumped minimum NodeJS version to 18.x
 - Refactor to handle null and undefined values in filterSet properties
 
