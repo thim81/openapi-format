@@ -289,46 +289,48 @@ function analyzeOpenApi(oaObj) {
   const responseContent = new Set();
   const flagValues = new Set();
 
-  Object.keys(oaObj.paths).forEach((path) => {
-    paths.push(path);
-    const pathItem = oaObj.paths[path];
+  if (oaObj && oaObj.paths) {
+    Object.keys(oaObj.paths).forEach((path) => {
+      paths.push(path);
+      const pathItem = oaObj.paths[path];
 
-    Object.keys(pathItem).forEach((method) => {
-      methods.add(method.toUpperCase());
-      const operation = pathItem[method];
-      operations.push(`${method.toUpperCase()}::${path}`);
+      Object.keys(pathItem).forEach((method) => {
+        methods.add(method.toUpperCase());
+        const operation = pathItem[method];
+        operations.push(`${method.toUpperCase()}::${path}`);
 
-      if (operation?.tags && Array.isArray(operation.tags)) {
-        operation.tags.forEach((tag) => {
-          if (tag.startsWith('x-')) {
-            flags.add(tag);
-          } else {
-            tags.add(tag);
-          }
-        });
-      }
-
-      if (operation?.operationId) {
-        operationIds.push(operation.operationId);
-      }
-
-      if (operation?.responses) {
-        Object.values(operation.responses).forEach((response) => {
-          if (response?.content) {
-            Object.keys(response.content).forEach((contentType) => {
-              responseContent.add(contentType);
-            });
-          }
-        });
-      }
-
-      Object.keys(operation).forEach((key) => {
-        if (key.startsWith('x-')) {
-          flagValues.add(`${key}: ${operation[key]}`);
+        if (operation?.tags && Array.isArray(operation.tags)) {
+          operation.tags.forEach((tag) => {
+            if (tag.startsWith('x-')) {
+              flags.add(tag);
+            } else {
+              tags.add(tag);
+            }
+          });
         }
+
+        if (operation?.operationId) {
+          operationIds.push(operation.operationId);
+        }
+
+        if (operation?.responses) {
+          Object.values(operation.responses).forEach((response) => {
+            if (response?.content) {
+              Object.keys(response.content).forEach((contentType) => {
+                responseContent.add(contentType);
+              });
+            }
+          });
+        }
+
+        Object.keys(operation).forEach((key) => {
+          if (key.startsWith('x-')) {
+            flagValues.add(`${key}: ${operation[key]}`);
+          }
+        });
       });
     });
-  });
+  }
 
   return {
     methods: Array.from(methods),

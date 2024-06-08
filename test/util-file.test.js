@@ -10,6 +10,7 @@ const {
 } = require("../utils/file");
 const yaml = require('@stoplight/yaml');
 const {describe} = require("@jest/globals");
+const mockOpenApi = require("./__utils__/mockOpenApi.json");
 
 describe('openapi-format CLI file tests', () => {
 
@@ -411,7 +412,7 @@ describe('openapi-format CLI file tests', () => {
   })
 
   describe('analyzeOpenApi function', () => {
-    test('should extract custom tags, regular tags, operationIds, paths, methods, operations, responseContent, and flagValues', () => {
+    test('should extract OpenAPI info', () => {
       const mockOpenApi = require('./__utils__/mockOpenApi.json');
       const result = analyzeOpenApi(mockOpenApi);
 
@@ -424,6 +425,22 @@ describe('openapi-format CLI file tests', () => {
         operations: ["GET::/pets", "PUT::/pets"],
         responseContent: ["application/json", "application/xml"],
         flagValues: ["x-version: 1.0"]
+      });
+    });
+
+    test('should handle null when extracting OpenAPI info', () => {
+      const mockOpenApi = require('./__utils__/mockOpenApi.json');
+      const result = analyzeOpenApi(null);
+
+      expect(result).toEqual({
+        "flagValues": [],
+        "flags": [],
+        "methods": [],
+        "operationIds": [],
+        "operations": [],
+        "paths": [],
+        "responseContent": [],
+        "tags": []
       });
     });
   });
