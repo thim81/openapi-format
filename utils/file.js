@@ -274,6 +274,74 @@ function addQuotesToRefInString(yamlString) {
   return yamlString.replace(/(\$ref:\s*)([^"'\s]+)/g, '$1"$2"');
 }
 
+/**
+ * Analyze the OpenAPI document.
+ * @param {object} openApiObj - The OpenAPI document as a JSON object.
+ * @returns {{operations: *[], methods: any[], paths: *[], flags: any[], operationIds: *[], flagValues: any[], responseContent: any[], tags: any[]}}
+ */
+function analyzeOpenApi(openApiObj) {
+  const flags = new Set();
+  const tags = new Set();
+  const operationIds = [];
+  const paths = [];
+  const methods = new Set();
+  const operations = [];
+  const responseContent = new Set();
+  const flagValues = new Set();
+
+  Object.keys(openApiObj.paths).forEach((path) => {
+    paths.push(path);
+    const pathItem = openApiObj.paths[path];
+
+    Object.keys(pathItem).forEach((method) => {
+      methods.add(method.toUpperCase());
+      const operation = pathItem[method];
+      operations.push(`${method.toUpperCase()}::${path}`);
+
+      if (operation?.tags && Array.isArray(operation.tags)) {
+        operation.tags.forEach((tag) => {
+          if (tag.startsWith('x-')) {
+            flags.add(tag);
+          } else {
+            tags.add(tag);
+          }
+        });
+      }
+
+      if (operation?.operationId) {
+        operationIds.push(operation.operationId);
+      }
+
+      if (operation?.responses) {
+        Object.values(operation.responses).forEach((response) => {
+          if (response?.content) {
+            Object.keys(response.content).forEach((contentType) => {
+              responseContent.add(contentType);
+            });
+          }
+        });
+      }
+
+      Object.keys(operation).forEach((key) => {
+        if (key.startsWith('x-')) {
+          flagValues.add(`${key}: ${operation[key]}`);
+        }
+      });
+    });
+  });
+
+  return {
+    methods: Array.from(methods),
+    tags: Array.from(tags),
+    operationIds,
+    flags: Array.from(flags),
+    flagValues: Array.from(flagValues),
+    paths,
+    operations,
+    responseContent: Array.from(responseContent),
+  };
+}
+
 module.exports = {
   parseString,
   parseFile,
@@ -286,5 +354,6 @@ module.exports = {
   decodeLargeNumbers,
   getLocalFile,
   getRemoteFile,
+  analyzeOpenApi,
   addQuotesToRefInString
 };

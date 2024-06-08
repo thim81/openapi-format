@@ -26,7 +26,7 @@ const {
   convertImageBase64,
   convertMultiPartBinary, convertConst, convertExclusiveMinimum, convertExclusiveMaximum, setInObject
 } = require("./utils/convert");
-const {parseFile, writeFile, stringify, detectFormat, parseString} = require("./utils/file");
+const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi} = require("./utils/file");
 
 /**
  * OpenAPI sort function
@@ -902,5 +902,6 @@ module.exports = {
   stringify: stringify,
   writeFile: writeFile,
   detectFormat: detectFormat,
+  analyzeOpenApi: analyzeOpenApi,
   changeCase: changeCase
 };
