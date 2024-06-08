@@ -276,10 +276,10 @@ function addQuotesToRefInString(yamlString) {
 
 /**
  * Analyze the OpenAPI document.
- * @param {object} openApiObj - The OpenAPI document as a JSON object.
+ * @param {object} oaObj - The OpenAPI document as a JSON object.
  * @returns {{operations: *[], methods: any[], paths: *[], flags: any[], operationIds: *[], flagValues: any[], responseContent: any[], tags: any[]}}
  */
-function analyzeOpenApi(openApiObj) {
+function analyzeOpenApi(oaObj) {
   const flags = new Set();
   const tags = new Set();
   const operationIds = [];
@@ -289,9 +289,9 @@ function analyzeOpenApi(openApiObj) {
   const responseContent = new Set();
   const flagValues = new Set();
 
-  Object.keys(openApiObj.paths).forEach((path) => {
+  Object.keys(oaObj.paths).forEach((path) => {
     paths.push(path);
-    const pathItem = openApiObj.paths[path];
+    const pathItem = oaObj.paths[path];
 
     Object.keys(pathItem).forEach((method) => {
       methods.add(method.toUpperCase());
