@@ -128,6 +128,19 @@ describe("openapi-format CLI command", () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
+  it("should generate a playground share URL", async () => {
+    const path = `test/yaml-filter-custom`
+    const inputFile = `${path}/input.yaml`
+    const outputFile = `${path}/output.yaml`
+    const output = await getLocalFile(outputFile);
+    const setting = `${path}/customFilter.yaml`
+
+    let result = await testUtils.cli([inputFile, `--filterFile ${setting}`, `--playground`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain("🌐");
+  });
+
   it("should use the sortComponentsFile", async () => {
     const path = `test/yaml-sort-components`
     const inputFile = `${path}/input.yaml`
