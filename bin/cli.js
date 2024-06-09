@@ -256,7 +256,7 @@ async function run(oaFile, options) {
 
   if (options?.playground) {
     try {
-      const playgroundEndpoint = 'http://localhost:3000/api/share';
+      const playgroundEndpoint = 'https://openapi-format-playground.vercel.app/api/share';
       const config = {};
 
       if (options.sortSet !== undefined) config.sortSet = await stringify(options.sortSet);
@@ -294,7 +294,7 @@ async function run(oaFile, options) {
         console.log('Running in CI/CD environment, no Share URL generated');
       }
     } catch (err) {
-      console.error('\x1b[31m', 'Error sending to openapi-format playground:', err.message);
+      console.error('\x1b[31m', 'Error generating openapi-format playground URL:', err.message);
     }
   }
 }
