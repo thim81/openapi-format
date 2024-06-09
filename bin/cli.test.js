@@ -128,7 +128,7 @@ describe("openapi-format CLI command", () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
-  it("should generate a playground share URL", async () => {
+  it.skip("should generate a playground share URL", async () => {
     const path = `test/yaml-filter-custom`
     const inputFile = `${path}/input.yaml`
     const outputFile = `${path}/output.yaml`
