@@ -38,6 +38,7 @@ Options:
   --convertTo <oaVersion>                    convert the OpenAPI document to OpenAPI version 3.1
   --json                                     print the file to stdout as JSON
   --yaml                                     print the file to stdout as YAML
+  -p, --playground                           Open config in online playground
   --version                                  output the version number
   -v, --verbose                              verbosity that can be increased (default: 0)
   -h, --help                                 display help for command

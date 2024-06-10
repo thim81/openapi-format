@@ -1,5 +1,8 @@
 ## unreleased
 
+- CLI - option to open in online playground
+- Added OpenAPI analyze method 
+
 ## [1.18.0] - 2024-06-06
 
 - Bumped minimum NodeJS version to 18.x
@@ -27,7 +30,7 @@
 ## [1.16.0] - 2024-01-16
 
 - Filter - Flags for $ref items (#103)
-- Casing: Extended changeCase function with customKeepChars parameter
+- Casing - Extended changeCase function with customKeepChars parameter
 
 ## [1.15.4] - 2024-01-07
 

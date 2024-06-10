@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 "use strict";
 
-const fs = require('fs');
 const traverse = require('traverse');
 const {isString, isArray, isObject} = require("./utils/types");
 const {
@@ -26,7 +25,7 @@ const {
   convertImageBase64,
   convertMultiPartBinary, convertConst, convertExclusiveMinimum, convertExclusiveMaximum, setInObject
 } = require("./utils/convert");
-const {parseFile, writeFile, stringify, detectFormat, parseString} = require("./utils/file");
+const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi} = require("./utils/file");
 
 /**
  * OpenAPI sort function
@@ -133,7 +132,7 @@ async function openapiFilter(oaObj, options) {
   let defaultFilter = options.defaultFilter || await parseFile(__dirname + "/defaultFilter.json");
   let filterSet = Object.assign({}, defaultFilter, options.filterSet);
   const httpVerbs = ["get", "post", "put", "patch", "delete"];
-  const fixedFlags = ["x-openapi-format-filter"]
+  const fixedFlags = ["x-openapi-format-filter"];
   options.unusedDepth = options.unusedDepth || 0;
 
   // Merge object filters
@@ -187,7 +186,7 @@ async function openapiFilter(oaObj, options) {
   // Use options.unusedComp to collect unused components during multiple recursion
   if (!options.unusedComp) options.unusedComp = JSON.parse(JSON.stringify(unusedComp));
 
-  let debugFilterStep = '' // uncomment // debugFilterStep below to see which sort part is triggered
+  let debugFilterStep = ''; // uncomment // debugFilterStep below to see which sort part is triggered
 
   traverse(jsonObj).forEach(function (node) {
     // Register components presence
@@ -274,7 +273,7 @@ async function openapiFilter(oaObj, options) {
       // Filter out the top level tags matching the inverse "tags"
       if (inverseFilterArray.length > 0 && this.key === 'tags' && this.parent.parent === undefined) {
         // debugFilterStep = 'Filter - inverse top tags'
-        node = node.filter(value => inverseFilterArray.includes(value.name))
+        node = node.filter(value => inverseFilterArray.includes(value.name));
         this.update(node);
       }
 
@@ -287,7 +286,7 @@ async function openapiFilter(oaObj, options) {
       // Filter out the top OpenAPI.tags matching the "tags"
       if (filterArray.length > 0 && this.key === 'tags' && this.path[0] === 'tags') {
         // debugFilterStep = 'Filter - top tags'
-        node = node.filter(value => !filterArray.includes(value.name))
+        node = node.filter(value => !filterArray.includes(value.name));
         this.update(node);
       }
 
@@ -301,9 +300,9 @@ async function openapiFilter(oaObj, options) {
             // HACK to overcome the issue with removing items from an array
             if (get(this, 'parent.parent.key') && this.parent.parent.key === 'x-tagGroups') {
               // debugFilterStep = 'Filter -x-tagGroups - flagValues - array value'
-              const tagGroup = this.parent.node
-              tagGroup['x-openapi-format-filter'] = true
-              this.parent.update(tagGroup)
+              const tagGroup = this.parent.node;
+              tagGroup['x-openapi-format-filter'] = true;
+              this.parent.update(tagGroup);
               // ========================================================================
             } else {
               // debugFilterStep = 'Filter - Single field - flagValues - array value'
@@ -355,9 +354,9 @@ async function openapiFilter(oaObj, options) {
       if (filterProps.length > 0 && filterProps.includes(this.key)) {
         if (this.parent && this.parent.parent && Array.isArray(this.parent.parent.node)) {
           // debugFilterStep = 'Filter - Array - flags'
-          const arrayItem = this.parent.parent.node
+          const arrayItem = this.parent.parent.node;
           const filteredArray = arrayItem.filter(item => !item[this.key]);
-          this.parent.parent.update(filteredArray)
+          this.parent.parent.update(filteredArray);
         } else {
           // debugFilterStep = 'Filter - Single field - flags'
           this.parent.remove();
@@ -373,9 +372,9 @@ async function openapiFilter(oaObj, options) {
           // HACK to overcome the issue with removing items from an array
           if (get(this, 'parent.parent.key') && this.parent.parent.key === 'x-tagGroups') {
             // debugFilterStep = 'Filter -x-tagGroups - flagValues - single value'
-            const tagGroup = this.parent.node
-            tagGroup['x-openapi-format-filter'] = true
-            this.parent.update(tagGroup)
+            const tagGroup = this.parent.node;
+            tagGroup['x-openapi-format-filter'] = true;
+            this.parent.update(tagGroup);
             // ========================================================================
           } else {
             // debugFilterStep = 'Filter - Single field - flagValues - single value'
@@ -462,8 +461,8 @@ async function openapiFilter(oaObj, options) {
         // debugFilterStep = 'Filter - tag - flagValues'
         // Deep filter array of tag/x-tagGroup
         for (let i = 0; i < filterFlagValues.length; i++) {
-          let [key, value] = Object.entries(filterFlagValues[i])[0]
-          oaTags = oaTags.filter(item => item[key] !== value)
+          let [key, value] = Object.entries(filterFlagValues[i])[0];
+          oaTags = oaTags.filter(item => item[key] !== value);
         }
 
         this.update(oaTags);
@@ -474,10 +473,10 @@ async function openapiFilter(oaObj, options) {
     if (this.key === 'description' && isString(node)) {
       const lines = node.split('\n');
       if (lines.length > 1) {
-        const filtered = lines.filter(line => !line.startsWith('[comment]: <>'))
+        const filtered = lines.filter(line => !line.startsWith('[comment]: <>'));
         const cleanDescription = filtered.join('\n');
-        this.update(cleanDescription)
-        node = cleanDescription
+        this.update(cleanDescription);
+        node = cleanDescription;
       }
     }
 
@@ -486,7 +485,7 @@ async function openapiFilter(oaObj, options) {
       && (this.key === 'description' || this.key === 'summary' || this.key === 'url')) {
       const replaceRes = valueReplace(node, textReplace);
       this.update(replaceRes);
-      node = replaceRes
+      node = replaceRes;
     }
   });
 
@@ -504,7 +503,7 @@ async function openapiFilter(oaObj, options) {
     if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
     unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !isUsedComp(comps.headers, key));
     if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
-    unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length
+    unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length;
   }
 
   // Clean-up jsonObj
@@ -588,7 +587,7 @@ async function openapiFilter(oaObj, options) {
   }
 
   // Return result object
-  return {data: jsonObj, resultData: {unusedComp: unusedComp}}
+  return {data: jsonObj, resultData: {unusedComp: unusedComp}};
 }
 
 /**
@@ -902,5 +901,6 @@ module.exports = {
   stringify: stringify,
   writeFile: writeFile,
   detectFormat: detectFormat,
+  analyzeOpenApi: analyzeOpenApi,
   changeCase: changeCase
 };

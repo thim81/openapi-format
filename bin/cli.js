@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-const openapiFormat = require('../openapi-format')
+const openapiFormat = require('../openapi-format');
 const program = require('commander');
 const {infoTable, infoOut, logOut, debugOut} = require("../utils/logging");
+const {stringify} = require("../openapi-format");
 
 // CLI Helper - change verbosity
 function increaseVerbosity(dummyValue, previous) {
@@ -25,6 +26,7 @@ program
   .option('--convertTo <oaVersion>', 'convert the OpenAPI document to OpenAPI version 3.1')
   .option('--json', 'print the file to stdout as JSON')
   .option('--yaml', 'print the file to stdout as YAML')
+  .option('-p, --playground', 'Open config in online playground')
   .version(require('../package.json').version, '--version')
   .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
   .action(run)
@@ -147,12 +149,14 @@ async function run(oaFile, options) {
 
   let resObj = {};
   let output = {};
+  let input = {};
 
   try {
     infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
 
     // Parse input content
     resObj = await openapiFormat.parseFile(oaFile);
+    input = resObj;
   } catch (err) {
     if (err.code !== 'ENOENT') {
       console.error('\x1b[31m', `Input file error - Failed to download file: ${err.message}`);
@@ -166,7 +170,7 @@ async function run(oaFile, options) {
   if (options.filterSet) {
     const resFilter = await openapiFormat.openapiFilter(resObj, options);
     if (resFilter.resultData && resFilter.resultData.unusedComp) {
-      cliLog.unusedComp = resFilter.resultData.unusedComp
+      cliLog.unusedComp = resFilter.resultData.unusedComp;
     }
     outputLogFiltered = `filtered & `;
     resObj = resFilter.data;
@@ -175,38 +179,38 @@ async function run(oaFile, options) {
   // Format & Order OpenAPI document
   if (options.sort === true) {
     const resFormat = await openapiFormat.openapiSort(resObj, options);
-    if (resFormat.data) resObj = resFormat.data
+    if (resFormat.data) resObj = resFormat.data;
   }
 
   // Change case OpenAPI document
   if (options.casingSet) {
     const resFormat = await openapiFormat.openapiChangeCase(resObj, options);
-    if (resFormat.data) resObj = resFormat.data
+    if (resFormat.data) resObj = resFormat.data;
   }
 
   // Convert the OpenAPI document to OpenAPI 3.1
   if ((options.convertTo && options.convertTo.toString() === "3.1") || (options.convertToVersion && options.convertToVersion === 3.1)) {
     const resVersion = await openapiFormat.openapiConvertVersion(resObj, options);
-    if (resVersion.data) resObj = resVersion.data
-    debugOut(`- OAS version converted to: "${options.convertTo}"`, options.verbose) // LOG - Conversion title
+    if (resVersion.data) resObj = resVersion.data;
+    debugOut(`- OAS version converted to: "${options.convertTo}"`, options.verbose); // LOG - Conversion title
   }
 
   // Rename title OpenAPI document
   if (options.rename) {
     const resRename = await openapiFormat.openapiRename(resObj, options);
-    if (resRename.data) resObj = resRename.data
-    debugOut(`- OAS.title renamed to: "${options.rename}"`, options.verbose) // LOG - Rename title
+    if (resRename.data) resObj = resRename.data;
+    debugOut(`- OAS.title renamed to: "${options.rename}"`, options.verbose); // LOG - Rename title
   }
 
   if (options.output) {
     try {
       // Write OpenAPI string to file
-      await openapiFormat.writeFile(options.output, resObj, options)
-      infoOut(`- Output file:\t\t${options.output}`) // LOG - config file
+      await openapiFormat.writeFile(options.output, resObj, options);
+      infoOut(`- Output file:\t\t${options.output}`); // LOG - config file
     } catch (err) {
-      console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`)
+      console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`);
       if (options.verbose >= 1) {
-        console.error(err)
+        console.error(err);
       }
     }
   } else {
@@ -219,7 +223,7 @@ async function run(oaFile, options) {
   if (outputLogOptions) { //&& options.verbose > 2) {
     // Show options
     debugOut(`${consoleLine}\n`, options.verbose); // LOG - horizontal rule
-    debugOut(`OpenAPI-Format CLI options:`, options.verbose) // LOG - config file
+    debugOut(`OpenAPI-Format CLI options:`, options.verbose); // LOG - config file
     debugOut(`${outputLogOptions}`, options.verbose);
   }
 
@@ -228,8 +232,8 @@ async function run(oaFile, options) {
     // List unused component
     const unusedComp = cliLog.unusedComp;
     const keys = Object.keys(unusedComp || {});
-    let count = 0
-    const cliOut = []
+    let count = 0;
+    const cliOut = [];
     keys.map((comp) => {
       if (unusedComp && unusedComp[comp] && unusedComp[comp].length > 0) {
         unusedComp[comp].forEach(value => {
@@ -251,4 +255,49 @@ async function run(oaFile, options) {
   infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
   infoOut(`\x1b[32m✅  OpenAPI ${outputLogFiltered}formatted successfully\x1b[0m`, 99); // LOG - success message
   infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
+
+  if (options?.playground) {
+    try {
+      const playgroundEndpoint = 'https://openapi-format-playground.vercel.app/api/share';
+      const config = {};
+
+      if (options.sortSet !== undefined) config.sortSet = await stringify(options.sortSet);
+      if (options.filterSet !== undefined) config.filterSet = await stringify(options.filterSet);
+      // if (options.casingSet !== undefined) config.casingSet = await stringify(options.casingSet);
+      if (options.sort !== undefined) config.sort = options.sort;
+      // if (options.rename !== undefined) config.rename = options.rename;
+      // if (options.convertTo !== undefined) config.convertTo = options.convertTo;
+      if (options.format === 'json' || options.format === 'yaml') config.outputLanguage = options.format;
+
+      const payload = {
+        openapi: await stringify(input),
+        config: config
+      };
+
+      if (!process.env.CI) {
+        const response = await fetch(playgroundEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Source': 'openapi-format-cli'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        const shareUrl = responseData?.shareUrl;
+        const hyperlink = `\x1b]8;;${shareUrl}\x1b\\\x1b[34m\x1b[4mClick here to visit the online playground\x1b[0m\x1b]8;;\x1b\\`;
+        infoOut(`🌐 ${hyperlink}`);
+        infoOut(`\x1b[34m${consoleLine}\x1b[0m`); // LOG - horizontal rule
+      } else {
+        console.log('Running in CI/CD environment, no Share URL generated');
+      }
+    } catch (err) {
+      console.error('\x1b[31m', 'Error generating openapi-format playground URL:', err.message);
+    }
+  }
 }

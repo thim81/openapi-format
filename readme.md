@@ -149,6 +149,7 @@ Options:
   --json                Prints the file to stdout as JSON                    [boolean]
   --yaml                Prints the file to stdout as YAML                    [boolean]
 
+  --playground, -p      Open config in online playground
   --help                Show help                                            [boolean]
   --version             Output the version number                            
   --verbose             Output more details of the filter process              [count]
@@ -171,6 +172,7 @@ Options:
 | --lineWidth          |               | max line width of YAML output                                               | number       | -1 (Infinity)               | optional  |
 | --json               |               | prints the file to stdout as JSON                                           |              | FALSE                       | optional  |
 | --yaml               |               | prints the file to stdout as YAML                                           |              | FALSE                       | optional  |
+| --playground         | -p            | open config in online playground                                            |              |                             | optional  |
 | --version            |               | output the version number                                                   |              |                             | optional  |
 | --verbose            | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                             | optional  |
 | --help               | h             | display help for command                                                    |              |                             | optional  |
