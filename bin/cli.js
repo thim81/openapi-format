@@ -149,7 +149,7 @@ async function run(oaFile, options) {
 
   let resObj = {};
   let output = {};
-  let input = {}
+  let input = {};
 
   try {
     infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
