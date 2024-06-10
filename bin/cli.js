@@ -258,6 +258,7 @@ async function run(oaFile, options) {
 
   if (options?.playground) {
     try {
+      const playgroundEndpoint = 'https://openapi-format-playground.vercel.app/api/share';
       const config = {};
 
       if (options.sortSet !== undefined) config.sortSet = await stringify(options.sortSet);
