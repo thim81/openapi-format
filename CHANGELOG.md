@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.19.0] - 2024-06-11
+
 - CLI - option to open in online playground
 - Added OpenAPI analyze method 
 
