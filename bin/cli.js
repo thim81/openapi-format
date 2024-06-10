@@ -149,12 +149,14 @@ async function run(oaFile, options) {
 
   let resObj = {};
   let output = {};
+  let input = {}
 
   try {
     infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
 
     // Parse input content
     resObj = await openapiFormat.parseFile(oaFile);
+    input = resObj;
   } catch (err) {
     if (err.code !== 'ENOENT') {
       console.error('\x1b[31m', `Input file error - Failed to download file: ${err.message}`);
@@ -256,7 +258,6 @@ async function run(oaFile, options) {
 
   if (options?.playground) {
     try {
-      const playgroundEndpoint = 'https://openapi-format-playground.vercel.app/api/share';
       const config = {};
 
       if (options.sortSet !== undefined) config.sortSet = await stringify(options.sortSet);
@@ -265,9 +266,10 @@ async function run(oaFile, options) {
       if (options.sort !== undefined) config.sort = options.sort;
       // if (options.rename !== undefined) config.rename = options.rename;
       // if (options.convertTo !== undefined) config.convertTo = options.convertTo;
+      if (options.format === 'json' || options.format === 'yaml') config.outputLanguage = options.format;
 
       const payload = {
-        openapi: await stringify(resObj),
+        openapi: await stringify(input),
         config: config
       };
 
