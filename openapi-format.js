@@ -171,7 +171,7 @@ async function openapiFilter(oaObj, options) {
     requestBodies: {},
     headers: {},
     meta: {total: 0}
-  }
+  };
 
   // Prepare unused components
   let unusedComp = {
@@ -182,7 +182,7 @@ async function openapiFilter(oaObj, options) {
     requestBodies: [],
     headers: [],
     meta: {total: 0}
-  }
+  };
   // Use options.unusedComp to collect unused components during multiple recursion
   if (!options.unusedComp) options.unusedComp = JSON.parse(JSON.stringify(unusedComp));
 
@@ -193,7 +193,7 @@ async function openapiFilter(oaObj, options) {
     if (get(this, 'parent.parent.key') && this.parent.parent.key === 'components') {
       if (get(this, 'parent.key') && this.parent.key && comps[this.parent.key]) {
         comps[this.parent.key][this.key] = {...comps[this.parent.key][this.key], present: true};
-        comps.meta.total = comps.meta.total++;
+        comps.meta.total++;
       }
     }
 
@@ -256,8 +256,7 @@ async function openapiFilter(oaObj, options) {
 
     // Filter out fields without operationIds, when Inverse operationIds is set
     if (node !== null && inverseFilterProps.length > 0 && this.path[0] === 'paths' && node.operationId === undefined
-      && httpVerbs.includes(this.key)
-    ) {
+      && httpVerbs.includes(this.key)) {
       // debugFilterStep = 'Filter - Single field - Inverse operationIds without operationIds'
       this.remove();
     }
@@ -488,23 +487,22 @@ async function openapiFilter(oaObj, options) {
       node = replaceRes;
     }
   });
-
-  if (stripUnused.length > 0) {
-    const optFs = get(options, 'filterSet.unusedComponents', []) || [];
-    unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !isUsedComp(comps.schemas, key));
-    if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
-    unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !isUsedComp(comps.responses, key));
-    if (optFs.includes('responses')) options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
-    unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !isUsedComp(comps.parameters, key));
-    if (optFs.includes('parameters')) options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
-    unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !isUsedComp(comps.examples, key));
-    if (optFs.includes('examples')) options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
-    unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !isUsedComp(comps.requestBodies, key));
-    if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
-    unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !isUsedComp(comps.headers, key));
-    if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
-    unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length;
-  }
+  
+  // Collect unused components
+  const optFs = get(options, 'filterSet.unusedComponents', []) || [];
+  unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !comps.schemas[key].used);
+  if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
+  unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !comps.responses[key].used);
+  if (optFs.includes('responses')) options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
+  unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !comps.parameters[key].used);
+  if (optFs.includes('parameters')) options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
+  unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !comps.examples[key].used);
+  if (optFs.includes('examples')) options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
+  unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key].used);
+  if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
+  unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key].used);
+  if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
+  unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length;
 
   // Clean-up jsonObj
   traverse(jsonObj).forEach(function (node) {
@@ -587,7 +585,7 @@ async function openapiFilter(oaObj, options) {
   }
 
   // Return result object
-  return {data: jsonObj, resultData: {unusedComp: unusedComp}};
+  return {data: jsonObj, resultData: {unusedComp: unusedComp, comps: comps}};
 }
 
 /**
