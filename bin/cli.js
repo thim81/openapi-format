@@ -169,7 +169,7 @@ async function run(oaFile, options) {
   // Filter OpenAPI document
   if (options.filterSet) {
     const resFilter = await openapiFormat.openapiFilter(resObj, options);
-    if (resFilter.resultData && resFilter.resultData.unusedComp) {
+    if (resFilter?.resultData && resFilter.resultData.unusedComp) {
       cliLog.unusedComp = resFilter.resultData.unusedComp;
     }
     outputLogFiltered = `filtered & `;

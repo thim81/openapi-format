@@ -487,7 +487,15 @@ async function openapiFilter(oaObj, options) {
       node = replaceRes;
     }
   });
-  
+
+  // Calculate comps.meta.total at the end
+  // comps.meta.total = Object.keys(comps.schemas).length +
+  //   Object.keys(comps.responses).length +
+  //   Object.keys(comps.parameters).length +
+  //   Object.keys(comps.examples).length +
+  //   Object.keys(comps.requestBodies).length +
+  //   Object.keys(comps.headers).length;
+
   // Collect unused components
   const optFs = get(options, 'filterSet.unusedComponents', []) || [];
   unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !comps.schemas[key].used);
@@ -502,7 +510,14 @@ async function openapiFilter(oaObj, options) {
   if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
   unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key].used);
   if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
-  unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length;
+
+  // Update unusedComp.meta.total after each recursion
+  options.unusedComp.meta.total = options.unusedComp.schemas.length +
+    options.unusedComp.responses.length +
+    options.unusedComp.parameters.length +
+    options.unusedComp.examples.length +
+    options.unusedComp.requestBodies.length +
+    options.unusedComp.headers.length;
 
   // Clean-up jsonObj
   traverse(jsonObj).forEach(function (node) {
@@ -577,15 +592,26 @@ async function openapiFilter(oaObj, options) {
   });
 
   // Recurse to strip any remaining unusedComp, to a maximum depth of 10
-  if (stripUnused.length > 0 && unusedComp.meta.total > 0 && options.unusedDepth <= 10) {
+  if (stripUnused.length > 0 && options.unusedComp.meta.total > 0 && options.unusedDepth <= 10) {
     options.unusedDepth++;
     const resultObj = await openapiFilter(jsonObj, options);
     jsonObj = resultObj.data;
     unusedComp = JSON.parse(JSON.stringify(options.unusedComp));
   }
 
+  // Prepare totalComp for the final result
+  const totalComp = {
+    schemas: Object.keys(comps.schemas),
+    responses: Object.keys(comps.responses),
+    parameters: Object.keys(comps.parameters),
+    examples: Object.keys(comps.examples),
+    requestBodies: Object.keys(comps.requestBodies),
+    headers: Object.keys(comps.headers),
+    meta: {total: comps.meta.total}
+  };
+
   // Return result object
-  return {data: jsonObj, resultData: {unusedComp: unusedComp, comps: comps}};
+  return {data: jsonObj, resultData: {unusedComp: unusedComp, totalComp: totalComp}};
 }
 
 /**

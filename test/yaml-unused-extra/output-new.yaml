@@ -1,0 +1,52 @@
+openapi: 3.0.3
+info:
+  title: Marvel Universe API
+  version: 1.0.0
+  description: 'API for retrieving, creating, updating, and deleting information about the Marvel Universe.'
+  x-logo:
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Marvel-Comics-Logo.svg/1280px-Marvel-Comics-Logo.svg.png'
+servers:
+  - url: 'http://localhost:3004/api'
+    description: Production
+paths:
+  /characters:
+    get:
+      operationId: getCharacters
+      summary: Get all Marvel characters
+      description: Retrieve a list of all Marvel characters.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharactersResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableEntityError'
+      security:
+        - bearerAuth: []
+      tags:
+        - Characters
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+  - name: Characters
+    description: Manage all Marvel characters.
+security:
+  - bearerAuth: []
