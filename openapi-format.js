@@ -171,7 +171,7 @@ async function openapiFilter(oaObj, options) {
     requestBodies: {},
     headers: {},
     meta: {total: 0}
-  }
+  };
 
   // Prepare unused components
   let unusedComp = {
@@ -182,7 +182,7 @@ async function openapiFilter(oaObj, options) {
     requestBodies: [],
     headers: [],
     meta: {total: 0}
-  }
+  };
   // Use options.unusedComp to collect unused components during multiple recursion
   if (!options.unusedComp) options.unusedComp = JSON.parse(JSON.stringify(unusedComp));
 
@@ -193,7 +193,7 @@ async function openapiFilter(oaObj, options) {
     if (get(this, 'parent.parent.key') && this.parent.parent.key === 'components') {
       if (get(this, 'parent.key') && this.parent.key && comps[this.parent.key]) {
         comps[this.parent.key][this.key] = {...comps[this.parent.key][this.key], present: true};
-        comps.meta.total = comps.meta.total++;
+        comps.meta.total++;
       }
     }
 
@@ -256,8 +256,7 @@ async function openapiFilter(oaObj, options) {
 
     // Filter out fields without operationIds, when Inverse operationIds is set
     if (node !== null && inverseFilterProps.length > 0 && this.path[0] === 'paths' && node.operationId === undefined
-      && httpVerbs.includes(this.key)
-    ) {
+      && httpVerbs.includes(this.key)) {
       // debugFilterStep = 'Filter - Single field - Inverse operationIds without operationIds'
       this.remove();
     }
@@ -489,22 +488,36 @@ async function openapiFilter(oaObj, options) {
     }
   });
 
-  if (stripUnused.length > 0) {
-    const optFs = get(options, 'filterSet.unusedComponents', []) || [];
-    unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !isUsedComp(comps.schemas, key));
-    if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
-    unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !isUsedComp(comps.responses, key));
-    if (optFs.includes('responses')) options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
-    unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !isUsedComp(comps.parameters, key));
-    if (optFs.includes('parameters')) options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
-    unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !isUsedComp(comps.examples, key));
-    if (optFs.includes('examples')) options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
-    unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !isUsedComp(comps.requestBodies, key));
-    if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
-    unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !isUsedComp(comps.headers, key));
-    if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
-    unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length;
-  }
+  // Calculate comps.meta.total at the end
+  // comps.meta.total = Object.keys(comps.schemas).length +
+  //   Object.keys(comps.responses).length +
+  //   Object.keys(comps.parameters).length +
+  //   Object.keys(comps.examples).length +
+  //   Object.keys(comps.requestBodies).length +
+  //   Object.keys(comps.headers).length;
+
+  // Collect unused components
+  const optFs = get(options, 'filterSet.unusedComponents', []) || [];
+  unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !comps.schemas[key].used);
+  if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
+  unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !comps.responses[key].used);
+  if (optFs.includes('responses')) options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
+  unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !comps.parameters[key].used);
+  if (optFs.includes('parameters')) options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
+  unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !comps.examples[key].used);
+  if (optFs.includes('examples')) options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
+  unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key].used);
+  if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
+  unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key].used);
+  if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
+
+  // Update unusedComp.meta.total after each recursion
+  options.unusedComp.meta.total = options.unusedComp.schemas.length +
+    options.unusedComp.responses.length +
+    options.unusedComp.parameters.length +
+    options.unusedComp.examples.length +
+    options.unusedComp.requestBodies.length +
+    options.unusedComp.headers.length;
 
   // Clean-up jsonObj
   traverse(jsonObj).forEach(function (node) {
@@ -579,15 +592,26 @@ async function openapiFilter(oaObj, options) {
   });
 
   // Recurse to strip any remaining unusedComp, to a maximum depth of 10
-  if (stripUnused.length > 0 && unusedComp.meta.total > 0 && options.unusedDepth <= 10) {
+  if (stripUnused.length > 0 && options.unusedComp.meta.total > 0 && options.unusedDepth <= 10) {
     options.unusedDepth++;
     const resultObj = await openapiFilter(jsonObj, options);
     jsonObj = resultObj.data;
     unusedComp = JSON.parse(JSON.stringify(options.unusedComp));
   }
 
+  // Prepare totalComp for the final result
+  const totalComp = {
+    schemas: Object.keys(comps.schemas),
+    responses: Object.keys(comps.responses),
+    parameters: Object.keys(comps.parameters),
+    examples: Object.keys(comps.examples),
+    requestBodies: Object.keys(comps.requestBodies),
+    headers: Object.keys(comps.headers),
+    meta: {total: comps.meta.total}
+  };
+
   // Return result object
-  return {data: jsonObj, resultData: {unusedComp: unusedComp}};
+  return {data: jsonObj, resultData: {unusedComp: unusedComp, totalComp: totalComp}};
 }
 
 /**

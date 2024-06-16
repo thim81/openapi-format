@@ -592,7 +592,7 @@ externalDocs:
   url: 'http://swagger.io'
 components:
   schemas:
-    ErrorModel:
+    UcErrorModel:
       type: object
       required:
         - code
@@ -634,7 +634,7 @@ components:
       xml:
         name: order
       type: object
-    Customer:
+    UcCustomer:
       properties:
         id:
           type: integer
@@ -778,7 +778,7 @@ components:
       xml:
         name: '##default'
       type: object
-    Unused:
+    UcUnused:
       properties:
         code:
           type: integer
@@ -795,7 +795,7 @@ components:
   #######################
 
   requestBodies:
-    NewItem:
+    UcNewItem:
       description: A JSON object containing item data
       required: true
       content:
@@ -834,14 +834,14 @@ components:
   # Common parameters
   ####################
   parameters:
-    offsetParam:
+    UcOffsetParam:
       name: offset
       in: query
       schema:
         type: integer
         minimum: 0
       description: The number of items to skip before returning the results
-    limitParam:
+    UcLimitParam:
       in: query
       name: limit
       schema:
@@ -862,7 +862,7 @@ components:
   # Common responses
   ####################
   responses:
-    GeneralError:
+    UcGeneralError:
       description: An error occurred
       content:
         application/json:
@@ -897,7 +897,7 @@ components:
   # Common examples of input/output data
   ######################################
   examples:
-    tshirt:
+    uctshirt:
       summary: Sample T-shirt data
       value:
         id: 17
@@ -905,7 +905,7 @@ components:
         description: 100% cotton shirt
         categories:
           - clothes
-    tshirt-unused:
+    uctshirt-unused:
       summary: Sample T-shirt data
       value:
         id: 17

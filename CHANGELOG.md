@@ -1,5 +1,7 @@
 ## unreleased
 
+- Improved the logic to remove "unused" component items
+
 ## [1.19.0] - 2024-06-11
 
 - CLI - option to open in online playground
