@@ -86,7 +86,7 @@ The [OpenAPI-Format Playground](https://openapi-format-playground.vercel.app/) i
 <a href="https://openapi-format-playground.vercel.app/" target="_blank" title="OpenAPI-format Playground" rel="nofollow">
 <img src="https://raw.githubusercontent.com/thim81/openapi-format/main/assets/openapi-format-playground.png" alt="OpenAPI-format Playground" width="50%">
 <img src="https://raw.githubusercontent.com/thim81/openapi-format/main/assets/openapi-format-playground-diff.png" alt="OpenAPI-format Playground Diff viewer" width="25%">
-<img src="https://raw.githubusercontent.com/thim81/openapi-format/postman-to-k6/main/assets/openapi-format-playground-filter.png" alt="OpenAPI-format Playground Filter UI" width="25%">
+<img src="https://raw.githubusercontent.com/thim81/openapi-format/main/assets/openapi-format-playground-filter.png" alt="OpenAPI-format Playground Filter UI" width="25%">
 </a>
 
 More info about the features and usage, can be found in the [readme](https://github.com/thim81/openapi-format-playground?tab=readme-ov-file#features).
