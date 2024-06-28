@@ -1,5 +1,29 @@
 ## unreleased
 
+## [1.20.0] - 2024-06-16
+
+- Improved the logic to remove "unused" component items
+
+## [1.19.0] - 2024-06-11
+
+- CLI - option to open in online playground
+- Added OpenAPI analyze method 
+
+## [1.18.0] - 2024-06-06
+
+- Bumped minimum NodeJS version to 18.x
+- Refactor to handle null and undefined values in filterSet properties
+
+## [1.17.2] - 2024-06-05
+
+- Allow setting defaults via options
+- Added support for uppercased filter methods
+- Added parseString, detectFormat, isJson, isYaml functions
+
+## [1.17.1] - 2024-05-18
+
+- Bugfix to keep quotes for $ref values (#108)
+
 ## [1.17.0] - 2024-04-14
 
 - Filter - Added inverse filtering for flags for operations, components, tags, x-tagGroups
@@ -12,7 +36,7 @@
 ## [1.16.0] - 2024-01-16
 
 - Filter - Flags for $ref items (#103)
-- Casing: Extended changeCase function with customKeepChars parameter
+- Casing - Extended changeCase function with customKeepChars parameter
 
 ## [1.15.4] - 2024-01-07
 

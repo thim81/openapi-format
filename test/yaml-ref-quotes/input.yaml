@@ -1,0 +1,11 @@
+openapi: 3.0.2
+components:
+  schemas:
+    Case:
+      description: Case file subset
+      type: object
+      properties:
+        extern:
+          $ref: "domain-types.openapi.yaml#/components/schemas/Extern"
+        intern:
+          $ref: 'domain-types.openapi.yaml#/components/schemas/Extern'

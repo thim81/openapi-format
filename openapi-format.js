@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 "use strict";
 
-const fs = require('fs');
 const traverse = require('traverse');
 const {isString, isArray, isObject} = require("./utils/types");
 const {
@@ -26,7 +25,7 @@ const {
   convertImageBase64,
   convertMultiPartBinary, convertConst, convertExclusiveMinimum, convertExclusiveMaximum, setInObject
 } = require("./utils/convert");
-const {parseFile, writeFile, stringify} = require("./utils/file");
+const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi} = require("./utils/file");
 
 /**
  * OpenAPI sort function
@@ -42,8 +41,8 @@ async function openapiSort(oaObj, options) {
   }
 
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-  let sortSet = options.sortSet || JSON.parse(fs.readFileSync(__dirname + "/defaultSort.json", 'utf8'));
-  let sortComponentsSet = options.sortComponentsSet || JSON.parse(fs.readFileSync(__dirname + "/defaultSortComponents.json", 'utf8'));
+  let sortSet = options.sortSet || await parseFile(__dirname + "/defaultSort.json");
+  let sortComponentsSet = options.sortComponentsSet || await parseFile(__dirname + "/defaultSortComponents.json");
   let debugStep = '' // uncomment // debugStep below to see which sort part is triggered
 
   // Recursive traverse through OpenAPI document
@@ -130,38 +129,38 @@ async function openapiSort(oaObj, options) {
  */
 async function openapiFilter(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-  let defaultFilter = await parseFile(__dirname + "/defaultFilter.json");
+  let defaultFilter = options.defaultFilter || await parseFile(__dirname + "/defaultFilter.json");
   let filterSet = Object.assign({}, defaultFilter, options.filterSet);
   const httpVerbs = ["get", "post", "put", "patch", "delete"];
-  const fixedFlags = ["x-openapi-format-filter"]
+  const fixedFlags = ["x-openapi-format-filter"];
   options.unusedDepth = options.unusedDepth || 0;
 
   // Merge object filters
-  const filterKeys = [...filterSet.methods];
-  const filterArray = [...filterSet.tags];
-  const filterOperations = [...filterSet.operations];
-  const filterProps = [...filterSet.operationIds, ...filterSet.flags, ...fixedFlags];
-  const filterResponseContent = [...filterSet.responseContent];
+  const filterKeys = (filterSet.methods ?? []).filter(method => method != null).map(method => method.toLowerCase());
+  const filterArray = [...(filterSet.tags ?? [])];
+  const filterOperations = [...(filterSet.operations ?? [])];
+  const filterProps = [...(filterSet.operationIds ?? []), ...(filterSet.flags ?? []), ...(fixedFlags ?? [])];
+  const filterResponseContent = [...(filterSet.responseContent ?? [])];
 
   // Inverse object filters
-  const inverseFilterKeys = [...filterSet.inverseMethods];
-  const inverseFilterProps = [...filterSet.inverseOperationIds];
-  const inverseFilterArray = [...filterSet.inverseTags];
-  const inverseFilterFlags = [...filterSet.inverseFlags];
-  const inverseFilterResponseContent = [...filterSet.inverseResponseContent];
+  const inverseFilterKeys = [...(filterSet.inverseMethods ?? [])];
+  const inverseFilterProps = [...(filterSet.inverseOperationIds ?? [])];
+  const inverseFilterArray = [...(filterSet.inverseTags ?? [])];
+  const inverseFilterFlags = [...(filterSet.inverseFlags ?? [])];
+  const inverseFilterResponseContent = [...(filterSet.inverseResponseContent ?? [])];
 
-  const stripFlags = [...filterSet.stripFlags];
-  const stripUnused = [...filterSet.unusedComponents];
+  const stripFlags = [...(filterSet.stripFlags ?? [])];
+  const stripUnused = [...(filterSet.unusedComponents ?? [])];
   const textReplace = filterSet.textReplace || [];
 
   // Convert flag values to flags
-  const filterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.flagValues));
-  const filterFlagValues = [...filterSet.flagValues];
+  const filterFlagValuesKeys = Object.keys(Object.assign({}, ...(filterSet.flagValues ?? [])));
+  const filterFlagValues = [...(filterSet.flagValues ?? [])];
   const filterFlagHash = filterFlagValues.map(o => (JSON.stringify(o)));
 
   // Convert invert flag values to flags
-  const inverseFilterFlagValuesKeys = Object.keys(Object.assign({}, ...filterSet.inverseFlagValues));
-  const inverseFilterFlagValues = [...filterSet.inverseFlagValues];
+  const inverseFilterFlagValuesKeys = Object.keys(Object.assign({}, ...(filterSet.inverseFlagValues ?? [])));
+  const inverseFilterFlagValues = [...(filterSet.inverseFlagValues ?? [])];
 
   // Initiate components tracking
   const comps = {
@@ -172,7 +171,7 @@ async function openapiFilter(oaObj, options) {
     requestBodies: {},
     headers: {},
     meta: {total: 0}
-  }
+  };
 
   // Prepare unused components
   let unusedComp = {
@@ -183,18 +182,18 @@ async function openapiFilter(oaObj, options) {
     requestBodies: [],
     headers: [],
     meta: {total: 0}
-  }
+  };
   // Use options.unusedComp to collect unused components during multiple recursion
   if (!options.unusedComp) options.unusedComp = JSON.parse(JSON.stringify(unusedComp));
 
-  let debugFilterStep = '' // uncomment // debugFilterStep below to see which sort part is triggered
+  let debugFilterStep = ''; // uncomment // debugFilterStep below to see which sort part is triggered
 
   traverse(jsonObj).forEach(function (node) {
     // Register components presence
     if (get(this, 'parent.parent.key') && this.parent.parent.key === 'components') {
       if (get(this, 'parent.key') && this.parent.key && comps[this.parent.key]) {
         comps[this.parent.key][this.key] = {...comps[this.parent.key][this.key], present: true};
-        comps.meta.total = comps.meta.total++;
+        comps.meta.total++;
       }
     }
 
@@ -257,8 +256,7 @@ async function openapiFilter(oaObj, options) {
 
     // Filter out fields without operationIds, when Inverse operationIds is set
     if (node !== null && inverseFilterProps.length > 0 && this.path[0] === 'paths' && node.operationId === undefined
-      && httpVerbs.includes(this.key)
-    ) {
+      && httpVerbs.includes(this.key)) {
       // debugFilterStep = 'Filter - Single field - Inverse operationIds without operationIds'
       this.remove();
     }
@@ -274,7 +272,7 @@ async function openapiFilter(oaObj, options) {
       // Filter out the top level tags matching the inverse "tags"
       if (inverseFilterArray.length > 0 && this.key === 'tags' && this.parent.parent === undefined) {
         // debugFilterStep = 'Filter - inverse top tags'
-        node = node.filter(value => inverseFilterArray.includes(value.name))
+        node = node.filter(value => inverseFilterArray.includes(value.name));
         this.update(node);
       }
 
@@ -287,7 +285,7 @@ async function openapiFilter(oaObj, options) {
       // Filter out the top OpenAPI.tags matching the "tags"
       if (filterArray.length > 0 && this.key === 'tags' && this.path[0] === 'tags') {
         // debugFilterStep = 'Filter - top tags'
-        node = node.filter(value => !filterArray.includes(value.name))
+        node = node.filter(value => !filterArray.includes(value.name));
         this.update(node);
       }
 
@@ -301,9 +299,9 @@ async function openapiFilter(oaObj, options) {
             // HACK to overcome the issue with removing items from an array
             if (get(this, 'parent.parent.key') && this.parent.parent.key === 'x-tagGroups') {
               // debugFilterStep = 'Filter -x-tagGroups - flagValues - array value'
-              const tagGroup = this.parent.node
-              tagGroup['x-openapi-format-filter'] = true
-              this.parent.update(tagGroup)
+              const tagGroup = this.parent.node;
+              tagGroup['x-openapi-format-filter'] = true;
+              this.parent.update(tagGroup);
               // ========================================================================
             } else {
               // debugFilterStep = 'Filter - Single field - flagValues - array value'
@@ -355,9 +353,9 @@ async function openapiFilter(oaObj, options) {
       if (filterProps.length > 0 && filterProps.includes(this.key)) {
         if (this.parent && this.parent.parent && Array.isArray(this.parent.parent.node)) {
           // debugFilterStep = 'Filter - Array - flags'
-          const arrayItem = this.parent.parent.node
+          const arrayItem = this.parent.parent.node;
           const filteredArray = arrayItem.filter(item => !item[this.key]);
-          this.parent.parent.update(filteredArray)
+          this.parent.parent.update(filteredArray);
         } else {
           // debugFilterStep = 'Filter - Single field - flags'
           this.parent.remove();
@@ -373,9 +371,9 @@ async function openapiFilter(oaObj, options) {
           // HACK to overcome the issue with removing items from an array
           if (get(this, 'parent.parent.key') && this.parent.parent.key === 'x-tagGroups') {
             // debugFilterStep = 'Filter -x-tagGroups - flagValues - single value'
-            const tagGroup = this.parent.node
-            tagGroup['x-openapi-format-filter'] = true
-            this.parent.update(tagGroup)
+            const tagGroup = this.parent.node;
+            tagGroup['x-openapi-format-filter'] = true;
+            this.parent.update(tagGroup);
             // ========================================================================
           } else {
             // debugFilterStep = 'Filter - Single field - flagValues - single value'
@@ -462,8 +460,8 @@ async function openapiFilter(oaObj, options) {
         // debugFilterStep = 'Filter - tag - flagValues'
         // Deep filter array of tag/x-tagGroup
         for (let i = 0; i < filterFlagValues.length; i++) {
-          let [key, value] = Object.entries(filterFlagValues[i])[0]
-          oaTags = oaTags.filter(item => item[key] !== value)
+          let [key, value] = Object.entries(filterFlagValues[i])[0];
+          oaTags = oaTags.filter(item => item[key] !== value);
         }
 
         this.update(oaTags);
@@ -474,10 +472,10 @@ async function openapiFilter(oaObj, options) {
     if (this.key === 'description' && isString(node)) {
       const lines = node.split('\n');
       if (lines.length > 1) {
-        const filtered = lines.filter(line => !line.startsWith('[comment]: <>'))
+        const filtered = lines.filter(line => !line.startsWith('[comment]: <>'));
         const cleanDescription = filtered.join('\n');
-        this.update(cleanDescription)
-        node = cleanDescription
+        this.update(cleanDescription);
+        node = cleanDescription;
       }
     }
 
@@ -486,26 +484,40 @@ async function openapiFilter(oaObj, options) {
       && (this.key === 'description' || this.key === 'summary' || this.key === 'url')) {
       const replaceRes = valueReplace(node, textReplace);
       this.update(replaceRes);
-      node = replaceRes
+      node = replaceRes;
     }
   });
 
-  if (stripUnused.length > 0) {
-    const optFs = get(options, 'filterSet.unusedComponents', []) || [];
-    unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !isUsedComp(comps.schemas, key));
-    if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
-    unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !isUsedComp(comps.responses, key));
-    if (optFs.includes('responses')) options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
-    unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !isUsedComp(comps.parameters, key));
-    if (optFs.includes('parameters')) options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
-    unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !isUsedComp(comps.examples, key));
-    if (optFs.includes('examples')) options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
-    unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !isUsedComp(comps.requestBodies, key));
-    if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
-    unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !isUsedComp(comps.headers, key));
-    if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
-    unusedComp.meta.total = unusedComp.schemas.length + unusedComp.responses.length + unusedComp.parameters.length + unusedComp.examples.length + unusedComp.requestBodies.length + unusedComp.headers.length
-  }
+  // Calculate comps.meta.total at the end
+  // comps.meta.total = Object.keys(comps.schemas).length +
+  //   Object.keys(comps.responses).length +
+  //   Object.keys(comps.parameters).length +
+  //   Object.keys(comps.examples).length +
+  //   Object.keys(comps.requestBodies).length +
+  //   Object.keys(comps.headers).length;
+
+  // Collect unused components
+  const optFs = get(options, 'filterSet.unusedComponents', []) || [];
+  unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !comps.schemas[key].used);
+  if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
+  unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !comps.responses[key].used);
+  if (optFs.includes('responses')) options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
+  unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !comps.parameters[key].used);
+  if (optFs.includes('parameters')) options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
+  unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !comps.examples[key].used);
+  if (optFs.includes('examples')) options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
+  unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key].used);
+  if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
+  unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key].used);
+  if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
+
+  // Update unusedComp.meta.total after each recursion
+  options.unusedComp.meta.total = options.unusedComp.schemas.length +
+    options.unusedComp.responses.length +
+    options.unusedComp.parameters.length +
+    options.unusedComp.examples.length +
+    options.unusedComp.requestBodies.length +
+    options.unusedComp.headers.length;
 
   // Clean-up jsonObj
   traverse(jsonObj).forEach(function (node) {
@@ -580,15 +592,26 @@ async function openapiFilter(oaObj, options) {
   });
 
   // Recurse to strip any remaining unusedComp, to a maximum depth of 10
-  if (stripUnused.length > 0 && unusedComp.meta.total > 0 && options.unusedDepth <= 10) {
+  if (stripUnused.length > 0 && options.unusedComp.meta.total > 0 && options.unusedDepth <= 10) {
     options.unusedDepth++;
     const resultObj = await openapiFilter(jsonObj, options);
     jsonObj = resultObj.data;
     unusedComp = JSON.parse(JSON.stringify(options.unusedComp));
   }
 
+  // Prepare totalComp for the final result
+  const totalComp = {
+    schemas: Object.keys(comps.schemas),
+    responses: Object.keys(comps.responses),
+    parameters: Object.keys(comps.parameters),
+    examples: Object.keys(comps.examples),
+    requestBodies: Object.keys(comps.requestBodies),
+    headers: Object.keys(comps.headers),
+    meta: {total: comps.meta.total}
+  };
+
   // Return result object
-  return {data: jsonObj, resultData: {unusedComp: unusedComp}}
+  return {data: jsonObj, resultData: {unusedComp: unusedComp, totalComp: totalComp}};
 }
 
 /**
@@ -898,7 +921,10 @@ module.exports = {
   openapiConvertVersion: openapiConvertVersion,
   openapiRename: openapiRename,
   parseFile: parseFile,
+  parseString: parseString,
   stringify: stringify,
   writeFile: writeFile,
+  detectFormat: detectFormat,
+  analyzeOpenApi: analyzeOpenApi,
   changeCase: changeCase
 };

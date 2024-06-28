@@ -1,0 +1,41 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Sample API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/pets": {
+      "get": {
+        "tags": [
+          "pets"
+        ],
+        "operationId": "getPets",
+        "responses": {
+          "200": {
+            "description": "A list of pets.",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "x-customTag"
+        ],
+        "operationId": "updatePet",
+        "responses": {
+          "200": {
+            "description": "Pet updated.",
+            "content": {
+              "application/json": {},
+              "application/xml": {}
+            }
+          }
+        },
+        "x-version": "1.0"
+      }
+    }
+  }
+}

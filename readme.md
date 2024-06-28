@@ -18,6 +18,7 @@ The openapi-format CLI has the option to convert an OpenAPI 3.0 document to an O
 ## Table of content
 * [Use-cases](#use-cases)
 * [Features](#features)
+* [Online playground](#online-playground)
 * [Installation](#installation)
     + [Local Installation (recommended)](#local-installation-recommended)
     + [Global Installation](#global-installation)
@@ -76,7 +77,19 @@ Postman collections, test suites, ...
 - [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
 - [x] Support for OpenAPI 3.1 (beta)
-- [ ] Online playground (coming soon)
+- [x] Online playground (https://openapi-format-playground.vercel.app/)
+
+## Online playground
+
+The [OpenAPI-Format Playground](https://openapi-format-playground.vercel.app/) is a web-based tool for formatting and sorting OpenAPI documents, powered by the openapi-format CLI.
+
+<a href="https://openapi-format-playground.vercel.app/" target="_blank" title="OpenAPI-format Playground" rel="nofollow">
+<img src="https://raw.githubusercontent.com/thim81/openapi-format/main/assets/openapi-format-playground.png" alt="OpenAPI-format Playground" width="50%"><br>
+<img src="https://raw.githubusercontent.com/thim81/openapi-format/main/assets/openapi-format-playground-diff.png" alt="OpenAPI-format Playground Diff viewer" width="25%">
+<img src="https://raw.githubusercontent.com/thim81/openapi-format/main/assets/openapi-format-playground-filter.png" alt="OpenAPI-format Playground Filter UI" width="25%">
+</a>
+
+More info about the features and usage, can be found in the [readme](https://github.com/thim81/openapi-format-playground?tab=readme-ov-file#features).
 
 ## Installation
 
@@ -142,6 +155,7 @@ Options:
   --json                Prints the file to stdout as JSON                    [boolean]
   --yaml                Prints the file to stdout as YAML                    [boolean]
 
+  --playground, -p      Open config in online playground
   --help                Show help                                            [boolean]
   --version             Output the version number                            
   --verbose             Output more details of the filter process              [count]
@@ -164,6 +178,7 @@ Options:
 | --lineWidth          |               | max line width of YAML output                                               | number       | -1 (Infinity)               | optional  |
 | --json               |               | prints the file to stdout as JSON                                           |              | FALSE                       | optional  |
 | --yaml               |               | prints the file to stdout as YAML                                           |              | FALSE                       | optional  |
+| --playground         | -p            | open config in online playground                                            |              |                             | optional  |
 | --version            |               | output the version number                                                   |              |                             | optional  |
 | --verbose            | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                             | optional  |
 | --help               | h             | display help for command                                                    |              |                             | optional  |

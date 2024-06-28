@@ -38,6 +38,7 @@ Options:
   --convertTo <oaVersion>                    convert the OpenAPI document to OpenAPI version 3.1
   --json                                     print the file to stdout as JSON
   --yaml                                     print the file to stdout as YAML
+  -p, --playground                           Open config in online playground
   --version                                  output the version number
   -v, --verbose                              verbosity that can be increased (default: 0)
   -h, --help                                 display help for command
@@ -51,16 +52,16 @@ OpenAPI-Format CLI settings:
 - Input file:		test/yaml-filter-unused-components/input.yaml
 ================================================================================
 Removed unused components:
-- components/schemas		 \\"Customer\\"
-- components/schemas		 \\"Unused\\"
-- components/schemas		 \\"ErrorModel\\"
+- components/schemas		 \\"UcErrorModel\\"
+- components/schemas		 \\"UcCustomer\\"
+- components/schemas		 \\"UcUnused\\"
 - components/schemas		 \\"Address\\"
-- components/responses		 \\"GeneralError\\"
-- components/parameters		 \\"offsetParam\\"
-- components/parameters		 \\"limitParam\\"
-- components/examples		 \\"tshirt-unused\\"
-- components/examples		 \\"tshirt\\"
-- components/requestBodies	 \\"NewItem\\"
+- components/responses		 \\"UcGeneralError\\"
+- components/parameters		 \\"UcOffsetParam\\"
+- components/parameters		 \\"UcLimitParam\\"
+- components/examples		 \\"uctshirt\\"
+- components/examples		 \\"uctshirt-unused\\"
+- components/requestBodies	 \\"UcNewItem\\"
 - components/requestBodies	 \\"Pet\\"
 - components/requestBodies	 \\"UserArray\\"
 - components/requestBodies	 \\"UnusedArray\\"

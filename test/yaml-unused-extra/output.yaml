@@ -1,0 +1,204 @@
+openapi: 3.0.3
+info:
+  title: Marvel Universe API
+  version: 1.0.0
+  description: 'API for retrieving, creating, updating, and deleting information about the Marvel Universe.'
+  x-logo:
+    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Marvel-Comics-Logo.svg/1280px-Marvel-Comics-Logo.svg.png'
+servers:
+  - url: 'http://localhost:3004/api'
+    description: Production
+paths:
+  /characters:
+    get:
+      operationId: getCharacters
+      summary: Get all Marvel characters
+      description: Retrieve a list of all Marvel characters.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharactersResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableEntityError'
+      security:
+        - bearerAuth: []
+      tags:
+        - Characters
+components:
+  parameters:
+    LimitParam:
+      name: limit
+      in: query
+      description: The number of items to return per page.
+      required: false
+      schema:
+        type: integer
+        default: 10
+        maximum: 100
+        minimum: 1
+    PageParam:
+      name: page
+      in: query
+      description: The page number for pagination.
+      required: false
+      schema:
+        type: integer
+        default: 1
+  schemas:
+    MarvelCharacterModel:
+      description: A Marvel character.
+      type: object
+      properties:
+        id:
+          description: ID of the Marvel character
+          type: integer
+          format: int64
+          example: 7
+          readOnly: true
+        name:
+          description: The full name of the Marvel character.
+          type: string
+          example: Iron Man
+        first_name:
+          description: The first name of the Marvel character.
+          type: string
+          example: Tony
+        last_name:
+          description: The last name of the Marvel character.
+          type: string
+          example: Stark
+        description:
+          description: A brief description of the Marvel character.
+          type: string
+          example: 'Genius, billionaire, playboy, philanthropist.'
+          nullable: true
+        powers:
+          description: List of superpowers possessed by the Marvel character.
+          type: array
+          items:
+            type: string
+          example:
+            - Superhuman strength
+            - Powered armor suit
+            - Genius-level intellect
+      additionalProperties: false
+      required:
+        - name
+    CharactersResponse:
+      type: object
+      properties:
+        characters:
+          description: List of Marvel characters.
+          type: array
+          items:
+            $ref: '#/components/schemas/MarvelCharacterModel'
+          example:
+            - id: 1
+              name: Iron Man
+              first_name: Tony
+              last_name: Stark
+              description: 'Genius, billionaire, playboy, philanthropist.'
+              powers:
+                - Superhuman strength
+                - Powered armor suit
+                - Genius-level intellect
+            - id: 2
+              name: Spider-Man
+              first_name: Peter
+              last_name: Parker
+              description: Friendly neighborhood superhero.
+              powers:
+                - Wall-crawling
+                - Spider-sense
+                - Web-shooters
+        pagination:
+          $ref: '#/components/schemas/PaginationModel'
+    PaginationModel:
+      description: Pagination information.
+      type: object
+      properties:
+        pagination:
+          type: object
+          properties:
+            total:
+              description: The total number of items for the requested resource.
+              type: integer
+              example: 100
+            current_page:
+              description: The current page number.
+              type: integer
+              example: 1
+            next_page:
+              description: The next page number. Null if there is no next page.
+              type: integer
+              example: 2
+              nullable: true
+            prev_page:
+              description: The previous page number. Null if there is no previous page.
+              type: integer
+              example: null
+              nullable: true
+            per_page:
+              description: The number of items to return per page.
+              type: integer
+              example: 10
+            total_pages:
+              description: The total number of pages.
+              type: integer
+              example: 10
+    UnprocessableEntityError:
+      type: object
+      properties:
+        error:
+          description: Description of the error.
+          type: string
+        details:
+          description: An array of objects providing details about the validation errors encountered in the request.
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                description: The field causing the validation error.
+                type: string
+              message:
+                description: Details about the validation error.
+                type: string
+      example:
+        error: Validation errors
+        details:
+          - field: first_name
+            message: Field 'first_name' must be of type 'String'.
+    BadRequestError:
+      type: object
+      properties:
+        error:
+          description: Description of the error.
+          type: string
+      example:
+        error: Page number cannot be greater than total number of pages
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+  - name: Characters
+    description: Manage all Marvel characters.
+security:
+  - bearerAuth: []

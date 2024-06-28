@@ -6,10 +6,11 @@ const {
   decodeLargeNumbers,
   encodeLargeNumbers,
   getRemoteFile,
-  getLocalFile, stringify
+  getLocalFile, stringify, addQuotesToRefInString, parseString, isJSON, isYaml, detectFormat, analyzeOpenApi
 } = require("../utils/file");
 const yaml = require('@stoplight/yaml');
 const {describe} = require("@jest/globals");
+const mockOpenApi = require("./__utils__/mockOpenApi.json");
 
 describe('openapi-format CLI file tests', () => {
 
@@ -158,6 +159,80 @@ describe('openapi-format CLI file tests', () => {
 
       const expectedJSON = JSON.stringify(obj, null, 2);
       expect(result).toEqual(expectedJSON);
+    });
+  });
+
+  describe('parseString', () => {
+    it('should parse JSON string correctly', async () => {
+      const jsonString = '{"name":"John","age":30}';
+      const result = await parseString(jsonString);
+      expect(result).toEqual({name: 'John', age: 30});
+    });
+
+    it('should return JSON parsing error if options.format is json', async () => {
+      const jsonString = '{"name":"John","age":30,}'; // Invalid JSON
+      const result = await parseString(jsonString, {format: 'json'});
+      expect(result).toBeInstanceOf(SyntaxError);
+    });
+
+    it('should parse YAML string correctly', async () => {
+      const yamlString = 'name: John\nage: 30';
+      const result = await parseString(yamlString);
+      expect(result).toEqual({name: 'John', age: 30});
+    });
+
+    it('should return YAML parsing error if YAML parsing fail', async () => {
+      const invalidString = '#name 1John\nage 30#'; // Invalid YAML
+      const result = await parseString(invalidString, {format: 'yaml'});
+      expect(result).toBeInstanceOf(SyntaxError);
+    });
+  });
+
+  describe('isJSON', () => {
+    it('should return true for valid JSON string', async () => {
+      const jsonString = '{"name":"John","age":30}';
+      const result = await isJSON(jsonString);
+      expect(result).toEqual(true);
+    });
+
+    it('should return false for invalid JSON string', async () => {
+      const jsonString = '{"name":"John","age":30,}'; // Invalid JSON
+      const result = await isJSON(jsonString);
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('isYaml', () => {
+    it('should return true for valid YAML string', async () => {
+      const yamlString = 'name: John\nage: 30';
+      const result = await isYaml(yamlString);
+      expect(result).toBe(true);
+    });
+
+    it('should return false for invalid YAML string', async () => {
+      const invalidString = '#name 1John\nage 30#';
+      const result = await isYaml(invalidString);
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('detectFormat', () => {
+    it('should return "json" for valid JSON string', async () => {
+      const jsonString = '{"name":"John","age":30}';
+      const result = await detectFormat(jsonString);
+      expect(result).toBe('json');
+    });
+
+    it('should return "yaml" for valid YAML string', async () => {
+      const yamlString = 'name: John\nage: 30';
+      const result = await detectFormat(yamlString);
+      expect(result).toBe('yaml');
+    });
+
+    it('should return "unknown" for invalid string', async () => {
+      const invalidString = '#name 1John\nage 30#'; // Invalid format
+      const result = await detectFormat(invalidString);
+      expect(result).toBe('unknown');
     });
   });
 
@@ -315,5 +390,59 @@ describe('openapi-format CLI file tests', () => {
     });
   });
 
+  describe('addQuotesToRefInString function', () => {
+    test('should add " quotes to $ref in string', () => {
+      const input = '$ref: #/components/schemas/Example';
+      const output = addQuotesToRefInString(input);
+      expect(output).toBe('$ref: "#/components/schemas/Example"');
+    })
+
+    test('should keep double quotes to $ref in string', () => {
+      const input = '$ref: "#/components/schemas/Example"';
+      const output = addQuotesToRefInString(input);
+      expect(output).toBe('$ref: "#/components/schemas/Example"');
+    })
+
+    test('should keep single quotes to $ref in string', () => {
+      const input = "$ref: '#/components/schemas/Example'";
+      const output = addQuotesToRefInString(input);
+      expect(output).toBe("$ref: '#/components/schemas/Example'");
+    })
+
+  })
+
+  describe('analyzeOpenApi function', () => {
+    test('should extract OpenAPI info', () => {
+      const mockOpenApi = require('./__utils__/mockOpenApi.json');
+      const result = analyzeOpenApi(mockOpenApi);
+
+      expect(result).toEqual({
+        flags: ["x-customTag"],
+        tags: ["pets"],
+        operationIds: ["getPets", "updatePet"],
+        paths: ["/pets"],
+        methods: ["GET", "PUT"],
+        operations: ["GET::/pets", "PUT::/pets"],
+        responseContent: ["application/json", "application/xml"],
+        flagValues: ["x-version: 1.0"]
+      });
+    });
+
+    test('should handle null when extracting OpenAPI info', () => {
+      const mockOpenApi = require('./__utils__/mockOpenApi.json');
+      const result = analyzeOpenApi(null);
+
+      expect(result).toEqual({
+        "flagValues": [],
+        "flags": [],
+        "methods": [],
+        "operationIds": [],
+        "operations": [],
+        "paths": [],
+        "responseContent": [],
+        "tags": []
+      });
+    });
+  });
 });
 
