@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.21.0] - 2024-07-10
+
 - Filter - added requestContent and inverseRequestContent filters 
 - Bumped dependencies
 
