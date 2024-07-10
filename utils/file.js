@@ -290,6 +290,7 @@ function analyzeOpenApi(oaObj) {
   const methods = new Set();
   const operations = [];
   const responseContent = new Set();
+  const requestContent = new Set();
   const flagValues = new Set();
 
   if (oaObj && oaObj.paths) {
@@ -314,6 +315,12 @@ function analyzeOpenApi(oaObj) {
 
         if (operation?.operationId) {
           operationIds.push(operation.operationId);
+        }
+
+        if (operation?.requestBody?.content) {
+          Object.keys(operation.requestBody.content).forEach((contentType) => {
+            requestContent.add(contentType);
+          });
         }
 
         if (operation?.responses) {
@@ -344,6 +351,7 @@ function analyzeOpenApi(oaObj) {
     paths,
     operations,
     responseContent: Array.from(responseContent),
+    requestContent: Array.from(requestContent),
   };
 }
 

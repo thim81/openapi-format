@@ -424,6 +424,7 @@ describe('openapi-format CLI file tests', () => {
         methods: ["GET", "PUT"],
         operations: ["GET::/pets", "PUT::/pets"],
         responseContent: ["application/json", "application/xml"],
+        requestContent: ["application/json","application/xml"],
         flagValues: ["x-version: 1.0"]
       });
     });
@@ -440,6 +441,7 @@ describe('openapi-format CLI file tests', () => {
         "operations": [],
         "paths": [],
         "responseContent": [],
+        "requestContent": [],
         "tags": []
       });
     });
