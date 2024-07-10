@@ -25,6 +25,57 @@
           "x-customTag"
         ],
         "operationId": "updatePet",
+        "requestBody": {
+          "description": "Pet object that needs to be updated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Rex"
+                  },
+                  "tag": {
+                    "type": "string",
+                    "example": "dog"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name"
+                ]
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Rex"
+                  },
+                  "tag": {
+                    "type": "string",
+                    "example": "dog"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name"
+                ]
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Pet updated.",

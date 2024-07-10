@@ -15,7 +15,7 @@ const destroyOutput = false;
 // Load tests
 const tests = !localTesting ? fs.readdirSync(__dirname).filter(file => {
   return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_'));
-}) : ['yaml-linewidth'];
+}) : ['json-filter-inverse-tags-unused'];
 
 describe('openapi-format tests', () => {
   tests.forEach((test) => {
@@ -198,15 +198,13 @@ describe('openapi-format tests', () => {
             if ((options.output && options.output.indexOf('.json') >= 0) || options.json) {
               // Convert OpenAPI object to JSON string
               options.format = 'json';
-              output = await stringify(result, options);
             } else {
               // Convert OpenAPI object to YAML string
               options.format = 'yaml';
-              output = await stringify(result, options);
             }
 
             // Write OpenAPI string to file
-            await writeFile(outputFilename, output, options);
+            await writeFile(outputFilename, result, options);
           }
         } catch (error) {
           console.log('error', error);

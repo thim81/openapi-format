@@ -75,17 +75,20 @@ async function detectFormat(str) {
 async function parseFile(filePath) {
   try {
     const isRemoteFile = filePath.startsWith('http://') || filePath.startsWith('https://');
-    // const isYamlFile = filePath.endsWith('.yaml') || filePath.endsWith('.yml');
+
+    const options = {}
 
     let fileContent;
     if (isRemoteFile) {
       fileContent = await getRemoteFile(filePath);
     } else {
+      const isYamlFile = filePath.endsWith('.yaml') || filePath.endsWith('.yml');
+      (isYamlFile) ? options.format = 'yaml' : options.format = 'json';
       fileContent = await getLocalFile(filePath);
     }
 
     // Encode & Parse file content
-    return parseString(fileContent)
+    return parseString(fileContent, options)
 
   } catch (err) {
     throw err;
@@ -287,6 +290,7 @@ function analyzeOpenApi(oaObj) {
   const methods = new Set();
   const operations = [];
   const responseContent = new Set();
+  const requestContent = new Set();
   const flagValues = new Set();
 
   if (oaObj && oaObj.paths) {
@@ -311,6 +315,12 @@ function analyzeOpenApi(oaObj) {
 
         if (operation?.operationId) {
           operationIds.push(operation.operationId);
+        }
+
+        if (operation?.requestBody?.content) {
+          Object.keys(operation.requestBody.content).forEach((contentType) => {
+            requestContent.add(contentType);
+          });
         }
 
         if (operation?.responses) {
@@ -341,6 +351,7 @@ function analyzeOpenApi(oaObj) {
     paths,
     operations,
     responseContent: Array.from(responseContent),
+    requestContent: Array.from(requestContent),
   };
 }
 
