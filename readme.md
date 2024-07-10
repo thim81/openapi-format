@@ -237,6 +237,8 @@ extended options for filtering OpenAPI documents.
 | inverseFlagValues      | Custom flags with a value that will be kept | array | ['x-version: 1.0','x-version: 3.0']       |
 | responseContent        | Response Content types                      | array | ['application/json','application/html']   |
 | inverseResponseContent | Response Content types that will kept       | array | ['application/ld+json']                   |
+| requestContent         | Request Body Content types                  | array | ['application/json','application/html']   |
+| inverseRequestContent  | Request Body Content types that will kept   | array | ['application/ld+json']                   |
 | unusedComponents       | Unused components                           | array | ['examples','schemas']                    |
 | stripFlags             | Custom flags that will be stripped          | array | ['x-exclude','x-internal']                |
 | textReplace            | Search & replace values to replace          | array | [{'searchFor':'Pet','replaceWith':'Dog'}] |
@@ -443,14 +445,14 @@ Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-value) and [flagV
 
 => **ResponseContent**: Refers to the [Response Object's content](https://spec.openapis.org/oas/v3.0.3.html#response-object)
 
-A `content` example:
+A responses `content` filter example:
 
 ```yaml
-content:
+responseContent:
   - application/json
 ```
 
-This will remove all the content that match the media types. In the example below, this would mean that all `application/json`
+This will remove all the content that match the media types from the responses. In the example below, this would mean that all `application/json`
 content items would be removed from the OpenAPI document
 
 Example before:
@@ -511,6 +513,72 @@ paths:
 ```
 
 => **inverseResponseContent**: This option does the inverse filtering, by keeping only the content with media types defined and remove all other content.
+
+### Filter - requestContent/inverseRequestContent
+
+=> **requestContent**: Refers to the [Request Body Object's content](https://spec.openapis.org/oas/v3.0.3.html#request-body-object)
+
+A  request body `content` filter example:
+
+```yaml
+requestContent:
+  - application/json
+```
+
+This will remove all the content that match the media types from the request body. In the example below, this would mean that all `application/json`
+content items would be removed from the OpenAPI document.
+
+Example before:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+  /pet:
+    post:
+      tags:
+        - pet
+      summary: Add a new pet to the store
+      description: Add a new pet to the store
+      operationId: addPet
+      x-visibility: true
+      requestBody: 
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Pet'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+
+```
+
+Example after:
+
+```yaml
+openapi: 3.0.0
+info:
+    title: API
+    version: 1.0.0
+paths:
+  /pet:
+    post:
+      tags:
+        - pet
+      summary: Add a new pet to the store
+      description: Add a new pet to the store
+      operationId: addPet
+      x-visibility: true
+      requestBody:
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Pet'
+```
+
+=> **inverseRequestContent**: This option does the inverse filtering, by keeping only the content with media types defined and remove all other content types from the request body.
 
 ### Filter - unusedComponents
 
