@@ -1,5 +1,8 @@
 ## unreleased
 
+- Filter - added requestContent and inverseRequestContent filters 
+- Bumped dependencies
+
 ## [1.20.0] - 2024-06-16
 
 - Improved the logic to remove "unused" component items
