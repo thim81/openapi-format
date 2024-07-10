@@ -13,5 +13,7 @@
   "unusedComponents": [],
   "stripFlags": [],
   "responseContent": [],
-  "inverseResponseContent": []
+  "inverseResponseContent": [],
+  "requestContent": [],
+  "inverseRequestContent": []
 }

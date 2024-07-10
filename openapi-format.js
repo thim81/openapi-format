@@ -141,6 +141,7 @@ async function openapiFilter(oaObj, options) {
   const filterOperations = [...(filterSet.operations ?? [])];
   const filterProps = [...(filterSet.operationIds ?? []), ...(filterSet.flags ?? []), ...(fixedFlags ?? [])];
   const filterResponseContent = [...(filterSet.responseContent ?? [])];
+  const filterRequestContent = [...(filterSet.requestContent ?? [])];
 
   // Inverse object filters
   const inverseFilterKeys = [...(filterSet.inverseMethods ?? [])];
@@ -148,6 +149,7 @@ async function openapiFilter(oaObj, options) {
   const inverseFilterArray = [...(filterSet.inverseTags ?? [])];
   const inverseFilterFlags = [...(filterSet.inverseFlags ?? [])];
   const inverseFilterResponseContent = [...(filterSet.inverseResponseContent ?? [])];
+  const inverseFilterRequestContent = [...(filterSet.inverseRequestContent ?? [])];
 
   const stripFlags = [...(filterSet.stripFlags ?? [])];
   const stripUnused = [...(filterSet.unusedComponents ?? [])];
@@ -238,6 +240,22 @@ async function openapiFilter(oaObj, options) {
       && this.parent && this.parent.key === 'content'
       && this.parent.parent && this.parent.parent.parent && this.parent.parent.parent.key === 'responses') {
       // debugFilterStep = 'Filter - inverse response content'
+      this.remove();
+    }
+
+    // Filter out object matching the "request content"
+    if (filterRequestContent.length > 0 && filterRequestContent.includes(this.key)
+      && this.parent && this.parent.key === 'content'
+      && this.parent.parent && this.parent.parent.key === 'requestBody') {
+      // debugFilterStep = 'Filter - request content'
+      this.remove();
+    }
+
+    // Filter out object matching the inverse "request content"
+    if (inverseFilterRequestContent.length > 0 && !inverseFilterRequestContent.includes(this.key)
+      && this.parent && this.parent.key === 'content'
+      && this.parent.parent && this.parent.parent.key === 'requestBody') {
+      // debugFilterStep = 'Filter - inverse request content'
       this.remove();
     }
 

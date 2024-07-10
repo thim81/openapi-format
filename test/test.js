@@ -9,13 +9,13 @@ const openapiFormat = require('../openapi-format.js');
 const {parseFile, stringify, writeFile} = require("../openapi-format");
 
 // SELECTIVE TESTING DEBUG
-const localTesting = true;
+const localTesting = false;
 const destroyOutput = false;
 
 // Load tests
 const tests = !localTesting ? fs.readdirSync(__dirname).filter(file => {
   return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_'));
-}) : ['json-filter-inverse-tags-unused'];
+}) : ['yaml-filter-inverse-request-content'];
 
 describe('openapi-format tests', () => {
   tests.forEach((test) => {
