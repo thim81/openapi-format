@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 "use strict";
 
-const traverse = require('traverse');
+const traverse = require('neotraverse/legacy');
 const {isString, isArray, isObject} = require("./utils/types");
 const {
   prioritySort,
