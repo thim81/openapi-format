@@ -85,37 +85,40 @@ function changeArrayObjKeysCase(node, caseType) {
  * @returns {string}
  */
 function changeCase(valueAsString, caseType, customKeepChars = null) {
-  if (!isString(valueAsString) || valueAsString === "") return valueAsString
-  const keepChars = customKeepChars || ['$', '@']
-  const normCaseType = camelCase(caseType)
+  if (!isString(valueAsString) || valueAsString === "") return valueAsString;
+  const keepChars = customKeepChars || ['$', '@'];
+  const cleanedString = valueAsString.replace(/\[(.*?)]/g, (match, p1) => {
+    return ' ' + p1.replace(/([A-Z])/g, ' $1') + ' ';
+  });
+  const normCaseType = camelCase(caseType);
 
   switch (normCaseType) {
     case "camelCase":
-      return camelCase(valueAsString, {keep: keepChars})
+      return camelCase(cleanedString, {keep: keepChars})
     case "pascalCase":
     case "upperCamelCase":
-      return pascalCase(valueAsString, {keep: keepChars})
+      return pascalCase(cleanedString, {keep: keepChars})
     case "kebabCase":
     case "kebapCase":
-      return kebabCase(valueAsString, {keep: keepChars})
+      return kebabCase(cleanedString, {keep: keepChars})
     case "trainCase":
     case "capitalKebabCase":
     case "capitalKebapCase":
-      return trainCase(valueAsString, {keep: keepChars})
+      return trainCase(cleanedString, {keep: keepChars})
     case "snakeCase":
-      return snakeCase(valueAsString, {keep: keepChars})
+      return snakeCase(cleanedString, {keep: keepChars})
     case "adaCase":
-      return adaCase(valueAsString, {keep: keepChars})
+      return adaCase(cleanedString, {keep: keepChars})
     case "constantCase":
-      return constantCase(valueAsString, {keep: keepChars})
+      return constantCase(cleanedString, {keep: keepChars})
     case "cobolCase":
-      return cobolCase(valueAsString, {keep: keepChars})
+      return cobolCase(cleanedString, {keep: keepChars})
     case "dotNotation":
-      return dotNotation(valueAsString, {keep: keepChars})
+      return dotNotation(cleanedString, {keep: keepChars})
     case "spaceCase":
-      return spaceCase(valueAsString, {keep: keepChars})
+      return spaceCase(cleanedString, {keep: keepChars})
     case "capitalCase":
-      return capitalCase(valueAsString, {keep: keepChars})
+      return capitalCase(cleanedString, {keep: keepChars})
     case "lowerCase":
       return lowerCase(valueAsString, {keep: keepChars})
     case "upperCase":

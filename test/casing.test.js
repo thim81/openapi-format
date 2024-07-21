@@ -127,6 +127,39 @@ describe('openapi-format CLI casing tests', () => {
     it('casing should not match', async () => {
       expect(of.changeCase(str, 'foo bar')).toBe('openapi-format');
     });
+    it('casing should handle [] with camelCase', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'camelCase')).toBe('createLeadMissingParams');
+    });
+    it('casing should handle [] with PascalCase', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'PascalCase')).toBe('CreateLeadMissingParams');
+    });
+    it('casing should handle [] with kebab-case', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'kebab-case')).toBe('create-lead-missing-params');
+    });
+    it('casing should handle [] with snakeCase', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'snakeCase')).toBe('create_lead_missing_params');
+    });
+    it('casing should handle [] with trainCase', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'trainCase')).toBe('Create-Lead-Missing-Params');
+    });
+    it('casing should handle [] with adaCase', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'adaCase')).toBe('Create_Lead_Missing_Params');
+    });
+    it('casing should handle [] with constantCase', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'constantCase')).toBe('CREATE_LEAD_MISSING_PARAMS');
+    });
+    it('casing should handle [] with cobolCase', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'cobolCase')).toBe('CREATE-LEAD-MISSING-PARAMS');
+    });
+    it('casing should handle [] with dotNotation', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'dotNotation')).toBe('Create.lead.missing.Params');
+    });
+    it('casing should handle [] with spaceCase', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'spaceCase')).toBe('Create lead missing Params');
+    });
+    it('casing should handle [] with capitalCase', async () => {
+      expect(of.changeCase('Create lead[missingParams]', 'capitalCase')).toBe('Create Lead Missing Params');
+    });
     it('casing should keep custom characters', async () => {
       expect(of.changeCase('{{openapi-format}}', 'snake_case', ['{{', '}}'])).toBe('{{openapi_format}}');
     });
