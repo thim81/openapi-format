@@ -1,5 +1,8 @@
 ## unreleased
 
+- Replaced Traverse with Neotraverse
+- Casing - Improvements to handle special characters
+
 ## [1.21.0] - 2024-07-10
 
 - Filter - added requestContent and inverseRequestContent filters 
