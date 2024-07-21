@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.21.1] - 2024-07-21
+
 - Replaced Traverse with Neotraverse
 - Casing - Improvements to handle special characters
 
