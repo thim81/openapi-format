@@ -73,9 +73,9 @@ async function openapiSort(oaObj, options) {
       if (sortSet.hasOwnProperty(this.key) && Array.isArray(sortSet[this.key])) {
 
         if (Array.isArray(node)) {
-          if (this.parent && this.parent.key === 'example' && this.path[0] === 'components') {
-            // debugStep = 'Generic sorting - skip nested components>example array'
-            // Skip nested components>example values
+          if (this.parent && this.parent.key === 'example' && (this.path[0] === 'components' || this.path[3] === 'requestBody')) {
+            debugStep = 'Generic sorting - skip nested components>example array'
+            // Skip nested components>example or requestBody>example values
           } else {
             // debugStep = 'Generic sorting - array'
             // Deep sort array of properties

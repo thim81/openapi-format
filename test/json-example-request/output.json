@@ -1,0 +1,37 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "description": "This is a sample OpenAPI 3.0 specification. ",
+    "version": "1.0.6-SNAPSHOT",
+    "title": "Sample OpenAPI 3.0 app"
+  },
+  "paths": {
+    "/api": {
+      "put": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "schemas": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "schemas": [
+                    "urn:ietf:params:scim:schemas:core:2.0:Group"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
