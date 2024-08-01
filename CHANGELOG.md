@@ -1,5 +1,7 @@
 ## unreleased
 
+- Sort - Added option to sort paths alphabetically or by tag (#119)
+
 ## [1.21.1] - 2024-07-21
 
 - Replaced Traverse with Neotraverse

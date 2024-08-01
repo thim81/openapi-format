@@ -5,7 +5,7 @@ const traverse = require('neotraverse/legacy');
 const {isString, isArray, isObject} = require("./utils/types");
 const {
   prioritySort,
-  isMatchOperationItem, arraySort,
+  isMatchOperationItem, arraySort, sortPathsByTags, sortPathsByAlphabet,
 } = require("./utils/sorting");
 const {
   changeComponentParametersCasingEnabled,
@@ -40,6 +40,15 @@ async function openapiSort(oaObj, options) {
     return oaObj;
   }
 
+  // Sort by options
+  const sortPathsBy = options.sortSet?.sortPathsBy || "original";
+
+  // Cleanup sortSet
+  if (options.sortSet) {
+    delete options.sortSet.sortPathsBy;
+    options.sortSet = Object.keys(options.sortSet).length ? options.sortSet : null;
+  }
+
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
   let sortSet = options.sortSet || await parseFile(__dirname + "/defaultSort.json");
   let sortComponentsSet = options.sortComponentsSet || await parseFile(__dirname + "/defaultSortComponents.json");
@@ -67,6 +76,21 @@ async function openapiSort(oaObj, options) {
         let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the node
         node = arraySort(sortedObj, 'name');
         this.update(node);
+      }
+
+      // Path sorting
+      if (this.key === 'paths' && sortPathsBy !== 'original') {
+        let sortedObj = JSON.parse(JSON.stringify(node));
+        if (sortPathsBy === 'path') {
+          // debugStep = 'Path sorting by alphabet'
+          node = sortPathsByAlphabet(sortedObj);
+          this.update(node);
+        }
+        if (sortPathsBy === 'tags') {
+          // debugStep = 'Path sorting by first method, first tag'
+          node = sortPathsByTags(sortedObj);
+          this.update(node);
+        }
       }
 
       // Generic sorting

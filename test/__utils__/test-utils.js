@@ -2,7 +2,7 @@ const fs = require("fs");
 const sy = require("@stoplight/yaml");
 const {exec} = require("child_process");
 const path = require("path");
-const {parseFile} = require("../../utils/file");
+const {parseFile, stringify} = require("../../utils/file");
 
 async function loadTest(folder, inputType = 'yaml', outType = 'yaml') {
   let input, outputBefore, outputAfter = {}
@@ -32,7 +32,7 @@ async function loadTest(folder, inputType = 'yaml', outType = 'yaml') {
     //
   }
 
-  return {result: result, input: input, outputBefore: outputBefore, outputAfter: outputAfter}
+  return {result: result, input: input, outputBefore: await stringify(outputBefore), outputAfter: await stringify(outputAfter)}
 }
 
 function cli(args, cwd) {

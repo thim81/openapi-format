@@ -185,12 +185,14 @@ Options:
 
 ## OpenAPI sort configuration options
 
-The CLI will sort the OpenAPI document in the defined order liked defined per OpenAPI key/element. The fields that are
+The CLI will sort the OpenAPI document in the defined order liked defined per OpenAPI key/field/property/element. The fields that are
 not specified will keep their order like it is in the original OpenAPI document, so only defined fields will be
 re-ordered.
 
-The default sorting based on the defined order (listed in the table below), which is stored in
+The default sorting of the different fields based on the defined order (listed in the table below), which is stored in
 the [defaultSort.json](https://github.com/thim81/openapi-format/blob/main/defaultSort.json) file.
+
+### OpenAPI sort fields
 
 You can easily modify this by specifying your own ordering per key, which can be passed on to the CLI (see below for an
 example on how to do this).
@@ -213,6 +215,22 @@ example on how to do this).
 | properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                           |
 
 Have a look at the folder [yaml-default](test/yaml-default) and compare the "output.yaml" (sorted document) with the "input.yaml" (original document), to see how openapi-format have sorted the OpenAPI document.
+
+### OpenAPI sort Paths
+
+You can change the order of the paths defined in the OpenAPI specification and sort them alphabetically (`path`) or by the first tag of the first method (`tags`).
+
+Options to sort by:
+
+- `original` (default): keep the order as defined in the OpenAPI specification
+- `path`: order the paths alphabetically by the path parts
+- `tags`: order by the first tag of the first method
+
+| Key         | Ordered by                   | OpenAPI reference                                                      |
+|-------------|------------------------------|------------------------------------------------------------------------|
+| sortPathsBy | 'original' / 'path' / 'tags' | [paths-object](https://spec.openapis.org/oas/v3.0.3.html#paths-object) |
+
+
 
 ## OpenAPI filter options
 

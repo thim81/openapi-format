@@ -1,0 +1,84 @@
+openapi: 3.0.3
+info:
+  title: MiniMap API
+  version: 1.0.0
+paths:
+  /tag-x:
+    get:
+      summary: Get list
+      responses:
+        '200':
+          description: A JSON array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      tags:
+        - Tag 2
+  /tag-b/details:
+    get:
+      summary: Get
+      responses:
+        '200':
+          description: Lorem
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+      tags:
+        - Tag 3
+  /tag-b:
+    get:
+      summary: Get
+      responses:
+        '200':
+          description: Lorem
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+      tags:
+        - Tag 3
+  /tag-c:
+    get:
+      summary: Get list
+      responses:
+        '200':
+          description: A JSON array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      tags:
+        - Tag 1
+  /tag-a:
+    get:
+      summary: Get list
+      responses:
+        '200':
+          description: A JSON array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      tags:
+        - Tag 1
+tags:
+  - name: Tag 1
+    description: Operations related to users
+  - name: Tag 2
+    description: Operations related to products
+  - name: Tag 3
+    description: Operations related to products
