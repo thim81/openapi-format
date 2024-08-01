@@ -226,7 +226,7 @@ Options to sort by:
 - `path`: order the paths alphabetically by the path parts
 - `tags`: order by the first tag of the first method
 
-| Key         | Ordered by                   | OpenAPI reference                                                      |
+| Key         | Options                      | OpenAPI reference                                                      |
 |-------------|------------------------------|------------------------------------------------------------------------|
 | sortPathsBy | 'original' / 'path' / 'tags' | [paths-object](https://spec.openapis.org/oas/v3.0.3.html#paths-object) |
 
