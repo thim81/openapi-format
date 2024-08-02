@@ -1,6 +1,6 @@
 ## unreleased
 
-- Sorting - Bugfix for requestBody.example distortion (#120)
+- Sort - Bugfix for requestBody.example distortion (#120)
 
 ## [1.21.1] - 2024-07-21
 
