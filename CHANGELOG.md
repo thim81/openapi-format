@@ -1,5 +1,7 @@
 ## unreleased
 
+- Sort - Added option to sort paths alphabetically or by tag (#119)
+
 ## [1.21.2] - 2024-08-02
 
 - Sort - Bugfix for requestBody.example distortion (#120)

@@ -78,6 +78,73 @@ function arraySort(arr, propertyName) {
 }
 
 /**
+ * Sort OpenAPI paths by alphabet
+ * @param paths
+ * @returns {{[p: string]: unknown}}
+ */
+
+function sortPathsByAlphabet(paths) { // Convert the paths object to an array of entries
+  const entries = Object.entries(paths);
+  // Sort the entries alphabetically by their paths
+  entries.sort((a, b) => {
+    const pathA = a[0].split('/');
+    const pathB = b[0].split('/');
+
+    for (let i = 1; i < Math.max(pathA.length, pathB.length); i++) {
+      if (!pathA[i]) return -1;
+      if (!pathB[i]) return 1;
+      if (pathA[i] < pathB[i]) return -1;
+      if (pathA[i] > pathB[i]) return 1;
+    }
+
+    return 0;
+  });
+  return Object.fromEntries(entries);
+}
+
+/**
+ * Sort OpenAPI paths by tags
+ * @param paths
+ * @returns {{[p: string]: unknown}}
+ */
+function sortPathsByTags(paths) {
+  const entries = Object.entries(paths);
+  // Sort the entries by the first tag in the available methods
+  entries.sort((a, b) => {
+    const methodsA = a[1];
+    const methodsB = b[1];
+
+    const tagsOrder = ["get", "post", "put", "delete", "patch", "options", "head"];
+
+    let tagA = "";
+    let tagB = "";
+
+    for (const method of tagsOrder) {
+      if (methodsA[method] && methodsA[method].tags && methodsA[method].tags.length > 0) {
+        tagA = methodsA[method].tags[0];
+        break;
+      }
+    }
+
+    for (const method of tagsOrder) {
+      if (methodsB[method] && methodsB[method].tags && methodsB[method].tags.length > 0) {
+        tagB = methodsB[method].tags[0];
+        break;
+      }
+    }
+
+    if (tagA < tagB) {
+      return -1;
+    }
+    if (tagA > tagB) {
+      return 1;
+    }
+    return 0;
+  });
+  return Object.fromEntries(entries);
+}
+
+/**
  * A check if the OpenAPI operation item matches a target definition .
  * @param {object} operationPath the OpenAPI path item to match
  * @param {object} operationMethod the OpenAPI method item to match
@@ -151,11 +218,13 @@ function matchPath(path, url) {
 }
 
 module.exports = {
-  sortObjectByKeyNameList:sortObjectByKeyNameList,
-  propComparator:propComparator,
-  arraySort: arraySort,
-  prioritySort:prioritySort,
-  isMatchOperationItem:isMatchOperationItem,
-  pathToRegExp:pathToRegExp,
-  matchPath:matchPath,
+  sortObjectByKeyNameList,
+  propComparator,
+  arraySort,
+  prioritySort,
+  sortPathsByAlphabet,
+  sortPathsByTags,
+  isMatchOperationItem,
+  pathToRegExp,
+  matchPath,
 };

@@ -204,6 +204,26 @@ describe('openapi-format CLI sorting tests', () => {
     });
   })
 
+  describe('yaml-sort-paths', () => {
+    it('yaml-sort-paths by alphabet - should match expected output', async () => {
+      const testName = 'yaml-sort-paths-alphabet'
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName)
+      // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain("formatted successfully");
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+
+    it('yaml-sort-paths by tags - should match expected output', async () => {
+      const testName = 'yaml-sort-paths-tags'
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName)
+      // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain("formatted successfully");
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  })
+
   describe('yaml-stoplight-studio-style', () => {
     it('yaml-stoplight-studio-style - should match expected output', async () => {
       const testName = 'yaml-stoplight-studio-style'
