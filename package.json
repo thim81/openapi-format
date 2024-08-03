@@ -1,6 +1,6 @@
 {
   "name": "openapi-format",
-  "version": "1.21.1",
+  "version": "1.21.2",
   "description": "Format an OpenAPI document by ordering, formatting and filtering fields.",
   "keywords": [
     "openapi",
@@ -34,7 +34,7 @@
     "@stoplight/yaml": "^4.3.0",
     "case-anything": "2.1.10",
     "commander": "^7.2.0",
-    "neotraverse": "^0.6.14"
+    "neotraverse": "^0.6.15"
   },
   "devDependencies": {
     "jest": "^27.5.1"

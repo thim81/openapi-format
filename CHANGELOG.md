@@ -2,6 +2,10 @@
 
 - Sort - Added option to sort paths alphabetically or by tag (#119)
 
+## [1.21.2] - 2024-08-02
+
+- Sort - Bugfix for requestBody.example distortion (#120)
+
 ## [1.21.1] - 2024-07-21
 
 - Replaced Traverse with Neotraverse
