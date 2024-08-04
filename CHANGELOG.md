@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.22.0] - 2024-08-04
+
 - Sort - Added option to sort paths alphabetically or by tag (#119)
 
 ## [1.21.2] - 2024-08-02
