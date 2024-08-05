@@ -1,6 +1,8 @@
 ## unreleased
 
-- Convert - Check node is not null in traverse
+## [1.22.1] - 2024-08-04
+
+- Convert - Check node is not null in traverse (#123)
 
 ## [1.22.0] - 2024-08-04
 
