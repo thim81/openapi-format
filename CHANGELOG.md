@@ -1,5 +1,7 @@
 ## unreleased
 
+- Convert - Check node is not null in traverse
+
 ## [1.22.0] - 2024-08-04
 
 - Sort - Added option to sort paths alphabetically or by tag (#119)

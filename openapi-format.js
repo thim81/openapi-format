@@ -57,7 +57,7 @@ async function openapiSort(oaObj, options) {
   // Recursive traverse through OpenAPI document
   traverse(jsonObj).forEach(function (node) {
 
-    if (typeof node === 'object') {
+    if (typeof node === 'object' && node !== null) {
 
       // Components sorting by alphabet
       if (this.parent && this.parent.key && this.path[0] === 'components' && this.parent.key === 'components'
@@ -885,7 +885,7 @@ async function openapiConvertVersion(oaObj, options) {
 
   // Recursive traverse through OpenAPI document for deprecated 3.0 properties
   traverse(jsonObj).forEach(function (node) {
-    if (typeof node === 'object') {
+    if (typeof node === 'object' && node !== null) {
       // Change components/schemas - properties
       if (node.type) {
         // Change type > nullable
