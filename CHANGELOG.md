@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.22.2] - 2024-08-16
+
 - Filter - Only remove path methods, keeping similarly named properties
 - Filter - Prevent removal of empty objects in oneOf, allOf items
 
