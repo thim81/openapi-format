@@ -150,7 +150,6 @@ async function writeFile(filePath, data, options = {}) {
       // Convert Object to YAML string
       options.format = 'yaml';
       output = await stringify(data, options);
-
     } else {
       // Convert Object to JSON string
       options.format = 'json';
@@ -159,11 +158,9 @@ async function writeFile(filePath, data, options = {}) {
 
     // Write output file
     fs.writeFileSync(filePath, output, 'utf8');
-    // console.log(`- Output file:\t\t${outputFilePath}`);
   } catch (err) {
-    console.log('err', err)
+    console.error('\x1b[31m',  `Error writing file "${filePath}": ${err.message}`);
     throw err
-    // throw new Error(`Error writing file "${filePath}": ${err.message}`);
   }
 }
 
