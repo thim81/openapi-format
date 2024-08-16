@@ -589,7 +589,7 @@ async function openapiFilter(oaObj, options) {
       // Remove empty objects - preserveEmptyObjects: undefined
       if (
         (typeof filterSet.preserveEmptyObjects === 'undefined') &&
-        (!['security', 'schemas', 'default'].includes(this.parent.key)
+        (!['security', 'schemas', 'default', 'oneOf', 'allOf'].includes(this.parent.key)
           && ((this.key === "examples" || this.key === "example")
             || !this.path.includes('example') && !this.path.includes('examples'))
         )
