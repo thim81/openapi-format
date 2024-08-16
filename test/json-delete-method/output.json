@@ -1,0 +1,38 @@
+{
+  "components": {
+    "schemas": {
+      "RequestBody": {
+        "type": "object",
+        "properties": {
+          "delete": {
+            "type": "boolean",
+            "default": false
+          },
+          "get": {
+            "type": "boolean",
+            "default": false
+          },
+          "put": {
+            "type": "boolean",
+            "default": false
+          },
+          "patch": {
+            "type": "boolean",
+            "default": false
+          },
+          "post": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "delete",
+          "get",
+          "post",
+          "put",
+          "patch"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "methods": [
+    "POST",
+    "DELETE",
+    "get",
+    "post",
+    "put",
+    "patch"
+  ],
+  "tags": [],
+  "operationIds": [],
+  "operations": [],
+  "flags": [],
+  "flagValues": []
+}
