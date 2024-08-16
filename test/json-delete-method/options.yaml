@@ -1,0 +1,4 @@
+verbose: true
+no-sort: true
+output: output.json
+filterFile: customFilter.json

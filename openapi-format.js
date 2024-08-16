@@ -291,7 +291,8 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Filter out object matching the "methods"
-    if (filterKeys.length > 0 && filterKeys.includes(this.key)) {
+    if (filterKeys.length > 0 && filterKeys.includes(this.key)
+      && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
       // debugFilterStep = 'Filter - methods'
       this.remove();
     }
