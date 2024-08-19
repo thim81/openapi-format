@@ -1,6 +1,8 @@
 ## unreleased
 
-- Filter - Only unused components, keep properties with same key (#126)
+## [1.22.3] - 2024-08-19
+
+- Filter - Fix to only remove unused components, keep properties with same key (#126)
 
 ## [1.22.2] - 2024-08-16
 
