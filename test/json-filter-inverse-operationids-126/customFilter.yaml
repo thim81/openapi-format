@@ -1,0 +1,9 @@
+unusedComponents:
+  - schemas
+  - parameters
+  - examples
+  - headers
+  - requestBodies
+  - responses
+inverseOperationIds:
+  - createJob

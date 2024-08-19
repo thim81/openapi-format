@@ -565,7 +565,7 @@ async function openapiFilter(oaObj, options) {
   // Clean-up jsonObj
   traverse(jsonObj).forEach(function (node) {
     // Remove unused component
-    if (this.path[0] === 'components' && stripUnused.length > 0) {
+    if (this.path[0] === 'components' && this.level === 3 && stripUnused.length > 0) {
       if (stripUnused.includes(this.path[1]) && unusedComp[this.path[1]].includes(this.key)) {
         // debugFilterStep = 'Filter - Remove unused components'
         this.delete();
