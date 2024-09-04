@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: Minimal API
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /resource:
+    get:
+      summary: Get a resource
+      responses:
+        '200':
+          description: Successful response
+    post:
+      summary: Create a resource
+      requestBody:
+        description: New resource data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Resource created
+    put:
+      summary: Update a resource
+      requestBody:
+        description: Updated resource data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Resource updated
+    patch:
+      summary: Partially update a resource
+      requestBody:
+        description: Partial resource data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Resource partially updated
+    delete:
+      summary: Delete a resource
+      responses:
+        '204':
+          description: Resource deleted
+    head:
+      summary: Get headers of a resource
+      responses:
+        '200':
+          description: Successful response (headers only)
+    options:
+      summary: Get supported HTTP methods
+      responses:
+        '200':
+          description: Successful response, listing allowed methods
+          headers:
+            Allow:
+              description: Allowed HTTP methods
+              schema:
+                type: string
+    trace:
+      summary: Trace the path to a resource
+      responses:
+        '200':
+          description: Trace successful
+
+components: {}

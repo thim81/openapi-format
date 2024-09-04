@@ -1,0 +1,13 @@
+openapi: 3.0.3
+info:
+  title: Minimal API
+  version: 1.0.0
+servers:
+  - url: 'https://api.example.com/v1'
+paths:
+  /resource:
+    head:
+      summary: Get headers of a resource
+      responses:
+        '200':
+          description: Successful response (headers only)

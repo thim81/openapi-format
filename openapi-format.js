@@ -155,7 +155,7 @@ async function openapiFilter(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
   let defaultFilter = options.defaultFilter || await parseFile(__dirname + "/defaultFilter.json");
   let filterSet = Object.assign({}, defaultFilter, options.filterSet);
-  const httpVerbs = ["get", "post", "put", "patch", "delete"];
+  const httpVerbs = ["get", "post", "put", "patch", "delete", "head", "options", "trace"];
   const fixedFlags = ["x-openapi-format-filter"];
   options.unusedDepth = options.unusedDepth || 0;
 

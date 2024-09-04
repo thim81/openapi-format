@@ -1,5 +1,7 @@
 ## unreleased
 
+- Filter - Extend methods/inverseMethods filtering with "head", "options", "trace" (#128)
+
 ## [1.22.3] - 2024-08-19
 
 - Filter - Fix to only remove unused components, keep properties with same key (#126)

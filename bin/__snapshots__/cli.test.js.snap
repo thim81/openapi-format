@@ -52,22 +52,22 @@ OpenAPI-Format CLI settings:
 - Input file:		test/yaml-filter-unused-components/input.yaml
 ================================================================================
 Removed unused components:
-- components/schemas		 \\"UcErrorModel\\"
-- components/schemas		 \\"UcCustomer\\"
-- components/schemas		 \\"UcUnused\\"
-- components/schemas		 \\"Address\\"
-- components/responses		 \\"UcGeneralError\\"
-- components/parameters		 \\"UcOffsetParam\\"
-- components/parameters		 \\"UcLimitParam\\"
-- components/examples		 \\"uctshirt\\"
-- components/examples		 \\"uctshirt-unused\\"
-- components/requestBodies	 \\"UcNewItem\\"
-- components/requestBodies	 \\"Pet\\"
-- components/requestBodies	 \\"UserArray\\"
-- components/requestBodies	 \\"UnusedArray\\"
-- components/headers		 \\"X-RateLimit-Unused\\"
-- components/headers		 \\"X-RateLimit-Limit\\"
-- components/headers		 \\"X-RateLimit-Remaining\\"
+- components/schemas		 "UcErrorModel"
+- components/schemas		 "UcCustomer"
+- components/schemas		 "UcUnused"
+- components/schemas		 "Address"
+- components/responses		 "UcGeneralError"
+- components/parameters		 "UcOffsetParam"
+- components/parameters		 "UcLimitParam"
+- components/examples		 "uctshirt"
+- components/examples		 "uctshirt-unused"
+- components/requestBodies	 "UcNewItem"
+- components/requestBodies	 "Pet"
+- components/requestBodies	 "UserArray"
+- components/requestBodies	 "UnusedArray"
+- components/headers		 "X-RateLimit-Unused"
+- components/headers		 "X-RateLimit-Limit"
+- components/headers		 "X-RateLimit-Remaining"
 Total components removed: 16
 [32m================================================================================[0m
 [32m✅  OpenAPI filtered & formatted successfully[0m
@@ -79,7 +79,7 @@ exports[`openapi-format CLI command should stop and show error 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
 - Sort file:		foobar
-[31m Sort file error - no such file or directory \\"foobar\\"
+[31m Sort file error - no such file or directory "foobar"
 "
 `;
 
@@ -138,7 +138,7 @@ exports[`openapi-format CLI command should use the convert version 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
 - Input file:		test/yaml-convert-3.1/input.yaml
-- OAS version converted to: \\"3.1\\"
+- OAS version converted to: "3.1"
 ================================================================================
 
 OpenAPI-Format CLI options:
