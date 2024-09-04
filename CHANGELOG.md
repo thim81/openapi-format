@@ -1,6 +1,9 @@
 ## unreleased
 
+## [1.22.4] - 2024-09-04
+
 - Filter - Extend methods/inverseMethods filtering with "head", "options", "trace" (#128)
+- Bumped dependencies: Neotraverse, Jest
 
 ## [1.22.3] - 2024-08-19
 
