@@ -24,16 +24,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Pet'
-          examples:
-            example1:
-              key2: {}
-            example2:
-              key2: {}
       responses:
         '200':
           description: Successful operation
-          content:
-            application/json: {}
         '405':
           description: Invalid input
       security:
@@ -80,8 +73,6 @@ components:
       example:
         default:
           key1: {}
-          key2: {}
-        key:
           key2: {}
       required:
         - name

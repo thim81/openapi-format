@@ -44,14 +44,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
-            examples:
-              example1:
+            examples: # should not be kept
+              example1: # should not be kept
                 key1: { } # should not be kept
-                key2:
+                key2: # should not be kept
                   key: { } # should not be kept
-              example2:
+              example2: # should not be kept
                 key1: { } # should not be kept
-                key2:
+                key2: # should not be kept
                   key: { } # should not be kept
         '405':
           description: Invalid input

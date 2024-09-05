@@ -15,7 +15,7 @@ const destroyOutput = false;
 // Load tests
 const tests = !localTesting ? fs.readdirSync(__dirname).filter(file => {
   return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_'));
-}) : ['json-filter-inverse-tags-unused'];
+}) : ['json-filter-unused'];
 
 describe('openapi-format tests', () => {
   tests.forEach((test) => {

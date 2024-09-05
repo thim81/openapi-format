@@ -44,11 +44,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
-            examples:
-              example1:
-                key2: {}
-              example2:
-                key2: {}
         '405':
           description: Invalid input
       security:
