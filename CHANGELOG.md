@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.22.5] - 2024-09-06
+
 - Filter - Improved unused components handling
 
 ## [1.22.4] - 2024-09-04
