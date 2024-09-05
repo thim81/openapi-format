@@ -178,6 +178,7 @@ async function openapiFilter(oaObj, options) {
   const stripFlags = [...(filterSet.stripFlags ?? [])];
   const stripUnused = [...(filterSet.unusedComponents ?? [])];
   const textReplace = filterSet.textReplace || [];
+  let doRecurse = false;
 
   // Convert flag values to flags
   const filterFlagValuesKeys = Object.keys(Object.assign({}, ...(filterSet.flagValues ?? [])));
@@ -569,6 +570,8 @@ async function openapiFilter(oaObj, options) {
       if (stripUnused.includes(this.path[1]) && unusedComp[this.path[1]].includes(this.key)) {
         // debugFilterStep = 'Filter - Remove unused components'
         this.delete();
+        // Trigger recurse
+        doRecurse = true;
       }
     }
 
@@ -597,6 +600,8 @@ async function openapiFilter(oaObj, options) {
       ) {
         // debugFilterStep = 'Filter - Remove empty objects'
         this.delete();
+        // Trigger recurse
+        doRecurse = true;
       }
 
       // Remove empty objects - preserveEmptyObjects: false
@@ -606,6 +611,8 @@ async function openapiFilter(oaObj, options) {
       ) {
         // debugFilterStep = 'Filter - Remove empty objects'
         this.delete();
+        // Trigger recurse
+        doRecurse = true;
       }
 
       // Remove empty objects - preserveEmptyObjects: [...]
@@ -619,6 +626,8 @@ async function openapiFilter(oaObj, options) {
       ) {
         // debugFilterStep = 'Filter - Remove empty objects'
         this.delete();
+        // Trigger recurse
+        doRecurse = true;
       }
     }
 
@@ -635,7 +644,7 @@ async function openapiFilter(oaObj, options) {
   });
 
   // Recurse to strip any remaining unusedComp, to a maximum depth of 10
-  if (stripUnused.length > 0 && options.unusedComp.meta.total > 0 && options.unusedDepth <= 10) {
+  if (doRecurse === true || options.unusedDepth === 0 || (stripUnused.length > 0 && unusedComp.meta.total > 0 && options.unusedDepth <= 10)) {
     options.unusedDepth++;
     const resultObj = await openapiFilter(jsonObj, options);
     jsonObj = resultObj.data;

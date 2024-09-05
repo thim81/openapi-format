@@ -1,0 +1,9 @@
+operationIds:
+  - pets/getPets
+unusedComponents:
+  - schemas
+  - parameters
+  - examples
+  - headers
+  - requestBodies
+  - responses

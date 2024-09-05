@@ -24,20 +24,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Pet'
-          examples:
-            example1:
+          examples: # should not be kept
+            example1: # should not be kept
               key1: { } # should not be kept
-              key2:
+              key2: # should not be kept
                 key: { } # should not be kept
-            example2:
+            example2: # should not be kept
               key1: { } # should not be kept
-              key2:
+              key2: # should not be kept
                 key: { } # should not be kept
       responses:
         '200':
           description: Successful operation
-          content:
-            application/json:
+          content: # should not be kept
+            application/json: # should not be kept
               schema: { } # should not be kept
         '405':
           description: Invalid input
@@ -84,7 +84,7 @@ components:
             - sold
       example:
         default:
-          key1:
+          key1: # should not be kept
             key: { } # should not be kept
           key2: { } # should not be kept
         key:

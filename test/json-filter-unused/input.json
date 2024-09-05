@@ -1,0 +1,214 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "12.0.0"
+  },
+  "paths": {
+    "/pets": {
+      "get": {
+        "operationId": "pets/getPets",
+        "parameters": [
+          {
+            "name": "marker",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1234567890"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pets"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reviews": {
+      "post": {
+        "operationId": "reviews/postReview",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClientError": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "error",
+            "enum": [
+              "error"
+            ],
+            "nullable": false
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 400,
+            "nullable": false
+          }
+        }
+      },
+      "Pets": {
+        "type": "object",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "format": "int64",
+                "example": 1000
+              },
+              "next_marker": {
+                "type": "string",
+                "example": "1234567890",
+                "nullable": true
+              },
+              "prev_marker": {
+                "type": "string",
+                "example": "1234567890",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123",
+            "nullable": false
+          },
+          "type": {
+            "type": "string",
+            "example": "comment",
+            "enum": [
+              "comment"
+            ],
+            "nullable": false
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ]
+      },
+      "ReviewRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123",
+            "nullable": false,
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ReviewResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123",
+            "nullable": false,
+            "readOnly": true
+          },
+          "type": {
+            "type": "string",
+            "example": "review",
+            "enum": [
+              "review"
+            ],
+            "nullable": false,
+            "readOnly": true
+          },
+          "comment": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Comment"
+              }
+            ],
+            "nullable": false,
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "comment"
+        ]
+      }
+    }
+  }
+}
