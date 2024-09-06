@@ -6,19 +6,21 @@ const sy = require('@stoplight/yaml');
 const {describe, it, expect} = require('@jest/globals');
 
 const openapiFormat = require('../openapi-format.js');
-const {parseFile, stringify, writeFile} = require("../openapi-format");
+const {parseFile, stringify, writeFile} = require('../openapi-format');
 
 // SELECTIVE TESTING DEBUG
 const localTesting = false;
 const destroyOutput = false;
 
 // Load tests
-const tests = !localTesting ? fs.readdirSync(__dirname).filter(file => {
-  return fs.statSync(path.join(__dirname, file)).isDirectory() && (!file.startsWith('_'));
-}) : ['json-filter-unused'];
+const tests = !localTesting
+  ? fs.readdirSync(__dirname).filter(file => {
+      return fs.statSync(path.join(__dirname, file)).isDirectory() && !file.startsWith('_');
+    })
+  : ['json-filter-unused'];
 
 describe('openapi-format tests', () => {
-  tests.forEach((test) => {
+  tests.forEach(test => {
     describe(test, () => {
       it('should match expected output', async () => {
         let options = {};
@@ -39,7 +41,7 @@ describe('openapi-format tests', () => {
         try {
           // Load options.yaml
           configFileOptions = await parseFile(path.join(__dirname, test, 'options.yaml'));
-          configFileOptions.sort = !(configFileOptions['no-sort']);
+          configFileOptions.sort = !configFileOptions['no-sort'];
           options = Object.assign({}, options, configFileOptions);
         } catch (ex) {
           // console.error('ERROR Load options.yaml', ex)
@@ -47,7 +49,7 @@ describe('openapi-format tests', () => {
             // Fallback to options.json
             configFileOptions = await parseFile(path.join(__dirname, test, 'options.json'));
             if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
-              configFileOptions.sort = !(configFileOptions['no-sort']);
+              configFileOptions.sort = !configFileOptions['no-sort'];
               delete configFileOptions['no-sort'];
             }
             options = Object.assign({}, options, configFileOptions);
@@ -108,13 +110,17 @@ describe('openapi-format tests', () => {
 
         try {
           // Load customSortComponents.yaml
-          sortComponentsOptions.sortComponentsSet = await parseFile(path.join(__dirname, test, 'customSortComponents.yaml'));
+          sortComponentsOptions.sortComponentsSet = await parseFile(
+            path.join(__dirname, test, 'customSortComponents.yaml')
+          );
           options = Object.assign({}, options, sortComponentsOptions);
         } catch (ex) {
           // console.error('ERROR Load customSort.yaml', ex)
           try {
             // Fallback to customSort.json
-            sortComponentsOptions.sortComponentsSet = await parseFile(path.join(__dirname, test, 'customSortComponents.json'));
+            sortComponentsOptions.sortComponentsSet = await parseFile(
+              path.join(__dirname, test, 'customSortComponents.json')
+            );
             options = Object.assign({}, options, sortComponentsOptions);
           } catch (ex) {
             // No options found. defaultSort.json will be used
@@ -182,9 +188,12 @@ describe('openapi-format tests', () => {
         }
 
         // Convert the OpenAPI document to OpenAPI 3.1
-        if ((options.convertTo && options.convertTo.toString() === "3.1") || (options.convertToVersion && options.convertToVersion === 3.1)) {
+        if (
+          (options.convertTo && options.convertTo.toString() === '3.1') ||
+          (options.convertToVersion && options.convertToVersion === 3.1)
+        ) {
           const resVersion = await openapiFormat.openapiConvertVersion(result, options);
-          if (resVersion.data) result = resVersion.data
+          if (resVersion.data) result = resVersion.data;
         }
 
         // Rename title OpenAPI document

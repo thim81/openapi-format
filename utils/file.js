@@ -22,7 +22,7 @@ async function parseString(str, options = {}) {
     try {
       const obj = yaml.parse(encodedContent);
       if (typeof obj === 'object') {
-        return obj
+        return obj;
       } else {
         return SyntaxError('Invalid YAML');
       }
@@ -42,7 +42,7 @@ async function parseString(str, options = {}) {
 async function isJSON(str) {
   try {
     JSON.parse(str);
-    return true
+    return true;
   } catch (e) {
     return false;
   }
@@ -51,16 +51,16 @@ async function isJSON(str) {
 async function isYaml(str) {
   try {
     const rest = yaml.parse(str);
-    return (typeof rest === 'object')
+    return typeof rest === 'object';
   } catch (e) {
     return false;
   }
 }
 
 async function detectFormat(str) {
-  if (await isJSON(str) !== false) {
+  if ((await isJSON(str)) !== false) {
     return 'json';
-  } else if (await isYaml(str) !== false) {
+  } else if ((await isYaml(str)) !== false) {
     return 'yaml';
   } else {
     return 'unknown';
@@ -76,20 +76,19 @@ async function parseFile(filePath) {
   try {
     const isRemoteFile = filePath.startsWith('http://') || filePath.startsWith('https://');
 
-    const options = {}
+    const options = {};
 
     let fileContent;
     if (isRemoteFile) {
       fileContent = await getRemoteFile(filePath);
     } else {
       const isYamlFile = filePath.endsWith('.yaml') || filePath.endsWith('.yml');
-      (isYamlFile) ? options.format = 'yaml' : options.format = 'json';
+      isYamlFile ? (options.format = 'yaml') : (options.format = 'json');
       fileContent = await getLocalFile(filePath);
     }
 
     // Encode & Parse file content
-    return parseString(fileContent, options)
-
+    return parseString(fileContent, options);
   } catch (err) {
     throw err;
   }
@@ -109,8 +108,9 @@ async function stringify(obj, options = {}) {
 
     if (toYaml) {
       // Set YAML options
-      const yamlOptions = {}
-      yamlOptions.lineWidth = (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
+      const yamlOptions = {};
+      yamlOptions.lineWidth =
+        (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
 
       // Convert Object to YAML string
       output = yaml.safeStringify(obj, yamlOptions);
@@ -159,8 +159,8 @@ async function writeFile(filePath, data, options = {}) {
     // Write output file
     fs.writeFileSync(filePath, output, 'utf8');
   } catch (err) {
-    console.error('\x1b[31m',  `Error writing file "${filePath}": ${err.message}`);
-    throw err
+    console.error('\x1b[31m', `Error writing file "${filePath}": ${err.message}`);
+    throw err;
   }
 }
 
@@ -172,9 +172,9 @@ async function writeFile(filePath, data, options = {}) {
 async function getLocalFile(filePath) {
   try {
     const inputContent = fs.readFileSync(filePath, 'utf8');
-    return inputContent
+    return inputContent;
   } catch (err) {
-    throw err
+    throw err;
     // throw new Error(`Input file error - Failed to read file: ${filePath}`);
   }
 }
@@ -188,18 +188,18 @@ async function getRemoteFile(filePath) {
   const protocol = filePath.startsWith('https://') ? https : http;
 
   const inputContent = await new Promise((resolve, reject) => {
-    protocol.get(filePath, (res) => {
+    protocol.get(filePath, res => {
       if (res.statusCode < 200 || res.statusCode >= 300) {
         reject(new Error(`${res.statusCode} ${res.statusMessage}`));
       }
       const chunks = [];
-      res.on('data', (chunk) => {
+      res.on('data', chunk => {
         chunks.push(chunk);
       });
       res.on('end', () => {
         resolve(Buffer.concat(chunks).toString());
       });
-      res.on('error', (err) => {
+      res.on('error', err => {
         reject(new Error(`${err.message}`));
       });
     });
@@ -214,10 +214,10 @@ async function getRemoteFile(filePath) {
  */
 function encodeLargeNumbers(inputContent) {
   // Convert large number value safely before parsing
-  const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])(,|\n)/g;  // match > : 123456789.123456789
-  return inputContent.replace(regexEncodeLargeNumber, (rawInput) => {
-    const endChar = (rawInput.endsWith(',') ? ',' : '\n');
-    const rgx = new RegExp(endChar, "g");
+  const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])(,|\n)/g; // match > : 123456789.123456789
+  return inputContent.replace(regexEncodeLargeNumber, rawInput => {
+    const endChar = rawInput.endsWith(',') ? ',' : '\n';
+    const rgx = new RegExp(endChar, 'g');
     const number = rawInput.replace(/: /g, '').replace(rgx, '');
     // Handle large numbers safely in javascript
     if (Number(number).toString().includes('e') || number.replace('.', '').length > 15) {
@@ -238,25 +238,24 @@ function decodeLargeNumbers(output, isJson = false) {
   if (isJson) {
     // Decode large number JSON values safely before writing output
     const regexDecodeJsonLargeNumber = /: "([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])==="/g; // match > : "123456789.123456789==="
-    return output.replace(regexDecodeJsonLargeNumber, (strNumber) => {
+    return output.replace(regexDecodeJsonLargeNumber, strNumber => {
       const number = strNumber.replace(/: "|"/g, '');
       // Decode large numbers safely in javascript
       if (number.endsWith('===') || number.replace('.', '').length > 15) {
-        return strNumber.replace('===', '').replace(/"/g, '')
+        return strNumber.replace('===', '').replace(/"/g, '');
       } else {
         // Keep original number
         return strNumber;
       }
     });
-
   } else {
     // Decode large number YAML values safely before writing output
     const regexDecodeYamlLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])===/g; // match > : 123456789.123456789===
-    return output.replace(regexDecodeYamlLargeNumber, (strNumber) => {
+    return output.replace(regexDecodeYamlLargeNumber, strNumber => {
       const number = strNumber.replace(/: '|'/g, '');
       // Decode large numbers safely in javascript
       if (number.endsWith('===') || number.replace('.', '').length > 15) {
-        return strNumber.replace('===', '').replace(/'/g, '')
+        return strNumber.replace('===', '').replace(/'/g, '');
       } else {
         // Keep original number
         return strNumber;
@@ -291,17 +290,17 @@ function analyzeOpenApi(oaObj) {
   const flagValues = new Set();
 
   if (oaObj && oaObj.paths) {
-    Object.keys(oaObj.paths).forEach((path) => {
+    Object.keys(oaObj.paths).forEach(path => {
       paths.push(path);
       const pathItem = oaObj.paths[path];
 
-      Object.keys(pathItem).forEach((method) => {
+      Object.keys(pathItem).forEach(method => {
         methods.add(method.toUpperCase());
         const operation = pathItem[method];
         operations.push(`${method.toUpperCase()}::${path}`);
 
         if (operation?.tags && Array.isArray(operation.tags)) {
-          operation.tags.forEach((tag) => {
+          operation.tags.forEach(tag => {
             if (tag.startsWith('x-')) {
               flags.add(tag);
             } else {
@@ -315,22 +314,22 @@ function analyzeOpenApi(oaObj) {
         }
 
         if (operation?.requestBody?.content) {
-          Object.keys(operation.requestBody.content).forEach((contentType) => {
+          Object.keys(operation.requestBody.content).forEach(contentType => {
             requestContent.add(contentType);
           });
         }
 
         if (operation?.responses) {
-          Object.values(operation.responses).forEach((response) => {
+          Object.values(operation.responses).forEach(response => {
             if (response?.content) {
-              Object.keys(response.content).forEach((contentType) => {
+              Object.keys(response.content).forEach(contentType => {
                 responseContent.add(contentType);
               });
             }
           });
         }
 
-        Object.keys(operation).forEach((key) => {
+        Object.keys(operation).forEach(key => {
           if (key.startsWith('x-')) {
             flagValues.add(`${key}: ${operation[key]}`);
           }
@@ -348,7 +347,7 @@ function analyzeOpenApi(oaObj) {
     paths,
     operations,
     responseContent: Array.from(responseContent),
-    requestContent: Array.from(requestContent),
+    requestContent: Array.from(requestContent)
   };
 }
 

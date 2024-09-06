@@ -1,31 +1,34 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 const traverse = require('neotraverse/legacy');
-const {isString, isArray, isObject} = require("./utils/types");
+const {isString, isArray, isObject} = require('./utils/types');
 const {
   prioritySort,
-  isMatchOperationItem, arraySort, sortPathsByTags, sortPathsByAlphabet,
-} = require("./utils/sorting");
+  isMatchOperationItem,
+  arraySort,
+  sortPathsByTags,
+  sortPathsByAlphabet
+} = require('./utils/sorting');
 const {
   changeComponentParametersCasingEnabled,
   changeParametersCasingEnabled,
   changeCase,
   changeArrayObjKeysCase,
   changeObjKeysCase
-} = require("./utils/casing");
-const {
-  valueReplace,
-  get,
-  isUsedComp
-} = require("./utils/filtering");
+} = require('./utils/casing');
+const {valueReplace, get, isUsedComp} = require('./utils/filtering');
 const {
   convertNullable,
   convertExample,
   convertImageBase64,
-  convertMultiPartBinary, convertConst, convertExclusiveMinimum, convertExclusiveMaximum, setInObject
-} = require("./utils/convert");
-const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi} = require("./utils/file");
+  convertMultiPartBinary,
+  convertConst,
+  convertExclusiveMinimum,
+  convertExclusiveMaximum,
+  setInObject
+} = require('./utils/convert');
+const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi} = require('./utils/file');
 
 /**
  * OpenAPI sort function
@@ -41,7 +44,7 @@ async function openapiSort(oaObj, options) {
   }
 
   // Sort by options
-  const sortPathsBy = options.sortSet?.sortPathsBy || "original";
+  const sortPathsBy = options.sortSet?.sortPathsBy || 'original';
 
   // Cleanup sortSet
   if (options.sortSet) {
@@ -50,18 +53,21 @@ async function openapiSort(oaObj, options) {
   }
 
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-  let sortSet = options.sortSet || await parseFile(__dirname + "/defaultSort.json");
-  let sortComponentsSet = options.sortComponentsSet || await parseFile(__dirname + "/defaultSortComponents.json");
-  let debugStep = '' // uncomment // debugStep below to see which sort part is triggered
+  let sortSet = options.sortSet || (await parseFile(__dirname + '/defaultSort.json'));
+  let sortComponentsSet = options.sortComponentsSet || (await parseFile(__dirname + '/defaultSortComponents.json'));
+  let debugStep = ''; // uncomment // debugStep below to see which sort part is triggered
 
   // Recursive traverse through OpenAPI document
   traverse(jsonObj).forEach(function (node) {
-
     if (typeof node === 'object' && node !== null) {
-
       // Components sorting by alphabet
-      if (this.parent && this.parent.key && this.path[0] === 'components' && this.parent.key === 'components'
-        && sortComponentsSet.length > 0 && sortComponentsSet.includes(this.key)
+      if (
+        this.parent &&
+        this.parent.key &&
+        this.path[0] === 'components' &&
+        this.parent.key === 'components' &&
+        sortComponentsSet.length > 0 &&
+        sortComponentsSet.includes(this.key)
       ) {
         // debugStep = 'Component sorting by alphabet'
         let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
@@ -70,8 +76,12 @@ async function openapiSort(oaObj, options) {
       }
 
       // Inline parameters sorting by alphabet
-      if (this.path[0] !== 'components' && Array.isArray(node) && sortComponentsSet.length > 0
-        && sortComponentsSet.includes(this.key)) {
+      if (
+        this.path[0] !== 'components' &&
+        Array.isArray(node) &&
+        sortComponentsSet.length > 0 &&
+        sortComponentsSet.includes(this.key)
+      ) {
         // debugStep = 'Sorting inline parameters'
         let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the node
         node = arraySort(sortedObj, 'name');
@@ -95,9 +105,12 @@ async function openapiSort(oaObj, options) {
 
       // Generic sorting
       if (sortSet.hasOwnProperty(this.key) && Array.isArray(sortSet[this.key])) {
-
         if (Array.isArray(node)) {
-          if (this.parent && this.parent.key === 'example' && (this.path[0] === 'components' || this.path[3] === 'requestBody')) {
+          if (
+            this.parent &&
+            this.parent.key === 'example' &&
+            (this.path[0] === 'components' || this.path[3] === 'requestBody')
+          ) {
             // debugStep = 'Generic sorting - skip nested components>example array'
             // Skip nested components>example or requestBody>example values
           } else {
@@ -109,9 +122,12 @@ async function openapiSort(oaObj, options) {
             }
             this.update(sortedObj);
           }
-
-        } else if ((this.key === 'responses' || this.key === 'schemas' || this.key === 'properties')
-          && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value' && this.path[1] !== 'examples')
+        } else if (
+          (this.key === 'responses' || this.key === 'schemas' || this.key === 'properties') &&
+          this.parent &&
+          this.parent.key !== 'properties' &&
+          this.parent.key !== 'value' &&
+          this.path[1] !== 'examples'
         ) {
           // debugStep = 'Generic sorting - responses/schemas/properties'
           // Deep sort list of properties
@@ -129,7 +145,6 @@ async function openapiSort(oaObj, options) {
             // Sort list of properties
             this.update(prioritySort(node, sortSet[this.key]));
           }
-
         }
       }
     }
@@ -137,11 +152,11 @@ async function openapiSort(oaObj, options) {
 
   // Process root level
   if (jsonObj.openapi) {
-    jsonObj = prioritySort(jsonObj, sortSet['root'])
+    jsonObj = prioritySort(jsonObj, sortSet['root']);
   }
 
   // Return result object
-  return {data: jsonObj, resultData: {}}
+  return {data: jsonObj, resultData: {}};
 }
 
 /**
@@ -153,10 +168,10 @@ async function openapiSort(oaObj, options) {
  */
 async function openapiFilter(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-  let defaultFilter = options.defaultFilter || await parseFile(__dirname + "/defaultFilter.json");
+  let defaultFilter = options.defaultFilter || (await parseFile(__dirname + '/defaultFilter.json'));
   let filterSet = Object.assign({}, defaultFilter, options.filterSet);
-  const httpVerbs = ["get", "post", "put", "patch", "delete", "head", "options", "trace"];
-  const fixedFlags = ["x-openapi-format-filter"];
+  const httpVerbs = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'];
+  const fixedFlags = ['x-openapi-format-filter'];
   options.unusedDepth = options.unusedDepth || 0;
 
   // Merge object filters
@@ -183,7 +198,7 @@ async function openapiFilter(oaObj, options) {
   // Convert flag values to flags
   const filterFlagValuesKeys = Object.keys(Object.assign({}, ...(filterSet.flagValues ?? [])));
   const filterFlagValues = [...(filterSet.flagValues ?? [])];
-  const filterFlagHash = filterFlagValues.map(o => (JSON.stringify(o)));
+  const filterFlagHash = filterFlagValues.map(o => JSON.stringify(o));
 
   // Convert invert flag values to flags
   const inverseFilterFlagValuesKeys = Object.keys(Object.assign({}, ...(filterSet.inverseFlagValues ?? [])));
@@ -253,54 +268,91 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Filter out object matching the "response content"
-    if (filterResponseContent.length > 0 && filterResponseContent.includes(this.key)
-      && this.parent && this.parent.key === 'content'
-      && this.parent.parent && this.parent.parent.parent && this.parent.parent.parent.key === 'responses') {
+    if (
+      filterResponseContent.length > 0 &&
+      filterResponseContent.includes(this.key) &&
+      this.parent &&
+      this.parent.key === 'content' &&
+      this.parent.parent &&
+      this.parent.parent.parent &&
+      this.parent.parent.parent.key === 'responses'
+    ) {
       // debugFilterStep = 'Filter - response content'
       this.remove();
     }
 
     // Filter out object matching the inverse "response content"
-    if (inverseFilterResponseContent.length > 0 && !inverseFilterResponseContent.includes(this.key)
-      && this.parent && this.parent.key === 'content'
-      && this.parent.parent && this.parent.parent.parent && this.parent.parent.parent.key === 'responses') {
+    if (
+      inverseFilterResponseContent.length > 0 &&
+      !inverseFilterResponseContent.includes(this.key) &&
+      this.parent &&
+      this.parent.key === 'content' &&
+      this.parent.parent &&
+      this.parent.parent.parent &&
+      this.parent.parent.parent.key === 'responses'
+    ) {
       // debugFilterStep = 'Filter - inverse response content'
       this.remove();
     }
 
     // Filter out object matching the "request content"
-    if (filterRequestContent.length > 0 && filterRequestContent.includes(this.key)
-      && this.parent && this.parent.key === 'content'
-      && this.parent.parent && this.parent.parent.key === 'requestBody') {
+    if (
+      filterRequestContent.length > 0 &&
+      filterRequestContent.includes(this.key) &&
+      this.parent &&
+      this.parent.key === 'content' &&
+      this.parent.parent &&
+      this.parent.parent.key === 'requestBody'
+    ) {
       // debugFilterStep = 'Filter - request content'
       this.remove();
     }
 
     // Filter out object matching the inverse "request content"
-    if (inverseFilterRequestContent.length > 0 && !inverseFilterRequestContent.includes(this.key)
-      && this.parent && this.parent.key === 'content'
-      && this.parent.parent && this.parent.parent.key === 'requestBody') {
+    if (
+      inverseFilterRequestContent.length > 0 &&
+      !inverseFilterRequestContent.includes(this.key) &&
+      this.parent &&
+      this.parent.key === 'content' &&
+      this.parent.parent &&
+      this.parent.parent.key === 'requestBody'
+    ) {
       // debugFilterStep = 'Filter - inverse request content'
       this.remove();
     }
 
     // Filter out object matching the inverse "methods"
-    if (inverseFilterKeys.length > 0 && !inverseFilterKeys.includes(this.key)
-      && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
+    if (
+      inverseFilterKeys.length > 0 &&
+      !inverseFilterKeys.includes(this.key) &&
+      this.parent &&
+      this.parent.parent &&
+      this.parent.parent.key === 'paths'
+    ) {
       // debugFilterStep = 'Filter - inverse methods'
       this.remove();
     }
 
     // Filter out object matching the "methods"
-    if (filterKeys.length > 0 && filterKeys.includes(this.key)
-      && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
+    if (
+      filterKeys.length > 0 &&
+      filterKeys.includes(this.key) &&
+      this.parent &&
+      this.parent.parent &&
+      this.parent.parent.key === 'paths'
+    ) {
       // debugFilterStep = 'Filter - methods'
       this.remove();
     }
 
     // Filter out fields without operationIds, when Inverse operationIds is set
-    if (node !== null && inverseFilterProps.length > 0 && this.path[0] === 'paths' && node.operationId === undefined
-      && httpVerbs.includes(this.key)) {
+    if (
+      node !== null &&
+      inverseFilterProps.length > 0 &&
+      this.path[0] === 'paths' &&
+      node.operationId === undefined &&
+      httpVerbs.includes(this.key)
+    ) {
       // debugFilterStep = 'Filter - Single field - Inverse operationIds without operationIds'
       this.remove();
     }
@@ -308,7 +360,12 @@ async function openapiFilter(oaObj, options) {
     // Array field matching
     if (Array.isArray(node)) {
       // Filter out object matching the inverse "tags"
-      if (inverseFilterArray.length > 0 && this.key === 'tags' && !inverseFilterArray.some(i => node.includes(i)) && this.parent.parent !== undefined) {
+      if (
+        inverseFilterArray.length > 0 &&
+        this.key === 'tags' &&
+        !inverseFilterArray.some(i => node.includes(i)) &&
+        this.parent.parent !== undefined
+      ) {
         // debugFilterStep = 'Filter - inverse tags'
         this.parent.delete();
       }
@@ -356,7 +413,11 @@ async function openapiFilter(oaObj, options) {
       }
 
       // Keep fields matching the inverseFlags array
-      if (inverseFilterFlags.length > 0 && (this.path[0] === 'tags' || this.path[0] === 'x-tagGroups') && this.level === 1) {
+      if (
+        inverseFilterFlags.length > 0 &&
+        (this.path[0] === 'tags' || this.path[0] === 'x-tagGroups') &&
+        this.level === 1
+      ) {
         let oaTags = JSON.parse(JSON.stringify(node));
 
         oaTags = oaTags.filter(itmObj => {
@@ -371,14 +432,18 @@ async function openapiFilter(oaObj, options) {
       }
 
       // Keep the fields matching the inverseFlagValues array
-      if (inverseFilterFlagValuesKeys.length > 0 && (this.path[0] === 'tags' || this.path[0] === 'x-tagGroups') && this.level === 1) {
+      if (
+        inverseFilterFlagValuesKeys.length > 0 &&
+        (this.path[0] === 'tags' || this.path[0] === 'x-tagGroups') &&
+        this.level === 1
+      ) {
         let oaTags = JSON.parse(JSON.stringify(node));
 
         oaTags = oaTags.filter(itmObj => {
           // keep the item in the array if any of the inverseFilterFlags is a property of itmObj with a matching value
           return inverseFilterFlagValues.some(flagObj => {
-            const flagKey = Object.keys(flagObj)[0];  // Get the key of the flagObj
-            const flagValue = flagObj[flagKey];  // Get the value of the flagObj
+            const flagKey = Object.keys(flagObj)[0]; // Get the key of the flagObj
+            const flagValue = flagObj[flagKey]; // Get the value of the flagObj
 
             // Check if the key exists in itmObj and if its value matches the value in flagObj
             return itmObj.hasOwnProperty(flagKey) && itmObj[flagKey] === flagValue;
@@ -451,14 +516,16 @@ async function openapiFilter(oaObj, options) {
 
     // Filter out operations not matching inverseFilterArray
     if (inverseFilterArray.length > 0 && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
-      if ((node.tags === undefined || !inverseFilterArray.some(i => node.tags.includes(i)))) {
+      if (node.tags === undefined || !inverseFilterArray.some(i => node.tags.includes(i))) {
         this.delete();
       }
     }
 
     // Keep fields matching the inverseFlags
-    if (inverseFilterFlags.length > 0
-      && ((this.path[0] === 'paths' && this.level === 3) || (this.path[0] === 'components' && this.level === 3))) {
+    if (
+      inverseFilterFlags.length > 0 &&
+      ((this.path[0] === 'paths' && this.level === 3) || (this.path[0] === 'components' && this.level === 3))
+    ) {
       const itmObj = node;
       const matchesInverseFlag = inverseFilterFlags.some(flagKey => {
         return itmObj.hasOwnProperty(flagKey);
@@ -471,11 +538,14 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Keep fields matching the inverseFlagValues
-    if (inverseFilterFlagValuesKeys.length > 0 && ((this.path[0] === 'paths' && this.level === 3) || (this.path[0] === 'components' && this.level === 3))) {
+    if (
+      inverseFilterFlagValuesKeys.length > 0 &&
+      ((this.path[0] === 'paths' && this.level === 3) || (this.path[0] === 'components' && this.level === 3))
+    ) {
       const itmObj = node;
       const matchesInverseFlag = inverseFilterFlagValues.some(flagObj => {
-        const flagKey = Object.keys(flagObj)[0];  // Get the key of the flagObj
-        const flagValue = flagObj[flagKey];  // Get the value of the flagObj
+        const flagKey = Object.keys(flagObj)[0]; // Get the key of the flagObj
+        const flagValue = flagObj[flagKey]; // Get the value of the flagObj
 
         // Check if the key exists in itmObj and if its value matches the value in flagObj
         return itmObj.hasOwnProperty(flagKey) && itmObj[flagKey] === flagValue;
@@ -494,7 +564,7 @@ async function openapiFilter(oaObj, options) {
       if (filterProps.length > 0) {
         // debugFilterStep = 'Filter - tag/x-tagGroup - flags'
         // Deep filter array of tag/x-tagGroup
-        oaTags = oaTags.filter(item => !filterProps.some(i => (Object.keys(item || {}).includes(i))));
+        oaTags = oaTags.filter(item => !filterProps.some(i => Object.keys(item || {}).includes(i)));
         this.update(oaTags);
         // const oaFilteredTags = oaTags.filter(item => !filterProps.some(i => (Object.keys(item || {}).includes(i))));
         // this.update(oaFilteredTags);
@@ -524,8 +594,11 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Replace words in text with new value
-    if (isString(node) && textReplace.length > 0
-      && (this.key === 'description' || this.key === 'summary' || this.key === 'url')) {
+    if (
+      isString(node) &&
+      textReplace.length > 0 &&
+      (this.key === 'description' || this.key === 'summary' || this.key === 'url')
+    ) {
       const replaceRes = valueReplace(node, textReplace);
       this.update(replaceRes);
       node = replaceRes;
@@ -545,18 +618,23 @@ async function openapiFilter(oaObj, options) {
   unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !comps.schemas[key].used);
   if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
   unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !comps.responses[key].used);
-  if (optFs.includes('responses')) options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
+  if (optFs.includes('responses'))
+    options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
   unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !comps.parameters[key].used);
-  if (optFs.includes('parameters')) options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
+  if (optFs.includes('parameters'))
+    options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
   unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !comps.examples[key].used);
-  if (optFs.includes('examples')) options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
+  if (optFs.includes('examples'))
+    options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
   unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key].used);
-  if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
+  if (optFs.includes('requestBodies'))
+    options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
   unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key].used);
   if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
 
   // Update unusedComp.meta.total after each recursion
-  options.unusedComp.meta.total = options.unusedComp.schemas.length +
+  options.unusedComp.meta.total =
+    options.unusedComp.schemas.length +
     options.unusedComp.responses.length +
     options.unusedComp.parameters.length +
     options.unusedComp.examples.length +
@@ -582,7 +660,7 @@ async function openapiFilter(oaObj, options) {
         // Deep filter array of tag/x-tagGroup
         let oaTags = JSON.parse(JSON.stringify(node)); // Deep copy of the object
         const oaFilteredTags = oaTags
-          .filter(item => !fixedFlags.some(i => (Object.keys(item || {}).includes(i))))
+          .filter(item => !fixedFlags.some(i => Object.keys(item || {}).includes(i)))
           .filter(e => e);
         this.update(oaFilteredTags);
       }
@@ -592,11 +670,11 @@ async function openapiFilter(oaObj, options) {
     if (node && Object.keys(node).length === 0 && node.constructor === Object) {
       // Remove empty objects - preserveEmptyObjects: undefined
       if (
-        (typeof filterSet.preserveEmptyObjects === 'undefined') &&
-        (!['security', 'schemas', 'default', 'oneOf', 'allOf'].includes(this.parent.key)
-          && ((this.key === "examples" || this.key === "example")
-            || !this.path.includes('example') && !this.path.includes('examples'))
-        )
+        typeof filterSet.preserveEmptyObjects === 'undefined' &&
+        !['security', 'schemas', 'default', 'oneOf', 'allOf'].includes(this.parent.key) &&
+        (this.key === 'examples' ||
+          this.key === 'example' ||
+          (!this.path.includes('example') && !this.path.includes('examples')))
       ) {
         // debugFilterStep = 'Filter - Remove empty objects'
         this.delete();
@@ -605,10 +683,7 @@ async function openapiFilter(oaObj, options) {
       }
 
       // Remove empty objects - preserveEmptyObjects: false
-      if (
-        (filterSet.preserveEmptyObjects === false) &&
-        (!['security', 'schemas', 'default'].includes(this.parent.key))
-      ) {
+      if (filterSet.preserveEmptyObjects === false && !['security', 'schemas', 'default'].includes(this.parent.key)) {
         // debugFilterStep = 'Filter - Remove empty objects'
         this.delete();
         // Trigger recurse
@@ -617,12 +692,10 @@ async function openapiFilter(oaObj, options) {
 
       // Remove empty objects - preserveEmptyObjects: [...]
       if (
-        (Array.isArray(filterSet.preserveEmptyObjects)) &&
-        (
-          (!['security', 'schemas', 'default'].includes(this.parent.key)) &&
-          !filterSet.preserveEmptyObjects.includes(this.key)
-          || !filterSet.preserveEmptyObjects.some(v => this.path.includes(v))
-        )
+        Array.isArray(filterSet.preserveEmptyObjects) &&
+        ((!['security', 'schemas', 'default'].includes(this.parent.key) &&
+          !filterSet.preserveEmptyObjects.includes(this.key)) ||
+          !filterSet.preserveEmptyObjects.some(v => this.path.includes(v)))
       ) {
         // debugFilterStep = 'Filter - Remove empty objects'
         this.delete();
@@ -644,7 +717,11 @@ async function openapiFilter(oaObj, options) {
   });
 
   // Recurse to strip any remaining unusedComp, to a maximum depth of 10
-  if (doRecurse === true || options.unusedDepth === 0 || (stripUnused.length > 0 && unusedComp.meta.total > 0 && options.unusedDepth <= 10)) {
+  if (
+    doRecurse === true ||
+    options.unusedDepth === 0 ||
+    (stripUnused.length > 0 && unusedComp.meta.total > 0 && options.unusedDepth <= 10)
+  ) {
     options.unusedDepth++;
     const resultObj = await openapiFilter(jsonObj, options);
     jsonObj = resultObj.data;
@@ -678,28 +755,28 @@ async function openapiChangeCase(oaObj, options) {
   let defaultCasing = {}; // JSON.parse(fs.readFileSync(__dirname + "/defaultFilter.json", 'utf8'))
   let casingSet = Object.assign({}, defaultCasing, options.casingSet);
 
-  let debugCasingStep = '' // uncomment // debugCasingStep below to see which sort part is triggered
+  let debugCasingStep = ''; // uncomment // debugCasingStep below to see which sort part is triggered
 
   // Could add a default for all types pretty easily.
   const changeCasingKeyPlans = {
-    'query': casingSet.componentsParametersQuery,
-    'path': casingSet.componentsParametersPath,
-    'header': casingSet.componentsParametersHeader,
-    'cookie': casingSet.componentsParametersCookie
-  }
+    query: casingSet.componentsParametersQuery,
+    path: casingSet.componentsParametersPath,
+    header: casingSet.componentsParametersHeader,
+    cookie: casingSet.componentsParametersCookie
+  };
 
   // Could add a default for all types pretty easily.
   const changeCasingNamePlans = {
-    'query': casingSet.parametersQuery,
-    'path': casingSet.parametersPath,
-    'header': casingSet.parametersHeader,
-    'cookie': casingSet.parametersCookie
-  }
+    query: casingSet.parametersQuery,
+    path: casingSet.parametersPath,
+    header: casingSet.parametersHeader,
+    cookie: casingSet.parametersCookie
+  };
 
   // Initiate components tracking
   const comps = {
-    parameters: {},
-  }
+    parameters: {}
+  };
 
   // Recursive traverse through OpenAPI document to update components
   traverse(jsonObj).forEach(function (node) {
@@ -721,16 +798,20 @@ async function openapiChangeCase(oaObj, options) {
         this.update(changeObjKeysCase(node, casingSet.componentsHeaders));
       }
       // Change components/parameters - in:query/in:headers/in:path/in:cookie - key
-      if (this.path[1] === 'parameters' && this.path.length === 2 && changeComponentParametersCasingEnabled(casingSet)) {
+      if (
+        this.path[1] === 'parameters' &&
+        this.path.length === 2 &&
+        changeComponentParametersCasingEnabled(casingSet)
+      ) {
         const orgObj = JSON.parse(JSON.stringify(node));
-        let replacedItems = Object.keys(orgObj).map((key) => {
-          const parameterFoundIn = orgObj[key].in
+        let replacedItems = Object.keys(orgObj).map(key => {
+          const parameterFoundIn = orgObj[key].in;
           if (orgObj[key].in && changeCasingKeyPlans.hasOwnProperty(parameterFoundIn)) {
-            const changeCasingKeyPlan = changeCasingKeyPlans[parameterFoundIn]
+            const changeCasingKeyPlan = changeCasingKeyPlans[parameterFoundIn];
             if (changeCasingKeyPlan) {
               // debugCasingStep = `Casing - components/parameters - in:${parameterFoundIn} - key`
               const newKey = changeCase(key, changeCasingKeyPlan);
-              comps.parameters[key] = newKey
+              comps.parameters[key] = newKey;
               return {[newKey]: orgObj[key]};
             }
           }
@@ -740,7 +821,7 @@ async function openapiChangeCase(oaObj, options) {
       // Change components/parameters - query/header/path/cookie name
       if (this.path[1] === 'parameters' && this.path.length === 3) {
         if (node.in && changeCasingNamePlans.hasOwnProperty(node.in)) {
-          const changeCasingNamePlan = changeCasingNamePlans[node.in]
+          const changeCasingNamePlan = changeCasingNamePlans[node.in];
           if (changeCasingNamePlan) {
             // debugCasingStep = `Casing - path > parameters/${node.in} - name`
             node.name = changeCase(node.name, changeCasingNamePlan);
@@ -823,8 +904,13 @@ async function openapiChangeCase(oaObj, options) {
       this.update(changeObjKeysCase(node, casingSet.componentsExamples));
     }
     // Change components/schemas - properties
-    if (this.path[1] === 'schemas' && this.key === 'properties' && casingSet.properties
-      && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value')
+    if (
+      this.path[1] === 'schemas' &&
+      this.key === 'properties' &&
+      casingSet.properties &&
+      this.parent &&
+      this.parent.key !== 'properties' &&
+      this.parent.key !== 'value'
     ) {
       // debugCasingStep = 'Casing - components/schemas - properties name'
       this.update(changeObjKeysCase(node, casingSet.properties));
@@ -835,8 +921,13 @@ async function openapiChangeCase(oaObj, options) {
       this.update(changeCase(node, casingSet.properties));
     }
     // Change paths > schema - properties
-    if (this.path[0] === 'paths' && this.key === 'properties' && casingSet.properties
-      && (this.parent && this.parent.key !== 'properties' && this.parent.key !== 'value')
+    if (
+      this.path[0] === 'paths' &&
+      this.key === 'properties' &&
+      casingSet.properties &&
+      this.parent &&
+      this.parent.key !== 'properties' &&
+      this.parent.key !== 'value'
     ) {
       // debugCasingStep = 'Casing - paths > schema - properties name'
       this.update(changeObjKeysCase(node, casingSet.properties));
@@ -844,31 +935,29 @@ async function openapiChangeCase(oaObj, options) {
     // Change security - keys
     if (this.path[0] === 'paths' && this.key === 'security' && isArray(node) && casingSet.componentsSecuritySchemes) {
       // debugCasingStep = 'Casing - path > - security'
-      this.update(changeArrayObjKeysCase(node, casingSet.componentsSecuritySchemes))
+      this.update(changeArrayObjKeysCase(node, casingSet.componentsSecuritySchemes));
     }
     // Change parameters - name
-    if (this.path[0] === 'paths' && this.key === 'parameters'
-      && changeParametersCasingEnabled(casingSet)) {
+    if (this.path[0] === 'paths' && this.key === 'parameters' && changeParametersCasingEnabled(casingSet)) {
       // debugCasingStep = 'Casing - components > parameters - name'
 
       // Loop over parameters array
       let params = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
       for (let i = 0; i < params.length; i++) {
         if (params[i].in && changeCasingNamePlans.hasOwnProperty(params[i].in)) {
-          const changeCasingNamePlan = changeCasingNamePlans[params[i].in]
+          const changeCasingNamePlan = changeCasingNamePlans[params[i].in];
           if (changeCasingNamePlan) {
             // debugCasingStep = 'Casing - path > parameters/query- name'
-            params[i].name = changeCase(params[i].name, changeCasingNamePlan)
+            params[i].name = changeCase(params[i].name, changeCasingNamePlan);
           }
         }
       }
       this.update(params);
     }
-
   });
 
   // Return result object
-  return {data: jsonObj, resultData: {}}
+  return {data: jsonObj, resultData: {}};
 }
 
 /**
@@ -884,13 +973,13 @@ async function openapiConvertVersion(oaObj, options) {
   // let debugConvertVersionStep = '' // uncomment // debugConvertVersionStep below to see which sort part is triggered
 
   // Change OpenAPI version
-  jsonObj.openapi = "3.1.0"
+  jsonObj.openapi = '3.1.0';
 
   // Change x-webhooks to webhooks
   if (jsonObj['x-webhooks']) {
-    jsonObj = setInObject(jsonObj, 'webhooks', jsonObj['x-webhooks'], 'x-webhooks')
+    jsonObj = setInObject(jsonObj, 'webhooks', jsonObj['x-webhooks'], 'x-webhooks');
     // jsonObj.webhooks = jsonObj['x-webhooks']
-    delete jsonObj['x-webhooks']
+    delete jsonObj['x-webhooks'];
   }
 
   // Recursive traverse through OpenAPI document for deprecated 3.0 properties
@@ -919,32 +1008,35 @@ async function openapiConvertVersion(oaObj, options) {
       // Change components/schemas - schema
       if (node.schema) {
         // File Upload Payloads
-        if ((get(this, 'parent.key') && this.parent.key === 'content')
-          && (get(this, 'parent.parent.key') && this.parent.parent.key === 'requestBody')) {
-
+        if (
+          get(this, 'parent.key') &&
+          this.parent.key === 'content' &&
+          get(this, 'parent.parent.key') &&
+          this.parent.parent.key === 'requestBody'
+        ) {
           // Remove schema for application/octet-stream
           if (this.key === 'application/octet-stream') {
-            this.update({})
+            this.update({});
           }
 
           // Convert schema for images
           if (this.key && this.key.startsWith('image/')) {
-            node = convertImageBase64(node)
-            this.update(node)
+            node = convertImageBase64(node);
+            this.update(node);
           }
         }
       }
 
       // Convert schema for multipart file uploads with a binary file
       if (get(this, 'parent.parent.parent.key') && this.parent.parent.parent.key === 'multipart/form-data') {
-        node = convertMultiPartBinary(node)
-        this.update(node)
+        node = convertMultiPartBinary(node);
+        this.update(node);
       }
     }
   });
 
   // Return result object
-  return {data: jsonObj, resultData: {}}
+  return {data: jsonObj, resultData: {}};
 }
 
 /**
@@ -958,12 +1050,12 @@ async function openapiRename(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
 
   // OpenAPI 3
-  if (jsonObj.info && jsonObj.info.title && options.rename && options.rename !== "") {
-    jsonObj.info.title = options.rename
+  if (jsonObj.info && jsonObj.info.title && options.rename && options.rename !== '') {
+    jsonObj.info.title = options.rename;
   }
 
   // Return result object
-  return {data: jsonObj, resultData: {}}
+  return {data: jsonObj, resultData: {}};
 }
 
 module.exports = {
