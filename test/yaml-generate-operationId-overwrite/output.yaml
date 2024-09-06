@@ -1,0 +1,18 @@
+openapi: 3.0.3
+info:
+  title: Minimal API
+  version: 1.0.0
+paths:
+  /trains:
+    get:
+      summary: Retrieve a list of trains
+      operationId: get_trains
+      responses:
+        '200':
+          description: A list of trains
+    post:
+      summary: Create a new train
+      responses:
+        '201':
+          description: Train created
+      operationId: post_trains

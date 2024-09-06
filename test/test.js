@@ -17,7 +17,7 @@ const tests = !localTesting
   ? fs.readdirSync(__dirname).filter(file => {
       return fs.statSync(path.join(__dirname, file)).isDirectory() && !file.startsWith('_');
     })
-  : ['json-filter-unused'];
+  : ['yaml-generate-operationId'];
 
 describe('openapi-format tests', () => {
   tests.forEach(test => {
@@ -34,6 +34,7 @@ describe('openapi-format tests', () => {
         let sortComponentsFile = null;
         let filterOptions = {filterSet: {}};
         let casingOptions = {casingSet: {}};
+        let generateOptions = {generateSet: {}};
         let inputFilename = null;
         let inputContent = null;
         let input = null;
@@ -109,6 +110,21 @@ describe('openapi-format tests', () => {
         }
 
         try {
+          // Load customGenerate.yaml
+          generateOptions.generateSet = await parseFile(path.join(__dirname, test, 'customGenerate.yaml'));
+          options = Object.assign({}, options, generateOptions);
+        } catch (ex) {
+          // console.error('ERROR Load customGenerate.yaml', ex)
+          try {
+            // Fallback to customGenerate.json
+            generateOptions.generateSet = await parseFile(path.join(__dirname, test, 'customGenerate.json'));
+            options = Object.assign({}, options, generateOptions);
+          } catch (ex) {
+            // No options found
+          }
+        }
+
+        try {
           // Load customSortComponents.yaml
           sortComponentsOptions.sortComponentsSet = await parseFile(
             path.join(__dirname, test, 'customSortComponents.yaml')
@@ -168,6 +184,12 @@ describe('openapi-format tests', () => {
 
         // Initialize data
         let result = input;
+
+        // Generate elements in OpenAPI document
+        if (options.generateSet) {
+          const resGenerated = await openapiFormat.openapiGenerate(result, options);
+          if (resGenerated.data) result = resGenerated.data;
+        }
 
         // Filter OpenAPI document
         if (options.filterSet) {

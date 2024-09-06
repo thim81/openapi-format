@@ -1,0 +1,23 @@
+openapi: 3.0.0
+info:
+  title: Train API
+  version: 1.0.0
+
+paths:
+  /trains/{id}:
+    get:
+      operationId: trainDetails
+      summary: Retrieve details about a specific train
+      tags:
+        - Train
+        - Transport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the train
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A successful response with train details
