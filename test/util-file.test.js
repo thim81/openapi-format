@@ -6,14 +6,20 @@ const {
   decodeLargeNumbers,
   encodeLargeNumbers,
   getRemoteFile,
-  getLocalFile, stringify, addQuotesToRefInString, parseString, isJSON, isYaml, detectFormat, analyzeOpenApi
-} = require("../utils/file");
+  getLocalFile,
+  stringify,
+  addQuotesToRefInString,
+  parseString,
+  isJSON,
+  isYaml,
+  detectFormat,
+  analyzeOpenApi
+} = require('../utils/file');
 const yaml = require('@stoplight/yaml');
-const {describe} = require("@jest/globals");
-const mockOpenApi = require("./__utils__/mockOpenApi.json");
+const {describe} = require('@jest/globals');
+const mockOpenApi = require('./__utils__/mockOpenApi.json');
 
 describe('openapi-format CLI file tests', () => {
-
   describe('parseFile function', () => {
     test('should parse YAML file correctly', async () => {
       const inputFilePath = path.join(__dirname, 'yaml-default/input.yaml');
@@ -28,14 +34,16 @@ describe('openapi-format CLI file tests', () => {
     });
 
     test('should parse remote YAML file correctly', async () => {
-      const remoteFilePath = 'https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/input.yaml';
+      const remoteFilePath =
+        'https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/input.yaml';
       const inputFilePath = path.join(__dirname, 'yaml-default/input.yaml');
       const parsedContent = await parseFile(remoteFilePath);
       expect(parsedContent).toEqual(yaml.parse(fs.readFileSync(inputFilePath, 'utf8')));
     });
 
     test('should parse remote JSON file correctly', async () => {
-      const remoteFilePath = 'https://raw.githubusercontent.com/thim81/openapi-format/main/test/json-default/input.json';
+      const remoteFilePath =
+        'https://raw.githubusercontent.com/thim81/openapi-format/main/test/json-default/input.json';
       const inputFilePath = path.join(__dirname, 'json-default/input.json');
       const parsedContent = await parseFile(remoteFilePath);
       expect(parsedContent).toEqual(JSON.parse(fs.readFileSync(inputFilePath, 'utf8')));
@@ -85,7 +93,7 @@ describe('openapi-format CLI file tests', () => {
     test('should write YAML file correctly', async () => {
       const data = {key: 'value'};
       const options = {lineWidth: 80};
-      await writeFile(yamlOutputFile, data, options)
+      await writeFile(yamlOutputFile, data, options);
 
       const writtenContent = fs.readFileSync(yamlOutputFile, 'utf8');
       const parsedContent = yaml.parse(writtenContent);
@@ -395,21 +403,20 @@ describe('openapi-format CLI file tests', () => {
       const input = '$ref: #/components/schemas/Example';
       const output = addQuotesToRefInString(input);
       expect(output).toBe('$ref: "#/components/schemas/Example"');
-    })
+    });
 
     test('should keep double quotes to $ref in string', () => {
       const input = '$ref: "#/components/schemas/Example"';
       const output = addQuotesToRefInString(input);
       expect(output).toBe('$ref: "#/components/schemas/Example"');
-    })
+    });
 
     test('should keep single quotes to $ref in string', () => {
       const input = "$ref: '#/components/schemas/Example'";
       const output = addQuotesToRefInString(input);
       expect(output).toBe("$ref: '#/components/schemas/Example'");
-    })
-
-  })
+    });
+  });
 
   describe('analyzeOpenApi function', () => {
     test('should extract OpenAPI info', () => {
@@ -417,15 +424,15 @@ describe('openapi-format CLI file tests', () => {
       const result = analyzeOpenApi(mockOpenApi);
 
       expect(result).toEqual({
-        flags: ["x-customTag"],
-        tags: ["pets"],
-        operationIds: ["getPets", "updatePet"],
-        paths: ["/pets"],
-        methods: ["GET", "PUT"],
-        operations: ["GET::/pets", "PUT::/pets"],
-        responseContent: ["application/json", "application/xml"],
-        requestContent: ["application/json","application/xml"],
-        flagValues: ["x-version: 1.0"]
+        flags: ['x-customTag'],
+        tags: ['pets'],
+        operationIds: ['getPets', 'updatePet'],
+        paths: ['/pets'],
+        methods: ['GET', 'PUT'],
+        operations: ['GET::/pets', 'PUT::/pets'],
+        responseContent: ['application/json', 'application/xml'],
+        requestContent: ['application/json', 'application/xml'],
+        flagValues: ['x-version: 1.0']
       });
     });
 
@@ -434,17 +441,16 @@ describe('openapi-format CLI file tests', () => {
       const result = analyzeOpenApi(null);
 
       expect(result).toEqual({
-        "flagValues": [],
-        "flags": [],
-        "methods": [],
-        "operationIds": [],
-        "operations": [],
-        "paths": [],
-        "responseContent": [],
-        "requestContent": [],
-        "tags": []
+        flagValues: [],
+        flags: [],
+        methods: [],
+        operationIds: [],
+        operations: [],
+        paths: [],
+        responseContent: [],
+        requestContent: [],
+        tags: []
       });
     });
   });
 });
-

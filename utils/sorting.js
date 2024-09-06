@@ -1,4 +1,3 @@
-
 /**
  * Sort Object by Key or list of names
  * @param object
@@ -42,7 +41,7 @@ function propComparator(priorityArr) {
       return ib !== -1 ? ia - ib : -1;
     }
     return ib !== -1 || a > b ? 1 : a < b ? -1 : 0;
-  }
+  };
 }
 
 /**
@@ -53,7 +52,7 @@ function propComparator(priorityArr) {
  * @returns {*}
  */
 function prioritySort(jsonProp, sortPriority, options) {
-  return sortObjectByKeyNameList(jsonProp, propComparator(sortPriority))
+  return sortObjectByKeyNameList(jsonProp, propComparator(sortPriority));
 }
 
 /**
@@ -83,7 +82,8 @@ function arraySort(arr, propertyName) {
  * @returns {{[p: string]: unknown}}
  */
 
-function sortPathsByAlphabet(paths) { // Convert the paths object to an array of entries
+function sortPathsByAlphabet(paths) {
+  // Convert the paths object to an array of entries
   const entries = Object.entries(paths);
   // Sort the entries alphabetically by their paths
   entries.sort((a, b) => {
@@ -114,10 +114,10 @@ function sortPathsByTags(paths) {
     const methodsA = a[1];
     const methodsB = b[1];
 
-    const tagsOrder = ["get", "post", "put", "delete", "patch", "options", "head"];
+    const tagsOrder = ['get', 'post', 'put', 'delete', 'patch', 'options', 'head'];
 
-    let tagA = "";
-    let tagB = "";
+    let tagA = '';
+    let tagB = '';
 
     for (const method of tagsOrder) {
       if (methodsA[method] && methodsA[method].tags && methodsA[method].tags.length > 0) {
@@ -155,7 +155,7 @@ function isMatchOperationItem(operationPath, operationMethod, target) {
   if (operationPath && operationMethod && target) {
     const targetSplit = target.split('::');
     if (targetSplit[0] && targetSplit[1]) {
-      let targetMethod = [targetSplit[0].toLowerCase()]
+      let targetMethod = [targetSplit[0].toLowerCase()];
       const targetPath = targetSplit[1].toLowerCase();
       // Wildcard support
       if (targetMethod.includes('*')) {
@@ -163,8 +163,12 @@ function isMatchOperationItem(operationPath, operationMethod, target) {
         // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#pathItemObject
         targetMethod = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
       }
-      return ((operationMethod && targetMethod.includes(operationMethod.toLowerCase())) &&
-        (operationPath && matchPath(targetPath, operationPath.toLowerCase())));
+      return (
+        operationMethod &&
+        targetMethod.includes(operationMethod.toLowerCase()) &&
+        operationPath &&
+        matchPath(targetPath, operationPath.toLowerCase())
+      );
     }
   }
   return false;
@@ -226,5 +230,5 @@ module.exports = {
   sortPathsByTags,
   isMatchOperationItem,
   pathToRegExp,
-  matchPath,
+  matchPath
 };

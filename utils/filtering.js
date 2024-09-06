@@ -1,4 +1,4 @@
-const {isString, isArray, isObject} = require("./types");
+const {isString, isArray, isObject} = require('./types');
 
 /**
  * Value replacement function
@@ -7,17 +7,17 @@ const {isString, isArray, isObject} = require("./types");
  * @returns {*}
  */
 function valueReplace(valueAsString, replacements) {
-  if (!isString(valueAsString)) return valueAsString
-  if (!isArray(replacements)) return valueAsString
+  if (!isString(valueAsString)) return valueAsString;
+  if (!isArray(replacements)) return valueAsString;
 
   replacements.map(({searchFor, replaceWith}) => {
-    const pattern = searchFor.replace(/"/g, '\\\\"')
-    const replacement = replaceWith.replace(/"/g, '\\"')
+    const pattern = searchFor.replace(/"/g, '\\\\"');
+    const replacement = replaceWith.replace(/"/g, '\\"');
     valueAsString = valueAsString.replace(new RegExp(escapeRegExp(pattern), 'g'), replacement);
-    return valueAsString
-  })
+    return valueAsString;
+  });
 
-  return valueAsString
+  return valueAsString;
 }
 
 /**
@@ -26,7 +26,7 @@ function valueReplace(valueAsString, replacements) {
  * @returns {*}
  */
 function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**
@@ -38,8 +38,11 @@ function escapeRegExp(string) {
  * @returns {T}
  */
 function get(obj, path, defaultValue = undefined) {
-  const travel = regexp => String.prototype.split.call(path, regexp)
-    .filter(Boolean).reduce((res, key) => res !== null && res !== undefined ? res[key] : res, obj);
+  const travel = regexp =>
+    String.prototype.split
+      .call(path, regexp)
+      .filter(Boolean)
+      .reduce((res, key) => (res !== null && res !== undefined ? res[key] : res), obj);
 
   const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/);
   return result === undefined || result === obj ? defaultValue : result;
@@ -52,11 +55,11 @@ function get(obj, path, defaultValue = undefined) {
  * @returns {boolean}
  */
 function isUsedComp(obj, prop) {
-  if (!isObject(obj)) return false
-  if (!isString(prop)) return false
-  const comp = obj[prop]
-  if (comp.used && comp.used === true) return true
-  return false
+  if (!isObject(obj)) return false;
+  if (!isString(prop)) return false;
+  const comp = obj[prop];
+  if (comp.used && comp.used === true) return true;
+  return false;
 }
 
 module.exports = {

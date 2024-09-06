@@ -28,6 +28,7 @@
   },
   "scripts": {
     "test": "jest --colors --verbose --reporters=default --collectCoverage --no-cache --maxWorkers=2",
+    "lint": "npx prettier --write '**/*.js'",
     "release": "npx np --branch main"
   },
   "dependencies": {

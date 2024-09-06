@@ -2,8 +2,8 @@
 
 const openapiFormat = require('../openapi-format');
 const program = require('commander');
-const {infoTable, infoOut, logOut, debugOut} = require("../utils/logging");
-const {stringify} = require("../openapi-format");
+const {infoTable, infoOut, logOut, debugOut} = require('../utils/logging');
+const {stringify} = require('../openapi-format');
 
 // CLI Helper - change verbosity
 function increaseVerbosity(dummyValue, previous) {
@@ -30,12 +30,9 @@ program
   .version(require('../package.json').version, '--version')
   .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
   .action(run)
-  .exitOverride((err) => {
-    if (
-      err.code === "commander.missingArgument" ||
-      err.code === "commander.unknownOption"
-    ) {
-      process.stdout.write("\n");
+  .exitOverride(err => {
+    if (err.code === 'commander.missingArgument' || err.code === 'commander.unknownOption') {
+      process.stdout.write('\n');
       program.outputHelp();
     }
 
@@ -56,94 +53,97 @@ async function run(oaFile, options) {
   }
 
   infoOut(`${consoleLine}`); // LOG - horizontal rule
-  infoOut(`OpenAPI-Format CLI settings:`) // LOG - config file
+  infoOut(`OpenAPI-Format CLI settings:`); // LOG - config file
 
   // apply options from config file if present
   if (options && options.configFile) {
     try {
-      let configFileOptions = {}
+      let configFileOptions = {};
       configFileOptions = await openapiFormat.parseFile(options.configFile);
       if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
-        configFileOptions.sort = !(configFileOptions['no-sort'])
+        configFileOptions.sort = !configFileOptions['no-sort'];
         delete configFileOptions['no-sort'];
       }
-      infoOut(`- Config file:\t\t${options.configFile}`) // LOG - config file
+      infoOut(`- Config file:\t\t${options.configFile}`); // LOG - config file
       options = Object.assign({}, options, configFileOptions);
     } catch (err) {
-      console.error('\x1b[31m', 'Config file error - no such file or directory "' + options.configFile + '"')
+      console.error('\x1b[31m', 'Config file error - no such file or directory "' + options.configFile + '"');
       if (options.verbose >= 1) {
-        console.error(err)
+        console.error(err);
       }
-      process.exit(1)
+      process.exit(1);
     }
   }
 
   // LOG - Render info table with options
-  outputLogOptions = infoTable(options, options.verbose)
+  outputLogOptions = infoTable(options, options.verbose);
 
   // apply ordering by priority file if present
   if (options && options.sort === true) {
-    let sortFile = (options.sortFile) ? options.sortFile : __dirname + "/../defaultSort.json"
-    let sortFileName = (options.sortFile) ? options.sortFile : "(defaultSort.json)"
+    let sortFile = options.sortFile ? options.sortFile : __dirname + '/../defaultSort.json';
+    let sortFileName = options.sortFile ? options.sortFile : '(defaultSort.json)';
     try {
-      let sortOptions = {sortSet: {}}
-      infoOut(`- Sort file:\t\t${sortFileName}`) // LOG - sort file
+      let sortOptions = {sortSet: {}};
+      infoOut(`- Sort file:\t\t${sortFileName}`); // LOG - sort file
       sortOptions.sortSet = await openapiFormat.parseFile(sortFile);
       options = Object.assign({}, options, sortOptions);
     } catch (err) {
-      console.error('\x1b[31m', `Sort file error - no such file or directory "${sortFile}"`)
+      console.error('\x1b[31m', `Sort file error - no such file or directory "${sortFile}"`);
       if (options.verbose >= 1) {
-        console.error(err)
+        console.error(err);
       }
-      process.exit(1)
+      process.exit(1);
     }
   }
 
   // apply filtering by filter file if present
   if (options && options.filterFile) {
-    infoOut(`- Filter file:\t\t${options.filterFile}`) // LOG - Filter file
+    infoOut(`- Filter file:\t\t${options.filterFile}`); // LOG - Filter file
     try {
-      let filterOptions = {filterSet: {}}
+      let filterOptions = {filterSet: {}};
       filterOptions.filterSet = await openapiFormat.parseFile(options.filterFile);
       options = Object.assign({}, options, filterOptions);
     } catch (err) {
-      console.error('\x1b[31m', `Filter file error - no such file or directory "${options.filterFile}"`)
+      console.error('\x1b[31m', `Filter file error - no such file or directory "${options.filterFile}"`);
       if (options.verbose >= 1) {
-        console.error(err)
+        console.error(err);
       }
-      process.exit(1)
+      process.exit(1);
     }
   }
 
   // apply components sorting by alphabet, if file is present
   if (options && options.sortComponentsFile) {
-    infoOut(`- Sort Components file:\t${options.sortComponentsFile}`) // LOG - Sort file
+    infoOut(`- Sort Components file:\t${options.sortComponentsFile}`); // LOG - Sort file
     try {
-      let sortComponentsOptions = {sortComponentsSet: {}}
+      let sortComponentsOptions = {sortComponentsSet: {}};
       sortComponentsOptions.sortComponentsSet = await openapiFormat.parseFile(options.sortComponentsFile);
       options = Object.assign({}, options, sortComponentsOptions);
     } catch (err) {
-      console.error('\x1b[31m', `Sort Components file error - no such file or directory "${options.sortComponentsFile}"`)
+      console.error(
+        '\x1b[31m',
+        `Sort Components file error - no such file or directory "${options.sortComponentsFile}"`
+      );
       if (options.verbose >= 1) {
-        console.error(err)
+        console.error(err);
       }
-      process.exit(1)
+      process.exit(1);
     }
   }
 
   // apply change casing by casing file if present
   if (options && options.casingFile) {
-    infoOut(`- Casing file:\t\t${options.casingFile}`) // LOG - Casing file
+    infoOut(`- Casing file:\t\t${options.casingFile}`); // LOG - Casing file
     try {
-      let casingOptions = {casingSet: {}}
+      let casingOptions = {casingSet: {}};
       casingOptions.casingSet = await openapiFormat.parseFile(options.casingFile);
       options = Object.assign({}, options, casingOptions);
     } catch (err) {
-      console.error('\x1b[31m', `Casing file error - no such file or directory "${options.casingFile}"`)
+      console.error('\x1b[31m', `Casing file error - no such file or directory "${options.casingFile}"`);
       if (options.verbose >= 1) {
-        console.error(err)
+        console.error(err);
       }
-      process.exit(1)
+      process.exit(1);
     }
   }
 
@@ -152,7 +152,7 @@ async function run(oaFile, options) {
   let input = {};
 
   try {
-    infoOut(`- Input file:\t\t${oaFile}`) // LOG - Input file
+    infoOut(`- Input file:\t\t${oaFile}`); // LOG - Input file
 
     // Parse input content
     resObj = await openapiFormat.parseFile(oaFile);
@@ -189,7 +189,10 @@ async function run(oaFile, options) {
   }
 
   // Convert the OpenAPI document to OpenAPI 3.1
-  if ((options.convertTo && options.convertTo.toString() === "3.1") || (options.convertToVersion && options.convertToVersion === 3.1)) {
+  if (
+    (options.convertTo && options.convertTo.toString() === '3.1') ||
+    (options.convertToVersion && options.convertToVersion === 3.1)
+  ) {
     const resVersion = await openapiFormat.openapiConvertVersion(resObj, options);
     if (resVersion.data) resObj = resVersion.data;
     debugOut(`- OAS version converted to: "${options.convertTo}"`, options.verbose); // LOG - Conversion title
@@ -220,7 +223,8 @@ async function run(oaFile, options) {
     console.log(output);
   }
 
-  if (outputLogOptions) { //&& options.verbose > 2) {
+  if (outputLogOptions) {
+    //&& options.verbose > 2) {
     // Show options
     debugOut(`${consoleLine}\n`, options.verbose); // LOG - horizontal rule
     debugOut(`OpenAPI-Format CLI options:`, options.verbose); // LOG - config file
@@ -234,10 +238,10 @@ async function run(oaFile, options) {
     const keys = Object.keys(unusedComp || {});
     let count = 0;
     const cliOut = [];
-    keys.map((comp) => {
+    keys.map(comp => {
       if (unusedComp && unusedComp[comp] && unusedComp[comp].length > 0) {
         unusedComp[comp].forEach(value => {
-          const spacer = (comp === 'requestBodies' ? `\t` : `\t\t`);
+          const spacer = comp === 'requestBodies' ? `\t` : `\t\t`;
           cliOut.push(`- components/${comp}${spacer} "${value}"`);
           count++;
         });
@@ -279,7 +283,7 @@ async function run(oaFile, options) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Source': 'openapi-format-cli'
+            Source: 'openapi-format-cli'
           },
           body: JSON.stringify(payload)
         });
