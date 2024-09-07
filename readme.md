@@ -1280,19 +1280,19 @@ You can either pass the settings inline or reference an external file using the 
 - **sortSet** / **sortFile**: Sort the fields in the OpenAPI document based on the order defined in the sort settings.
 
   - Inline: Pass the sort order directly using sortSet in the config file.
-  - File: Use sortFile to specify the path to a JSON/YAML file containing custom sorting rules.
+  - File: Use sortFile to specify the path to a local or remote JSON/YAML file containing custom sorting rules.
 
 - **casingSet** / **casingFile**: Define the casing convention for operationId, parameters, properties, etc.
 
   - Inline:
     ```json
     "casingSet": {
-        "operationId": "camelCase",
-        "properties": "PascalCase"
+      "operationId": "camelCase",
+      "properties": "PascalCase"
     }
     ```
 
-  - File: Use casingFile to specify the path to a JSON/YAML file containing casing rules.
+  - File: Use casingFile to specify the path to a local or remote JSON/YAML file containing casing rules.
 
 - **filterSet** / **filterFile**: Filter out specific tags, paths, or components from the OpenAPI document.
 
@@ -1303,18 +1303,18 @@ You can either pass the settings inline or reference an external file using the 
     }
     ```
 
-  - File: Use filterFile to specify the path to a JSON/YAML file containing filter rules.
+  - File: Use filterFile to specify the path to a local or remote JSON/YAML file containing filter rules.
 
 - **generateSet** / **generateFile**: Automatically generate operationId, summary, and other elements based on predefined templates.
 
   - Inline:
     ```json
     "generateSet": {
-    "operationIdTemplate": "<method>_<pathPart2>_Handler"
+      "operationIdTemplate": "<method>_<pathPart2>_Handler"
     }
     ```
 
-  - File: Use generateFile to specify the path to a JSON/YAML file containing generate rules.
+  - File: Use generateFile to specify the path to a local or remote JSON/YAML file containing generate rules.
 
 
 ### Using .openapiformatrc
@@ -1327,11 +1327,9 @@ Example of a .openapiformatrc file:
 {
   "sort": true,
   "filterSet": {
-    "operationId": "PascalCase",
-    "parameters": "camelCase"
+      "tags": ["internal", "beta"]
   }
 }
-
 ```
 
 ## AsyncAPI documents
