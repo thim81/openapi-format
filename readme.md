@@ -174,8 +174,8 @@ Options:
 | --output             | -o            | save the formatted OpenAPI file as JSON/YAML                               | path to file |                             | optional  |
 | --sortFile           | -s            | the file to specify custom OpenAPI fields ordering                         | path to file | defaultSort.json            | optional  |
 | --filterFile         | -f            | the file to specify filter setting                                         | path to file | defaultFilter.json          | optional  |
-| --casingFile         | -c            | the file to specify casing setting                                         | path to file |                             | optional  |
-| --generateFile       | -c            | the file to specify generate rules                                         | path to file |                             | optional  |
+| --casingFile         | -k            | the file to specify casing setting                                         | path to file |                             | optional  |
+| --generateFile       | -g            | the file to specify generate rules                                         | path to file |                             | optional  |
 | --no-sort            |               | don't sort the OpenAPI file                                                | boolean      | FALSE                       | optional  |
 | --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet    | path to file | defaultSortComponents.json  | optional  |
 | --rename             |               | rename the OpenAPI title                                                   | string       |                             | optional  |

@@ -16,7 +16,7 @@ program
   .description('Format an OpenAPI document by ordering, formatting and filtering fields.')
   .option('-o, --output <output>', 'save the formatted OpenAPI file as JSON/YAML')
   .option('-s, --sortFile <sortFile>', 'the file to specify custom OpenAPI fields ordering')
-  .option('-c, --casingFile <casingFile>', 'the file to specify casing rules')
+  .option('-k, --casingFile <casingFile>', 'the file to specify casing rules')
   .option('-f, --filterFile <filterFile>', 'the file to specify filter rules')
   .option('-g, --generateFile <generateFile>', 'the file to specify generate rules')
   .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options')

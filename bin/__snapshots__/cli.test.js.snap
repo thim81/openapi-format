@@ -28,7 +28,7 @@ Format an OpenAPI document by ordering, formatting and filtering fields.
 Options:
   -o, --output <output>                      save the formatted OpenAPI file as JSON/YAML
   -s, --sortFile <sortFile>                  the file to specify custom OpenAPI fields ordering
-  -c, --casingFile <casingFile>              the file to specify casing rules
+  -k, --casingFile <casingFile>              the file to specify casing rules
   -f, --filterFile <filterFile>              the file to specify filter rules
   -g, --generateFile <generateFile>          the file to specify generate rules
   -c, --configFile <configFile>              the file with the OpenAPI-format CLI options
