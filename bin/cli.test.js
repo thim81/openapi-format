@@ -112,6 +112,21 @@ describe('openapi-format CLI command', () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
+  it('should use the generateFile', async () => {
+    const path = `test/yaml-generate-operationId-overwrite`;
+    const inputFile = `${path}/input.yaml`;
+    const outputFile = `${path}/output.yaml`;
+    const output = await getLocalFile(outputFile);
+    const setting = `${path}/customGenerate.yaml`;
+
+    let result = await testUtils.cli([inputFile, `--generateFile ${setting}`, `--no-sort`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
   it('should use the filterFile', async () => {
     const path = `test/yaml-filter-custom`;
     const inputFile = `${path}/input.yaml`;

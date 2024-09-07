@@ -18,6 +18,7 @@ program
   .option('-s, --sortFile <sortFile>', 'the file to specify custom OpenAPI fields ordering')
   .option('-c, --casingFile <casingFile>', 'the file to specify casing rules')
   .option('-f, --filterFile <filterFile>', 'the file to specify filter rules')
+  .option('-g, --generateFile <generateFile>', 'the file to specify generate rules')
   .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options')
   .option('--no-sort', `don't sort the OpenAPI file`)
   .option('--sortComponentsFile <sortComponentsFile>', 'the file with components to sort alphabetically')
@@ -131,7 +132,7 @@ async function run(oaFile, options) {
     }
   }
 
-  // apply change casing by casing file if present
+  // Apply casing based on casing file if present
   if (options && options.casingFile) {
     infoOut(`- Casing file:\t\t${options.casingFile}`); // LOG - Casing file
     try {
@@ -140,6 +141,22 @@ async function run(oaFile, options) {
       options = Object.assign({}, options, casingOptions);
     } catch (err) {
       console.error('\x1b[31m', `Casing file error - no such file or directory "${options.casingFile}"`);
+      if (options.verbose >= 1) {
+        console.error(err);
+      }
+      process.exit(1);
+    }
+  }
+
+  // Generate elements based on generate file if present
+  if (options && options.generateFile) {
+    infoOut(`- Generate file:\t${options.generateFile}`); // LOG - Casing file
+    try {
+      let generateOptions = {generateSet: {}};
+      generateOptions.generateSet = await openapiFormat.parseFile(options.generateFile);
+      options = Object.assign({}, options, generateOptions);
+    } catch (err) {
+      console.error('\x1b[31m', `Generate file error - no such file or directory "${options.generateOptions}"`);
       if (options.verbose >= 1) {
         console.error(err);
       }
@@ -164,6 +181,12 @@ async function run(oaFile, options) {
     }
     console.error('\x1b[31m', `Input file error - Failed to read file: ${oaFile}`);
     process.exit(1);
+  }
+
+  // Generate elements for OpenAPI document
+  if (options.generateSet) {
+    const resFormat = await openapiFormat.openapiGenerate(resObj, options);
+    if (resFormat.data) resObj = resFormat.data;
   }
 
   // Filter OpenAPI document

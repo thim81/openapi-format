@@ -977,14 +977,15 @@ async function openapiGenerate(oaObj, options) {
   traverse(jsonObj).forEach(function (node) {
     // Overwrite operationId
     if (this.path[0] === 'paths' && this.path.length === 3 && generateSet?.operationIdTemplate) {
-      const oaOperation = getOperation(this.path[1], this.path[2], oaObj);
-      const newOperationId = parseTpl({
-        template: generateSet.operationIdTemplate,
-        oaOperation
-      });
+      const operationIdExists = !!node.operationId;
 
-      // debugGenerateStep = 'Generate - OperationId - Overwrite'
-      if (generateSet.overwriteExisting || !node.operationId) {
+      if (generateSet.overwriteExisting || !operationIdExists) {
+        const oaOperation = getOperation(this.path[1], this.path[2], oaObj);
+        const newOperationId = parseTpl({
+          template: generateSet.operationIdTemplate,
+          oaOperation
+        });
+        // debugGenerateStep = 'Generate - OperationId - Overwrite'
         node.operationId = newOperationId;
         this.update(node);
       }

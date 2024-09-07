@@ -1,6 +1,6 @@
 'use strict';
 
-const {changeCase} = require('openapi-format');
+const {changeCase} = require('./casing');
 
 /**
  * Method to parse a template string
