@@ -1239,7 +1239,6 @@ Example:
 ```shell
 $ openapi-format openapi.json --configFile openapi-format-options.json
 ```
-
 The formatting will happen based on all the options set in the `openapi-format-options.json` file. All the
 available [OpenAPI format options](https://github.com/thim81/openapi-format#openapi-format-options) can be used in the config file.
 
@@ -1274,14 +1273,14 @@ Alternatively, you can reference external files for each setting using the corre
 
 In this case, the settings will be loaded from the external files, and they override any inline configurations.
 
-**Available Options**
+**Define sort, filter, casing, generate options**
 
 You can either pass the settings inline or reference an external file using the appropriate File property:
 
-- **sortFile**: Sort the fields in the OpenAPI document based on the order defined in the sort settings.
+- **sortSet** / **sortFile**: Sort the fields in the OpenAPI document based on the order defined in the sort settings.
 
   - Inline: Pass the sort order directly using sortSet in the config file.
-  - File: Use sortFile to specify the path to a JSON file containing custom sorting rules.
+  - File: Use sortFile to specify the path to a JSON/YAML file containing custom sorting rules.
 
 - **casingSet** / **casingFile**: Define the casing convention for operationId, parameters, properties, etc.
 
@@ -1293,7 +1292,7 @@ You can either pass the settings inline or reference an external file using the 
     }
     ```
 
-  - File: Use casingFile to specify the path to a JSON file containing casing rules.
+  - File: Use casingFile to specify the path to a JSON/YAML file containing casing rules.
 
 - **filterSet** / **filterFile**: Filter out specific tags, paths, or components from the OpenAPI document.
 
@@ -1304,18 +1303,18 @@ You can either pass the settings inline or reference an external file using the 
     }
     ```
 
-  - File: Use filterFile to specify the path to a JSON file containing filter rules.
+  - File: Use filterFile to specify the path to a JSON/YAML file containing filter rules.
 
 - **generateSet** / **generateFile**: Automatically generate operationId, summary, and other elements based on predefined templates.
 
-- Inline:
+  - Inline:
     ```json
     "generateSet": {
     "operationIdTemplate": "<method>_<pathPart2>_Handler"
     }
     ```
 
-  - File: Use generateFile to specify the path to a JSON file containing generate rules.
+  - File: Use generateFile to specify the path to a JSON/YAML file containing generate rules.
 
 
 ### Using .openapiformatrc

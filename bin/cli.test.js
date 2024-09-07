@@ -114,7 +114,6 @@ describe('openapi-format CLI command', () => {
     expect(output).toStrictEqual(snap);
   });
 
-
   it('should load the default .openapiformatrc if configFile is not provided', async () => {
     // Mock the existence of the .openapiformatrc file
     const defaultConfigPath = '.openapiformatrc';
@@ -126,11 +125,11 @@ describe('openapi-format CLI command', () => {
     `;
 
     // Mocking the file system to simulate the existence of .openapiformatrc
-    jest.spyOn(fs, 'existsSync').mockImplementation((path) => {
+    jest.spyOn(fs, 'existsSync').mockImplementation(path => {
       return path === defaultConfigPath; // Simulate .openapiformatrc exists
     });
 
-    jest.spyOn(fs, 'readFileSync').mockImplementation((path) => {
+    jest.spyOn(fs, 'readFileSync').mockImplementation(path => {
       if (path === defaultConfigPath) {
         return mockConfigContent;
       }
