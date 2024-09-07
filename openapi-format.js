@@ -29,6 +29,7 @@ const {
   setInObject
 } = require('./utils/convert');
 const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi} = require('./utils/file');
+const {parseTpl, getOperation} = require('./utils/parseTpl');
 
 /**
  * OpenAPI sort function
@@ -961,6 +962,41 @@ async function openapiChangeCase(oaObj, options) {
 }
 
 /**
+ * OpenAPI Generate elements function
+ * Traverse through all key.
+ * @param {object} oaObj OpenAPI document
+ * @param {object} options OpenAPI-format generate options
+ * @returns {object} Updated OpenAPI document with generated elements
+ */
+async function openapiGenerate(oaObj, options) {
+  let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
+  let generateDefault = {overwriteExisting: false};
+  let generateSet = Object.assign({}, generateDefault, options.generateSet);
+
+  // Recursive traverse through OpenAPI document to update components
+  traverse(jsonObj).forEach(function (node) {
+    if (this.path[0] === 'paths' && this.path.length === 3 && generateSet?.operationIdTemplate) {
+      const operationIdExists = !!node.operationId;
+
+      // Generate operationId element
+      if (generateSet.overwriteExisting || !operationIdExists) {
+        const oaOperation = getOperation(this.path[1], this.path[2], oaObj);
+        const newOperationId = parseTpl({
+          template: generateSet.operationIdTemplate,
+          oaOperation
+        });
+        // debugGenerateStep = 'Generate - OperationId'
+        node.operationId = newOperationId;
+        this.update(node);
+      }
+    }
+  });
+
+  // Return result object
+  return {data: jsonObj, resultData: {}};
+}
+
+/**
  * OpenAPI convert version function
  * Convert OpenAPI from version 3.0 to 3.1
  * @param {object} oaObj OpenAPI document
@@ -1060,6 +1096,7 @@ async function openapiRename(oaObj, options) {
 
 module.exports = {
   openapiFilter: openapiFilter,
+  openapiGenerate: openapiGenerate,
   openapiSort: openapiSort,
   openapiChangeCase: openapiChangeCase,
   openapiConvertVersion: openapiConvertVersion,

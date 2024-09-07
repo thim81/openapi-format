@@ -1,0 +1,3 @@
+operationIdTemplate: <method>_<pathPart1>
+
+overwriteExisting: true

@@ -28,8 +28,11 @@ The openapi-format CLI has the option to convert an OpenAPI 3.0 document to an O
 * [OpenAPI sort configuration options](#openapi-sort-configuration-options)
 * [OpenAPI formatting configuration options](#openapi-formatting-configuration-options)
 * [OpenAPI filter options](#openapi-filter-options)
+* [OpenAPI generate elements](#openapi-generate-options)
 * [CLI sort usage](#cli-sort-usage)
 * [CLI filter usage](#cli-filter-usage)
+* [CLI generate usage](#cli-generate-usage)
+* [CLI casing usage](#cli-casing-usage)
 * [CLI rename usage](#cli-rename-usage)
 * [CLI convertTo usage](#cli-convertto-usage)
 * [CLI configuration usage](#cli-configuration-usage)
@@ -67,6 +70,7 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on response content-types
 - [x] Strip flags from OpenAPI files
 - [x] Strip unused components from OpenAPI files
+- [x] Generate OpenAPI elements for consistency
 - [x] Convert OpenAPI 3.0 documents to OpenAPI 3.1 
 - [x] Rename the OpenAPI title
 - [x] Support OpenAPI documents in JSON format
@@ -139,6 +143,7 @@ Options:
 
   --sortFile            The file to specify custom OpenAPI fields ordering      [path]
   --casingFile          The file to specify casing rules                        [path]
+  --generateFile        The file to specify generate rules                      [path]
   --filterFile          The file to specify filter rules                        [path]
 
   --no-sort             Don't sort the OpenAPI file                          [boolean]
@@ -163,25 +168,26 @@ Options:
 
 ## OpenAPI format CLI options
 
-| Parameter            | Alias         | Description                                                                 | Input type   | Default                     | Info      |
-|----------------------|---------------|-----------------------------------------------------------------------------|--------------|-----------------------------|-----------|
-| file                 |               | the OpenAPI document can be a local or remote file in JSON or YAML format   | path to file |                             | required  |
-| --output             | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                             | optional  |
-| --sortFile           | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json            | optional  |
-| --filterFile         | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json          | optional  |
-| --casingFile         | -c            | the file to specify casing setting                                          | path to file |                             | optional  |
-| --no-sort            |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                       | optional  |
-| --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json  | optional  |
-| --rename             |               | rename the OpenAPI title                                                    | string       |                             | optional  |
-| --convertTo          |               | convert the OpenAPI document to OpenAPI version 3.1                         | string       |                             | optional  |
-| --configFile         | -c            | the file with all the format config options                                 | path to file |                             | optional  |
-| --lineWidth          |               | max line width of YAML output                                               | number       | -1 (Infinity)               | optional  |
-| --json               |               | prints the file to stdout as JSON                                           |              | FALSE                       | optional  |
-| --yaml               |               | prints the file to stdout as YAML                                           |              | FALSE                       | optional  |
-| --playground         | -p            | open config in online playground                                            |              |                             | optional  |
-| --version            |               | output the version number                                                   |              |                             | optional  |
+| Parameter            | Alias         | Description                                                                | Input type   | Default                     | Info      |
+|----------------------|---------------|----------------------------------------------------------------------------|--------------|-----------------------------|-----------|
+| file                 |               | the OpenAPI document can be a local or remote file in JSON or YAML format  | path to file |                             | required  |
+| --output             | -o            | save the formatted OpenAPI file as JSON/YAML                               | path to file |                             | optional  |
+| --sortFile           | -s            | the file to specify custom OpenAPI fields ordering                         | path to file | defaultSort.json            | optional  |
+| --filterFile         | -f            | the file to specify filter setting                                         | path to file | defaultFilter.json          | optional  |
+| --casingFile         | -k            | the file to specify casing setting                                         | path to file |                             | optional  |
+| --generateFile       | -g            | the file to specify generate rules                                         | path to file |                             | optional  |
+| --no-sort            |               | don't sort the OpenAPI file                                                | boolean      | FALSE                       | optional  |
+| --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet    | path to file | defaultSortComponents.json  | optional  |
+| --rename             |               | rename the OpenAPI title                                                   | string       |                             | optional  |
+| --convertTo          |               | convert the OpenAPI document to OpenAPI version 3.1                        | string       |                             | optional  |
+| --configFile         | -c            | the file with all the format config options                                | path to file |                             | optional  |
+| --lineWidth          |               | max line width of YAML output                                              | number       | -1 (Infinity)               | optional  |
+| --json               |               | prints the file to stdout as JSON                                          |              | FALSE                       | optional  |
+| --yaml               |               | prints the file to stdout as YAML                                          |              | FALSE                       | optional  |
+| --playground         | -p            | open config in online playground                                           |              |                             | optional  |
+| --version            |               | output the version number                                                  |              |                             | optional  |
 | --verbose            | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                             | optional  |
-| --help               | h             | display help for command                                                    |              |                             | optional  |
+| --help               | h             | display help for command                                                   |              |                             | optional  |
 
 ## OpenAPI sort configuration options
 
@@ -954,6 +960,22 @@ components:
             description: max records to return
 ```
 
+### OpenAPI Generate Options
+
+The OpenAPI formatting tool allows you to generate various elements such as `operationId`, and more using customizable templates. These templates enable dynamic generation of missing or incomplete values in your OpenAPI specification, ensuring consistency and adherence to your conventions.
+
+Options for generating elements:
+
+- `operationIdTemplate`: Generate the `operationId` using placeholders like `<method>`, `<pathPart2>`, etc.
+- `overwriteExisting`: Set to `true` or `false` to control whether existing values should be overwritten (default: `false`).
+
+| Key                 | Options                        | OpenAPI Reference                                                              |
+|---------------------|--------------------------------|--------------------------------------------------------------------------------|
+| operationIdTemplate | Customizable with placeholders | [operation-object](https://spec.openapis.org/oas/v3.0.3.html#operation-object) |
+| overwriteExisting   | `true` / `false`               | N/A                                                                            |
+
+See [CLI generate usage](#cli-generate-usage) for an example and the available template options.
+
 ## CLI sort usage
 
 - Format a spec with the default sorting and saves it as a new JSON file
@@ -1047,6 +1069,99 @@ operationIds:
     - addPet
     - findPetsByStatus
 ```
+
+## CLI generate usage
+
+- Generate OpenAPI elements and saves it as a new file
+
+The OpenAPI formatting tool allows you to generate OpenAPI elements, such as `operationId`, `summary`, and more, based on configurable templates. The generated elements will be saved to the output OpenAPI file.
+
+You can also combine generation with filtering and sorting to customize the output. For example, if you want to strip certain methods, tags, operationIds, operations, or flags, you can pass a `filterFile` containing the specific values to exclude. This helps you refine your OpenAPI document further, ensuring it’s well-ordered and only contains the relevant parts.
+
+example:
+
+```shell
+$ openapi-format openapi.json -o openapi-formatted.json --generateFile customGenerate.yaml
+```
+
+where the `customGenerate.yaml` would contain a combination of all the elements you to generate.
+
+```yaml
+operationIdTemplate: "<method>_<pathPart2>"
+overwriteExisting: false
+```
+
+**Template Options:**
+In the customGenerate.yaml, you can define templates for various OpenAPI properties using dynamic placeholders. These placeholders will be replaced by actual values from the OpenAPI operations. Below is a list of available placeholders and what they represent:
+
+- `<operationId>` : The operationId of the OpenAPI operation. Example: leadsAll
+- `<method>` : The HTTP method of the OpenAPI operation. Example: GET
+- `<path>` : The path of the OpenAPI operation. Example: /crm/leads
+- `<pathRef>` : The path reference of the OpenAPI operation. Example: GET::/crm/leads
+- `<tag>` : The first tag name of the OpenAPI operation. Example: Leads
+- `<tag1>` : The first tag name of the OpenAPI operation. Example: Leads
+- `<tag2>` : The second tag name of the OpenAPI operation, if more than one tag is defined. Example: CRM
+- `<tagn>` : The nth tag name of the OpenAPI operation if more than one tag is defined.
+- `<pathPart1>` : The first part of the path of the OpenAPI operation. Example: crm
+- `<pathPart2>` : The second part of the path of the OpenAPI operation. Example: leads
+- `<pathPartn>` : The nth part of the path of the OpenAPI operation.
+
+You can also include static text in the templates, which will be merged with the dynamic placeholders. For example:
+
+```yaml
+operationIdTemplate: "Prefix_<method>_<pathPart2>_Handler"
+```
+
+**Configuration Options:**
+
+- `operationIdTemplate`: Template for generating `operationId`. Use dynamic placeholders like <method> and <pathPart2>.
+- `overwriteExisting`: Set to `true` or `false` to control whether existing values should be overwritten. Default: `false`.
+
+## CLI casing usage
+
+- Generate OpenAPI elements and saves it as a new file
+
+The OpenAPI formatting tool allows you to enforce consistent casing styles across various OpenAPI elements, such as `operationId`, `summary`, `parameters`, and more. The specified casing preferences will be applied to the relevant elements and saved to the output OpenAPI file.
+
+example:
+
+```shell
+$ openapi-format openapi.json -o openapi-formatted.json --casingFile customCasing.yaml
+```
+
+where the `customCasing.yaml` would contain a casing preferences for the specified of the elements.
+
+In this example, the customCasing.yaml file would contain the desired casing preferences for specific OpenAPI elements.
+
+```yaml
+operationId: snake_case
+properties: camelCase
+
+parametersQuery: kebab-case
+parametersHeader: kebab-case
+parametersPath: snake_case
+
+componentsExamples: PascalCase
+componentsSchemas: camelCase
+componentsHeaders: kebab-case
+componentsResponses: snake_case
+componentsRequestBodies: snake_case
+componentsSecuritySchemes: PascalCase
+
+componentsParametersQuery: snake_case
+componentsParametersHeader: kebab-case
+componentsParametersPath: camelCase
+```
+
+**Casing Options:**
+In the customCasing.yaml, you can define the casing style for various OpenAPI properties, allowing you to customize the appearance of your document consistently.
+
+- `operationId`: Defines the casing for operation IDs. Example: snake_case, PascalCase, or camelCase.
+- `properties`: Sets the casing for properties within components. Example: camelCase.
+- `parametersQuery`, `parametersHeader`, `parametersPath`: Define different casing styles for parameters based on their location (query, header, path). Example: snake_case, kebab-case.
+- and many more
+
+See [OpenAPI formatting configuration options](#openapi-formatting-configuration-options) for the full list of casing options
 
 ## CLI rename usage
 

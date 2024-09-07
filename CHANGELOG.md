@@ -1,5 +1,7 @@
 ## unreleased
 
+- Generate - Added option to generate operationId using template structures
+
 ## [1.22.5] - 2024-09-06
 
 - Filter - Improved unused components handling

@@ -28,8 +28,9 @@ Format an OpenAPI document by ordering, formatting and filtering fields.
 Options:
   -o, --output <output>                      save the formatted OpenAPI file as JSON/YAML
   -s, --sortFile <sortFile>                  the file to specify custom OpenAPI fields ordering
-  -c, --casingFile <casingFile>              the file to specify casing rules
+  -k, --casingFile <casingFile>              the file to specify casing rules
   -f, --filterFile <filterFile>              the file to specify filter rules
+  -g, --generateFile <generateFile>          the file to specify generate rules
   -c, --configFile <configFile>              the file with the OpenAPI-format CLI options
   --no-sort                                  don't sort the OpenAPI file
   --sortComponentsFile <sortComponentsFile>  the file with components to sort alphabetically
@@ -173,6 +174,17 @@ OpenAPI-Format CLI settings:
 - Input file:		test/yaml-filter-custom/input.yaml
 [32m================================================================================[0m
 [32m✅  OpenAPI filtered & formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the generateFile 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Generate file:	test/yaml-generate-operationId-overwrite/customGenerate.yaml
+- Input file:		test/yaml-generate-operationId-overwrite/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m
 "
 `;
