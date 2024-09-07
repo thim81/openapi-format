@@ -4,8 +4,10 @@ const openapiFormat = require('../openapi-format');
 const program = require('commander');
 const {infoTable, infoOut, logOut, debugOut} = require('../utils/logging');
 const {stringify} = require('../openapi-format');
+const fs = require('fs');
+const path = require('path');
 
-// CLI Helper - change verbosity
+// CLI Helper - increase verbosity
 function increaseVerbosity(dummyValue, previous) {
   return previous + 1;
 }
@@ -56,8 +58,16 @@ async function run(oaFile, options) {
   infoOut(`${consoleLine}`); // LOG - horizontal rule
   infoOut(`OpenAPI-Format CLI settings:`); // LOG - config file
 
-  // apply options from config file if present
-  if (options && options.configFile) {
+  // Check for .openapiformatrc
+  if (!options?.configFile) {
+    const defaultConfigFile = path.resolve(process.cwd(), '.openapiformatrc');
+    if (fs.existsSync(defaultConfigFile)) {
+      options.configFile = defaultConfigFile;
+    }
+  }
+
+  // Apply options from config file if present
+  if (options?.configFile) {
     try {
       let configFileOptions = {};
       configFileOptions = await openapiFormat.parseFile(options.configFile);
@@ -79,7 +89,7 @@ async function run(oaFile, options) {
   // LOG - Render info table with options
   outputLogOptions = infoTable(options, options.verbose);
 
-  // apply ordering by priority file if present
+  // Apply ordering by priority file if present
   if (options && options.sort === true) {
     let sortFile = options.sortFile ? options.sortFile : __dirname + '/../defaultSort.json';
     let sortFileName = options.sortFile ? options.sortFile : '(defaultSort.json)';
@@ -97,7 +107,7 @@ async function run(oaFile, options) {
     }
   }
 
-  // apply filtering by filter file if present
+  // Apply filtering by filter file if present
   if (options && options.filterFile) {
     infoOut(`- Filter file:\t\t${options.filterFile}`); // LOG - Filter file
     try {
@@ -113,7 +123,7 @@ async function run(oaFile, options) {
     }
   }
 
-  // apply components sorting by alphabet, if file is present
+  // Apply components sorting by alphabet, if file is present
   if (options && options.sortComponentsFile) {
     infoOut(`- Sort Components file:\t${options.sortComponentsFile}`); // LOG - Sort file
     try {

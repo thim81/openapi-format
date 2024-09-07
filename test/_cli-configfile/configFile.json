@@ -1,0 +1,26 @@
+{
+  "output": "test/_cli-configfile/output.json",
+  "sortSet": {
+    "info": ["title", "version"],
+    "paths": {
+      "order": [ "post", "put", "delete","get"]
+    }
+  },
+  "casingSet": {
+    "operationId": "camelCase",
+    "parameters": "snake_case",
+    "properties": "PascalCase"
+  },
+  "filterSet": {
+    "removeUnusedComponents": true,
+    "requestContent": ["application/xml"],
+    "excludeTags": ["internal"]
+  },
+  "generateSet": {
+    "operationIdTemplate": "<method>_<pathPart1>_Handler",
+    "overwriteExisting": true
+  },
+  "no-sort": false,
+  "lineWidth": 80,
+  "rename": "Updated API"
+}

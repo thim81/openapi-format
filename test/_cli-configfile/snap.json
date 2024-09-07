@@ -1,0 +1,62 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Updated API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/pets": {
+      "get": {
+        "operationId": "getPetsHandler",
+        "responses": {
+          "200": {
+            "description": "A list of pets."
+          }
+        },
+        "tags": [
+          "pets"
+        ]
+      },
+      "put": {
+        "operationId": "putPetsHandler",
+        "requestBody": {
+          "description": "Pet object that needs to be updated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "Name": {
+                    "type": "string",
+                    "example": "Rex"
+                  },
+                  "Tag": {
+                    "type": "string",
+                    "example": "dog"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pet updated."
+          }
+        },
+        "tags": [
+          "x-customTag"
+        ],
+        "x-version": "1.0"
+      }
+    }
+  }
+}

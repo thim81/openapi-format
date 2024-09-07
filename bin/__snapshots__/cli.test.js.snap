@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`openapi-format CLI command should load the default .openapiformatrc if configFile is not provided 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		(defaultSort.json)
+- Input file:		test/yaml-default/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
 exports[`openapi-format CLI command should not convert large numbers in JSON 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
@@ -131,6 +142,19 @@ OpenAPI-Format CLI settings:
 - Input file:		test/yaml-casing/input.yaml
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the configFile with all settings 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Config file:		test/_cli-configfile/configFile.json
+- Sort file:		(defaultSort.json)
+- Input file:		test/__utils__/mockOpenApi.json
+- Output file:		test/_cli-configfile/output.json
+[32m================================================================================[0m
+[32m✅  OpenAPI filtered & formatted successfully[0m
 [32m================================================================================[0m
 "
 `;
