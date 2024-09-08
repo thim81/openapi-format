@@ -1,0 +1,18 @@
+openapi: 3.0.0
+info:
+  title: Minimal API
+  version: 1.0.0
+paths:
+  /example:
+    get: # This is a comment in the OpenAPI file
+      summary: Returns an example
+      # A more detailed description of the operation
+      responses:
+        '200':
+          description: A successful response
+    post: # This is a comment in the OpenAPI file
+      summary: Creates an example
+      # A more detailed description of the operation
+      responses:
+        '200':
+          description: A successful response

@@ -38,8 +38,12 @@ program
     }
 
     process.exit(err.exitCode);
-  })
-  .parse(process.argv);
+  });
+
+// Only trigger if the file is run directly
+if (require.main === module) {
+  program.parse(process.argv);
+}
 
 async function run(oaFile, options) {
   // General variables
@@ -167,12 +171,13 @@ async function run(oaFile, options) {
   let resObj = {};
   let output = {};
   let input = {};
+  let fileOptions = {};
 
   try {
     infoOut(`- Input file:\t\t${oaFile}`); // LOG - Input file
 
     // Parse input content
-    resObj = await openapiFormat.parseFile(oaFile);
+    resObj = await openapiFormat.parseFile(oaFile, fileOptions);
     input = resObj;
   } catch (err) {
     if (err.code !== 'ENOENT') {
@@ -228,6 +233,7 @@ async function run(oaFile, options) {
     debugOut(`- OAS.title renamed to: "${options.rename}"`, options.verbose); // LOG - Rename title
   }
 
+  options.yamlComments = fileOptions.yamlComments || {};
   if (options.output) {
     try {
       // Write OpenAPI string to file
@@ -297,7 +303,7 @@ async function run(oaFile, options) {
       if (options.format === 'json' || options.format === 'yaml') config.outputLanguage = options.format;
 
       const payload = {
-        openapi: await stringify(input),
+        openapi: await stringify(input, options),
         config: config
       };
 
@@ -327,4 +333,8 @@ async function run(oaFile, options) {
       console.error('\x1b[31m', 'Error generating openapi-format playground URL:', err.message);
     }
   }
+
+  return output;
 }
+
+module.exports = {run};

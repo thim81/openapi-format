@@ -20,7 +20,9 @@ async function parseString(str, options = {}) {
 
   if (toYaml) {
     try {
-      const obj = yaml.parse(encodedContent);
+      const result = yaml.parseWithPointers(encodedContent, {attachComments: true});
+      options.yamlComments = result.comments;
+      const obj = result.data;
       if (typeof obj === 'object') {
         return obj;
       } else {
@@ -70,13 +72,12 @@ async function detectFormat(str) {
 /**
  * Parse a JSON/YAML file and returns the parsed object
  * @param filePath Path to the JSON/YAML file.
+ * @param options Parse File options
  * @returns {Promise<unknown>} Parsed data object.
  */
-async function parseFile(filePath) {
+async function parseFile(filePath, options = {}) {
   try {
     const isRemoteFile = filePath.startsWith('http://') || filePath.startsWith('https://');
-
-    const options = {};
 
     let fileContent;
     if (isRemoteFile) {
@@ -111,6 +112,10 @@ async function stringify(obj, options = {}) {
       const yamlOptions = {};
       yamlOptions.lineWidth =
         (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
+
+      if (options?.yamlComments) {
+        yamlOptions.comments = options.yamlComments;
+      }
 
       // Convert Object to YAML string
       output = yaml.safeStringify(obj, yamlOptions);
