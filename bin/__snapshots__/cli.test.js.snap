@@ -166,12 +166,13 @@ OpenAPI-Format CLI settings:
 ================================================================================
 
 OpenAPI-Format CLI options:
-|-----------|-------|
-| sort      | false |
-| lineWidth | -1    |
-| convertTo | 3.1   |
-| verbose   | 3     |
-|-----------|-------|
+|--------------|-------|
+| sort         | false |
+| keepComments | false |
+| lineWidth    | -1    |
+| convertTo    | 3.1   |
+| verbose      | 3     |
+|--------------|-------|
 
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
