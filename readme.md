@@ -147,6 +147,7 @@ Options:
   --filterFile          The file to specify filter rules                        [path]
 
   --no-sort             Don't sort the OpenAPI file                          [boolean]
+  --keepComments        Don't remove the comments from the OpenAPI YAML file [boolean]
   --sortComponentsFile  The file with components to sort alphabetically         [path]
 
   --rename              Rename the OpenAPI title                              [string]
@@ -168,26 +169,27 @@ Options:
 
 ## OpenAPI format CLI options
 
-| Parameter            | Alias         | Description                                                                | Input type   | Default                     | Info      |
-|----------------------|---------------|----------------------------------------------------------------------------|--------------|-----------------------------|-----------|
-| file                 |               | the OpenAPI document can be a local or remote file in JSON or YAML format  | path to file |                             | required  |
-| --output             | -o            | save the formatted OpenAPI file as JSON/YAML                               | path to file |                             | optional  |
-| --sortFile           | -s            | the file to specify custom OpenAPI fields ordering                         | path to file | defaultSort.json            | optional  |
-| --filterFile         | -f            | the file to specify filter setting                                         | path to file | defaultFilter.json          | optional  |
-| --casingFile         | -k            | the file to specify casing setting                                         | path to file |                             | optional  |
-| --generateFile       | -g            | the file to specify generate rules                                         | path to file |                             | optional  |
-| --no-sort            |               | don't sort the OpenAPI file                                                | boolean      | FALSE                       | optional  |
-| --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet    | path to file | defaultSortComponents.json  | optional  |
-| --rename             |               | rename the OpenAPI title                                                   | string       |                             | optional  |
-| --convertTo          |               | convert the OpenAPI document to OpenAPI version 3.1                        | string       |                             | optional  |
-| --configFile         | -c            | the file with all the format config options                                | path to file |                             | optional  |
-| --lineWidth          |               | max line width of YAML output                                              | number       | -1 (Infinity)               | optional  |
-| --json               |               | prints the file to stdout as JSON                                          |              | FALSE                       | optional  |
-| --yaml               |               | prints the file to stdout as YAML                                          |              | FALSE                       | optional  |
-| --playground         | -p            | open config in online playground                                           |              |                             | optional  |
-| --version            |               | output the version number                                                  |              |                             | optional  |
-| --verbose            | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                             | optional  |
-| --help               | h             | display help for command                                                   |              |                             | optional  |
+| Parameter            | Alias         | Description                                                                 | Input type   | Default                    | Info     |
+|----------------------|---------------|-----------------------------------------------------------------------------|--------------|----------------------------|----------|
+| file                 |               | the OpenAPI document can be a local or remote file in JSON or YAML format   | path to file |                            | required |
+| --output             | -o            | save the formatted OpenAPI file as JSON/YAML                                | path to file |                            | optional |
+| --sortFile           | -s            | the file to specify custom OpenAPI fields ordering                          | path to file | defaultSort.json           | optional |
+| --filterFile         | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json         | optional |
+| --casingFile         | -k            | the file to specify casing setting                                          | path to file |                            | optional |
+| --generateFile       | -g            | the file to specify generate rules                                          | path to file |                            | optional |
+| --no-sort            |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                      | optional |
+| --keepComments       |               | don't remove the comments from the OpenAPI YAML file                        | boolean      | FALSE                      | optional |
+| --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json | optional |
+| --rename             |               | rename the OpenAPI title                                                    | string       |                            | optional |
+| --convertTo          |               | convert the OpenAPI document to OpenAPI version 3.1                         | string       |                            | optional |
+| --configFile         | -c            | the file with all the format config options                                 | path to file |                            | optional |
+| --lineWidth          |               | max line width of YAML output                                               | number       | -1 (Infinity)              | optional |
+| --json               |               | prints the file to stdout as JSON                                           |              | FALSE                      | optional |
+| --yaml               |               | prints the file to stdout as YAML                                           |              | FALSE                      | optional |
+| --playground         | -p            | open config in online playground                                            |              |                            | optional |
+| --version            |               | output the version number                                                   |              |                            | optional |
+| --verbose            | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                            | optional |
+| --help               | h             | display help for command                                                    |              |                            | optional |
 
 ## OpenAPI sort configuration options
 

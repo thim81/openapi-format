@@ -261,8 +261,12 @@ describe('openapi-format CLI command', () => {
     const inputFile = `${path}/input.yaml`;
     const outputFile = `${path}/output.yaml`;
     const output = await getLocalFile(outputFile);
+    const setting = `${path}/customFilter.yaml`;
 
-    let result = await testUtils.cli([inputFile, `--no-sort`, `-vvv`], '.');
+    let result = await testUtils.cli(
+      [inputFile, `--filterFile ${setting}`, `--keepComments`, `--no-sort`, `-vvv`],
+      '.'
+    );
     // console.log('result', result)
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('formatted successfully');

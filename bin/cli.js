@@ -21,6 +21,7 @@ program
   .option('-g, --generateFile <generateFile>', 'the file to specify generate rules')
   .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options')
   .option('--no-sort', `don't sort the OpenAPI file`)
+  .option('--keepComments', `don't remove the comments from the OpenAPI YAML file`, false)
   .option('--sortComponentsFile <sortComponentsFile>', 'the file with components to sort alphabetically')
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
   .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document')
@@ -171,7 +172,7 @@ async function run(oaFile, options) {
   let resObj = {};
   let output = {};
   let input = {};
-  let fileOptions = {};
+  let fileOptions = {keepComments: options?.keepComments || false};
 
   try {
     infoOut(`- Input file:\t\t${oaFile}`); // LOG - Input file

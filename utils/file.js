@@ -20,7 +20,7 @@ async function parseString(str, options = {}) {
 
   if (toYaml) {
     try {
-      const result = yaml.parseWithPointers(encodedContent, {attachComments: true});
+      const result = yaml.parseWithPointers(encodedContent, {attachComments: options?.keepComments || false});
       options.yamlComments = result.comments;
       const obj = result.data;
       if (typeof obj === 'object') {
@@ -113,7 +113,7 @@ async function stringify(obj, options = {}) {
       yamlOptions.lineWidth =
         (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
 
-      if (options?.yamlComments) {
+      if (options?.yamlComments && options?.keepComments === true) {
         yamlOptions.comments = options.yamlComments;
       }
 
