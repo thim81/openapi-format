@@ -88,6 +88,9 @@ async function parseFile(filePath, options = {}) {
       fileContent = await getLocalFile(filePath);
     }
 
+    // Check JSON or YAML
+    (await isJSON(fileContent)) ? (options.format = 'json') : (options.format = 'yaml');
+
     // Encode & Parse file content
     return parseString(fileContent, options);
   } catch (err) {

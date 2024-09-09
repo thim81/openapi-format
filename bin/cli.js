@@ -4,8 +4,10 @@ const openapiFormat = require('../openapi-format');
 const program = require('commander');
 const {infoTable, infoOut, logOut, debugOut} = require('../utils/logging');
 const {stringify} = require('../openapi-format');
+const fs = require('fs');
+const path = require('path');
 
-// CLI Helper - change verbosity
+// CLI Helper - increase verbosity
 function increaseVerbosity(dummyValue, previous) {
   return previous + 1;
 }
@@ -61,17 +63,22 @@ async function run(oaFile, options) {
   infoOut(`${consoleLine}`); // LOG - horizontal rule
   infoOut(`OpenAPI-Format CLI settings:`); // LOG - config file
 
-  // apply options from config file if present
-  if (options && options.configFile) {
+  // Check for .openapiformatrc
+  let defaultOptions = {};
+  if (!options?.configFile) {
+    const defaultConfigFile = path.resolve(process.cwd(), '.openapiformatrc');
+    if (fs.existsSync(defaultConfigFile)) {
+      defaultOptions = await openapiFormat.parseFile(defaultConfigFile);
+      infoOut(`- .openapiformatrc:\t${defaultConfigFile}`); // LOG - config file
+    }
+  }
+
+  // Apply options from config file if present
+  let configOptions = {};
+  if (options?.configFile) {
     try {
-      let configFileOptions = {};
-      configFileOptions = await openapiFormat.parseFile(options.configFile);
-      if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
-        configFileOptions.sort = !configFileOptions['no-sort'];
-        delete configFileOptions['no-sort'];
-      }
+      configOptions = await openapiFormat.parseFile(options.configFile);
       infoOut(`- Config file:\t\t${options.configFile}`); // LOG - config file
-      options = Object.assign({}, options, configFileOptions);
     } catch (err) {
       console.error('\x1b[31m', 'Config file error - no such file or directory "' + options.configFile + '"');
       if (options.verbose >= 1) {
@@ -81,10 +88,22 @@ async function run(oaFile, options) {
     }
   }
 
+  // Merge .openapiformatrc and configOptions
+  configOptions = Object.assign({}, defaultOptions, configOptions);
+  options.lineWidth = configOptions?.lineWidth ?? options.lineWidth;
+  options.sort = configOptions?.sort ?? options.sort;
+
+  // Merge configOptions and CLI options
+  options = Object.assign({}, configOptions, options);
+  if (options['no-sort'] && options['no-sort'] === true) {
+    options.sort = !options['no-sort'];
+    delete options['no-sort'];
+  }
+
   // LOG - Render info table with options
   outputLogOptions = infoTable(options, options.verbose);
 
-  // apply ordering by priority file if present
+  // Apply ordering by priority file if present
   if (options && options.sort === true) {
     let sortFile = options.sortFile ? options.sortFile : __dirname + '/../defaultSort.json';
     let sortFileName = options.sortFile ? options.sortFile : '(defaultSort.json)';
@@ -102,7 +121,7 @@ async function run(oaFile, options) {
     }
   }
 
-  // apply filtering by filter file if present
+  // Apply filtering by filter file if present
   if (options && options.filterFile) {
     infoOut(`- Filter file:\t\t${options.filterFile}`); // LOG - Filter file
     try {
@@ -118,7 +137,7 @@ async function run(oaFile, options) {
     }
   }
 
-  // apply components sorting by alphabet, if file is present
+  // Apply components sorting by alphabet, if file is present
   if (options && options.sortComponentsFile) {
     infoOut(`- Sort Components file:\t${options.sortComponentsFile}`); // LOG - Sort file
     try {
