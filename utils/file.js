@@ -88,7 +88,7 @@ async function parseFile(filePath) {
     }
 
     // Check JSON or YAML
-    await isJSON(fileContent) ? options.format = 'json' : options.format = 'yaml'
+    (await isJSON(fileContent)) ? (options.format = 'json') : (options.format = 'yaml');
 
     // Encode & Parse file content
     return parseString(fileContent, options);
