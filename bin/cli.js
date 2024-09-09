@@ -84,9 +84,9 @@ async function run(oaFile, options) {
   }
 
   // Merge .openapiformatrc and configOptions
-  configOptions = Object.assign({}, defaultOptions, configOptions)
-  options.lineWidth = configOptions?.lineWidth ?? options.lineWidth
-  options.sort = configOptions?.sort ?? options.sort
+  configOptions = Object.assign({}, defaultOptions, configOptions);
+  options.lineWidth = configOptions?.lineWidth ?? options.lineWidth;
+  options.sort = configOptions?.sort ?? options.sort;
 
   // Merge configOptions and CLI options
   options = Object.assign({}, configOptions, options);
