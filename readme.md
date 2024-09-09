@@ -1325,6 +1325,7 @@ Example of a .openapiformatrc file:
 
 ```json
 {
+  "output": "openapi-final.yaml",  
   "sort": true,
   "filterSet": {
       "tags": ["internal", "beta"]
