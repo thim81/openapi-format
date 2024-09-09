@@ -97,6 +97,55 @@ describe('openapi-format CLI command', () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
+  it('should use the configFile with all settings', async () => {
+    // const path = `test/__utils__`;
+    const inputFile = `test/__utils__/mockOpenApi.json`;
+    const outputFile = `test/_cli-configfile/output.json`;
+    const snapFile = `test/_cli-configfile/snap.json`;
+    const snap = await getLocalFile(snapFile);
+    const setting = `test/_cli-configfile/configFile.json`;
+
+    let result = await testUtils.cli([inputFile, `--configFile ${setting}`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    const output = await getLocalFile(outputFile);
+    expect(output).toStrictEqual(snap);
+  });
+
+  it('should load the default .openapiformatrc if configFile is not provided', async () => {
+    // Mock the existence of the .openapiformatrc file
+    const defaultConfigPath = '.openapiformatrc';
+    const mockConfigContent = `
+    {
+      "sort": true,
+      "lineWidth": 80
+    }
+    `;
+
+    // Mocking the file system to simulate the existence of .openapiformatrc
+    jest.spyOn(fs, 'existsSync').mockImplementation(path => {
+      return path === defaultConfigPath; // Simulate .openapiformatrc exists
+    });
+
+    jest.spyOn(fs, 'readFileSync').mockImplementation(path => {
+      if (path === defaultConfigPath) {
+        return mockConfigContent;
+      }
+    });
+
+    const inputFile = `test/yaml-default/input.yaml`;
+    let result = await testUtils.cli([inputFile], '.');
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+
+    // Clean up mocks
+    fs.existsSync.mockRestore();
+    fs.readFileSync.mockRestore();
+  });
+
   it('should use the casingFile', async () => {
     const path = `test/yaml-casing`;
     const inputFile = `${path}/input.yaml`;

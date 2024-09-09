@@ -1228,19 +1228,110 @@ which results in all the changes described in the [migration guide from Phil Stu
 
 ## CLI configuration usage
 
-All the CLI options can be managed in a separate configuration file and passed along the openapi-format command. This
-will make configuration easier, especially in CI/CD implementations where the configuration can be stored in version
-control systems.
+The openapi-format CLI supports bundling all options in a single configuration file. This can simplify management, especially for CI/CD pipelines where configurations are stored in version control systems.
 
-example:
+### Using the --configFile option
+
+You can pass a configuration file containing all the options that would otherwise be passed via the CLI. This helps in centralizing the configuration for your OpenAPI formatting operations.
+
+Example:
 
 ```shell
 $ openapi-format openapi.json --configFile openapi-format-options.json
 ```
-
 The formatting will happen based on all the options set in the `openapi-format-options.json` file. All the
-available [OpenAPI format options](https://github.com/thim81/openapi-format#openapi-format-options) can be used in the
-config file.
+available [OpenAPI format options](https://github.com/thim81/openapi-format#openapi-format-options) can be used in the config file.
+
+The openapi-format-options.json file might look like this:
+
+```json
+{
+  "sort": true,
+  "casingSet": {
+    "operationId": "camelCase",
+    "properties": "snake_case"
+  },
+  "filterSet": {
+    "tags": ["internal", "beta"]
+  },
+  "generateSet": {
+    "operationIdTemplate": "<method>_<pathPart2>_Handler"
+  }
+}
+```
+
+Alternatively, you can reference external files for each setting using the corresponding File properties.
+
+```json
+{
+    "sortFile": "customSort.json",
+    "casingFile": "casing-rules.json",
+    "filterFile": "filter-rules.json",
+    "generateFile": "generate-rules.json"
+}
+```
+
+In this case, the settings will be loaded from the external files, and they override any inline configurations.
+
+**Define sort, filter, casing, generate options**
+
+You can either pass the settings inline or reference an external file using the appropriate File property:
+
+- **sortSet** / **sortFile**: Sort the fields in the OpenAPI document based on the order defined in the sort settings.
+
+  - Inline: Pass the sort order directly using sortSet in the config file.
+  - File: Use sortFile to specify the path to a local or remote JSON/YAML file containing custom sorting rules.
+
+- **casingSet** / **casingFile**: Define the casing convention for operationId, parameters, properties, etc.
+
+  - Inline:
+    ```json
+    "casingSet": {
+      "operationId": "camelCase",
+      "properties": "PascalCase"
+    }
+    ```
+
+  - File: Use casingFile to specify the path to a local or remote JSON/YAML file containing casing rules.
+
+- **filterSet** / **filterFile**: Filter out specific tags, paths, or components from the OpenAPI document.
+
+  - Inline:
+    ```json
+    "filterSet": {
+      "tags": ["internal", "beta"]
+    }
+    ```
+
+  - File: Use filterFile to specify the path to a local or remote JSON/YAML file containing filter rules.
+
+- **generateSet** / **generateFile**: Automatically generate operationId, summary, and other elements based on predefined templates.
+
+  - Inline:
+    ```json
+    "generateSet": {
+      "operationIdTemplate": "<method>_<pathPart2>_Handler"
+    }
+    ```
+
+  - File: Use generateFile to specify the path to a local or remote JSON/YAML file containing generate rules.
+
+
+### Using .openapiformatrc
+
+In addition to specifying a configuration file using `--configFile`, openapi-format also supports automatically loading a configuration file named `.openapiformatrc from the current directory. If this file is present, it will be used as the configuration source, and individual options passed via the CLI will override the settings from this file.
+
+Example of a .openapiformatrc file:
+
+```json
+{
+  "output": "openapi-final.yaml",  
+  "sort": true,
+  "filterSet": {
+      "tags": ["internal", "beta"]
+  }
+}
+```
 
 ## AsyncAPI documents
 
