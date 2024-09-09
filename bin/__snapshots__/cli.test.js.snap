@@ -3,18 +3,18 @@
 exports[`openapi-format CLI command should keep the comments for YAML 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
-- Filter file:		test/yaml-no-sort-comments/customFilter.yaml
-- Input file:		test/yaml-no-sort-comments/input.yaml
+- Filter file:		test/yaml-no-sort-keep-comments/customFilter.yaml
+- Input file:		test/yaml-no-sort-keep-comments/input.yaml
 ================================================================================
 
 OpenAPI-Format CLI options:
-|--------------|----------------------------------------------|
-| sort         | false                                        |
-| keepComments | true                                         |
-| lineWidth    | -1                                           |
-| filterFile   | test/yaml-no-sort-comments/customFilter.yaml |
-| verbose      | 3                                            |
-|--------------|----------------------------------------------|
+|--------------|---------------------------------------------------|
+| sort         | false                                             |
+| keepComments | true                                              |
+| lineWidth    | -1                                                |
+| filterFile   | test/yaml-no-sort-keep-comments/customFilter.yaml |
+| verbose      | 3                                                 |
+|--------------|---------------------------------------------------|
 
 [32m================================================================================[0m
 [32m✅  OpenAPI filtered & formatted successfully[0m

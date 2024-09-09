@@ -257,7 +257,7 @@ describe('openapi-format CLI command', () => {
   });
 
   it('should keep the comments for YAML', async () => {
-    const path = `test/yaml-no-sort-comments`;
+    const path = `test/yaml-no-sort-keep-comments`;
     const inputFile = `${path}/input.yaml`;
     const outputFile = `${path}/output.yaml`;
     const output = await getLocalFile(outputFile);
