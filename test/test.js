@@ -16,7 +16,7 @@ const tests = !localTesting
   ? fs.readdirSync(__dirname).filter(file => {
       return fs.statSync(path.join(__dirname, file)).isDirectory() && !file.startsWith('_');
     })
-  : ['yaml-no-sort'];
+  : ['yaml-remove-empty-filter'];
 
 describe('openapi-format tests', () => {
   let consoleLogSpy, consoleWarnSpy;
@@ -37,28 +37,25 @@ describe('openapi-format tests', () => {
         let options = {};
         let configFileOptions = {};
         let inputFilename = null;
+        let configFilename = null;
         let input = null;
         let snap = null;
 
-        try {
-          // Load options.yaml
-          configFileOptions = await parseFile(path.join(__dirname, test, 'options.yaml'));
+        // Load input.yaml
+        configFilename = path.join(__dirname, test, 'options.yaml');
+        if (!fs.existsSync(configFilename)) {
+          configFilename = path.join(__dirname, test, 'input.json');
+        }
+
+        if (fs.existsSync(configFilename)) {
+          // Load options file
+          configFileOptions = await parseFile(configFilename);
           configFileOptions.sort = !configFileOptions['no-sort'];
-          options = Object.assign({}, options, configFileOptions);
-        } catch (ex) {
-          // console.error('ERROR Load options.yaml', ex)
-          try {
-            // Fallback to options.json
-            configFileOptions = await parseFile(path.join(__dirname, test, 'options.json'));
-            if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
-              configFileOptions.sort = !configFileOptions['no-sort'];
-              delete configFileOptions['no-sort'];
-            }
-            options = Object.assign({}, options, configFileOptions);
-          } catch (ex) {
-            // No options found. options = {} will be used
-            // console.error('ERROR Load options.json', ex)
+          if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
+            configFileOptions.sort = !configFileOptions['no-sort'];
+            delete configFileOptions['no-sort'];
           }
+          options = Object.assign({}, options, configFileOptions);
         }
 
         // Load input.yaml
@@ -98,7 +95,7 @@ describe('openapi-format tests', () => {
         // Initialize data
         let result = input;
 
-        // Execute OpenAPI-format
+        // Load proper options for test cases
         delete options.output;
         if (options.sortFile) options.sortFile = path.join(__dirname, test, options.sortFile);
         if (options.sortComponentsFile)
@@ -106,7 +103,6 @@ describe('openapi-format tests', () => {
         if (options.filterFile) options.filterFile = path.join(__dirname, test, options.filterFile);
         if (options.casingFile) options.casingFile = path.join(__dirname, test, options.casingFile);
         if (options.generateFile) options.generateFile = path.join(__dirname, test, options.generateFile);
-
         if (outputFilename.indexOf('.json') >= 0 || options.json) {
           // Convert OpenAPI object to JSON string
           options.format = 'json';
@@ -116,6 +112,7 @@ describe('openapi-format tests', () => {
         }
 
         try {
+          // Execute OpenAPI-format
           result = await run(inputFilename, options);
         } catch (e) {
           console.error('e', e);

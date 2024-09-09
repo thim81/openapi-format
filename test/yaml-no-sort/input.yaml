@@ -30,9 +30,10 @@ paths:
     post:
       tags:
         - pet
-      summary: Add a new pet to the store
+      summary: Add a new pet to the store # This is a comment in the OpenAPI file
       description: Add a new pet to the store
       operationId: addPet
+      # This is a comment in the OpenAPI file
       x-visibility: true
       responses:
         '200':

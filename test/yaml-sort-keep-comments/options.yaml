@@ -1,4 +1,5 @@
 verbose: true
 output: output.yaml
-no-sort: true
+no-sort: false
+keepComments: true
 filterFile: customFilter.yaml

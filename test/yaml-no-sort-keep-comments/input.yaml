@@ -5,6 +5,8 @@ info:
 paths:
   /example:
     get: # This is a comment in the OpenAPI file
+      description: The description of the example # This is a comment in the OpenAPI file
+      # This is a comment in the OpenAPI file
       summary: Returns an example
       # A more detailed description of the operation
       responses:
