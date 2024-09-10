@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.23.0] - 2024-09-10
+
 - Generate - Added option to generate operationId using template structures (#66)
 - CLI - Added option to bundle all options in --configFile
 - CLI - Added option to bundle all options in .openapiformatrc
