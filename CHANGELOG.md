@@ -3,6 +3,7 @@
 - Generate - Added option to generate operationId using template structures (#66)
 - CLI - Added option to bundle all options in --configFile
 - CLI - Added option to bundle all options in .openapiformatrc
+- CLI - Keep YAML comments (#44)(#60)
 
 ## [1.22.5] - 2024-09-06
 
