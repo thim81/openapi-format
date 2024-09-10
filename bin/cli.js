@@ -23,6 +23,7 @@ program
   .option('-g, --generateFile <generateFile>', 'the file to specify generate rules')
   .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options')
   .option('--no-sort', `don't sort the OpenAPI file`)
+  .option('--keepComments', `don't remove the comments from the OpenAPI YAML file`, false)
   .option('--sortComponentsFile <sortComponentsFile>', 'the file with components to sort alphabetically')
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
   .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document')
@@ -40,8 +41,12 @@ program
     }
 
     process.exit(err.exitCode);
-  })
-  .parse(process.argv);
+  });
+
+// Only trigger if the file is run directly
+if (require.main === module) {
+  program.parse(process.argv);
+}
 
 async function run(oaFile, options) {
   // General variables
@@ -186,12 +191,13 @@ async function run(oaFile, options) {
   let resObj = {};
   let output = {};
   let input = {};
+  let fileOptions = {keepComments: options?.keepComments || false};
 
   try {
     infoOut(`- Input file:\t\t${oaFile}`); // LOG - Input file
 
     // Parse input content
-    resObj = await openapiFormat.parseFile(oaFile);
+    resObj = await openapiFormat.parseFile(oaFile, fileOptions);
     input = resObj;
   } catch (err) {
     if (err.code !== 'ENOENT') {
@@ -247,6 +253,7 @@ async function run(oaFile, options) {
     debugOut(`- OAS.title renamed to: "${options.rename}"`, options.verbose); // LOG - Rename title
   }
 
+  options.yamlComments = fileOptions.yamlComments || {};
   if (options.output) {
     try {
       // Write OpenAPI string to file
@@ -316,7 +323,7 @@ async function run(oaFile, options) {
       if (options.format === 'json' || options.format === 'yaml') config.outputLanguage = options.format;
 
       const payload = {
-        openapi: await stringify(input),
+        openapi: await stringify(input, options),
         config: config
       };
 
@@ -346,4 +353,8 @@ async function run(oaFile, options) {
       console.error('\x1b[31m', 'Error generating openapi-format playground URL:', err.message);
     }
   }
+
+  return output;
 }
+
+module.exports = {run};

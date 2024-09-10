@@ -36,6 +36,9 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema: {}
         '405':
           description: Invalid input
       security:

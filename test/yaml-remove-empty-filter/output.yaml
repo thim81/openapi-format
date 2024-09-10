@@ -1,0 +1,29 @@
+openapi: 3.0.1
+info:
+  title: Test
+  version: 1.0.0
+  description: Test
+servers:
+  - url: 'https://example.de/test'
+security:
+  - bearerToken: []
+tags:
+  - name: Test API
+paths:
+  /test:
+    get:
+      summary: Get test
+      tags:
+        - Test API
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  test-value:
+                    type: string
+      operationId: get-test
+      description: Test

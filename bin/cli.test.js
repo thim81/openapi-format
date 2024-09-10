@@ -304,6 +304,24 @@ describe('openapi-format CLI command', () => {
     expect(result.stdout).toMatchSnapshot();
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
+
+  it('should keep the comments for YAML', async () => {
+    const path = `test/yaml-no-sort-keep-comments`;
+    const inputFile = `${path}/input.yaml`;
+    const outputFile = `${path}/output.yaml`;
+    const output = await getLocalFile(outputFile);
+    const setting = `${path}/customFilter.yaml`;
+
+    let result = await testUtils.cli(
+      [inputFile, `--filterFile ${setting}`, `--keepComments`, `--no-sort`, `-vvv`],
+      '.'
+    );
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
 });
 
 /**
