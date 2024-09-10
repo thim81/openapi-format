@@ -1374,10 +1374,8 @@ the [openapi-filter](https://github.com/Mermade/openapi-filter) package.
 
 The casing options available in `openapi-format` are powered by the excellent [case-anything](https://github.com/mesqueeb/case-anything) nano package from Luca Ban ([@mesqueeb](https://github.com/mesqueeb)).
 
-<div style="width: 200px;">
 <a href="https://www.jetbrains.com/" target="_blank">
-<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.png" alt="JetBrains logo.">
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.png" alt="JetBrains logo." width="200px">
 </a>
-</div>
 
 Special thanks to [JetBrains](https://www.jetbrains.com/) for their continuous sponsorship of this project over the last 3 years, and for their support to open-source software (OSS) initiatives.
