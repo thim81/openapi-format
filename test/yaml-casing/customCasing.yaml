@@ -12,7 +12,7 @@ componentsResponses: snake_case
 componentsRequestBodies: snake_case
 componentsSecuritySchemes: snake_case
 
-componentsparametersQuery: snake_case
-componentsparametersHeader: kebab-case
-componentsparametersPath: camelCase
+componentsParametersQuery: snake_case
+componentsParametersHeader: kebab-case
+componentsParametersPath: camelCase
 

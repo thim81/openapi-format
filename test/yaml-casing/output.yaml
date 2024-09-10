@@ -84,7 +84,7 @@ paths:
       summary: Finds Pets by status
       description: Multiple status values can be provided with comma separated strings
       parameters:
-        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/limit_param'
       responses:
         '200':
           description: successful operation
@@ -603,7 +603,7 @@ components:
             - tag 2
       summary: A payload example for a notification
   parameters:
-    skipParam:
+    skip_param:
       name: skip_items
       in: query
       description: number of items to skip
@@ -611,7 +611,7 @@ components:
       schema:
         type: integer
         format: int32
-    limitParam:
+    limit_param:
       name: limit_param
       in: query
       description: max records to return
