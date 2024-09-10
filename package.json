@@ -53,6 +53,7 @@
     "utils/file.js",
     "utils/filtering.js",
     "utils/logging.js",
+    "utils/parseTpl.js",
     "utils/sorting.js",
     "utils/types.js",
     "defaultFilter.json",
