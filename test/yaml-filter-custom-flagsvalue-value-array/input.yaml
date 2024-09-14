@@ -1,0 +1,17 @@
+openapi: 3.0.1
+servers:
+  - url: 'https://server-a'
+    x-stage-e-exclude:
+      - true
+  - url: 'https://server-b'
+    x-stage-e-exclude:
+      - true
+  - url: 'https://server-c'
+    x-stage-e-exclude:
+      - true
+  - url: 'https://server-d'
+    x-stage-e-exclude:
+      - false
+  - url: 'https://server-e'
+    x-stage-e-exclude:
+      - true
