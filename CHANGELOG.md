@@ -1,5 +1,10 @@
 ## unreleased
 
+## [1.23.1] - 2024-09-14
+
+- Filter - handle flagValue removal of nested array values (#139)
+- CLI - Fix to prevent that Sort settings get overwritten (#137)
+
 ## [1.23.0] - 2024-09-10
 
 - Generate - Added option to generate operationId using template structures (#66)
