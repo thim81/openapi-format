@@ -405,6 +405,9 @@ async function openapiFilter(oaObj, options) {
               tagGroup['x-openapi-format-filter'] = true;
               this.parent.update(tagGroup);
               // ========================================================================
+            } else if (isArray(this?.parent?.parent.node)) {
+              const group = this.parent.node;
+              group['x-openapi-format-filter'] = true;
             } else {
               // debugFilterStep = 'Filter - Single field - flagValues - array value'
               this.parent.remove();
