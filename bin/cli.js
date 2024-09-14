@@ -111,6 +111,9 @@ async function run(oaFile, options) {
       let sortOptions = {sortSet: {}};
       infoOut(`- Sort file:\t\t${sortFileName}`); // LOG - sort file
       sortOptions.sortSet = await openapiFormat.parseFile(sortFile);
+      sortOptions.sortSet = options.sortSet
+        ? Object.assign({}, sortOptions.sortSet, options.sortSet)
+        : sortOptions.sortSet;
       options = Object.assign({}, options, sortOptions);
     } catch (err) {
       console.error('\x1b[31m', `Sort file error - no such file or directory "${sortFile}"`);
