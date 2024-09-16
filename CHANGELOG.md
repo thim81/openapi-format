@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.23.2] - 2024-09-15
+
 - Filter - handle inverseFlagValues removal of nested array values
 
 ## [1.23.1] - 2024-09-14
