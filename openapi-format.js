@@ -204,6 +204,7 @@ async function openapiFilter(oaObj, options) {
   // Convert invert flag values to flags
   const inverseFilterFlagValuesKeys = Object.keys(Object.assign({}, ...(filterSet.inverseFlagValues ?? [])));
   const inverseFilterFlagValues = [...(filterSet.inverseFlagValues ?? [])];
+  const inverseFilterFlagHash = inverseFilterFlagValues.map(o => JSON.stringify(o));
 
   // Initiate components tracking
   const comps = {
@@ -457,6 +458,21 @@ async function openapiFilter(oaObj, options) {
         // Update the node with the filtered array
         node = oaTags;
         this.update(node);
+      }
+
+      // Filter out fields matching the inverseFlagValues
+      if (inverseFilterFlagValuesKeys.length > 0 && inverseFilterFlagValuesKeys.includes(this.key)) {
+        for (let i = 0; i < node.length; i++) {
+          const itmObj = {[this.key]: node[i]};
+          const itmObjHash = JSON.stringify(itmObj);
+          if (inverseFilterFlagHash.some(filterFlag => filterFlag !== itmObjHash)) {
+            if (isArray(this?.parent?.parent.node)) {
+              // debugFilterStep = 'Filter - inverse flagValues - array value'
+              const group = this.parent.node;
+              group['x-openapi-format-filter'] = true;
+            }
+          }
+        }
       }
     }
 

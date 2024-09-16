@@ -1,0 +1,7 @@
+verbose: true
+no-sort: true
+output: output.yaml
+filterSet:
+  inverseFlagValues:
+    - x-stage: e
+
