@@ -1,8 +1,10 @@
 ## unreleased
 
+- Filter - handle inverseFlagValues removal of nested array values
+
 ## [1.23.1] - 2024-09-14
 
-- Filter - handle flagValue removal of nested array values (#139)
+- Filter - handle flagValues removal of nested array values (#139)
 - CLI - Fix to prevent that Sort settings get overwritten (#137)
 
 ## [1.23.0] - 2024-09-10
