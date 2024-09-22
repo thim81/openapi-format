@@ -1,5 +1,7 @@
 ## unreleased
 
+- Add type definitions for openapi-format
+
 ## [1.23.2] - 2024-09-16
 
 - Filter - handle inverseFlagValues removal of nested array values
