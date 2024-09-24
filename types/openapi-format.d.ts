@@ -151,23 +151,23 @@ declare module 'openapi-format' {
    * Parses a JSON or YAML file into a JavaScript object.
    * @param {string} filePath - The path to the JSON or YAML file.
    * @param {Record<string, unknown>} [options] - Additional parsing options.
-   * @returns {Promise<Record<string, unknown>>} The parsed data object.
+   * @returns {Promise<Record<string, any>>} The parsed data object.
    */
   export function parseFile(
     filePath: string,
     options?: Record<string, unknown>
-  ): Promise<Record<string, unknown>>;
+  ): Promise<Record<string, any>>
 
   /**
    * Parses a JSON or YAML string into a JavaScript object.
    * @param {string} input - The JSON or YAML string.
    * @param {Record<string, unknown>} [options] - Additional parsing options.
-   * @returns {Promise<Record<string, unknown>>} The parsed data object.
+   * @returns {Promise<Record<string, any>>} The parsed data object.
    */
   export function parseString(
     input: string,
     options?: Record<string, unknown>
-  ): Promise<OpenAPIResult | OpenAPISortOptions | OpenAPIFilterOptions | OpenAPIV3.Document | Record<string, unknown>>
+  ): Promise<Record<string, any>>
 
   /**
    * Detects the format of a given string as either JSON or YAML.
@@ -187,7 +187,7 @@ declare module 'openapi-format' {
    */
   export function writeFile(
     filePath: string,
-    data: Record<string, unknown> | OpenAPIV3.Document,
+    data: Record<string, unknown>,
     options?: WriteFileOptions
   ): Promise<void>;
   /**
