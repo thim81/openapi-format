@@ -204,7 +204,7 @@ async function run(oaFile, options) {
     input = resObj;
   } catch (err) {
     if (err.code !== 'ENOENT') {
-      console.error('\x1b[31m', `Input file error - Failed to download file: ${err.message}`);
+      console.error('\x1b[31m', `Input file error - Failed to read file: ${err.message}`);
       process.exit(1);
     }
     console.error('\x1b[31m', `Input file error - Failed to read file: ${oaFile}`);

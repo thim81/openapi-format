@@ -1,16 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`openapi-format CLI command should load the default .openapiformatrc if configFile is not provided 1`] = `
-"================================================================================
-OpenAPI-Format CLI settings:
-- Sort file:		(defaultSort.json)
-- Input file:		test/yaml-default/input.yaml
-[32m================================================================================[0m
-[32m✅  OpenAPI formatted successfully[0m
-[32m================================================================================[0m
-"
-`;
-
 exports[`openapi-format CLI command should keep the comments for YAML 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
@@ -29,6 +18,17 @@ OpenAPI-Format CLI options:
 
 [32m================================================================================[0m
 [32m✅  OpenAPI filtered & formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should load the default .openapiformatrc if configFile is not provided 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		(defaultSort.json)
+- Input file:		test/yaml-default/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m
 "
 `;
@@ -132,7 +132,7 @@ exports[`openapi-format CLI command should stop and show error about remote file
 OpenAPI-Format CLI settings:
 - Sort file:		(defaultSort.json)
 - Input file:		https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/foo.yaml
-[31m Input file error - Failed to download file: 404 Not Found
+[31m Input file error - Failed to read file: 404 Not Found
 "
 `;
 

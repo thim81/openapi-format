@@ -28,7 +28,7 @@ const {
   convertExclusiveMaximum,
   setInObject
 } = require('./utils/convert');
-const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi} = require('./utils/file');
+const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi, readFile} = require('./utils/file');
 const {parseTpl, getOperation} = require('./utils/parseTpl');
 
 /**
@@ -1120,6 +1120,7 @@ module.exports = {
   openapiChangeCase: openapiChangeCase,
   openapiConvertVersion: openapiConvertVersion,
   openapiRename: openapiRename,
+  readFile: readFile,
   parseFile: parseFile,
   parseString: parseString,
   stringify: stringify,

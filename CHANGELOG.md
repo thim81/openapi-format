@@ -1,5 +1,7 @@
 ## unreleased
 
+- CLI - Bundle local and remote file references
+
 ## [1.23.2] - 2024-09-16
 
 - Filter - handle inverseFlagValues removal of nested array values
