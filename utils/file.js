@@ -99,7 +99,7 @@ async function parseFile(filePath, options = {}) {
 }
 
 /**
- * Converts an data object to a JSON/YAML string representation.
+ * Converts a data object to a JSON/YAML string representation.
  * @param obj Data object.
  * @param options Stringify options
  * @returns {Promise<*>} Stringified data.
