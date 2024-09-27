@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.24.0] - 2024-09-27
+
 - CLI - Bundle local and remote file references
 - CLI - Split OpenAPI in a multi-file structure 
 - Add type definitions for openapi-format
