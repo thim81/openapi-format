@@ -33,6 +33,7 @@ The openapi-format CLI has the option to convert an OpenAPI 3.0 document to an O
 * [CLI filter usage](#cli-filter-usage)
 * [CLI generate usage](#cli-generate-usage)
 * [CLI casing usage](#cli-casing-usage)
+* [CLI split & bundle usage](#cli-bundle--split-usage)
 * [CLI rename usage](#cli-rename-usage)
 * [CLI convertTo usage](#cli-convertto-usage)
 * [CLI configuration usage](#cli-configuration-usage)
@@ -71,6 +72,8 @@ Postman collections, test suites, ...
 - [x] Strip flags from OpenAPI files
 - [x] Strip unused components from OpenAPI files
 - [x] Generate OpenAPI elements for consistency
+- [x] Bundle local and remote references in the OpenAPI document
+- [x] Split the OpenAPI document into a multi-file structure
 - [x] Convert OpenAPI 3.0 documents to OpenAPI 3.1 
 - [x] Rename the OpenAPI title
 - [x] Support OpenAPI documents in JSON format
@@ -150,6 +153,9 @@ Options:
   --keepComments        Don't remove the comments from the OpenAPI YAML file [boolean]
   --sortComponentsFile  The file with components to sort alphabetically         [path]
 
+  --no-bundle           Don't bundle the local and remote $ref               [boolean]
+  --split               Split OpenAPI document into a multi-file structure   [boolean]
+  
   --rename              Rename the OpenAPI title                              [string]
   
   --convertTo           convert the OpenAPI document to OpenAPI version 3.1   [string]
@@ -180,6 +186,8 @@ Options:
 | --no-sort            |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                      | optional |
 | --keepComments       |               | don't remove the comments from the OpenAPI YAML file                        | boolean      | FALSE                      | optional |
 | --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json | optional |
+| --no-bunlde          |               | don't bundle the local and remote $ref in the OpenAPI document              | boolean      | FALSE                      | optional |
+| --split              |               | split the OpenAPI document into a multi-file structure                      | boolean      | FALSE                      | optional |
 | --rename             |               | rename the OpenAPI title                                                    | string       |                            | optional |
 | --convertTo          |               | convert the OpenAPI document to OpenAPI version 3.1                         | string       |                            | optional |
 | --configFile         | -c            | the file with all the format config options                                 | path to file |                            | optional |
@@ -1053,7 +1061,6 @@ $ openapi-format openapi.json -o openapi-formatted.json --sortComponentsFile ./t
 This will sort all elements in the components ( components/schemas, components/parameters, components/headers,
 components/requestBodies, components/responses, ...) section by alphabet.
 
-
 ## CLI filter usage
 
 - Format an OpenAPI document by filtering fields, default sorting and saves it as a new file
@@ -1173,6 +1180,64 @@ In the customCasing.yaml, you can define the casing style for various OpenAPI pr
 - and many more
 
 See [OpenAPI formatting configuration options](#openapi-formatting-configuration-options) for the full list of casing options
+
+## CLI Bundle & Split usage
+
+- **Bundling**: Create a self-contained OpenAPI file that can be used for documentation generation or API validation tools that don't support external references.
+
+- **Splitting**: Generate a modular OpenAPI structure during development or testing, making it easier to manage changes to individual paths or components without altering the entire document.
+
+### Splitting the OpenAPI Document
+
+The `--split` option splits the OpenAPI document into a modular multi-file structure. This structure makes it easier to manage larger specifications by separating paths, components (schemas, paramaters, ...) into individual files.
+
+Example: Splitting the Document
+
+```shell
+$ openapi-format openapi.json -o ./openapi-split/openapi.yaml --split
+```
+
+This command will take the openapi.json and split it into multiple files, stored under the ./openapi-split/ directory. 
+
+The resulting structure might look like this:
+
+```bash
+./openapi-split/
+├── openapi.yaml
+├── paths/
+│   ├── /pets.yaml
+│   └── /pets/{petId}.yaml
+├── components/
+├── schemas/
+│   ├── Pet.yaml
+│   └── Error.yaml
+├── parameters/
+│   └── petId.yaml
+```
+
+The main openapi.yaml file will contain references to these newly created files using $ref, making the structure modular and easier to navigate.
+
+###  Bundling the OpenAPI Document
+
+The `--no-bundle` option allows you to control whether local and remote $ref references are bundled into the final document. 
+
+By default, all $ref references are dereferenced, resulting in a single, self-contained OpenAPI file. However, in some cases, you might prefer to keep the $ref references intact, especially if you're working with external references or want to maintain a modular structure.
+
+Example: Default Bundling
+```shell
+$ openapi-format input.json -o bundled-openapi.json
+```
+
+This example produces a fully dereferenced dereferenced-openapi.json, where all local and remote $ref references are resolved into the file.
+This is the default behaviour.
+
+Example: No Bundling
+
+```shell
+$ openapi-format openapi.json -o openapi.json --no-bundle
+```
+
+In this case, the resulting bundled-openapi.json will preserve all $ref references as they are in the original document.
 
 ## CLI rename usage
 
