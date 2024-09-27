@@ -10,10 +10,13 @@ Format an OpenAPI document by ordering, formatting and filtering fields.
 The openapi-format CLI can load an OpenAPI file, sorts the OpenAPI fields by ordering them in a hierarchical order, format the casing of the fields and
 can output the file with clean indenting, to either JSON or YAML.
 
-Next to the ordering & formatting, the CLI provides additional options to filter fields & parts of the OpenAPI document based on
-flags, tags, methods, operationID's and even unused components.
+Next to the ordering & formatting, the CLI provides additional options to filter the OpenAPI document based on
+flags, tags, methods, operationID's and even unused components. To standardize and complete OpenAPI documents there is support for generating the `operationId`.
 
-The openapi-format CLI has the option to convert an OpenAPI 3.0 document to an OpenAPI version 3.1.
+The CLI also offers the ability to split a large OpenAPI document into a modular, multi-file structure, organizing paths 
+and components into separate files, making it easier to manage large or complex specifications.
+
+For easy upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0 document to OpenAPI 3.1.
 
 ## Table of content
 * [Use-cases](#use-cases)
