@@ -14,7 +14,8 @@ const https = require('https');
  */
 async function parseString(str, options = {}) {
   // Convert large number values safely before parsing
-  const encodedContent = encodeLargeNumbers(str);
+  let encodedContent = encodeLargeNumbers(str);
+  encodedContent = addQuotesToRefInString(encodedContent);
 
   // Default to YAML format unless specified as JSON
   const toYaml = options.format !== 'json' && (!options.hasOwnProperty('json') || options.json !== true);
@@ -123,7 +124,7 @@ async function parseFile(filePath, options = {}) {
     // Read local or remote file content and get format JSON or YAML
     let rawContent = await readFile(filePath, options);
 
-    if (rawContent.includes('$ref')) {
+    if (rawContent.includes('$ref') && options.bundle === true) {
       // Handler to Resolve references
       const resolver = async sourcePath => {
         let refContent = await readFile(sourcePath, options);

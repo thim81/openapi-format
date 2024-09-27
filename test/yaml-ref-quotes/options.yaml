@@ -1,3 +1,4 @@
 verbose: true
 lineWidth: 80
 output: output.yaml
+bundle: false

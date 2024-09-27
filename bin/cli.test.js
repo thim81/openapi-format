@@ -191,6 +191,48 @@ describe('openapi-format CLI command', () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
+  it('should bundle reference', async () => {
+    const path = `test/yaml-ref-quotes`;
+    const inputFile = `${path}/input.yaml`;
+    const outputFile = `${path}/bundled.yaml`;
+    const output = await getLocalFile(outputFile);
+
+    let result = await testUtils.cli([inputFile, `--no-sort`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
+  it('should not bundle reference', async () => {
+    const path = `test/yaml-ref-quotes`;
+    const inputFile = `${path}/input.yaml`;
+    const outputFile = `${path}/output.yaml`;
+    const output = await getLocalFile(outputFile);
+
+    let result = await testUtils.cli([inputFile, `--no-bundle`, `--no-sort`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
+  it('should split the openapi file', async () => {
+    const path = `test/_split`;
+    const inputFile = `test/__utils__/mockTrain.yaml`;
+    // const outputFile = `${path}/output.yaml`;
+    // const output = await getLocalFile(outputFile);
+
+    let result = await testUtils.cli([inputFile, `--split`, `--no-sort`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    // expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
   it.skip('should generate a playground share URL', async () => {
     const path = `test/yaml-filter-custom`;
     const inputFile = `${path}/input.yaml`;

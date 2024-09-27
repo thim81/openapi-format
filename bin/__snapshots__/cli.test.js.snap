@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`openapi-format CLI command should bundle reference 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Input file:		test/yaml-ref-quotes/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
 exports[`openapi-format CLI command should keep the comments for YAML 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
@@ -27,6 +37,16 @@ exports[`openapi-format CLI command should load the default .openapiformatrc if 
 OpenAPI-Format CLI settings:
 - Sort file:		(defaultSort.json)
 - Input file:		test/yaml-default/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should not bundle reference 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Input file:		test/yaml-ref-quotes/input.yaml
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m
@@ -106,6 +126,16 @@ Removed unused components:
 Total components removed: 16
 [32m================================================================================[0m
 [32m✅  OpenAPI filtered & formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should split the openapi file 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Input file:		test/__utils__/mockTrain.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m
 "
 `;
