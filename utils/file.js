@@ -1,5 +1,3 @@
-// utils-file.js
-
 const fs = require('fs');
 const bundler = require('api-ref-bundler');
 const yaml = require('@stoplight/yaml');

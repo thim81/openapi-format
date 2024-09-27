@@ -58,6 +58,7 @@
     "utils/logging.js",
     "utils/parseTpl.js",
     "utils/sorting.js",
+    "utils/split.js",
     "utils/types.js",
     "defaultFilter.json",
     "defaultSort.json",

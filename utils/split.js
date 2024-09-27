@@ -1,6 +1,5 @@
 const path = require('path');
 const traverse = require('neotraverse/legacy');
-const fs = require('node:fs');
 const {writeFile} = require('./../utils/file');
 
 async function writeSplitOpenAPISpec(oaObj, options) {
