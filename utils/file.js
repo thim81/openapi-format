@@ -1,21 +1,22 @@
-// utils-file.js
-
 const fs = require('fs');
+const bundler = require('api-ref-bundler');
 const yaml = require('@stoplight/yaml');
 const http = require('http');
 const https = require('https');
+const {dirname} = require('node:path');
 
 /**
  * Converts a string object to a JSON/YAML object.
- * @param str String.
- * @param options Parse options
- * @returns {Promise<*>} Object data.
+ * @param {string} str - The input string to be parsed (either JSON or YAML).
+ * @param {object} options - Options to define the parsing behavior (e.g., keeping comments).
+ * @returns {Promise<object>} Parsed data object.
  */
 async function parseString(str, options = {}) {
-  // Convert large number value safely before parsing
-  const encodedContent = encodeLargeNumbers(str);
+  // Convert large number values safely before parsing
+  let encodedContent = encodeLargeNumbers(str);
+  encodedContent = addQuotesToRefInString(encodedContent);
 
-  // Default to YAML format
+  // Default to YAML format unless specified as JSON
   const toYaml = options.format !== 'json' && (!options.hasOwnProperty('json') || options.json !== true);
 
   if (toYaml) {
@@ -26,7 +27,7 @@ async function parseString(str, options = {}) {
       if (typeof obj === 'object') {
         return obj;
       } else {
-        return SyntaxError('Invalid YAML');
+        throw new SyntaxError('Invalid YAML');
       }
     } catch (yamlError) {
       return yamlError;
@@ -41,6 +42,11 @@ async function parseString(str, options = {}) {
   }
 }
 
+/**
+ * Checks if a given string is valid JSON.
+ * @param {string} str - The input string to check.
+ * @returns {Promise<boolean>} True if the string is valid JSON, false otherwise.
+ */
 async function isJSON(str) {
   try {
     JSON.parse(str);
@@ -50,6 +56,11 @@ async function isJSON(str) {
   }
 }
 
+/**
+ * Checks if a given string is valid YAML.
+ * @param {string} str - The input string to check.
+ * @returns {Promise<boolean>} True if the string is valid YAML, false otherwise.
+ */
 async function isYaml(str) {
   try {
     const rest = yaml.parse(str);
@@ -59,6 +70,11 @@ async function isYaml(str) {
   }
 }
 
+/**
+ * Detects the format of a given string (either JSON or YAML).
+ * @param {string} str - The input string to check.
+ * @returns {Promise<string>} "json", "yaml", or "unknown" based on the detected format.
+ */
 async function detectFormat(str) {
   if ((await isJSON(str)) !== false) {
     return 'json';
@@ -70,12 +86,12 @@ async function detectFormat(str) {
 }
 
 /**
- * Parse a JSON/YAML file and returns the parsed object
- * @param filePath Path to the JSON/YAML file.
- * @param options Parse File options
- * @returns {Promise<unknown>} Parsed data object.
+ * Reads a file (local or remote) and returns its content as a string.
+ * @param {string} filePath - The path to the file (local or URL).
+ * @param {object} options - Parse file options (e.g., format detection).
+ * @returns {Promise<string>} The content of the file as a string.
  */
-async function parseFile(filePath, options = {}) {
+async function readFile(filePath, options) {
   try {
     const isRemoteFile = filePath.startsWith('http://') || filePath.startsWith('https://');
 
@@ -90,9 +106,40 @@ async function parseFile(filePath, options = {}) {
 
     // Check JSON or YAML
     (await isJSON(fileContent)) ? (options.format = 'json') : (options.format = 'yaml');
+    return fileContent;
+  } catch (err) {
+    throw err;
+  }
+}
 
-    // Encode & Parse file content
-    return parseString(fileContent, options);
+/**
+ * Parses a JSON/YAML file and returns the parsed object
+ * @param {string} filePath - The path to the JSON/YAML file.
+ * @param {object} options - Parse file options (e.g., reference resolution hooks).
+ * @returns {Promise<object>} Parsed data object with references resolved, if any.
+ */
+async function parseFile(filePath, options = {}) {
+  try {
+    // Read local or remote file content and get format JSON or YAML
+    let rawContent = await readFile(filePath, options);
+
+    if (rawContent.includes('$ref') && options.bundle === true) {
+      // Handler to Resolve references
+      const resolver = async sourcePath => {
+        let refContent = await readFile(sourcePath, options);
+        return await parseString(refContent, options);
+      };
+
+      const onErrorHook = msg => {
+        throw new Error(msg);
+      };
+
+      // Use the bundler to resolve external refs and bundle the document
+      return bundler.bundle(filePath, resolver, {ignoreSibling: false, hooks: {onError: onErrorHook}});
+    }
+
+    // Parse file content as JSON/YAML
+    return await parseString(rawContent, options);
   } catch (err) {
     throw err;
   }
@@ -100,9 +147,9 @@ async function parseFile(filePath, options = {}) {
 
 /**
  * Converts a data object to a JSON/YAML string representation.
- * @param obj Data object.
- * @param options Stringify options
- * @returns {Promise<*>} Stringified data.
+ * @param {object} obj - The data object to stringify.
+ * @param {object} options - Stringify options (e.g., line width, format).
+ * @returns {Promise<string>} The object as a string in JSON/YAML format.
  */
 async function stringify(obj, options = {}) {
   try {
@@ -120,14 +167,14 @@ async function stringify(obj, options = {}) {
         yamlOptions.comments = options.yamlComments;
       }
 
-      // Convert Object to YAML string
+      // Convert object to YAML string
       output = yaml.safeStringify(obj, yamlOptions);
       output = addQuotesToRefInString(output);
 
       // Decode large number YAML values safely before writing output
       output = decodeLargeNumbers(output);
     } else {
-      // Convert Object to JSON string
+      // Convert object to JSON string
       output = JSON.stringify(obj, null, 2);
 
       // Decode large number JSON values safely before writing output
@@ -144,10 +191,10 @@ async function stringify(obj, options = {}) {
 
 /**
  * Writes an object to a JSON/YAML file.
- * @param filePath Path to the output file.
- * @param data Data object.
- * @param options Write options
- * @returns {Promise<void>}
+ * @param {string} filePath - The path to the output file.
+ * @param {object} data - The data object to write.
+ * @param {object} options - Write options (e.g., format).
+ * @returns {Promise<void>} Resolves when the file is written successfully.
  */
 async function writeFile(filePath, data, options = {}) {
   try {
@@ -164,7 +211,12 @@ async function writeFile(filePath, data, options = {}) {
       output = await stringify(data, options);
     }
 
-    // Write output file
+    const dir = dirname(filePath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, {recursive: true});
+    }
+
+    // Write the output to the file
     fs.writeFileSync(filePath, output, 'utf8');
   } catch (err) {
     console.error('\x1b[31m', `Error writing file "${filePath}": ${err.message}`);
@@ -173,9 +225,9 @@ async function writeFile(filePath, data, options = {}) {
 }
 
 /**
- * Reads a local file and returns the content
- * @param filePath Path to the file.
- * @returns {Promise<string>} File content.
+ * Reads a local file and returns the content.
+ * @param {string} filePath - The path to the local file.
+ * @returns {Promise<string>} The content of the file as a string.
  */
 async function getLocalFile(filePath) {
   try {
@@ -188,9 +240,9 @@ async function getLocalFile(filePath) {
 }
 
 /**
- * Reads a remote file and returns the content
- * @param filePath Remote path to the file.
- * @returns {Promise<string>} File content.
+ * Reads a remote file and returns the content.
+ * @param {string} filePath - The URL to the remote file.
+ * @returns {Promise<string>} The content of the remote file as a string.
  */
 async function getRemoteFile(filePath) {
   const protocol = filePath.startsWith('https://') ? https : http;
@@ -274,8 +326,8 @@ function decodeLargeNumbers(output, isJson = false) {
 
 /**
  * Add quotes to $ref in string
- * @param yamlString YAML string.
- * @returns {*} YAML string with quotes.
+ * @param {string} yamlString - The input YAML string.
+ * @returns {string} YAML string with quotes.
  */
 function addQuotesToRefInString(yamlString) {
   return yamlString.replace(/(\$ref:\s*)([^"'\s]+)/g, '$1"$2"');
@@ -360,6 +412,7 @@ function analyzeOpenApi(oaObj) {
 }
 
 module.exports = {
+  readFile,
   parseString,
   parseFile,
   isJSON,

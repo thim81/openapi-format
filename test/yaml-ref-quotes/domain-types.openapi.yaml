@@ -1,0 +1,7 @@
+components:
+  schemas:
+    Extern:
+      type: object
+      properties:
+        id:
+          type: string

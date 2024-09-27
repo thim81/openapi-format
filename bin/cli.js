@@ -28,6 +28,8 @@ program
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
   .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document')
   .option('--convertTo <oaVersion>', 'convert the OpenAPI document to OpenAPI version 3.1')
+  .option('--no-bundle', 'Bundle the local and remote $ref in the OpenAPI document.', false)
+  .option('--split', 'Split the OpenAPI document into a multi-file structure.', false)
   .option('--json', 'print the file to stdout as JSON')
   .option('--yaml', 'print the file to stdout as YAML')
   .option('-p, --playground', 'Open config in online playground')
@@ -92,12 +94,17 @@ async function run(oaFile, options) {
   configOptions = Object.assign({}, defaultOptions, configOptions);
   options.lineWidth = configOptions?.lineWidth ?? options.lineWidth;
   options.sort = configOptions?.sort ?? options.sort;
+  options.bundle = configOptions?.bundle ?? options.bundle;
 
   // Merge configOptions and CLI options
   options = Object.assign({}, configOptions, options);
   if (options['no-sort'] && options['no-sort'] === true) {
     options.sort = !options['no-sort'];
     delete options['no-sort'];
+  }
+  if (options['no-bundle'] && options['no-bundle'] === true) {
+    options.bundle = !options['no-bundle'];
+    delete options['no-bundle'];
   }
 
   // LOG - Render info table with options
@@ -194,7 +201,7 @@ async function run(oaFile, options) {
   let resObj = {};
   let output = {};
   let input = {};
-  let fileOptions = {keepComments: options?.keepComments || false};
+  let fileOptions = {keepComments: options.keepComments ?? false, bundle: options.bundle ?? true};
 
   try {
     infoOut(`- Input file:\t\t${oaFile}`); // LOG - Input file
@@ -204,7 +211,7 @@ async function run(oaFile, options) {
     input = resObj;
   } catch (err) {
     if (err.code !== 'ENOENT') {
-      console.error('\x1b[31m', `Input file error - Failed to download file: ${err.message}`);
+      console.error('\x1b[31m', `Input file error - Failed to read file: ${err.message}`);
       process.exit(1);
     }
     console.error('\x1b[31m', `Input file error - Failed to read file: ${oaFile}`);
@@ -258,14 +265,27 @@ async function run(oaFile, options) {
 
   options.yamlComments = fileOptions.yamlComments || {};
   if (options.output) {
-    try {
-      // Write OpenAPI string to file
-      await openapiFormat.writeFile(options.output, resObj, options);
-      infoOut(`- Output file:\t\t${options.output}`); // LOG - config file
-    } catch (err) {
-      console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`);
-      if (options.verbose >= 1) {
-        console.error(err);
+    if (options.split !== true) {
+      try {
+        // Write OpenAPI string to single file
+        await openapiFormat.writeFile(options.output, resObj, options);
+        infoOut(`- Output file:\t\t${options.output}`); // LOG - config file
+      } catch (err) {
+        console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`);
+        if (options.verbose >= 1) {
+          console.error(err);
+        }
+      }
+    } else {
+      try {
+        // Write Split files
+        await openapiFormat.openapiSplit(resObj, options);
+        infoOut(`- Output location:\t${options.output}`); // LOG - config file
+      } catch (err) {
+        console.error('\x1b[31m', `Split error - no such file or directory "${options.output}"`);
+        if (options.verbose >= 1) {
+          console.error(err);
+        }
       }
     }
   } else {

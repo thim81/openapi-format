@@ -1,7 +1,7 @@
 const testUtils = require('../test/__utils__/test-utils');
 const fs = require('fs');
 const {describe, it, expect} = require('@jest/globals');
-const {getLocalFile, getRemoteFile, parseFile} = require('../utils/file');
+const {getLocalFile} = require('../utils/file');
 
 describe('openapi-format CLI command', () => {
   it('should output the help', async () => {
@@ -189,6 +189,66 @@ describe('openapi-format CLI command', () => {
     expect(result.stdout).toContain('formatted successfully');
     expect(result.stdout).toMatchSnapshot();
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
+  it('should bundle reference', async () => {
+    const path = `test/yaml-ref-quotes`;
+    const inputFile = `${path}/input.yaml`;
+    const outputFile = `${path}/bundled.yaml`;
+    const output = await getLocalFile(outputFile);
+
+    let result = await testUtils.cli([inputFile, `--no-sort`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
+  it('should not bundle reference', async () => {
+    const path = `test/yaml-ref-quotes`;
+    const inputFile = `${path}/input.yaml`;
+    const outputFile = `${path}/output.yaml`;
+    const output = await getLocalFile(outputFile);
+
+    let result = await testUtils.cli([inputFile, `--no-bundle`, `--no-sort`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
+  it('should split the openapi file', async () => {
+    const path = `test/_split`;
+    const inputFile = `../__utils__/train.yaml`;
+    const outputFile = `output.yaml`;
+
+    const snap = await getLocalFile(`${path}/snap.yaml`);
+    const snap_station = await getLocalFile(`${path}/snap_station.yaml`);
+    const snap_station_id = await getLocalFile(`${path}/snap_station_id.yaml`);
+
+    let result = await testUtils.cli([inputFile, `--output ${outputFile}`, `--split`, `--no-sort`], path);
+
+    const outputPath = `${path}/${outputFile}`;
+    const outputStationPath = `${path}/paths/stations_{station_id}.yaml`;
+    const outputStationIdPath = `${path}/components/parameters/StationId.yaml`;
+    // const outputStationSchemaPath = `${path}/components/schemas/Station.yaml`
+    const output = await getLocalFile(outputPath);
+    const output_station = await getLocalFile(outputStationPath);
+    const output_station_id = await getLocalFile(outputStationIdPath);
+
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(output)).toStrictEqual(sanitize(snap));
+    expect(sanitize(output_station)).toStrictEqual(sanitize(snap_station));
+    expect(sanitize(output_station_id)).toStrictEqual(sanitize(snap_station_id));
+
+    fs.rmSync(`${path}/paths`, {recursive: true, force: true});
+    fs.rmSync(`${path}/components`, {recursive: true, force: true});
+    fs.unlinkSync(outputPath);
   });
 
   it.skip('should generate a playground share URL', async () => {

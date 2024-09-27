@@ -1,0 +1,15 @@
+openapi: 3.0.3
+info:
+  title: Train Travel API
+  version: 1.0.0
+  description: A compact version of the Train Travel API
+paths:
+  '/stations/{station_id}':
+    $ref: 'paths/stations_{station_id}.yaml'
+components:
+  schemas:
+    Station:
+      $ref: "components/schemas/Station.yaml"
+  parameters:
+    StationId:
+      $ref: "components/parameters/StationId.yaml"

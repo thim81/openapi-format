@@ -1,0 +1,51 @@
+openapi: 3.0.3
+info:
+  title: Train Travel API
+  version: 1.0.0
+  description: A compact version of the Train Travel API
+
+paths:
+  /stations/{station_id}:
+    get:
+      summary: Get station information
+      operationId: getStation
+      parameters:
+        -  $ref: '#/components/parameters/StationId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Station'
+        '404':
+          description: Station not found
+components:
+  schemas:
+    Station:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the station
+        name:
+          type: string
+          description: Name of the station
+        location:
+          type: object
+          properties:
+            latitude:
+              type: number
+              format: float
+            longitude:
+              type: number
+              format: float
+          description: Location of the station
+  parameters:
+    StationId:
+      name: station_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the station

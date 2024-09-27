@@ -28,8 +28,10 @@ const {
   convertExclusiveMaximum,
   setInObject
 } = require('./utils/convert');
-const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi} = require('./utils/file');
+const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi, readFile} = require('./utils/file');
 const {parseTpl, getOperation} = require('./utils/parseTpl');
+const {writePaths, writeComponents, writeSplitOpenAPISpec} = require('./utils/split');
+const {dirname, extname} = require('node:path');
 
 /**
  * OpenAPI sort function
@@ -1016,6 +1018,31 @@ async function openapiGenerate(oaObj, options) {
 }
 
 /**
+ * Split the OpenAPI document into a multi-file structure
+ * @param {object} oaObj OpenAPI document
+ * @param options
+ * @returns {Promise<void>}
+ */
+async function openapiSplit(oaObj, options = {}) {
+  if (!options.output) {
+    throw new Error('Output is required');
+  }
+
+  options.outputDir = dirname(options.output);
+  options.extension = extname(options.output).substring(1);
+
+  if (oaObj?.components) {
+    await writeComponents(oaObj.components, options);
+  }
+
+  if (oaObj?.paths) {
+    await writePaths(oaObj.paths, options);
+  }
+
+  await writeSplitOpenAPISpec(oaObj, options);
+}
+
+/**
  * OpenAPI convert version function
  * Convert OpenAPI from version 3.0 to 3.1
  * @param {object} oaObj OpenAPI document
@@ -1118,8 +1145,10 @@ module.exports = {
   openapiGenerate: openapiGenerate,
   openapiSort: openapiSort,
   openapiChangeCase: openapiChangeCase,
+  openapiSplit: openapiSplit,
   openapiConvertVersion: openapiConvertVersion,
   openapiRename: openapiRename,
+  readFile: readFile,
   parseFile: parseFile,
   parseString: parseString,
   stringify: stringify,

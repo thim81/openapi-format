@@ -1,0 +1,6 @@
+name: station_id
+in: path
+required: true
+schema:
+  type: string
+description: The ID of the station

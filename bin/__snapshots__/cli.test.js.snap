@@ -1,10 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`openapi-format CLI command should load the default .openapiformatrc if configFile is not provided 1`] = `
+exports[`openapi-format CLI command should bundle reference 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
-- Sort file:		(defaultSort.json)
-- Input file:		test/yaml-default/input.yaml
+- Input file:		test/yaml-ref-quotes/input.yaml
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m
@@ -23,12 +22,35 @@ OpenAPI-Format CLI options:
 | sort         | false                                             |
 | keepComments | true                                              |
 | lineWidth    | -1                                                |
+| bundle       | true                                              |
+| split        | false                                             |
 | filterFile   | test/yaml-no-sort-keep-comments/customFilter.yaml |
 | verbose      | 3                                                 |
 |--------------|---------------------------------------------------|
 
 [32m================================================================================[0m
 [32m✅  OpenAPI filtered & formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should load the default .openapiformatrc if configFile is not provided 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		(defaultSort.json)
+- Input file:		test/yaml-default/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should not bundle reference 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Input file:		test/yaml-ref-quotes/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m
 "
 `;
@@ -71,6 +93,8 @@ Options:
   --lineWidth <lineWidth>                    max line width of YAML output (default: -1)
   --rename <oaTitle>                         overwrite the title in the OpenAPI document
   --convertTo <oaVersion>                    convert the OpenAPI document to OpenAPI version 3.1
+  --no-bundle                                Bundle the local and remote $ref in the OpenAPI document.
+  --split                                    Split the OpenAPI document into a multi-file structure. (default: false)
   --json                                     print the file to stdout as JSON
   --yaml                                     print the file to stdout as YAML
   -p, --playground                           Open config in online playground
@@ -110,6 +134,17 @@ Total components removed: 16
 "
 `;
 
+exports[`openapi-format CLI command should split the openapi file 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Input file:		../__utils__/train.yaml
+- Output location:	output.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
 exports[`openapi-format CLI command should stop and show error 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
@@ -132,7 +167,7 @@ exports[`openapi-format CLI command should stop and show error about remote file
 OpenAPI-Format CLI settings:
 - Sort file:		(defaultSort.json)
 - Input file:		https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/foo.yaml
-[31m Input file error - Failed to download file: 404 Not Found
+[31m Input file error - Failed to read file: 404 Not Found
 "
 `;
 
@@ -194,6 +229,8 @@ OpenAPI-Format CLI options:
 | sort         | false |
 | keepComments | false |
 | lineWidth    | -1    |
+| bundle       | true  |
+| split        | false |
 | convertTo    | 3.1   |
 | verbose      | 3     |
 |--------------|-------|
