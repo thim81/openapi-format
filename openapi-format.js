@@ -33,7 +33,6 @@ const {parseTpl, getOperation} = require('./utils/parseTpl');
 const {writePaths, writeComponents, writeSplitOpenAPISpec} = require('./utils/split');
 const {dirname, extname} = require('node:path');
 
-
 /**
  * OpenAPI sort function
  * Traverse through all keys and based on the key name, sort the props according the preferred order.
@@ -1025,18 +1024,18 @@ async function openapiGenerate(oaObj, options) {
  * @returns {Promise<void>}
  */
 async function openapiSplit(oaObj, options = {}) {
-  if(!options.output) {
-    throw new Error('Output is required')
+  if (!options.output) {
+    throw new Error('Output is required');
   }
 
   options.outputDir = dirname(options.output);
-  options.extension = extname(options.output).substring(1)
+  options.extension = extname(options.output).substring(1);
 
-  if(oaObj?.components) {
+  if (oaObj?.components) {
     await writeComponents(oaObj.components, options);
   }
 
-  if(oaObj?.paths) {
+  if (oaObj?.paths) {
     await writePaths(oaObj.paths, options);
   }
 

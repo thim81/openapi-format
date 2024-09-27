@@ -24,7 +24,8 @@ describe('openapi-format CLI splits tests', () => {
   const options = {
     outputDir: '/fake/output/dir',
     format: 'yaml',
-    output: 'openapi.yaml'
+    output: 'openapi.yaml',
+    extension: 'yaml'
   };
 
   const openapiDoc = {
@@ -54,7 +55,7 @@ describe('openapi-format CLI splits tests', () => {
 
     // Assert that the main openapi.yaml file is written with $refs
     expect(writeFile).toHaveBeenCalledWith(
-      path.join(options.outputDir, 'openapi.yaml'),
+      path.join('openapi.yaml'),
       {
         paths: {
           '/example/foo/{id}': {

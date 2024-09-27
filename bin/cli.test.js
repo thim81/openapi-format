@@ -228,11 +228,11 @@ describe('openapi-format CLI command', () => {
     const snap_station = await getLocalFile(`${path}/snap_station.yaml`);
     const snap_station_id = await getLocalFile(`${path}/snap_station_id.yaml`);
 
-    let result = await testUtils.cli([inputFile,`--output ${outputFile}`, `--split`, `--no-sort`], path);
+    let result = await testUtils.cli([inputFile, `--output ${outputFile}`, `--split`, `--no-sort`], path);
 
-    const outputPath = `${path}/${outputFile}`
-    const outputStationPath = `${path}/paths/stations_{station_id}.yaml`
-    const outputStationIdPath = `${path}/components/parameters/StationId.yaml`
+    const outputPath = `${path}/${outputFile}`;
+    const outputStationPath = `${path}/paths/stations_{station_id}.yaml`;
+    const outputStationIdPath = `${path}/components/parameters/StationId.yaml`;
     // const outputStationSchemaPath = `${path}/components/schemas/Station.yaml`
     const output = await getLocalFile(outputPath);
     const output_station = await getLocalFile(outputStationPath);
@@ -246,8 +246,8 @@ describe('openapi-format CLI command', () => {
     expect(sanitize(snap_station)).toStrictEqual(sanitize(output_station));
     expect(sanitize(snap_station_id)).toStrictEqual(sanitize(output_station_id));
 
-    fs.rmSync(`${path}/paths`, { recursive: true, force: true });
-    fs.rmSync(`${path}/components`, { recursive: true, force: true });
+    fs.rmSync(`${path}/paths`, {recursive: true, force: true});
+    fs.rmSync(`${path}/components`, {recursive: true, force: true});
     fs.unlinkSync(outputPath);
   });
 

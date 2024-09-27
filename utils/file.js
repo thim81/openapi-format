@@ -215,7 +215,7 @@ async function writeFile(filePath, data, options = {}) {
 
     const dir = dirname(filePath);
     if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+      fs.mkdirSync(dir, {recursive: true});
     }
 
     // Write the output to the file

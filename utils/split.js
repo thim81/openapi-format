@@ -9,7 +9,7 @@ async function writeSplitOpenAPISpec(oaObj, options) {
   const ext = `${options.extension}`;
 
   // Replace paths with $ref links
-  if(openapiDoc?.paths) {
+  if (openapiDoc?.paths) {
     Object.keys(openapiDoc.paths).forEach(pathKey => {
       const sanitizedPath = sanitizeFileName(pathKey);
       openapiDoc.paths[pathKey] = {$ref: `paths/${sanitizedPath}.${ext}`};
@@ -17,7 +17,7 @@ async function writeSplitOpenAPISpec(oaObj, options) {
   }
 
   // Replace components with $ref links
-  if(openapiDoc?.components) {
+  if (openapiDoc?.components) {
     Object.keys(openapiDoc.components).forEach(componentType => {
       Object.keys(openapiDoc.components[componentType]).forEach(componentName => {
         openapiDoc.components[componentType][componentName] = {
