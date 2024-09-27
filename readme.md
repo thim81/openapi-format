@@ -14,7 +14,7 @@ Additional features include powerful filtering options based on flags, tags, met
 To quickly standardize OpenAPI documents there is support for generating the operationIds.
 
 The CLI can split large OpenAPI documents into modular, multi-file structures for easier management. 
-For easy upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0 document to OpenAPI 3.1.
+For upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0 document to OpenAPI 3.1.
 
 ## Table of content
 * [Use-cases](#use-cases)
