@@ -265,18 +265,27 @@ async function run(oaFile, options) {
 
   options.yamlComments = fileOptions.yamlComments || {};
   if (options.output) {
-    try {
-      // Write OpenAPI string to file
-      await openapiFormat.writeFile(options.output, resObj, options);
-      infoOut(`- Output file:\t\t${options.output}`); // LOG - config file
-
-      if (options.split === true) {
-        await openapiFormat.openapiSplit(resObj, options);
+    if (options.split !== true) {
+      try {
+        // Write OpenAPI string to single file
+        await openapiFormat.writeFile(options.output, resObj, options);
+        infoOut(`- Output file:\t\t${options.output}`); // LOG - config file
+      } catch (err) {
+        console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`);
+        if (options.verbose >= 1) {
+          console.error(err);
+        }
       }
-    } catch (err) {
-      console.error('\x1b[31m', `Output file error - no such file or directory "${options.output}"`);
-      if (options.verbose >= 1) {
-        console.error(err);
+    } else {
+      try {
+        // Write Split files
+        await openapiFormat.openapiSplit(resObj, options);
+        infoOut(`- Output location:\t${options.output}`); // LOG - config file
+      } catch (err) {
+        console.error('\x1b[31m', `Split error - no such file or directory "${options.output}"`);
+        if (options.verbose >= 1) {
+          console.error(err);
+        }
       }
     }
   } else {

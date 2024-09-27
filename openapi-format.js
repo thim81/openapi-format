@@ -30,7 +30,9 @@ const {
 } = require('./utils/convert');
 const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi, readFile} = require('./utils/file');
 const {parseTpl, getOperation} = require('./utils/parseTpl');
-const {writeMainOpenAPISpec, writePaths, writeComponents} = require('./utils/split');
+const {writePaths, writeComponents, writeSplitOpenAPISpec} = require('./utils/split');
+const {dirname, extname} = require('node:path');
+
 
 /**
  * OpenAPI sort function
@@ -1022,12 +1024,23 @@ async function openapiGenerate(oaObj, options) {
  * @param options
  * @returns {Promise<void>}
  */
-async function openapiSplit(oaObj, options) {
-  await writeComponents(oaObj?.components, options);
+async function openapiSplit(oaObj, options = {}) {
+  if(!options.output) {
+    throw new Error('Output is required')
+  }
 
-  await writePaths(oaObj?.paths, options);
+  options.outputDir = dirname(options.output);
+  options.extension = extname(options.output).substring(1)
 
-  await writeMainOpenAPISpec(oaObj, options);
+  if(oaObj?.components) {
+    await writeComponents(oaObj.components, options);
+  }
+
+  if(oaObj?.paths) {
+    await writePaths(oaObj.paths, options);
+  }
+
+  await writeSplitOpenAPISpec(oaObj, options);
 }
 
 /**

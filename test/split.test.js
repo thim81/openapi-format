@@ -1,20 +1,30 @@
 'use strict';
 
-const {writeMainOpenAPISpec, writePaths, writeComponents, sanitizeFileName} = require('./../utils/split');
-const of = require('./../openapi-format');
+const {writeFile} = require('./../utils/file');
+const {
+  writeSplitOpenAPISpec,
+  writePaths,
+  writeComponents,
+  sanitizeFileName,
+  convertComponentsToRef
+} = require('./../utils/split');
 const {describe, it, expect} = require('@jest/globals');
 const path = require('path');
-const {writeFile} = require('./../utils/file');
-const {convertComponentsToRef} = require('../utils/split');
+const fs = require('node:fs');
 
 jest.mock('./../utils/file', () => ({
   writeFile: jest.fn()
 }));
 
+jest.mock('node:fs', () => ({
+  mkdirSync: jest.fn()
+}));
+
 describe('openapi-format CLI splits tests', () => {
   const options = {
     outputDir: '/fake/output/dir',
-    someOtherOption: true
+    format: 'yaml',
+    output: 'openapi.yaml'
   };
 
   const openapiDoc = {
@@ -40,7 +50,7 @@ describe('openapi-format CLI splits tests', () => {
   });
 
   it('should split and write main openapi spec with $refs', async () => {
-    await writeMainOpenAPISpec(openapiDoc, options);
+    await writeSplitOpenAPISpec(openapiDoc, options);
 
     // Assert that the main openapi.yaml file is written with $refs
     expect(writeFile).toHaveBeenCalledWith(
@@ -71,7 +81,7 @@ describe('openapi-format CLI splits tests', () => {
     // Assert that each path is written to its own file
     expect(writeFile).toHaveBeenCalledWith(
       path.join(options.outputDir, 'paths', 'example_foo_{id}.yaml'),
-      {'/example/foo/{id}': paths['/example/foo/{id}']},
+      paths['/example/foo/{id}'],
       options
     );
   });
@@ -84,7 +94,7 @@ describe('openapi-format CLI splits tests', () => {
     // Assert that each component is written to its own file
     expect(writeFile).toHaveBeenCalledWith(
       path.join(options.outputDir, 'components/schemas', 'ExampleSchema.yaml'),
-      {ExampleSchema: components.schemas.ExampleSchema},
+      components.schemas.ExampleSchema,
       options
     );
   });
@@ -111,10 +121,8 @@ describe('openapi-format CLI splits tests', () => {
       }
     };
 
-    const ext = 'yaml';
-
     // Call convertComponentsToRef without mocking traverse
-    const result = convertComponentsToRef(components, ext);
+    const result = convertComponentsToRef(components, 'yaml', '.');
 
     // Assert that the $ref is converted correctly
     expect(result.schemas.ExampleSchema.properties.related.$ref).toBe('components/schemas/RelatedSchema.yaml');
@@ -142,10 +150,8 @@ describe('openapi-format CLI splits tests', () => {
       }
     };
 
-    const ext = 'yaml';
-
     // Call convertComponentsToRef to check nested $ref conversion
-    const result = convertComponentsToRef(components, ext);
+    const result = convertComponentsToRef(components, 'yaml', '.');
 
     // Assert that the deeply nested $ref is converted
     expect(result.schemas.NestedSchema.properties.nested.properties.deep.$ref).toBe(

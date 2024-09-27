@@ -1,0 +1,14 @@
+get:
+  summary: Get station information
+  operationId: getStation
+  parameters:
+    - $ref: "../components/parameters/StationId.yaml"
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/Station.yaml"
+    '404':
+      description: Station not found

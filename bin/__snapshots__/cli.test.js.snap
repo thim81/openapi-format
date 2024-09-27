@@ -22,6 +22,8 @@ OpenAPI-Format CLI options:
 | sort         | false                                             |
 | keepComments | true                                              |
 | lineWidth    | -1                                                |
+| bundle       | true                                              |
+| split        | false                                             |
 | filterFile   | test/yaml-no-sort-keep-comments/customFilter.yaml |
 | verbose      | 3                                                 |
 |--------------|---------------------------------------------------|
@@ -91,6 +93,8 @@ Options:
   --lineWidth <lineWidth>                    max line width of YAML output (default: -1)
   --rename <oaTitle>                         overwrite the title in the OpenAPI document
   --convertTo <oaVersion>                    convert the OpenAPI document to OpenAPI version 3.1
+  --no-bundle                                Bundle the local and remote $ref in the OpenAPI document.
+  --split                                    Split the OpenAPI document into a multi-file structure. (default: false)
   --json                                     print the file to stdout as JSON
   --yaml                                     print the file to stdout as YAML
   -p, --playground                           Open config in online playground
@@ -133,7 +137,8 @@ Total components removed: 16
 exports[`openapi-format CLI command should split the openapi file 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
-- Input file:		test/__utils__/mockTrain.yaml
+- Input file:		../__utils__/train.yaml
+- Output location:	output.yaml
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m
@@ -224,6 +229,8 @@ OpenAPI-Format CLI options:
 | sort         | false |
 | keepComments | false |
 | lineWidth    | -1    |
+| bundle       | true  |
+| split        | false |
 | convertTo    | 3.1   |
 | verbose      | 3     |
 |--------------|-------|

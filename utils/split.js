@@ -3,37 +3,39 @@ const traverse = require('neotraverse/legacy');
 const fs = require('node:fs');
 const {writeFile} = require('./../utils/file');
 
-async function writeMainOpenAPISpec(oaObj, options) {
+async function writeSplitOpenAPISpec(oaObj, options) {
   const {outputDir, format} = options;
   const openapiDoc = {...oaObj};
-
-  const ext = `${options.format}`;
+  const ext = `${options.extension}`;
 
   // Replace paths with $ref links
-  Object.keys(openapiDoc.paths).forEach(pathKey => {
-    const sanitizedPath = sanitizeFileName(pathKey);
-    openapiDoc.paths[pathKey] = {$ref: `paths/${sanitizedPath}.${ext}`};
-  });
+  if(openapiDoc?.paths) {
+    Object.keys(openapiDoc.paths).forEach(pathKey => {
+      const sanitizedPath = sanitizeFileName(pathKey);
+      openapiDoc.paths[pathKey] = {$ref: `paths/${sanitizedPath}.${ext}`};
+    });
+  }
 
   // Replace components with $ref links
-  Object.keys(openapiDoc.components).forEach(componentType => {
-    Object.keys(openapiDoc.components[componentType]).forEach(componentName => {
-      openapiDoc.components[componentType][componentName] = {
-        $ref: `components/${componentType}/${componentName}.${ext}`
-      };
+  if(openapiDoc?.components) {
+    Object.keys(openapiDoc.components).forEach(componentType => {
+      Object.keys(openapiDoc.components[componentType]).forEach(componentName => {
+        openapiDoc.components[componentType][componentName] = {
+          $ref: `components/${componentType}/${componentName}.${ext}`
+        };
+      });
     });
-  });
+  }
 
   // Write the openapi.yaml file
-  const outputFile = path.join(outputDir || './', options.output);
+  const outputFile = options.output;
   await writeFile(outputFile, openapiDoc, options);
 }
 
 async function writePaths(paths, options) {
   const {outputDir, format} = options;
-  const ext = `${format}`;
+  const ext = `${options.extension}`;
   const pathsDir = path.join(outputDir || './', 'paths');
-  fs.mkdirSync(pathsDir, {recursive: true});
 
   for (const pathKey of Object.keys(paths)) {
     const sanitizedPath = sanitizeFileName(pathKey);
@@ -48,14 +50,14 @@ async function writePaths(paths, options) {
 }
 
 async function writeComponents(components, options) {
-  const {outputDir, format} = options;
-  const ext = `${format}`;
+  const {outputDir} = options;
+  const ext = `${options.extension}`;
+
   const componentsDir = path.join(outputDir || './', 'components');
 
   for (const componentType of Object.keys(components)) {
     for (const componentName of Object.keys(components[componentType])) {
       const fileDir = path.join(componentsDir, componentType);
-      fs.mkdirSync(fileDir, {recursive: true});
       const filePath = path.join(fileDir, `${componentName}.${ext}`);
 
       // Update any component references within components
@@ -100,7 +102,7 @@ function sanitizeFileName(fileName) {
 }
 
 module.exports = {
-  writeMainOpenAPISpec,
+  writeSplitOpenAPISpec,
   writePaths,
   writeComponents,
   convertComponentsToRef,

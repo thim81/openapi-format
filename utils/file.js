@@ -5,6 +5,7 @@ const bundler = require('api-ref-bundler');
 const yaml = require('@stoplight/yaml');
 const http = require('http');
 const https = require('https');
+const {dirname} = require('node:path');
 
 /**
  * Converts a string object to a JSON/YAML object.
@@ -210,6 +211,11 @@ async function writeFile(filePath, data, options = {}) {
       // Convert Object to JSON string
       options.format = 'json';
       output = await stringify(data, options);
+    }
+
+    const dir = dirname(filePath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
     }
 
     // Write the output to the file
