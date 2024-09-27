@@ -42,7 +42,7 @@ async function writePaths(paths, options) {
     const filePath = path.join(pathsDir, `${sanitizedPath}.${ext}`);
 
     // Update any component references to the proper file location in paths
-    const updatedPath = convertComponentsToRef(paths[pathKey], ext, outputDir);
+    const updatedPath = convertComponentsToRef(paths[pathKey], ext, 'paths');
 
     // Write each path to its own file
     await writeFile(filePath, updatedPath, options);
@@ -61,7 +61,7 @@ async function writeComponents(components, options) {
       const filePath = path.join(fileDir, `${componentName}.${ext}`);
 
       // Update any component references within components
-      const updatedComponent = convertComponentsToRef(components[componentType][componentName], ext, componentsDir);
+      const updatedComponent = convertComponentsToRef(components[componentType][componentName], ext, 'components');
 
       // Write each component (schema, parameter, etc.) to its own YAML file
       await writeFile(filePath, updatedComponent, options);

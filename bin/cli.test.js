@@ -242,9 +242,9 @@ describe('openapi-format CLI command', () => {
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('formatted successfully');
     expect(result.stdout).toMatchSnapshot();
-    expect(sanitize(snap)).toStrictEqual(sanitize(output));
-    expect(sanitize(snap_station)).toStrictEqual(sanitize(output_station));
-    expect(sanitize(snap_station_id)).toStrictEqual(sanitize(output_station_id));
+    expect(sanitize(output)).toStrictEqual(sanitize(snap));
+    expect(sanitize(output_station)).toStrictEqual(sanitize(snap_station));
+    expect(sanitize(output_station_id)).toStrictEqual(sanitize(snap_station_id));
 
     fs.rmSync(`${path}/paths`, {recursive: true, force: true});
     fs.rmSync(`${path}/components`, {recursive: true, force: true});
