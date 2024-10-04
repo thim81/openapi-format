@@ -31,7 +31,7 @@ const {
 const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi, readFile} = require('./utils/file');
 const {parseTpl, getOperation} = require('./utils/parseTpl');
 const {writePaths, writeComponents, writeSplitOpenAPISpec} = require('./utils/split');
-const {dirname, extname} = require('node:path');
+const {dirname, extname} = require('path');
 
 /**
  * OpenAPI sort function
