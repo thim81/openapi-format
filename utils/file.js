@@ -3,7 +3,7 @@ const bundler = require('api-ref-bundler');
 const yaml = require('@stoplight/yaml');
 const http = require('http');
 const https = require('https');
-const {dirname} = require('node:path');
+const {dirname} = require('path');
 
 /**
  * Converts a string object to a JSON/YAML object.
