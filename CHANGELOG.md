@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.24.1] - 2024-10-04
+
+- fix: replace 'node:path' with 'path' to resolve Webpack build error
+
 ## [1.24.0] - 2024-09-27
 
 - CLI - Bundle local and remote file references
