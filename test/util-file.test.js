@@ -415,6 +415,12 @@ describe('openapi-format CLI file tests', () => {
       const output = addQuotesToRefInString(input);
       expect(output).toBe("$ref: '#/components/schemas/Example'");
     });
+
+    test('should not modify $ref with >- block scalar', () => {
+      const input = `application/json:\n  schema:\n    $ref: >-\n      #/components/schemas/Example`;
+      const output = addQuotesToRefInString(input);
+      expect(output).toBe(input);
+    });
   });
 
   describe('analyzeOpenApi function', () => {

@@ -1,5 +1,7 @@
 ## unreleased
 
+- fix: scalar $ref: >-
+
 ## [1.24.1] - 2024-10-04
 
 - fix: replace 'node:path' with 'path' to resolve Webpack build error

@@ -330,7 +330,7 @@ function decodeLargeNumbers(output, isJson = false) {
  * @returns {string} YAML string with quotes.
  */
 function addQuotesToRefInString(yamlString) {
-  return yamlString.replace(/(\$ref:\s*)([^"'\s]+)/g, '$1"$2"');
+  return yamlString.replace(/(\$ref:\s*)([^"'\s>]+)/g, '$1"$2"');
 }
 
 /**
