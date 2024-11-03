@@ -12,6 +12,11 @@ const {dirname} = require('path');
  * @returns {Promise<object>} Parsed data object.
  */
 async function parseString(str, options = {}) {
+  // Exit early
+  if (str.length === 0) {
+    return str;
+  }
+
   // Convert large number values safely before parsing
   let encodedContent = encodeLargeNumbers(str);
   encodedContent = addQuotesToRefInString(encodedContent);
