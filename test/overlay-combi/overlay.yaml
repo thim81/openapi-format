@@ -1,0 +1,15 @@
+actions:
+  - target: $.info
+    update:
+      description: An updated description
+      contact:
+        name: Support
+        url: 'https://example.com/contact'
+  - target: '$.servers[*]'
+    remove: true
+  - target: '$.server[*]'
+    remove: true
+  - target: $.servers
+    update:
+      - url: 'https://api.new-example.com'
+        description: New server

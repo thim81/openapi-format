@@ -1,0 +1,7 @@
+openapi: 3.0.2
+info:
+  title: Original API
+  version: 1.0.0
+servers:
+  - url: 'https://api.example.com'
+    description: Default server

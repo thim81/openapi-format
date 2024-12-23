@@ -21,6 +21,7 @@ program
   .option('-k, --casingFile <casingFile>', 'the file to specify casing rules')
   .option('-f, --filterFile <filterFile>', 'the file to specify filter rules')
   .option('-g, --generateFile <generateFile>', 'the file to specify generate rules')
+  .option('-l, --overlayFile <overlayFile>', 'the file to specify OpenAPI overlay changes')
   .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options')
   .option('--no-sort', `don't sort the OpenAPI file`)
   .option('--keepComments', `don't remove the comments from the OpenAPI YAML file`, false)
@@ -198,6 +199,22 @@ async function run(oaFile, options) {
     }
   }
 
+  // Set OpenAPI overlay actions
+  if (options && options.overlayFile) {
+    infoOut(`- Overlay file:\t\t${options.overlayFile}`); // LOG - Casing file
+    try {
+      let overlayOptions = {overlaySet: {}};
+      overlayOptions.overlaySet = await openapiFormat.parseFile(options.overlayFile);
+      options = Object.assign({}, options, overlayOptions);
+    } catch (err) {
+      console.error('\x1b[31m', `Overlay file error - no such file or directory "${options.overlayOptions}"`);
+      if (options.verbose >= 1) {
+        console.error(err);
+      }
+      process.exit(1);
+    }
+  }
+
   let resObj = {};
   let output = {};
   let input = {};
@@ -232,6 +249,18 @@ async function run(oaFile, options) {
     }
     outputLogFiltered = `filtered & `;
     resObj = resFilter.data;
+  }
+
+  // Apply OpenAPI overlay actions
+  if (options.overlaySet) {
+    const resOverlay = await openapiFormat.openapiOverlay(resObj, options);
+    if (resOverlay?.resultData &&
+      (resOverlay.resultData.unusedActions || resOverlay.resultData.appliedActions || resOverlay.resultData.totalActions)) {
+      cliLog.unusedActions = resOverlay.resultData.unusedActions || [];
+      cliLog.appliedActions = resOverlay.resultData.appliedActions || 0;
+      cliLog.totalActions = resOverlay.resultData.totalActions || 0;
+    }
+    resObj = resOverlay.data;
   }
 
   // Format & Order OpenAPI document
@@ -327,10 +356,27 @@ async function run(oaFile, options) {
     }
   }
 
-  // Final result
-  infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
-  infoOut(`\x1b[32m✅  OpenAPI ${outputLogFiltered}formatted successfully\x1b[0m`, 99); // LOG - success message
-  infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
+  // Show unused components
+  if (options.overlaySet && (cliLog?.totalActions || cliLog?.appliedActions || cliLog?.unusedActions)) {
+    // Log summary of actions
+    logOut(`${consoleLine}`, options.verbose); // LOG - horizontal rule
+    logOut(`OpenAPI Overlay actions summary:`, options.verbose);
+    logOut(`- Total actions: ${cliLog.totalActions}`, options.verbose);
+    logOut(`- Applied actions: ${cliLog.appliedActions}`, options.verbose);
+
+    const cliOut = [];
+    cliLog.unusedActions.forEach(action => {
+      const description = action.description || 'No description provided';
+      cliOut.push(`- Target: ${action.target}\n  Description: ${description}`);
+    });
+
+    if (cliLog.unusedActions.length > 0) {
+      // Log unused actions
+      logOut(`${consoleLine}`, options.verbose); // LOG - horizontal rule
+      logOut(`Unused overlay actions:`, options.verbose);
+      logOut(cliOut.join('\n'), options.verbose);
+    }
+  }
 
   if (options?.playground) {
     try {

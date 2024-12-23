@@ -32,6 +32,7 @@ const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenAp
 const {parseTpl, getOperation} = require('./utils/parseTpl');
 const {writePaths, writeComponents, writeSplitOpenAPISpec} = require('./utils/split');
 const {dirname, extname} = require('path');
+const { openapiOverlay } = require('./utils/overlay');
 
 /**
  * OpenAPI sort function
@@ -1145,6 +1146,7 @@ module.exports = {
   openapiGenerate: openapiGenerate,
   openapiSort: openapiSort,
   openapiChangeCase: openapiChangeCase,
+  openapiOverlay: openapiOverlay,
   openapiSplit: openapiSplit,
   openapiConvertVersion: openapiConvertVersion,
   openapiRename: openapiRename,

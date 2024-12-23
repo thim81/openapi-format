@@ -108,6 +108,7 @@ describe('openapi-format tests', () => {
         if (options.filterFile) options.filterFile = path.join(__dirname, test, options.filterFile);
         if (options.casingFile) options.casingFile = path.join(__dirname, test, options.casingFile);
         if (options.generateFile) options.generateFile = path.join(__dirname, test, options.generateFile);
+        if (options.overlayFile) options.overlayFile = path.join(__dirname, test, options.overlayFile);
         if (outputFilename.indexOf('.json') >= 0 || options.json) {
           // Convert OpenAPI object to JSON string
           options.format = 'json';

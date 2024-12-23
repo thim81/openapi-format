@@ -1,0 +1,11 @@
+openapi: 3.0.2
+info:
+  title: Original API
+  version: 1.0.0
+  description: An updated description
+  contact:
+    name: Support
+    url: 'https://example.com/contact'
+servers:
+  - url: 'https://api.new-example.com'
+    description: New server
