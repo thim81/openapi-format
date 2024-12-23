@@ -361,8 +361,8 @@ async function run(oaFile, options) {
     // Log summary of actions
     logOut(`${consoleLine}`, options.verbose); // LOG - horizontal rule
     logOut(`OpenAPI Overlay actions summary:`, options.verbose);
-    logOut(`- Total actions: ${cliLog.totalActions}`, options.verbose);
-    logOut(`- Applied actions: ${cliLog.appliedActions}`, options.verbose);
+    logOut(`- Total actions: \t${cliLog.totalActions}`, options.verbose);
+    logOut(`- Applied actions: \t${cliLog.appliedActions}`, options.verbose);
 
     const cliOut = [];
     cliLog.unusedActions.forEach(action => {
@@ -377,6 +377,11 @@ async function run(oaFile, options) {
       logOut(cliOut.join('\n'), options.verbose);
     }
   }
+
+  // Final result
+  infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
+  infoOut(`\x1b[32m✅  OpenAPI ${outputLogFiltered}formatted successfully\x1b[0m`, 99); // LOG - success message
+  infoOut(`\x1b[32m${consoleLine}\x1b[0m`); // LOG - horizontal rule
 
   if (options?.playground) {
     try {

@@ -1,20 +1,12 @@
 /**
  * Applies an overlay to an OpenAPI Specification (OAS).
  *
- * @param {Object} baseOAS - The base OpenAPI Specification to be processed.
+ * @param {Object} oaObj - The base OpenAPI Specification to be processed.
  * @param {Object} options - The options containing overlaySet and additional configurations.
  * @returns {Object} - An object containing the processed OpenAPI Specification and result metadata.
  */
-async function openapiOverlay(baseOAS, options) {
-  if (!baseOAS || typeof baseOAS !== 'object') {
-    throw new Error('Invalid base OpenAPI Specification provided.');
-  }
-
+async function openapiOverlay(oaObj, options) {
   const overlayDoc = options?.overlaySet;
-
-  if (!overlayDoc || !Array.isArray(overlayDoc.actions)) {
-    throw new Error('Overlay document must contain an array of actions.');
-  }
 
   let unusedActions = [...overlayDoc.actions]; // Track unused actions
   let totalActions = overlayDoc.actions.length; // Total actions provided
@@ -27,7 +19,20 @@ async function openapiOverlay(baseOAS, options) {
       return;
     }
 
-    const targets = resolveJsonPath(baseOAS, target);
+    // Explicitly handle the `$` target for the root object
+    if (target === '$') {
+      if (update) {
+        oaObj = deepMerge(oaObj, update);
+        unusedActions = unusedActions.filter((a) => a !== action);
+      }
+      if (remove) {
+        console.error('Remove operations are not supported at the root level.');
+      }
+      return;
+    }
+
+    // Resolve JSONPath for other targets
+    const targets = resolveJsonPath(oaObj, target);
 
     if (targets.length > 0) {
       // Mark this action as used
@@ -48,19 +53,17 @@ async function openapiOverlay(baseOAS, options) {
       });
     } else if (update) {
       // Handle update actions
-      if (targets.length === 0 && target === '$') {
-        baseOAS = deepMerge(baseOAS, update);
-      } else {
-        targets.forEach((node) => {
+      targets.forEach((node) => {
+        if (node.parent && node.key !== undefined) {
           node.parent[node.key] = deepMerge(node.value, update);
-        });
-      }
+        }
+      });
     }
   });
 
   // Return the processed OpenAPI Specification along with result metadata
   return {
-    data: baseOAS, // The processed OpenAPI document
+    data: oaObj, // The processed OpenAPI document
     resultData: {
       unusedActions: unusedActions, // Actions that couldn't be applied
       totalActions: totalActions, // Total number of actions in the overlay
@@ -85,6 +88,8 @@ function resolveJsonPath(obj, path) {
   const results = [];
 
   function traverse(current, currentPath = [], parent = null, key = null) {
+    if (current === null || current === undefined) return;
+
     const segment = segments[currentPath.length];
 
     if (segment === undefined) {
@@ -127,7 +132,27 @@ function deepMerge(target, source) {
   if (typeof source !== 'object' || source === null) return source;
 
   if (Array.isArray(target) && Array.isArray(source)) {
-    return [...target, ...source];
+    // Merge arrays by unique 'name' and 'in' for OpenAPI parameters
+    const mergedArray = [...target];
+    source.forEach((sourceItem) => {
+      if (sourceItem && sourceItem.name && sourceItem.in) {
+        const existingIndex = mergedArray.findIndex(
+          (targetItem) =>
+            targetItem && targetItem.name === sourceItem.name && targetItem.in === sourceItem.in
+        );
+        if (existingIndex !== -1) {
+          // Merge existing item with source item
+          mergedArray[existingIndex] = deepMerge(mergedArray[existingIndex], sourceItem);
+        } else {
+          // Add new item
+          mergedArray.push(sourceItem);
+        }
+      } else {
+        // For non-parameter arrays, append the item
+        mergedArray.push(sourceItem);
+      }
+    });
+    return mergedArray;
   }
 
   if (typeof target !== 'object' || target === null) {
@@ -142,5 +167,7 @@ function deepMerge(target, source) {
 }
 
 module.exports = {
-  openapiOverlay
+  openapiOverlay,
+  deepMerge,
+  resolveJsonPath
 };

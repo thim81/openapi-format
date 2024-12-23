@@ -78,6 +78,17 @@ declare module 'openapi-format' {
     defaultFilter?: OpenAPIFilterSet
   }
 
+  interface OpenAPIOverlayOptions {
+    overlaySet: {
+      actions: Array<{
+        target: string;
+        update?: Record<string, unknown>;
+        remove?: boolean;
+        description?: string;
+      }>;
+    };
+  }
+
   interface OpenAPIResult {
     data: OpenAPIV3.Document | string
     resultData: Record<string, never>
@@ -146,6 +157,18 @@ declare module 'openapi-format' {
     oaObj: OpenAPIV3.Document,
     options: OpenAPICasingOptions
   ): Promise<OpenAPIResult>
+
+
+  /**
+   * Applies OpenAPI overlay actions to an OpenAPI Specification (OAS).
+   * @param {Object} baseOAS - The OpenAPI document.
+   * @param {Object} options - The options containing overlaySet and additional configurations.
+   * @returns {Object} - The processed OpenAPI Specification and result metadata.
+   */
+  export function openapiOverlay(
+    baseOAS: OpenAPIV3.Document,
+    options: OpenAPIOverlayOptions
+  ): Promise<OpenAPIResult>;
 
   /**
    * Parses a JSON or YAML file into a JavaScript object.

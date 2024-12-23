@@ -1,0 +1,17 @@
+overlay: 1.0.0
+info:
+  title: Structured Overlay
+  version: 1.0.0
+actions:
+  - target: "$"   # Root of document
+    update:
+      paths:
+        /timeseries:
+          get:
+            description: Retrieve a list of all time series definitions. This endpoint supports search and pagination.
+            parameters:
+              - name: searchPattern
+                in: query
+                description: A pattern used to search time series definitions.
+                schema:
+                  example: temp-

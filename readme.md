@@ -70,6 +70,7 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on operationID's
 - [x] Filter OpenAPI files based on operations definition
 - [x] Filter OpenAPI files based on response content-types
+- [x] Apply OpenAPI overlay actions
 - [x] Strip flags from OpenAPI files
 - [x] Strip unused components from OpenAPI files
 - [x] Generate OpenAPI elements for consistency
@@ -147,8 +148,9 @@ Options:
 
   --sortFile            The file to specify custom OpenAPI fields ordering      [path]
   --casingFile          The file to specify casing rules                        [path]
-  --generateFile        The file to specify generate rules                      [path]
+  --generateFile        The file to specify generate rules                      [path]  
   --filterFile          The file to specify filter rules                        [path]
+  --overlayFile         The file to specify OpenAPI overlay actions             [path]
 
   --no-sort             Don't sort the OpenAPI file                          [boolean]
   --keepComments        Don't remove the comments from the OpenAPI YAML file [boolean]
@@ -184,6 +186,7 @@ Options:
 | --filterFile         | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json         | optional |
 | --casingFile         | -k            | the file to specify casing setting                                          | path to file |                            | optional |
 | --generateFile       | -g            | the file to specify generate rules                                          | path to file |                            | optional |
+| --overlayFile        | -l            | the file to specify OpenAPI overlay actions                                 | path to file |                            | optional |
 | --no-sort            |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                      | optional |
 | --keepComments       |               | don't remove the comments from the OpenAPI YAML file                        | boolean      | FALSE                      | optional |
 | --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json | optional |
