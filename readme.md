@@ -32,6 +32,7 @@ For upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0
 * [OpenAPI generate elements](#openapi-generate-options)
 * [CLI sort usage](#cli-sort-usage)
 * [CLI filter usage](#cli-filter-usage)
+* [CLI OpenAPI overlay usage](#cli-openapi-overlay-usage)
 * [CLI generate usage](#cli-generate-usage)
 * [CLI casing usage](#cli-casing-usage)
 * [CLI split & bundle usage](#cli-bundle--split-usage)
@@ -1090,6 +1091,46 @@ tags: [ ]
 operationIds:
     - addPet
     - findPetsByStatus
+```
+
+## CLI OpenAPI Overlay Usage
+
+The OpenAPI Overlay functionality allows users to apply actions such as updates and removals to an OpenAPI Specification (OAS). This feature is useful for dynamically modifying OAS documents during development, testing, or publishing workflows.
+
+### What is an OpenAPI Overlay?
+An overlay is a OpenAPI specification, where a structured set of actions will be applied to an existing OpenAPI document. It enables:
+
+- Updating existing fields, such as descriptions, parameters, or endpoints.
+- Adding new fields or objects to the OpenAPI document.
+- Removing fields or objects that are no longer relevant.
+
+An overlay document follows the structure below:
+
+```
+overlay: 1.0.0
+info:
+  title: Example Overlay
+  version: 1.0.0
+actions:
+  - target: "$"   // JSONPath definition of the targetted element of the document
+    update: // The action to be applied: update or remove
+      info:
+        description: "Updated description for the OpenAPI specification."
+  - target: "$.paths['/example']"
+    update:
+      get:
+        description: "Updated GET description for /example endpoint."
+  - target: "$.paths['/example'].get.parameters"
+    remove: true   # Example of removing an element
+```
+
+Fore more information about the OpenAPI Overlay options, see [OpenAPI Overlay Specification 1.0.0](https://www.openapis.org/blog/2024/10/22/announcing-overlay-specification) 
+
+Use the `--overlayFile` option to specify the overlay file and apply it to your OpenAPI document.
+
+example:
+```shell
+$ openapi-format openapi.yaml --overlayFile overlay.yaml -o openapi-updated.yaml
 ```
 
 ## CLI generate usage
