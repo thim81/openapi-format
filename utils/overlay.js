@@ -109,14 +109,49 @@ function resolveJsonPath(obj, path) {
           traverse(current[childKey], [...currentPath, childKey], current, childKey)
         );
       }
+    /*} else if (/^\?\((.*)\)$/.test(segment)) {
+      // Handle filtering
+      const condition = segment.match(/^\?\((.*)\)$/)[1];
+      if (Array.isArray(current)) {
+        current.forEach((item, index) => {
+          try {
+            if (eval(condition.replace(/@/g, 'item'))) {
+              traverse(item, [...currentPath, index], current, index);
+            }
+          } catch {
+            // Silently fail for invalid expressions
+          }
+        });
+      }
+    } else if (/^\d*:\d*(:\d+)?$/.test(segment)) {
+      // Array slicing
+      const [start, end, step] = segment.split(':').map((s) => (s ? parseInt(s) : undefined));
+      const sliced = current.slice(start, end);
+      sliced.forEach((item, index) =>
+        traverse(item, [...currentPath, start + index], current, start + index)
+      );
+    } else if (segment.includes(',')) {
+      // Handle union
+      const keys = segment.split(',');
+      keys.forEach((key) => {
+        const normalizedKey = key.replace(/^['"]|['"]$/g, '');
+        if (Array.isArray(current) && /^[0-9]+$/.test(normalizedKey)) {
+          traverse(current[parseInt(normalizedKey)], [...currentPath, normalizedKey], current, normalizedKey);
+        } else if (typeof current === 'object' && current.hasOwnProperty(normalizedKey)) {
+          traverse(current[normalizedKey], [...currentPath, normalizedKey], current, normalizedKey);
+        }
+      });*/
     } else if (segment === '..') {
-      // Recursive descent: traverse all children and capture matches
+      // Recursive descent
       if (typeof current === 'object') {
         Object.keys(current).forEach((childKey) =>
           traverse(current[childKey], currentPath, current, childKey)
         );
       }
-      traverse(current, [...currentPath]); // Ensure the current node is also checked
+      traverse(current, [...currentPath]);
+    } else if (segment === 'length' && Array.isArray(current)) {
+      // Length of arrays
+      results.push({ parent, key, value: current.length });
     } else if (Array.isArray(current) && /^[0-9]+$/.test(segment)) {
       traverse(current[parseInt(segment)], [...currentPath, segment], current, segment);
     } else if (typeof current === 'object' && current.hasOwnProperty(segment)) {
