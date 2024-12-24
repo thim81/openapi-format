@@ -80,6 +80,10 @@ async function openapiOverlay(oaObj, options) {
  * @returns {Array} - An array of matching nodes, each with { parent, key, value }.
  */
 function resolveJsonPath(obj, path) {
+  if (typeof path !== 'string' || !path.startsWith('$')) {
+    return [];
+  }
+
   const segments = path
     .replace(/\['?([^.\[\]]+)'?\]/g, '.$1') // Convert bracket notation to dot notation
     .split('.')
@@ -100,25 +104,28 @@ function resolveJsonPath(obj, path) {
     if (segment === '*') {
       if (Array.isArray(current)) {
         current.forEach((item, index) => traverse(item, [...currentPath, index], current, index));
-      } else if (typeof current === 'object' && current !== null) {
+      } else if (typeof current === 'object') {
         Object.keys(current).forEach((childKey) =>
           traverse(current[childKey], [...currentPath, childKey], current, childKey)
         );
       }
     } else if (segment === '..') {
-      traverse(current, currentPath, parent, key); // Include current level
-      if (typeof current === 'object' && current !== null) {
-        Object.values(current).forEach((value) => traverse(value, currentPath, parent, key));
+      // Recursive descent: traverse all children and capture matches
+      if (typeof current === 'object') {
+        Object.keys(current).forEach((childKey) =>
+          traverse(current[childKey], currentPath, current, childKey)
+        );
       }
+      traverse(current, [...currentPath]); // Ensure the current node is also checked
     } else if (Array.isArray(current) && /^[0-9]+$/.test(segment)) {
       traverse(current[parseInt(segment)], [...currentPath, segment], current, segment);
-    } else if (typeof current === 'object' && current !== null && current.hasOwnProperty(segment)) {
+    } else if (typeof current === 'object' && current.hasOwnProperty(segment)) {
       traverse(current[segment], [...currentPath, segment], current, segment);
     }
   }
 
   traverse(obj);
-  return results;
+  return results.map((node) => node.value);
 }
 
 /**
