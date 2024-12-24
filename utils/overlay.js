@@ -85,7 +85,8 @@ function resolveJsonPath(obj, path) {
   }
 
   const segments = path
-    .replace(/\['?([^.\[\]]+)'?\]/g, '.$1') // Convert bracket notation to dot notation
+    .replace(/\[\?\(([^)]*)\)\]/g, '.?($1)')
+    .replace(/\['?([^.\[\]]+)'?\]/g, '.$1')
     .split('.')
     .slice(1);
 
@@ -102,6 +103,7 @@ function resolveJsonPath(obj, path) {
     }
 
     if (segment === '*') {
+      // Handle wildcard for arrays and objects
       if (Array.isArray(current)) {
         current.forEach((item, index) => traverse(item, [...currentPath, index], current, index));
       } else if (typeof current === 'object') {
@@ -109,57 +111,39 @@ function resolveJsonPath(obj, path) {
           traverse(current[childKey], [...currentPath, childKey], current, childKey)
         );
       }
-    /*} else if (/^\?\((.*)\)$/.test(segment)) {
-      // Handle filtering
-      const condition = segment.match(/^\?\((.*)\)$/)[1];
-      if (Array.isArray(current)) {
-        current.forEach((item, index) => {
-          try {
-            if (eval(condition.replace(/@/g, 'item'))) {
-              traverse(item, [...currentPath, index], current, index);
-            }
-          } catch {
-            // Silently fail for invalid expressions
-          }
+    } else if (segment === '..') {
+      // Handle recursive descent
+      if (typeof current === 'object') {
+        Object.keys(current).forEach((childKey) => {
+          traverse(current[childKey], currentPath, current, childKey);
+          traverse(current[childKey], [...currentPath, childKey], current, childKey);
         });
       }
-    } else if (/^\d*:\d*(:\d+)?$/.test(segment)) {
-      // Array slicing
-      const [start, end, step] = segment.split(':').map((s) => (s ? parseInt(s) : undefined));
-      const sliced = current.slice(start, end);
-      sliced.forEach((item, index) =>
-        traverse(item, [...currentPath, start + index], current, start + index)
-      );
-    } else if (segment.includes(',')) {
-      // Handle union
-      const keys = segment.split(',');
-      keys.forEach((key) => {
-        const normalizedKey = key.replace(/^['"]|['"]$/g, '');
-        if (Array.isArray(current) && /^[0-9]+$/.test(normalizedKey)) {
-          traverse(current[parseInt(normalizedKey)], [...currentPath, normalizedKey], current, normalizedKey);
-        } else if (typeof current === 'object' && current.hasOwnProperty(normalizedKey)) {
-          traverse(current[normalizedKey], [...currentPath, normalizedKey], current, normalizedKey);
-        }
-      });*/
-    } else if (segment === '..') {
-      // Recursive descent
-      if (typeof current === 'object') {
-        Object.keys(current).forEach((childKey) =>
-          traverse(current[childKey], currentPath, current, childKey)
-        );
-      }
-      traverse(current, [...currentPath]);
     } else if (segment === 'length' && Array.isArray(current)) {
-      // Length of arrays
+      // Handle array length
       results.push({ parent, key, value: current.length });
     } else if (Array.isArray(current) && /^[0-9]+$/.test(segment)) {
+      // Handle specific array index
       traverse(current[parseInt(segment)], [...currentPath, segment], current, segment);
     } else if (typeof current === 'object' && current.hasOwnProperty(segment)) {
+      // Handle object key
       traverse(current[segment], [...currentPath, segment], current, segment);
     }
   }
 
   traverse(obj);
+  return results;
+}
+
+/**
+ * Resolves JSONPath-like expressions to matching node values in an object.
+ *
+ * @param {Object} obj - The object to resolve paths in.
+ * @param {string} path - The JSONPath-like expression.
+ * @returns {Array} - An array of matching nodes' values.
+ */
+function resolveJsonPathValue(obj, path) {
+  const results = resolveJsonPath(obj, path)
   return results.map((node) => node.value);
 }
 
@@ -211,5 +195,6 @@ function deepMerge(target, source) {
 module.exports = {
   openapiOverlay,
   deepMerge,
-  resolveJsonPath
+  resolveJsonPath,
+  resolveJsonPathValue
 };

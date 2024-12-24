@@ -1,6 +1,6 @@
 'use strict';
 
-const {openapiOverlay, resolveJsonPath} = require('../utils/overlay');
+const {openapiOverlay, resolveJsonPathValue} = require('../utils/overlay');
 
 const {describe, it, expect} = require('@jest/globals');
 
@@ -257,23 +257,23 @@ describe('openapi-format CLI overlay tests', () => {
     ]);
   });
 });
-describe('resolveJsonPath tests', () => {
+describe('resolveJsonPathValue tests', () => {
   it('should resolve a simple path to a property', () => {
     const obj = {info: {title: 'Test API'}};
-    const result = resolveJsonPath(obj, '$.info.title');
+    const result = resolveJsonPathValue(obj, '$.info.title');
     expect(result).toEqual(['Test API']);
   });
 
   it('should resolve a path with a wildcard for object keys', () => {
     const obj = {paths: {'/example': {get: {}}, '/test': {post: {}}}};
-    const result = resolveJsonPath(obj, '$.paths[*]');
+    const result = resolveJsonPathValue(obj, '$.paths[*]');
     expect(result.length).toBe(2);
     expect(result).toEqual([{'get': {}}, {'post': {}}]);
   });
 
   it('should resolve a path with a wildcard for array elements', () => {
     const obj = { tags: [{ name: 'tag1' }, { name: 'tag2' }] };
-    const result = resolveJsonPath(obj, '$.tags[*]');
+    const result = resolveJsonPathValue(obj, '$.tags[*]');
     expect(result.length).toBe(2);
     expect(result).toEqual([
       {'name': 'tag1'},
@@ -283,7 +283,7 @@ describe('resolveJsonPath tests', () => {
 
   it('should resolve a nested path with specific array indices', () => {
     const obj = {tags: [{name: 'tag1'}, {name: 'tag2'}]};
-    const result = resolveJsonPath(obj, '$.tags[1].name');
+    const result = resolveJsonPathValue(obj, '$.tags[1].name');
     expect(result).toEqual(['tag2']);
   });
 
@@ -294,7 +294,7 @@ describe('resolveJsonPath tests', () => {
         '/test': { post: { summary: 'Test endpoint' } },
       },
     };
-    const result = resolveJsonPath(obj, '$.paths[*].*');
+    const result = resolveJsonPathValue(obj, '$.paths[*].*');
     expect(result.length).toBe(2);
     expect(result).toEqual([
       {'summary': 'Example endpoint'},
@@ -304,22 +304,22 @@ describe('resolveJsonPath tests', () => {
 
   it('should return an empty array for a non-existent path', () => {
     const obj = { info: { title: 'Test API' } };
-    const result = resolveJsonPath(obj, '$.nonExistent.path');
+    const result = resolveJsonPathValue(obj, '$.nonExistent.path');
     expect(result).toEqual([]);
   });
 
   it('should resolve a path with a parent reference', () => {
     const obj = { paths: { '/example': { get: {} } } };
-    const result = resolveJsonPath(obj, '$.paths..get');
+    const result = resolveJsonPathValue(obj, '$.paths..get');
     expect(result).toEqual([]);
   });
 
   it('should handle array paths with mixed indices and wildcards', () => {
     const obj = {items: [{id: 1}, {id: 2}, {id: 3}]};
-    const result = resolveJsonPath(obj, '$.items[1].id');
+    const result = resolveJsonPathValue(obj, '$.items[1].id');
     expect(result).toEqual([2]);
 
-    const wildcardResult = resolveJsonPath(obj, '$.items[*].id');
+    const wildcardResult = resolveJsonPathValue(obj, '$.items[*].id');
     expect(wildcardResult.length).toBe(3);
     expect(wildcardResult).toEqual([1, 2, 3]);
   });
@@ -332,20 +332,56 @@ describe('resolveJsonPath tests', () => {
         }
       }
     };
-    const result = resolveJsonPath(obj, '$.components.schemas.ExampleSchema.properties.id.type');
+    const result = resolveJsonPathValue(obj, '$.components.schemas.ExampleSchema.properties.id.type');
     expect(result).toEqual(['string']);
   });
 
   it('should handle root path `$`', () => {
     const obj = { openapi: '3.0.0', info: { title: 'Test API' } };
-    const result = resolveJsonPath(obj, '$');
+    const result = resolveJsonPathValue(obj, '$');
     expect(result).toEqual([{'openapi': '3.0.0', 'info': {'title': 'Test API'}}]);
   });
 
   it('should handle invalid JSONPath gracefully', () => {
     const obj = { info: { title: 'Test API' } };
-    const result = resolveJsonPath(obj, 'invalidPath');
+    const result = resolveJsonPathValue(obj, 'invalidPath');
     expect(result).toEqual([]);
   });
+
+  it('should handle `length` property of arrays', () => {
+    const obj = { items: [1, 2, 3, 4, 5] };
+    const result = resolveJsonPathValue(obj, '$.items.length');
+    expect(result).toEqual([5]);
+  });
+
+  // it('should handle a path with escaped special characters', () => {
+  //   const obj = { 'key.with.dot': 'value' };
+  //   const result = resolveJsonPathValue(obj, "$['key.with.dot']");
+  //   expect(result).toEqual(['value']);
+  // });
+
+  // it('should handle filtering with conditions', () => {
+  //   const obj = { items: [{ id: 1 }, { id: 2 }, { id: 3 }] };
+  //   const result = resolveJsonPathValue(obj, '$.items[?(@.id==2)]');
+  //   expect(result).toEqual([{ id: 2 }]);
+  // });
+
+  // it('should handle array slicing', () => {
+  //   const obj = { items: [1, 2, 3, 4, 5] };
+  //   const result = resolveJsonPathValue(obj, '$.items[1:4]');
+  //   expect(result).toEqual([2, 3, 4]);
+  // });
+
+  // it('should handle union of keys', () => {
+  //   const obj = { data: { key1: 'value1', key2: 'value2', key3: 'value3' } };
+  //   const result = resolveJsonPathValue(obj, '$.data["key1","key3"]');
+  //   expect(result).toEqual(['value1', 'value3']);
+  // });
+
+  // it('should resolve a path with recursive descent', () => {
+  //   const obj = { paths: { '/example': { get: { summary: 'Example' } } } };
+  //   const result = resolveJsonPathValue(obj, '$.paths..summary');
+  //   expect(result).toEqual(['Example']);
+  // });
 });
 
