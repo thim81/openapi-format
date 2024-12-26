@@ -8,8 +8,8 @@
 async function openapiOverlay(oaObj, options) {
   const overlayDoc = options?.overlaySet;
 
-  let unusedActions = [...overlayDoc.actions]; // Track unused actions
-  let totalActions = overlayDoc.actions.length; // Total actions provided
+  let unusedActions = [...(overlayDoc?.actions || [])]; // Track unused actions
+  let totalActions = overlayDoc?.actions?.length || 0;  // Total actions provided
 
   overlayDoc?.actions.forEach((action) => {
     const { target, update, remove } = action;
@@ -143,8 +143,8 @@ function resolveJsonPath(obj, path) {
  * @returns {Array} - An array of matching nodes' values.
  */
 function resolveJsonPathValue(obj, path) {
-  const results = resolveJsonPath(obj, path)
-  return results.map((node) => node.value);
+  const nodes = resolveJsonPath(obj, path);
+  return nodes.map((node) => node.value);
 }
 
 /**
