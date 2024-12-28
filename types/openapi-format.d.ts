@@ -238,4 +238,26 @@ declare module 'openapi-format' {
     document: T,
     options?: Record<string, unknown>
   ): Promise<string>;
+
+  /**
+   * Resolves JSONPath expressions to matching nodes in an object.
+   * @param {Object} obj - The object to resolve paths in.
+   * @param {string} path - The JSONPath-like expression.
+   * @returns {Array<{ value: any; parent: any; key: string | number }>} - An array of matching nodes with value, parent, and key metadata.
+   */
+  export function resolveJsonPath(
+    obj: Record<string, unknown>,
+    path: string
+  ): Array<{ value: any; parent: any; key: string | number }>;
+
+  /**
+   * Resolves JSONPath expressions to matching node values in an object.
+   * @param {Object} obj - The object to resolve paths in.
+   * @param {string} path - The JSONPath-like expression.
+   * @returns {Array<any>} - An array of matching node values.
+   */
+  export function resolveJsonPathValue(
+    obj: Record<string, unknown>,
+    path: string
+  ): Array<any>;
 }

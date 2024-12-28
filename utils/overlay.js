@@ -1,3 +1,5 @@
+const jp = require("jsonpath");
+
 /**
  * Applies an overlay to an OpenAPI Specification (OAS).
  *
@@ -73,10 +75,10 @@ async function openapiOverlay(oaObj, options) {
 }
 
 /**
- * Resolves JSONPath-like expressions to matching nodes in an object.
+ * Resolves JSONPath expressions to matching nodes in an object.
  *
  * @param {Object} obj - The object to resolve paths in.
- * @param {string} path - The JSONPath-like expression.
+ * @param {string} path - The JSONPath expression.
  * @returns {Array} - An array of matching nodes, each with { parent, key, value }.
  */
 function resolveJsonPath(obj, path) {
@@ -84,59 +86,29 @@ function resolveJsonPath(obj, path) {
     return [];
   }
 
-  const segments = path
-    .replace(/\[\?\(([^)]*)\)\]/g, '.?($1)')
-    .replace(/\['?([^.\[\]]+)'?\]/g, '.$1')
-    .split('.')
-    .slice(1);
+  try {
+    const nodes = jp.nodes(obj, path); // Get nodes, including paths and values
 
-  const results = [];
+    return nodes.map(({ path: matchPath, value }) => {
+      const parentPath = matchPath.slice(0, -1); // Parent path
+      const key = matchPath[matchPath.length - 1]; // Key of the current node
+      const parent =
+        parentPath.length > 0 ? jp.value(obj, jp.stringify(parentPath)) : null;
 
-  function traverse(current, currentPath = [], parent = null, key = null) {
-    if (current === null || current === undefined) return;
-
-    const segment = segments[currentPath.length];
-
-    if (segment === undefined) {
-      results.push({ parent, key, value: current });
-      return;
-    }
-
-    if (segment === '*') {
-      // Handle wildcard for arrays and objects
-      if (Array.isArray(current)) {
-        current.forEach((item, index) => traverse(item, [...currentPath, index], current, index));
-      } else if (typeof current === 'object') {
-        Object.keys(current).forEach((childKey) =>
-          traverse(current[childKey], [...currentPath, childKey], current, childKey)
-        );
-      }
-    } else if (segment === '..') {
-      // Handle recursive descent
-      if (typeof current === 'object') {
-        Object.keys(current).forEach((childKey) => {
-          traverse(current[childKey], currentPath, current, childKey);
-          traverse(current[childKey], [...currentPath, childKey], current, childKey);
-        });
-      }
-    } else if (segment === 'length' && Array.isArray(current)) {
-      // Handle array length
-      results.push({ parent, key, value: current.length });
-    } else if (Array.isArray(current) && /^[0-9]+$/.test(segment)) {
-      // Handle specific array index
-      traverse(current[parseInt(segment)], [...currentPath, segment], current, segment);
-    } else if (typeof current === 'object' && current.hasOwnProperty(segment)) {
-      // Handle object key
-      traverse(current[segment], [...currentPath, segment], current, segment);
-    }
+      return {
+        value,
+        parent,
+        key,
+      };
+    });
+  } catch (err) {
+    console.error(`Error resolving JSONPath: ${err.message}`);
+    return [];
   }
-
-  traverse(obj);
-  return results;
 }
 
 /**
- * Resolves JSONPath-like expressions to matching node values in an object.
+ * Resolves JSONPath expressions to matching node values in an object.
  *
  * @param {Object} obj - The object to resolve paths in.
  * @param {string} path - The JSONPath-like expression.
