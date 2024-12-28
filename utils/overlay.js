@@ -1,4 +1,4 @@
-const jp = require("jsonpath");
+const { JSONPath } = require("jsonpath-plus");
 
 /**
  * Applies an overlay to an OpenAPI Specification (OAS).
@@ -67,8 +67,8 @@ async function openapiOverlay(oaObj, options) {
   return {
     data: oaObj, // The processed OpenAPI document
     resultData: {
-      unusedActions: unusedActions, // Actions that couldn't be applied
-      totalActions: totalActions, // Total number of actions in the overlay
+      unusedActions, // Actions that couldn't be applied
+      totalActions, // Total number of actions in the overlay
       appliedActions: totalActions - unusedActions.length, // Successfully applied actions
     },
   };
@@ -87,18 +87,13 @@ function resolveJsonPath(obj, path) {
   }
 
   try {
-    const nodes = jp.nodes(obj, path); // Get nodes, including paths and values
+    const nodes = JSONPath({ path, json: obj, resultType: 'all' });
 
-    return nodes.map(({ path: matchPath, value }) => {
-      const parentPath = matchPath.slice(0, -1); // Parent path
-      const key = matchPath[matchPath.length - 1]; // Key of the current node
-      const parent =
-        parentPath.length > 0 ? jp.value(obj, jp.stringify(parentPath)) : null;
-
+    return nodes.map(({ path: matchPath, value, parent, parentProperty }) => {
       return {
         value,
         parent,
-        key,
+        key: parentProperty,
       };
     });
   } catch (err) {
@@ -111,7 +106,7 @@ function resolveJsonPath(obj, path) {
  * Resolves JSONPath expressions to matching node values in an object.
  *
  * @param {Object} obj - The object to resolve paths in.
- * @param {string} path - The JSONPath-like expression.
+ * @param {string} path - The JSONPath expression.
  * @returns {Array} - An array of matching nodes' values.
  */
 function resolveJsonPathValue(obj, path) {

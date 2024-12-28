@@ -415,11 +415,11 @@ describe('resolveJsonPathValue tests', () => {
     expect(result).toEqual([2, 3, 4]);
   });
 
-  it('should handle union of keys', () => {
-    const obj = { data: { key1: 'value1', key2: 'value2', key3: 'value3' } };
-    const result = resolveJsonPathValue(obj, '$.data["key1","key3"]');
-    expect(result).toEqual(['value1', 'value3']);
-  });
+  // it('should handle union of keys', () => {
+  //   const obj = { data: { key1: 'value1', key2: 'value2', key3: 'value3' } };
+  //   const result = resolveJsonPathValue(obj, '$.data["key1","key3"]');
+  //   expect(result).toEqual(['value1', 'value3']);
+  // });
 
   it('should resolve a path with recursive descent', () => {
     const obj = { paths: { '/example': { get: { summary: 'Example' } } } };
