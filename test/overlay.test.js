@@ -426,5 +426,11 @@ describe('resolveJsonPathValue tests', () => {
     const result = resolveJsonPathValue(obj, '$.paths..summary');
     expect(result).toEqual(['Example']);
   });
+
+  it('should resolve a path with empty oas', () => {
+    const obj = "";
+    const result = resolveJsonPathValue(obj, '$.paths..summary');
+    expect(result).toEqual([]);
+  });
 });
 

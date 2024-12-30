@@ -82,7 +82,7 @@ async function openapiOverlay(oaObj, options) {
  * @returns {Array} - An array of matching nodes, each with { parent, key, value }.
  */
 function resolveJsonPath(obj, path) {
-  if (typeof path !== 'string' || !path.startsWith('$')) {
+  if (typeof path !== 'string' || !path.startsWith('$') || obj.length === 0) {
     return [];
   }
 
