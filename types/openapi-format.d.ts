@@ -1,8 +1,36 @@
 // openapi-format.d.ts
 
 declare module 'openapi-format' {
+  // OpenAPI types
   import { OpenAPIV3 } from 'openapi-types'
 
+  // OpenAPI Overlay
+  interface OpenAPIOverlay {
+    overlay: string;
+    info: Info;
+    actions: OverlayAction[];
+  }
+
+  interface Info {
+    title: string;
+    version: string;
+  }
+
+  type OverlayAction = UpdateAction | RemoveAction;
+
+  interface UpdateAction {
+    target: string;
+    update: Record<string, unknown>;
+    description?: string;
+  }
+
+  interface RemoveAction {
+    target: string;
+    remove: boolean;
+    description?: string;
+  }
+
+  // OpenAPI Format types
   interface OpenAPISortSet {
     root?: Array<'openapi' | 'info' | 'servers' | 'paths' | 'components' | 'tags' | 'x-tagGroups' | 'externalDocs'>
     get?: Array<'operationId' | 'summary' | 'description' | 'parameters' | 'requestBody' | 'responses'>
@@ -158,7 +186,6 @@ declare module 'openapi-format' {
     options: OpenAPICasingOptions
   ): Promise<OpenAPIResult>
 
-
   /**
    * Applies OpenAPI overlay actions to an OpenAPI Specification (OAS).
    * @param {Object} baseOAS - The OpenAPI document.
@@ -213,6 +240,7 @@ declare module 'openapi-format' {
     data: Record<string, unknown>,
     options?: WriteFileOptions
   ): Promise<void>;
+  
   /**
    * Changes the case of a given string to the specified case type.
    * @param {string} valueAsString - The input string to change the case of.
