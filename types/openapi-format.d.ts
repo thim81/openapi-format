@@ -119,7 +119,7 @@ declare module 'openapi-format' {
 
   interface OpenAPIResult {
     data: OpenAPIV3.Document | string
-    resultData: Record<string, never>
+    resultData: Record<string, any>
   }
 
   export interface AnalyzeOpenApiResult {
@@ -240,7 +240,7 @@ declare module 'openapi-format' {
     data: Record<string, unknown>,
     options?: WriteFileOptions
   ): Promise<void>;
-  
+
   /**
    * Changes the case of a given string to the specified case type.
    * @param {string} valueAsString - The input string to change the case of.
