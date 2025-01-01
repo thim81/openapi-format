@@ -1,0 +1,17 @@
+openapi: 3.0.1
+info:
+  title: Datasource API
+  description: API to work with Datasources.
+  termsOfService: 'urn:tos'''
+paths:
+  /timeseries:
+    get:
+      operationId: searchTimeSeriesDefinitions
+      summary: Search the time series definitions
+      parameters:
+        - name: searchPattern
+          in: query
+          description: Pattern to search time series definitions. Cannot be used at the same time as name parameter.
+          required: false
+          schema:
+            type: string

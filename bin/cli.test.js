@@ -191,6 +191,36 @@ describe('openapi-format CLI command', () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
+  it('should use the overlayFile', async () => {
+    const path = `test/overlay-combi`;
+    const inputFile = `${path}/input.yaml`;
+    const outputFile = `${path}/output.yaml`;
+    const output = await getLocalFile(outputFile);
+    const setting = `${path}/overlay.yaml`;
+
+    let result = await testUtils.cli([inputFile, `--overlayFile ${setting}`, `--no-sort`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
+  it('should use the overlayFile with verbose', async () => {
+    const path = `test/overlay-combi`;
+    const inputFile = `${path}/input.yaml`;
+    const outputFile = `${path}/output.yaml`;
+    const output = await getLocalFile(outputFile);
+    const setting = `${path}/overlay.yaml`;
+
+    let result = await testUtils.cli([inputFile, `--overlayFile ${setting}`, `--no-sort`, `-v`], '.');
+    // console.log('result', result)
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(result.stdout).toMatchSnapshot();
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
   it('should bundle reference', async () => {
     const path = `test/yaml-ref-quotes`;
     const inputFile = `${path}/input.yaml`;

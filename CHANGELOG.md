@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.25.0] - 2025-01-01
+
+- CLI - Added option to apply OpenAPI overlay actions
+
 ## [1.24.2] - 2024-10-07
 
 - fix: scalar $ref: >-

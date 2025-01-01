@@ -1,8 +1,36 @@
 // openapi-format.d.ts
 
 declare module 'openapi-format' {
+  // OpenAPI types
   import { OpenAPIV3 } from 'openapi-types'
 
+  // OpenAPI Overlay
+  interface OpenAPIOverlay {
+    overlay: string;
+    info: Info;
+    actions: OverlayAction[];
+  }
+
+  interface Info {
+    title: string;
+    version: string;
+  }
+
+  type OverlayAction = UpdateAction | RemoveAction;
+
+  interface UpdateAction {
+    target: string;
+    update: Record<string, unknown>;
+    description?: string;
+  }
+
+  interface RemoveAction {
+    target: string;
+    remove: boolean;
+    description?: string;
+  }
+
+  // OpenAPI Format types
   interface OpenAPISortSet {
     root?: Array<'openapi' | 'info' | 'servers' | 'paths' | 'components' | 'tags' | 'x-tagGroups' | 'externalDocs'>
     get?: Array<'operationId' | 'summary' | 'description' | 'parameters' | 'requestBody' | 'responses'>
@@ -78,9 +106,20 @@ declare module 'openapi-format' {
     defaultFilter?: OpenAPIFilterSet
   }
 
+  interface OpenAPIOverlayOptions {
+    overlaySet: {
+      actions: Array<{
+        target: string;
+        update?: Record<string, unknown>;
+        remove?: boolean;
+        description?: string;
+      }>;
+    };
+  }
+
   interface OpenAPIResult {
     data: OpenAPIV3.Document | string
-    resultData: Record<string, never>
+    resultData: Record<string, any>
   }
 
   export interface AnalyzeOpenApiResult {
@@ -148,6 +187,17 @@ declare module 'openapi-format' {
   ): Promise<OpenAPIResult>
 
   /**
+   * Applies OpenAPI overlay actions to an OpenAPI Specification (OAS).
+   * @param {Object} baseOAS - The OpenAPI document.
+   * @param {Object} options - The options containing overlaySet and additional configurations.
+   * @returns {Object} - The processed OpenAPI Specification and result metadata.
+   */
+  export function openapiOverlay(
+    baseOAS: OpenAPIV3.Document,
+    options: OpenAPIOverlayOptions
+  ): Promise<OpenAPIResult>;
+
+  /**
    * Parses a JSON or YAML file into a JavaScript object.
    * @param {string} filePath - The path to the JSON or YAML file.
    * @param {Record<string, unknown>} [options] - Additional parsing options.
@@ -190,6 +240,7 @@ declare module 'openapi-format' {
     data: Record<string, unknown>,
     options?: WriteFileOptions
   ): Promise<void>;
+
   /**
    * Changes the case of a given string to the specified case type.
    * @param {string} valueAsString - The input string to change the case of.
@@ -215,4 +266,26 @@ declare module 'openapi-format' {
     document: T,
     options?: Record<string, unknown>
   ): Promise<string>;
+
+  /**
+   * Resolves JSONPath expressions to matching nodes in an object.
+   * @param {Object} obj - The object to resolve paths in.
+   * @param {string} path - The JSONPath-like expression.
+   * @returns {Array<{ value: any; parent: any; key: string | number }>} - An array of matching nodes with value, parent, and key metadata.
+   */
+  export function resolveJsonPath(
+    obj: Record<string, unknown>,
+    path: string
+  ): Array<{ value: any; parent: any; key: string | number }>;
+
+  /**
+   * Resolves JSONPath expressions to matching node values in an object.
+   * @param {Object} obj - The object to resolve paths in.
+   * @param {string} path - The JSONPath-like expression.
+   * @returns {Array<any>} - An array of matching node values.
+   */
+  export function resolveJsonPathValue(
+    obj: Record<string, unknown>,
+    path: string
+  ): Array<any>;
 }

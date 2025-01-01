@@ -32,6 +32,7 @@ For upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0
 * [OpenAPI generate elements](#openapi-generate-options)
 * [CLI sort usage](#cli-sort-usage)
 * [CLI filter usage](#cli-filter-usage)
+* [CLI OpenAPI overlay usage](#cli-openapi-overlay-usage)
 * [CLI generate usage](#cli-generate-usage)
 * [CLI casing usage](#cli-casing-usage)
 * [CLI split & bundle usage](#cli-bundle--split-usage)
@@ -70,6 +71,7 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on operationID's
 - [x] Filter OpenAPI files based on operations definition
 - [x] Filter OpenAPI files based on response content-types
+- [x] Apply OpenAPI overlay actions
 - [x] Strip flags from OpenAPI files
 - [x] Strip unused components from OpenAPI files
 - [x] Generate OpenAPI elements for consistency
@@ -147,8 +149,9 @@ Options:
 
   --sortFile            The file to specify custom OpenAPI fields ordering      [path]
   --casingFile          The file to specify casing rules                        [path]
-  --generateFile        The file to specify generate rules                      [path]
+  --generateFile        The file to specify generate rules                      [path]  
   --filterFile          The file to specify filter rules                        [path]
+  --overlayFile         The file to specify OpenAPI overlay actions             [path]
 
   --no-sort             Don't sort the OpenAPI file                          [boolean]
   --keepComments        Don't remove the comments from the OpenAPI YAML file [boolean]
@@ -184,6 +187,7 @@ Options:
 | --filterFile         | -f            | the file to specify filter setting                                          | path to file | defaultFilter.json         | optional |
 | --casingFile         | -k            | the file to specify casing setting                                          | path to file |                            | optional |
 | --generateFile       | -g            | the file to specify generate rules                                          | path to file |                            | optional |
+| --overlayFile        | -l            | the file to specify OpenAPI overlay actions                                 | path to file |                            | optional |
 | --no-sort            |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                      | optional |
 | --keepComments       |               | don't remove the comments from the OpenAPI YAML file                        | boolean      | FALSE                      | optional |
 | --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json | optional |
@@ -1087,6 +1091,46 @@ tags: [ ]
 operationIds:
     - addPet
     - findPetsByStatus
+```
+
+## CLI OpenAPI Overlay Usage
+
+The OpenAPI Overlay functionality allows users to apply actions such as updates and removals to an OpenAPI Specification (OAS). This feature is useful for dynamically modifying OAS documents during development, testing, or publishing workflows.
+
+### What is an OpenAPI Overlay?
+An [OpenAPI Overlay](https://spec.openapis.org/overlay/v1.0.0.html) is a specification that defines a structured set of actions to be applied to an existing OpenAPI document. It enables:
+
+- Updating existing fields, such as descriptions, parameters, or endpoints.
+- Adding new fields or objects to the OpenAPI document.
+- Removing fields or objects that are no longer relevant.
+
+An overlay document follows the structure below:
+
+```
+overlay: 1.0.0
+info:
+  title: Example Overlay
+  version: 1.0.0
+actions:
+  - target: "$"   // JSONPath definition of the targetted element of the document
+    update: // The action to be applied: update or remove
+      info:
+        description: "Updated description for the OpenAPI specification."
+  - target: "$.paths['/example']"
+    update:
+      get:
+        description: "Updated GET description for /example endpoint."
+  - target: "$.paths['/example'].get.parameters"
+    remove: true   # Example of removing an element
+```
+
+Fore more information about the OpenAPI Overlay options, see [OpenAPI Overlay Specification 1.0.0](https://www.openapis.org/blog/2024/10/22/announcing-overlay-specification) 
+
+Use the `--overlayFile` option to specify the overlay file and apply it to your OpenAPI document.
+
+example:
+```shell
+$ openapi-format openapi.yaml --overlayFile overlay.yaml -o openapi-updated.yaml
 ```
 
 ## CLI generate usage
