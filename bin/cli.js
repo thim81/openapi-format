@@ -254,8 +254,12 @@ async function run(oaFile, options) {
   // Apply OpenAPI overlay actions
   if (options.overlaySet) {
     const resOverlay = await openapiFormat.openapiOverlay(resObj, options);
-    if (resOverlay?.resultData &&
-      (resOverlay.resultData.unusedActions || resOverlay.resultData.appliedActions || resOverlay.resultData.totalActions)) {
+    if (
+      resOverlay?.resultData &&
+      (resOverlay.resultData.unusedActions ||
+        resOverlay.resultData.totalUsedActions ||
+        resOverlay.resultData.totalActions)
+    ) {
       cliLog.unusedActions = resOverlay.resultData.unusedActions || [];
       cliLog.totalUsedActions = resOverlay.resultData.totalUsedActions || 0;
       cliLog.totalUnusedActions = resOverlay.resultData.totalUnusedActions || 0;
@@ -358,7 +362,7 @@ async function run(oaFile, options) {
   }
 
   // Show unused components
-  if (options.overlaySet && (cliLog?.totalActions || cliLog?.appliedActions || cliLog?.unusedActions)) {
+  if (options.overlaySet && (cliLog?.totalActions || cliLog?.totalUsedActions || cliLog?.unusedActions)) {
     // Log summary of actions
     logOut(`${consoleLine}`, options.verbose); // LOG - horizontal rule
     logOut(`OpenAPI Overlay actions summary:`, options.verbose);
@@ -369,7 +373,9 @@ async function run(oaFile, options) {
     const cliOut = [];
     cliLog.unusedActions.forEach(action => {
       const description = action.description || 'No description provided';
-      cliOut.push(`- Target: ${action.target}\n  Type: ${action.update ? 'update' : action.remove ? 'remove' : 'unknown'}`);
+      cliOut.push(
+        `- Target: ${action.target}\n  Type: ${action.update ? 'update' : action.remove ? 'remove' : 'unknown'}`
+      );
     });
 
     if (cliLog.unusedActions.length > 0) {

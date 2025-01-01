@@ -1,4 +1,4 @@
-const { JSONPath } = require("jsonpath-plus");
+const {JSONPath} = require('jsonpath-plus');
 
 /**
  * Applies an overlay to an OpenAPI Specification (OAS).
@@ -11,11 +11,11 @@ async function openapiOverlay(oaObj, options) {
   const overlayDoc = options?.overlaySet;
 
   let unusedActions = [...(overlayDoc?.actions || [])]; // Track unused actions
-  let totalActions = overlayDoc?.actions?.length || 0;  // Total actions provided
+  let totalActions = overlayDoc?.actions?.length || 0; // Total actions provided
   let usedActions = []; // Initialize usedActions array
 
-  overlayDoc?.actions.forEach((action) => {
-    const { target, update, remove } = action;
+  overlayDoc?.actions.forEach(action => {
+    const {target, update, remove} = action;
 
     if (!target) {
       console.error('Action with missing target');
@@ -27,7 +27,7 @@ async function openapiOverlay(oaObj, options) {
       if (update) {
         oaObj = deepMerge(oaObj, update);
         usedActions.push(action);
-        unusedActions = unusedActions.filter((a) => a !== action);
+        unusedActions = unusedActions.filter(a => a !== action);
       }
       if (remove) {
         console.error('Remove operations are not supported at the root level.');
@@ -41,12 +41,12 @@ async function openapiOverlay(oaObj, options) {
     if (targets.length > 0) {
       // Mark this action as used
       usedActions.push(action);
-      unusedActions = unusedActions.filter((a) => a !== action);
+      unusedActions = unusedActions.filter(a => a !== action);
     }
 
     if (remove) {
       // Handle remove actions
-      targets.forEach((node) => {
+      targets.forEach(node => {
         if (node.parent && node.key !== undefined) {
           if (Array.isArray(node.parent)) {
             // Splice array item instead of setting it to null
@@ -58,7 +58,7 @@ async function openapiOverlay(oaObj, options) {
       });
     } else if (update) {
       // Handle update actions
-      targets.forEach((node) => {
+      targets.forEach(node => {
         if (node.parent && node.key !== undefined) {
           node.parent[node.key] = deepMerge(node.value, update);
         }
@@ -75,7 +75,7 @@ async function openapiOverlay(oaObj, options) {
       totalActions,
       totalUsedActions: totalActions - unusedActions.length,
       totalUnusedActions: unusedActions.length
-    },
+    }
   };
 }
 
@@ -92,13 +92,13 @@ function resolveJsonPath(obj, path) {
   }
 
   try {
-    const nodes = JSONPath({ path, json: obj, resultType: 'all' });
+    const nodes = JSONPath({path, json: obj, resultType: 'all'});
 
-    return nodes.map(({ path: matchPath, value, parent, parentProperty }) => {
+    return nodes.map(({path: matchPath, value, parent, parentProperty}) => {
       return {
         value,
         parent,
-        key: parentProperty,
+        key: parentProperty
       };
     });
   } catch (err) {
@@ -116,7 +116,7 @@ function resolveJsonPath(obj, path) {
  */
 function resolveJsonPathValue(obj, path) {
   const nodes = resolveJsonPath(obj, path);
-  return nodes.map((node) => node.value);
+  return nodes.map(node => node.value);
 }
 
 /**
@@ -132,11 +132,10 @@ function deepMerge(target, source) {
   if (Array.isArray(target) && Array.isArray(source)) {
     // Merge arrays by unique 'name' and 'in' for OpenAPI parameters
     const mergedArray = [...target];
-    source.forEach((sourceItem) => {
+    source.forEach(sourceItem => {
       if (sourceItem && sourceItem.name && sourceItem.in) {
         const existingIndex = mergedArray.findIndex(
-          (targetItem) =>
-            targetItem && targetItem.name === sourceItem.name && targetItem.in === sourceItem.in
+          targetItem => targetItem && targetItem.name === sourceItem.name && targetItem.in === sourceItem.in
         );
         if (existingIndex !== -1) {
           // Merge existing item with source item
