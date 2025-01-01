@@ -7,12 +7,12 @@ const {describe, it, expect} = require('@jest/globals');
 describe('openapi-format CLI overlay tests', () => {
   it('should log an error if an action is missing a target', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-    const baseOAS = { openapi: '3.0.0', info: { title: 'Test API' } };
+    const baseOAS = {openapi: '3.0.0', info: {title: 'Test API'}};
     const overlaySet = {
-      actions: [{ update: { description: 'Update description without a target' } }],
+      actions: [{update: {description: 'Update description without a target'}}]
     };
 
-    await openapiOverlay(baseOAS, { overlaySet });
+    await openapiOverlay(baseOAS, {overlaySet});
     expect(consoleSpy).toHaveBeenCalledWith('Action with missing target');
     consoleSpy.mockRestore();
   });
@@ -21,84 +21,84 @@ describe('openapi-format CLI overlay tests', () => {
     const baseOAS = {
       openapi: '3.0.0',
       servers: [
-        { url: 'https://api.example.com', description: 'Default server' },
-        { url: 'https://api.new-example.com', description: 'New server' },
-      ],
+        {url: 'https://api.example.com', description: 'Default server'},
+        {url: 'https://api.new-example.com', description: 'New server'}
+      ]
     };
     const overlaySet = {
-      actions: [{ target: '$.servers[0]', remove: true }],
+      actions: [{target: '$.servers[0]', remove: true}]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
-    expect(result.data.servers).toEqual([{ url: 'https://api.new-example.com', description: 'New server' }]);
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.servers).toEqual([{url: 'https://api.new-example.com', description: 'New server'}]);
   });
 
   it('should apply updates to the root object if target is `$` and no matches', async () => {
-    const baseOAS = { openapi: '3.0.0', info: { title: 'Test API' } };
+    const baseOAS = {openapi: '3.0.0', info: {title: 'Test API'}};
     const overlaySet = {
       actions: [
         {
           target: '$',
-          update: { externalDocs: { url: 'https://docs.example.com' } },
-        },
-      ],
+          update: {externalDocs: {url: 'https://docs.example.com'}}
+        }
+      ]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
-    expect(result.data).toHaveProperty('externalDocs', { url: 'https://docs.example.com' });
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data).toHaveProperty('externalDocs', {url: 'https://docs.example.com'});
   });
 
   it('should update the root object when target is $', async () => {
-    const baseOAS = { openapi: '3.0.0', info: { title: 'Test API' } };
+    const baseOAS = {openapi: '3.0.0', info: {title: 'Test API'}};
     const overlaySet = {
       actions: [
         {
           target: '$',
-          update: { externalDocs: { url: 'https://docs.example.com' } },
-        },
-      ],
+          update: {externalDocs: {url: 'https://docs.example.com'}}
+        }
+      ]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
-    expect(result.data).toHaveProperty('externalDocs', { url: 'https://docs.example.com' });
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data).toHaveProperty('externalDocs', {url: 'https://docs.example.com'});
     expect(result.resultData.totalUsedActions).toBe(1);
     expect(result.resultData.unusedActions.length).toBe(0);
   });
 
   it('should log an error for remove actions on the root object', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-    const baseOAS = { openapi: '3.0.0', info: { title: 'Test API' } };
+    const baseOAS = {openapi: '3.0.0', info: {title: 'Test API'}};
     const overlaySet = {
       actions: [
         {
           target: '$',
-          remove: true,
-        },
-      ],
+          remove: true
+        }
+      ]
     };
 
-    await openapiOverlay(baseOAS, { overlaySet });
+    await openapiOverlay(baseOAS, {overlaySet});
     expect(consoleSpy).toHaveBeenCalledWith('Remove operations are not supported at the root level.');
     consoleSpy.mockRestore();
   });
 
   it('should properly handle no matches for the target', async () => {
-    const baseOAS = { openapi: '3.0.0', info: { title: 'Test API' } };
+    const baseOAS = {openapi: '3.0.0', info: {title: 'Test API'}};
     const overlaySet = {
-      actions: [{ target: '$.nonExistentPath', update: { description: 'New description' } }],
+      actions: [{target: '$.nonExistentPath', update: {description: 'New description'}}]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
+    const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.resultData.unusedActions).toEqual(overlaySet.actions);
   });
 
   it('should track unused, total, and applied actions correctly', async () => {
-    const baseOAS = { openapi: '3.0.0', info: { title: 'Test API' } };
+    const baseOAS = {openapi: '3.0.0', info: {title: 'Test API'}};
     const overlaySet = {
       actions: [
-        { target: '$.info', update: { description: 'Updated description' } },
-        { target: '$.nonExistentPath', update: { description: 'New description' } },
-      ],
+        {target: '$.info', update: {description: 'Updated description'}},
+        {target: '$.nonExistentPath', update: {description: 'New description'}}
+      ]
     };
   });
 
@@ -106,47 +106,47 @@ describe('openapi-format CLI overlay tests', () => {
     const baseOAS = {
       openapi: '3.0.0',
       servers: [
-        { url: 'https://api.example.com', description: 'Default server' },
-        { url: 'https://api.new-example.com', description: 'New server' },
-      ],
+        {url: 'https://api.example.com', description: 'Default server'},
+        {url: 'https://api.new-example.com', description: 'New server'}
+      ]
     };
     const overlaySet = {
-      actions: [{ target: '$.servers[0]', remove: true }],
+      actions: [{target: '$.servers[0]', remove: true}]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
-    expect(result.data.servers).toEqual([{ url: 'https://api.new-example.com', description: 'New server' }]);
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.servers).toEqual([{url: 'https://api.new-example.com', description: 'New server'}]);
   });
 
   it('should apply updates to the root object if target is `$` and no matches', async () => {
-    const baseOAS = { openapi: '3.0.0', info: { title: 'Test API' } };
+    const baseOAS = {openapi: '3.0.0', info: {title: 'Test API'}};
     const overlaySet = {
       actions: [
         {
           target: '$',
-          update: { externalDocs: { url: 'https://docs.example.com' } },
-        },
-      ],
+          update: {externalDocs: {url: 'https://docs.example.com'}}
+        }
+      ]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
-    expect(result.data).toHaveProperty('externalDocs', { url: 'https://docs.example.com' });
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data).toHaveProperty('externalDocs', {url: 'https://docs.example.com'});
     expect(result.resultData.totalActions).toBe(1);
     expect(result.resultData.totalUsedActions).toBe(1);
     expect(result.resultData.unusedActions.length).toBe(0);
   });
 
   it('should handle multiple actions with mixed results', async () => {
-    const baseOAS = { info: { title: 'Test API' } };
+    const baseOAS = {info: {title: 'Test API'}};
     const overlaySet = {
       actions: [
-        { target: '$.info', update: { description: 'Updated description' } },
-        { target: '$.nonExistentPath', update: { summary: 'New summary' } },
-        { target: '$.info', remove: true },
-      ],
+        {target: '$.info', update: {description: 'Updated description'}},
+        {target: '$.nonExistentPath', update: {summary: 'New summary'}},
+        {target: '$.info', remove: true}
+      ]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
+    const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.data).toEqual({});
     expect(result.resultData.totalActions).toBe(3);
     expect(result.resultData.totalUsedActions).toBe(2);
@@ -154,43 +154,41 @@ describe('openapi-format CLI overlay tests', () => {
   });
 
   it('should handle conflicting updates by merging properties', async () => {
-    const baseOAS = { info: { title: 'Test API', version: '1.0.0' } };
+    const baseOAS = {info: {title: 'Test API', version: '1.0.0'}};
     const overlaySet = {
-      actions: [
-        { target: '$.info', update: { version: '2.0.0', description: 'Updated description' } },
-      ],
+      actions: [{target: '$.info', update: {version: '2.0.0', description: 'Updated description'}}]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
+    const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.data.info).toEqual({
       title: 'Test API',
       version: '2.0.0',
-      description: 'Updated description',
+      description: 'Updated description'
     });
   });
 
   it('should properly handle no matches for the target', async () => {
-    const baseOAS = { openapi: '3.0.0', info: { title: 'Test API' } };
+    const baseOAS = {openapi: '3.0.0', info: {title: 'Test API'}};
     const overlaySet = {
-      actions: [{ target: '$.nonExistentPath', update: { description: 'New description' } }],
+      actions: [{target: '$.nonExistentPath', update: {description: 'New description'}}]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
+    const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.resultData.unusedActions).toEqual(overlaySet.actions);
     expect(result.resultData.totalActions).toBe(1);
     expect(result.resultData.totalUsedActions).toBe(0);
   });
 
   it('should track unused, total, and applied actions correctly', async () => {
-    const baseOAS = { openapi: '3.0.0', info: { title: 'Test API' } };
+    const baseOAS = {openapi: '3.0.0', info: {title: 'Test API'}};
     const overlaySet = {
       actions: [
-        { target: '$.info', update: { description: 'Updated description' } },
-        { target: '$.nonExistentPath', update: { description: 'New description' } },
-      ],
+        {target: '$.info', update: {description: 'Updated description'}},
+        {target: '$.nonExistentPath', update: {description: 'New description'}}
+      ]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
+    const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.resultData.totalActions).toBe(2);
     expect(result.resultData.totalUsedActions).toBe(1);
     expect(result.resultData.unusedActions.length).toBe(1);
@@ -198,36 +196,32 @@ describe('openapi-format CLI overlay tests', () => {
   });
 
   it('should deepmerge update nested properties correctly', async () => {
-    const baseOAS = { info: { title: 'Test API', contact: { name: 'Old Contact' } } };
+    const baseOAS = {info: {title: 'Test API', contact: {name: 'Old Contact'}}};
     const overlaySet = {
       actions: [
         {
           target: '$.info',
-          update: { contact: { email: 'contact@example.com' } },
-        },
-      ],
+          update: {contact: {email: 'contact@example.com'}}
+        }
+      ]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
+    const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.data.info.contact).toEqual({
       name: 'Old Contact',
-      email: 'contact@example.com',
+      email: 'contact@example.com'
     });
   });
 
   it('should add a new unique item to the array during deepMerge', () => {
-    const target = [
-      { name: 'param1', in: 'query', description: 'First parameter' },
-    ];
-    const source = [
-      { name: 'param2', in: 'query', description: 'Second parameter' },
-    ];
+    const target = [{name: 'param1', in: 'query', description: 'First parameter'}];
+    const source = [{name: 'param2', in: 'query', description: 'Second parameter'}];
 
     const result = deepMerge(target, source);
 
     expect(result).toEqual([
-      { name: 'param1', in: 'query', description: 'First parameter' },
-      { name: 'param2', in: 'query', description: 'Second parameter' },
+      {name: 'param1', in: 'query', description: 'First parameter'},
+      {name: 'param2', in: 'query', description: 'Second parameter'}
     ]);
   });
 
@@ -240,16 +234,17 @@ describe('openapi-format CLI overlay tests', () => {
               {
                 name: 'searchPattern',
                 in: 'query',
-                description: 'Pattern to search time series definitions. Cannot be used at the same time as name parameter.',
+                description:
+                  'Pattern to search time series definitions. Cannot be used at the same time as name parameter.',
                 required: false,
                 schema: {
-                  type: 'string',
-                },
-              },
-            ],
-          },
-        },
-      },
+                  type: 'string'
+                }
+              }
+            ]
+          }
+        }
+      }
     };
 
     const overlaySet = {
@@ -260,26 +255,27 @@ describe('openapi-format CLI overlay tests', () => {
             paths: {
               '/timeseries': {
                 get: {
-                  description: 'Retrieve a list of all time series definitions. This endpoint supports search and pagination.',
+                  description:
+                    'Retrieve a list of all time series definitions. This endpoint supports search and pagination.',
                   parameters: [
                     {
                       name: 'searchPattern',
                       in: 'query',
                       description: 'A pattern used to search time series definitions.',
                       schema: {
-                        example: 'temp-',
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-      ],
+                        example: 'temp-'
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
     };
 
-    const result = await openapiOverlay(baseOAS, { overlaySet });
+    const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.data.paths['/timeseries'].get.parameters).toEqual([
       {
         name: 'searchPattern',
@@ -288,9 +284,9 @@ describe('openapi-format CLI overlay tests', () => {
         required: false,
         schema: {
           type: 'string',
-          example: 'temp-',
-        },
-      },
+          example: 'temp-'
+        }
+      }
     ]);
   });
 });
@@ -305,17 +301,14 @@ describe('resolveJsonPathValue tests', () => {
     const obj = {paths: {'/example': {get: {}}, '/test': {post: {}}}};
     const result = resolveJsonPathValue(obj, '$.paths[*]');
     expect(result.length).toBe(2);
-    expect(result).toEqual([{'get': {}}, {'post': {}}]);
+    expect(result).toEqual([{get: {}}, {post: {}}]);
   });
 
   it('should resolve a path with a wildcard for array elements', () => {
-    const obj = { tags: [{ name: 'tag1' }, { name: 'tag2' }] };
+    const obj = {tags: [{name: 'tag1'}, {name: 'tag2'}]};
     const result = resolveJsonPathValue(obj, '$.tags[*]');
     expect(result.length).toBe(2);
-    expect(result).toEqual([
-      {'name': 'tag1'},
-      {'name': 'tag2'}
-    ]);
+    expect(result).toEqual([{name: 'tag1'}, {name: 'tag2'}]);
   });
 
   it('should resolve a nested path with specific array indices', () => {
@@ -327,32 +320,34 @@ describe('resolveJsonPathValue tests', () => {
   it('should resolve a path with deep wildcard', () => {
     const obj = {
       paths: {
-        '/example': { get: { summary: 'Example endpoint' } },
-        '/test': { post: { summary: 'Test endpoint' } },
-      },
+        '/example': {get: {summary: 'Example endpoint'}},
+        '/test': {post: {summary: 'Test endpoint'}}
+      }
     };
     const result = resolveJsonPathValue(obj, '$.paths[*].*');
     expect(result.length).toBe(2);
-    expect(result).toEqual([
-      {'summary': 'Example endpoint'},
-      {'summary': 'Test endpoint'}
-    ]);
+    expect(result).toEqual([{summary: 'Example endpoint'}, {summary: 'Test endpoint'}]);
   });
 
   it('should return an empty array for a non-existent path', () => {
-    const obj = { info: { title: 'Test API' } };
+    const obj = {info: {title: 'Test API'}};
     const result = resolveJsonPathValue(obj, '$.nonExistent.path');
     expect(result).toEqual([]);
   });
 
   it('should handle complex JSONPath expressions', () => {
-    const obj = { items: [{ id: 1, value: 10 }, { id: 2, value: 20 }] };
+    const obj = {
+      items: [
+        {id: 1, value: 10},
+        {id: 2, value: 20}
+      ]
+    };
     const result = resolveJsonPathValue(obj, '$.items[?(@.id==2 && @.value>15)]');
-    expect(result).toEqual([{ id: 2, value: 20 }]);
+    expect(result).toEqual([{id: 2, value: 20}]);
   });
 
   it('should resolve a path with a parent reference', () => {
-    const obj = { paths: { '/example': { get: {} } } };
+    const obj = {paths: {'/example': {get: {}}}};
     const result = resolveJsonPathValue(obj, '$.paths..get');
     expect(result).toEqual([{}]);
   });
@@ -380,37 +375,37 @@ describe('resolveJsonPathValue tests', () => {
   });
 
   it('should handle root path `$`', () => {
-    const obj = { openapi: '3.0.0', info: { title: 'Test API' } };
+    const obj = {openapi: '3.0.0', info: {title: 'Test API'}};
     const result = resolveJsonPathValue(obj, '$');
-    expect(result).toEqual([{'openapi': '3.0.0', 'info': {'title': 'Test API'}}]);
+    expect(result).toEqual([{openapi: '3.0.0', info: {title: 'Test API'}}]);
   });
 
   it('should handle invalid JSONPath gracefully', () => {
-    const obj = { info: { title: 'Test API' } };
+    const obj = {info: {title: 'Test API'}};
     const result = resolveJsonPathValue(obj, 'invalidPath');
     expect(result).toEqual([]);
   });
 
   it('should handle `length` property of arrays', () => {
-    const obj = { items: [1, 2, 3, 4, 5] };
+    const obj = {items: [1, 2, 3, 4, 5]};
     const result = resolveJsonPathValue(obj, '$.items.length');
     expect(result).toEqual([5]);
   });
 
   it('should handle a path with escaped special characters', () => {
-    const obj = { 'key.with.dot': 'value' };
+    const obj = {'key.with.dot': 'value'};
     const result = resolveJsonPathValue(obj, "$['key.with.dot']");
     expect(result).toEqual(['value']);
   });
 
   it('should handle filtering with conditions', () => {
-    const obj = { items: [{ id: 1 }, { id: 2 }, { id: 3 }] };
+    const obj = {items: [{id: 1}, {id: 2}, {id: 3}]};
     const result = resolveJsonPathValue(obj, '$.items[?(@.id==2)]');
-    expect(result).toEqual([{ id: 2 }]);
+    expect(result).toEqual([{id: 2}]);
   });
 
   it('should handle array slicing', () => {
-    const obj = { items: [1, 2, 3, 4, 5] };
+    const obj = {items: [1, 2, 3, 4, 5]};
     const result = resolveJsonPathValue(obj, '$.items[1:4]');
     expect(result).toEqual([2, 3, 4]);
   });
@@ -422,15 +417,14 @@ describe('resolveJsonPathValue tests', () => {
   // });
 
   it('should resolve a path with recursive descent', () => {
-    const obj = { paths: { '/example': { get: { summary: 'Example' } } } };
+    const obj = {paths: {'/example': {get: {summary: 'Example'}}}};
     const result = resolveJsonPathValue(obj, '$.paths..summary');
     expect(result).toEqual(['Example']);
   });
 
   it('should resolve a path with empty oas', () => {
-    const obj = "";
+    const obj = '';
     const result = resolveJsonPathValue(obj, '$.paths..summary');
     expect(result).toEqual([]);
   });
 });
-

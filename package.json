@@ -12,6 +12,8 @@
     "convert",
     "rename",
     "case",
+    "generate",
+    "overlay",
     "cli"
   ],
   "homepage": "https://github.com/thim81/openapi-format#readme",
@@ -57,6 +59,7 @@
     "utils/file.js",
     "utils/filtering.js",
     "utils/logging.js",
+    "utils/overlay.js",
     "utils/parseTpl.js",
     "utils/sorting.js",
     "utils/split.js",
