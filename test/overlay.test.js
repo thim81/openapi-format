@@ -61,7 +61,7 @@ describe('openapi-format CLI overlay tests', () => {
 
     const result = await openapiOverlay(baseOAS, { overlaySet });
     expect(result.data).toHaveProperty('externalDocs', { url: 'https://docs.example.com' });
-    expect(result.resultData.appliedActions).toBe(1);
+    expect(result.resultData.totalUsedActions).toBe(1);
     expect(result.resultData.unusedActions.length).toBe(0);
   });
 
@@ -132,7 +132,7 @@ describe('openapi-format CLI overlay tests', () => {
     const result = await openapiOverlay(baseOAS, { overlaySet });
     expect(result.data).toHaveProperty('externalDocs', { url: 'https://docs.example.com' });
     expect(result.resultData.totalActions).toBe(1);
-    expect(result.resultData.appliedActions).toBe(1);
+    expect(result.resultData.totalUsedActions).toBe(1);
     expect(result.resultData.unusedActions.length).toBe(0);
   });
 
@@ -149,7 +149,7 @@ describe('openapi-format CLI overlay tests', () => {
     const result = await openapiOverlay(baseOAS, { overlaySet });
     expect(result.data).toEqual({});
     expect(result.resultData.totalActions).toBe(3);
-    expect(result.resultData.appliedActions).toBe(2);
+    expect(result.resultData.totalUsedActions).toBe(2);
     expect(result.resultData.unusedActions.length).toBe(1);
   });
 
@@ -178,7 +178,7 @@ describe('openapi-format CLI overlay tests', () => {
     const result = await openapiOverlay(baseOAS, { overlaySet });
     expect(result.resultData.unusedActions).toEqual(overlaySet.actions);
     expect(result.resultData.totalActions).toBe(1);
-    expect(result.resultData.appliedActions).toBe(0);
+    expect(result.resultData.totalUsedActions).toBe(0);
   });
 
   it('should track unused, total, and applied actions correctly', async () => {
@@ -192,7 +192,7 @@ describe('openapi-format CLI overlay tests', () => {
 
     const result = await openapiOverlay(baseOAS, { overlaySet });
     expect(result.resultData.totalActions).toBe(2);
-    expect(result.resultData.appliedActions).toBe(1);
+    expect(result.resultData.totalUsedActions).toBe(1);
     expect(result.resultData.unusedActions.length).toBe(1);
     expect(result.resultData.unusedActions[0]).toEqual(overlaySet.actions[1]);
   });
