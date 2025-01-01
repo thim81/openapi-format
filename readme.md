@@ -1098,7 +1098,7 @@ operationIds:
 The OpenAPI Overlay functionality allows users to apply actions such as updates and removals to an OpenAPI Specification (OAS). This feature is useful for dynamically modifying OAS documents during development, testing, or publishing workflows.
 
 ### What is an OpenAPI Overlay?
-An overlay is a OpenAPI specification, where a structured set of actions will be applied to an existing OpenAPI document. It enables:
+An [OpenAPI Overlay](https://spec.openapis.org/overlay/v1.0.0.html) is a specification that defines a structured set of actions to be applied to an existing OpenAPI document. It enables:
 
 - Updating existing fields, such as descriptions, parameters, or endpoints.
 - Adding new fields or objects to the OpenAPI document.
