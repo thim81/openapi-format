@@ -305,10 +305,11 @@ OpenAPI-Format CLI settings:
 OpenAPI Overlay actions summary:
 - Total actions: 	4
 - Applied actions: 	3
+- Unused actions: 	1
 ================================================================================
 Unused overlay actions:
 - Target: $.server[*]
-  Description: No description provided
+  Type: remove
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m
