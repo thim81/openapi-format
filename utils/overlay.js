@@ -12,6 +12,7 @@ async function openapiOverlay(oaObj, options) {
 
   let unusedActions = [...(overlayDoc?.actions || [])]; // Track unused actions
   let totalActions = overlayDoc?.actions?.length || 0;  // Total actions provided
+  let usedActions = []; // Initialize usedActions array
 
   overlayDoc?.actions.forEach((action) => {
     const { target, update, remove } = action;
@@ -25,6 +26,7 @@ async function openapiOverlay(oaObj, options) {
     if (target === '$') {
       if (update) {
         oaObj = deepMerge(oaObj, update);
+        usedActions.push(action);
         unusedActions = unusedActions.filter((a) => a !== action);
       }
       if (remove) {
@@ -38,6 +40,7 @@ async function openapiOverlay(oaObj, options) {
 
     if (targets.length > 0) {
       // Mark this action as used
+      usedActions.push(action);
       unusedActions = unusedActions.filter((a) => a !== action);
     }
 
@@ -67,9 +70,11 @@ async function openapiOverlay(oaObj, options) {
   return {
     data: oaObj, // The processed OpenAPI document
     resultData: {
-      unusedActions, // Actions that couldn't be applied
-      totalActions, // Total number of actions in the overlay
-      appliedActions: totalActions - unusedActions.length, // Successfully applied actions
+      unusedActions,
+      usedActions,
+      totalActions,
+      totalUsedActions: totalActions - unusedActions.length,
+      totalUnusedActions: unusedActions.length
     },
   };
 }

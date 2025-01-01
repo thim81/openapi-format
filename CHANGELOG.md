@@ -1,6 +1,8 @@
 ## unreleased
 
-- CLI - Apply OpenAPI overlay actions
+## [1.25.0] - 2025-01-02
+
+- CLI - Added option to apply OpenAPI overlay actions
 
 ## [1.24.2] - 2024-10-07
 
