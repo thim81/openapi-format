@@ -5,16 +5,18 @@
 
 # openapi-format
 
-Format an OpenAPI document by ordering, formatting and filtering fields.
+Format an OpenAPI document by ordering, formatting, filtering, and applying overlays to OpenAPI documents.
 
 The openapi-format CLI can sort the OpenAPI fields by ordering them in a hierarchical order, format the casing of the fields and
 output cleanly indented JSON or YAML.
 
 Additional features include powerful filtering options based on flags, tags, methods, operationIDs, and even unused components.
-To quickly standardize OpenAPI documents there is support for generating the operationIds.
+To quickly standardize OpenAPI documents there is support for generating the operationIds and apply casing rules for consistency.
 
 The CLI can split large OpenAPI documents into modular, multi-file structures for easier management. 
 For upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0 document to OpenAPI 3.1.
+
+With the newly added OpenAPI Overlay support, users can overlay changes onto existing OpenAPI documents, to extend and customize the OpenAPI document.
 
 ## Table of content
 * [Use-cases](#use-cases)
