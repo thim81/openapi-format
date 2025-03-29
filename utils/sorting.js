@@ -52,6 +52,9 @@ function propComparator(priorityArr) {
  * @returns {*}
  */
 function prioritySort(jsonProp, sortPriority, options) {
+  if (typeof jsonProp !== 'object' || jsonProp === null) {
+    return jsonProp;
+  }
   return sortObjectByKeyNameList(jsonProp, propComparator(sortPriority));
 }
 
