@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.25.1] - 2025-03-29
+
+- fix: Prevent distorted properties when sorting (#154)
+
 ## [1.25.0] - 2025-01-01
 
 - CLI - Added option to apply OpenAPI overlay actions
