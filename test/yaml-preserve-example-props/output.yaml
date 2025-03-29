@@ -1,0 +1,21 @@
+openapi: 3.0.0
+info:
+  title: Repro
+paths:
+  /items:
+    get:
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  properties:
+                    type: object
+                    text:
+                      type: string
+              example:
+                properties:
+                  text: test
