@@ -16,7 +16,7 @@ const tests = !localTesting
   ? fs.readdirSync(__dirname).filter(file => {
       return fs.statSync(path.join(__dirname, file)).isDirectory() && !file.startsWith('_');
     })
-  : ['yaml-remove-empty-filter'];
+  : ['overlay-preserve-required'];
 
 describe('openapi-format tests', () => {
   let consoleLogSpy, consoleWarnSpy;

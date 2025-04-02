@@ -1,0 +1,25 @@
+openapi: 3.1.0
+info:
+  title: Example API
+  version: 1.0.0
+paths:
+  /items:
+    get:
+      summary: List items
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        'default':
+          description: Error response
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailsComponent'
+components:
+  schemas: {}

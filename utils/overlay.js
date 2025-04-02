@@ -127,8 +127,6 @@ function resolveJsonPathValue(obj, path) {
  * @returns {Object|Array} - The merged result.
  */
 function deepMerge(target, source) {
-  if (typeof source !== 'object' || source === null) return source;
-
   if (Array.isArray(target) && Array.isArray(source)) {
     // Merge arrays by unique 'name' and 'in' for OpenAPI parameters
     const mergedArray = [...target];
@@ -152,6 +150,15 @@ function deepMerge(target, source) {
     return mergedArray;
   }
 
+  // If source is an array but the target isn't an array, return a shallow copy.
+  if (Array.isArray(source)) {
+    return source.slice();
+  }
+
+  // If source is not an object or is null, return it directly.
+  if (typeof source !== 'object' || source === null) return source;
+
+  // If target is not an object or is null, initialize it as an object.
   if (typeof target !== 'object' || target === null) {
     target = {};
   }
