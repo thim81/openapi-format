@@ -260,9 +260,6 @@ Options to sort by:
 By specifying the desired filter values for the available filter types, the openapi-format CLI will strip out any
 matching item from the OpenAPI document. You can combine multiple types to filter out a range of OpenAPI items.
 
-For more complex use-cases, we can advise the excellent https://github.com/Mermade/openapi-filter package, which has
-extended options for filtering OpenAPI documents.
-
 | Type                   | Description                                 | Type    | Examples                                  |
 |------------------------|---------------------------------------------|---------|-------------------------------------------|
 | methods                | OpenAPI methods.                            | array   | ['get','post','put']                      |
@@ -1481,7 +1478,7 @@ the [@microsoft.azure/format-spec](https://www.npmjs.com/package/@microsoft.azur
 original code was not available on GitHub, with the last update being 3 years ago, so to improve support and extend it we
 tried to reproduce the original functionality.
 
-The filter capabilities from `openapi-format` are a light version grounded by the work from [@MikeRalphson](https://github.com/mikeralphson) on
+The filter capabilities from `openapi-format` are inspired by the work from [@MikeRalphson](https://github.com/mikeralphson) on
 the [openapi-filter](https://github.com/Mermade/openapi-filter) package.
 
 The casing options available in `openapi-format` are powered by the excellent [case-anything](https://github.com/mesqueeb/case-anything) nano package from Luca Ban ([@mesqueeb](https://github.com/mesqueeb)).
