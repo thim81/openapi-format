@@ -1,8 +1,12 @@
 ## unreleased
 
+## [1.25.2] - 2025-04-02
+
+- Overlay: Prevent distorted properties (#154)
+
 ## [1.25.1] - 2025-03-29
 
-- fix: Prevent distorted properties when sorting (#154)
+- Sort: Prevent distorted properties (#154)
 
 ## [1.25.0] - 2025-01-01
 
