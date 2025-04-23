@@ -116,11 +116,13 @@ Removed unused components:
 - components/schemas		 "UcCustomer"
 - components/schemas		 "UcUnused"
 - components/schemas		 "Address"
+- components/schemas		 "ErrorModel"
 - components/responses		 "UcGeneralError"
 - components/parameters		 "UcOffsetParam"
 - components/parameters		 "UcLimitParam"
 - components/examples		 "uctshirt"
 - components/examples		 "uctshirt-unused"
+- components/examples		 "tshirt"
 - components/requestBodies	 "UcNewItem"
 - components/requestBodies	 "Pet"
 - components/requestBodies	 "UserArray"
@@ -128,7 +130,7 @@ Removed unused components:
 - components/headers		 "X-RateLimit-Unused"
 - components/headers		 "X-RateLimit-Limit"
 - components/headers		 "X-RateLimit-Remaining"
-Total components removed: 16
+Total components removed: 18
 [32m================================================================================[0m
 [32m✅  OpenAPI filtered & formatted successfully[0m
 [32m================================================================================[0m

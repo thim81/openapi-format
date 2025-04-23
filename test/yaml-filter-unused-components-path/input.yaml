@@ -1,0 +1,156 @@
+openapi: 3.0.0
+info:
+  title: Test API
+  version: 1.0.0
+paths:
+  /pets:
+    get:
+      summary: List all pets
+      parameters:
+        - $ref: '#/components/parameters/ParamUsed'
+      responses:
+        '200':
+          description: A list of pets
+          headers:
+            X-RateLimit:
+              $ref: '#/components/headers/HeaderUsed'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaUsed'
+              examples:
+                petExample:
+                  $ref: '#/components/examples/ExampleUsed'
+    post:
+      summary: Add a new pet
+      requestBody:
+        $ref: '#/components/requestBodies/RequestBodyUsed'
+      responses:
+        '201':
+          $ref: '#/components/responses/ResponseUsed'
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                # — directly referenced in a path
+                $ref: '#/components/schemas/User'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    # — Not referenced in any path.
+    InvisibleParent:
+      type: object
+      properties:
+        # ...but references another schema
+        child:
+          $ref: '#/components/schemas/InvisibleChild'
+    InvisibleChild:
+      type: object
+      properties:
+        foo:
+          type: string
+    # — used directly by /pets GET and by RequestBodyUsed
+    SchemaUsed:
+      type: object
+      properties:
+        id:
+          type: integer
+    # — never referenced anywhere → direct unused
+    SchemaUnused:
+      type: object
+      properties:
+        foo:
+          type: string
+    # — a chain of refs to test transitive removal:
+    SchemaChain1:
+      allOf:
+        - $ref: '#/components/schemas/SchemaChain2'
+    SchemaChain2:
+      allOf:
+        - $ref: '#/components/schemas/SchemaChain3'
+    SchemaChain3:
+      allOf:
+        - $ref: '#/components/schemas/SchemaChain4'
+    SchemaChain4:
+      type: object
+      properties:
+        bar:
+          type: boolean
+    # — A self-referenced schema
+    selfRefSchema:
+      type: object
+      properties:
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/selfRefSchema"
+  responses:
+    # — used by POST /pets
+    ResponseUsed:
+      description: Created successfully
+    # — never referenced → direct unused
+    ResponseUnused:
+      description: This one’s not used
+  parameters:
+    # — used by GET /pets
+    ParamUsed:
+      name: status
+      in: query
+      schema:
+        type: string
+    # — never referenced → direct unused
+    ParamUnused:
+      name: unusedParam
+      in: query
+      schema:
+        type: integer
+  examples:
+    # — used in GET /pets response
+    ExampleUsed:
+      summary: A single pet
+      value:
+        id: 1
+    # — never referenced → direct unused
+    ExampleUnused:
+      summary: Not used
+      value:
+        hello: world
+  requestBodies:
+    # — used by POST /pets
+    RequestBodyUsed:
+      description: New pet to add
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SchemaUsed'
+    # — never referenced → direct unused
+    RequestBodyUnused:
+      description: Not used
+      content:
+        application/json:
+          schema:
+            type: object
+  headers:
+    # — used in GET /pets response
+    HeaderUsed:
+      description: Rate limit info
+      schema:
+        type: integer
+    # — never referenced → direct unused
+    HeaderUnused:
+      description: Not used
+      schema:
+        type: string

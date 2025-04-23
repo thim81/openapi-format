@@ -638,21 +638,78 @@ async function openapiFilter(oaObj, options) {
 
   // Collect unused components
   const optFs = get(options, 'filterSet.unusedComponents', []) || [];
+
+  // Identify components that are directly unused (not referenced anywhere)
   unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !comps.schemas[key].used);
-  if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
   unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !comps.responses[key].used);
-  if (optFs.includes('responses'))
-    options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
   unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !comps.parameters[key].used);
-  if (optFs.includes('parameters'))
-    options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
   unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !comps.examples[key].used);
-  if (optFs.includes('examples'))
-    options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
   unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key].used);
-  if (optFs.includes('requestBodies'))
-    options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
   unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key].used);
+
+  // Identify components that are only used by other unused components
+  let foundNewUnused = true;
+  while (foundNewUnused) {
+    foundNewUnused = false;
+
+    // Check each component type
+    for (const compType of ['schemas', 'responses', 'parameters', 'examples', 'requestBodies', 'headers']) {
+      // Get all components of this type that are currently marked as used
+      const usedComps = Object.keys(comps[compType] || {}).filter(
+        key => comps[compType][key].used && !unusedComp[compType].includes(key)
+      );
+
+      // For each used component, check if it's only used by unused components
+      for (const compKey of usedComps) {
+        let isOnlyUsedByUnusedComps = true;
+
+        // Check if this component is used in paths (directly used)
+        traverse(jsonObj.paths || {}).forEach(function(node) {
+          if (this.key === '$ref' && node === `#/components/${compType}/${compKey}`) {
+            isOnlyUsedByUnusedComps = false;
+            this.stop();
+          }
+        });
+
+        if (isOnlyUsedByUnusedComps) {
+          // Check if this component is used by any component that is not in the unused list
+          for (const otherCompType of ['schemas', 'responses', 'parameters', 'examples', 'requestBodies', 'headers']) {
+            const otherUsedComps = Object.keys(comps[otherCompType] || {}).filter(
+              key => comps[otherCompType][key].used && !unusedComp[otherCompType].includes(key)
+            );
+
+            for (const otherCompKey of otherUsedComps) {
+              if (otherCompKey === compKey && otherCompType === compType) continue; // Skip self-reference
+
+              traverse(jsonObj.components?.[otherCompType]?.[otherCompKey] || {}).forEach(function(node) {
+                if (this.key === '$ref' && node === `#/components/${compType}/${compKey}`) {
+                  isOnlyUsedByUnusedComps = false;
+                  this.stop();
+                }
+              });
+
+              if (!isOnlyUsedByUnusedComps) break;
+            }
+
+            if (!isOnlyUsedByUnusedComps) break;
+          }
+        }
+
+        // If this component is only used by unused components, mark it as unused
+        if (isOnlyUsedByUnusedComps) {
+          unusedComp[compType].push(compKey);
+          foundNewUnused = true;
+        }
+      }
+    }
+  }
+
+  // Update options.unusedComp with the newly identified unused components
+  if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
+  if (optFs.includes('responses')) options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
+  if (optFs.includes('parameters')) options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
+  if (optFs.includes('examples')) options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
+  if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
   if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
 
   // Update unusedComp.meta.total after each recursion
@@ -717,7 +774,7 @@ async function openapiFilter(oaObj, options) {
       if (
         Array.isArray(filterSet.preserveEmptyObjects) &&
         ((!['security', 'schemas', 'default'].includes(this.parent.key) &&
-          !filterSet.preserveEmptyObjects.includes(this.key)) ||
+            !filterSet.preserveEmptyObjects.includes(this.key)) ||
           !filterSet.preserveEmptyObjects.some(v => this.path.includes(v)))
       ) {
         // debugFilterStep = 'Filter - Remove empty objects'
