@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: Test API
+  version: 1.0.0
+paths:
+  /pets:
+    get:
+      summary: List all pets
+      parameters:
+        - $ref: '#/components/parameters/ParamUsed'
+      responses:
+        '200':
+          description: A list of pets
+          headers:
+            X-RateLimit:
+              $ref: '#/components/headers/HeaderUsed'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaUsed'
+              examples:
+                petExample:
+                  $ref: '#/components/examples/ExampleUsed'
+    post:
+      summary: Add a new pet
+      requestBody:
+        $ref: '#/components/requestBodies/RequestBodyUsed'
+      responses:
+        '201':
+          $ref: '#/components/responses/ResponseUsed'
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    SchemaUsed:
+      type: object
+      properties:
+        id:
+          type: integer
+  responses:
+    ResponseUsed:
+      description: Created successfully
+  parameters:
+    ParamUsed:
+      name: status
+      in: query
+      schema:
+        type: string
+  examples:
+    ExampleUsed:
+      summary: A single pet
+      value:
+        id: 1
+  requestBodies:
+    RequestBodyUsed:
+      description: New pet to add
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SchemaUsed'
+  headers:
+    HeaderUsed:
+      description: Rate limit info
+      schema:
+        type: integer

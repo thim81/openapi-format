@@ -1,0 +1,19 @@
+#methods:
+#  - get
+#flags:
+#  - x-visibility
+#flagValues: []
+#tags:
+#  - store
+#  - user
+#operationIds:
+#  - addPet
+#  - findPetsByStatus
+unusedComponents:
+  - schemas
+  - parameters
+  - examples
+  - headers
+  - requestBodies
+  - responses
+
