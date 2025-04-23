@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.25.3] - 2025-04-23
+
+- Filtering: Improved the unused components removal ( #147)
+
 ## [1.25.2] - 2025-04-02
 
 - Overlay: Prevent distorted properties (#154)
