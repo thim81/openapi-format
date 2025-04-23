@@ -89,6 +89,14 @@ components:
       properties:
         bar:
           type: boolean
+    # — A self-referenced schema
+    selfRefSchema:
+      type: object
+      properties:
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/selfRefSchema"
   responses:
     # — used by POST /pets
     ResponseUsed:
