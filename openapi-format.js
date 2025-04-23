@@ -639,7 +639,7 @@ async function openapiFilter(oaObj, options) {
   // Collect unused components
   const optFs = get(options, 'filterSet.unusedComponents', []) || [];
 
-  // First, identify components that are directly unused (not referenced anywhere)
+  // Identify components that are directly unused (not referenced anywhere)
   unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !comps.schemas[key].used);
   unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !comps.responses[key].used);
   unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !comps.parameters[key].used);
@@ -647,7 +647,7 @@ async function openapiFilter(oaObj, options) {
   unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key].used);
   unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key].used);
 
-  // Then, identify components that are only used by other unused components
+  // Identify components that are only used by other unused components
   let foundNewUnused = true;
   while (foundNewUnused) {
     foundNewUnused = false;
