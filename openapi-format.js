@@ -664,7 +664,7 @@ async function openapiFilter(oaObj, options) {
         let isOnlyUsedByUnusedComps = true;
 
         // Check if this component is used in paths (directly used)
-        traverse(jsonObj.paths || {}).forEach(function(node) {
+        traverse(jsonObj.paths || {}).forEach(function (node) {
           if (this.key === '$ref' && node === `#/components/${compType}/${compKey}`) {
             isOnlyUsedByUnusedComps = false;
             this.stop();
@@ -681,7 +681,7 @@ async function openapiFilter(oaObj, options) {
             for (const otherCompKey of otherUsedComps) {
               if (otherCompKey === compKey && otherCompType === compType) continue; // Skip self-reference
 
-              traverse(jsonObj.components?.[otherCompType]?.[otherCompKey] || {}).forEach(function(node) {
+              traverse(jsonObj.components?.[otherCompType]?.[otherCompKey] || {}).forEach(function (node) {
                 if (this.key === '$ref' && node === `#/components/${compType}/${compKey}`) {
                   isOnlyUsedByUnusedComps = false;
                   this.stop();
@@ -706,10 +706,14 @@ async function openapiFilter(oaObj, options) {
 
   // Update options.unusedComp with the newly identified unused components
   if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
-  if (optFs.includes('responses')) options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
-  if (optFs.includes('parameters')) options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
-  if (optFs.includes('examples')) options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
-  if (optFs.includes('requestBodies')) options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
+  if (optFs.includes('responses'))
+    options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
+  if (optFs.includes('parameters'))
+    options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
+  if (optFs.includes('examples'))
+    options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
+  if (optFs.includes('requestBodies'))
+    options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
   if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
 
   // Update unusedComp.meta.total after each recursion
@@ -774,7 +778,7 @@ async function openapiFilter(oaObj, options) {
       if (
         Array.isArray(filterSet.preserveEmptyObjects) &&
         ((!['security', 'schemas', 'default'].includes(this.parent.key) &&
-            !filterSet.preserveEmptyObjects.includes(this.key)) ||
+          !filterSet.preserveEmptyObjects.includes(this.key)) ||
           !filterSet.preserveEmptyObjects.some(v => this.path.includes(v)))
       ) {
         // debugFilterStep = 'Filter - Remove empty objects'
