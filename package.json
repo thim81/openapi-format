@@ -1,6 +1,6 @@
 {
   "name": "openapi-format",
-  "version": "1.25.3",
+  "version": "1.25.4",
   "description": "Format an OpenAPI document by ordering, formatting and filtering fields.",
   "keywords": [
     "openapi",
