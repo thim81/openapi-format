@@ -246,29 +246,12 @@ async function openapiFilter(oaObj, options) {
 
     // Register components usage
     if (this.key === '$ref' && typeof node === 'string') {
-      if (node.startsWith('#/components/schemas/')) {
-        const compSchema = node.replace('#/components/schemas/', '');
-        comps.schemas[compSchema] = {...comps.schemas[compSchema], used: true};
-      }
-      if (node.startsWith('#/components/responses/')) {
-        const compResp = node.replace('#/components/responses/', '');
-        comps.responses[compResp] = {...comps.responses[compResp], used: true};
-      }
-      if (node.startsWith('#/components/parameters/')) {
-        const compParam = node.replace('#/components/parameters/', '');
-        comps.parameters[compParam] = {...comps.parameters[compParam], used: true};
-      }
-      if (node.startsWith('#/components/examples/')) {
-        const compExample = node.replace('#/components/examples/', '');
-        comps.examples[compExample] = {...comps.examples[compExample], used: true};
-      }
-      if (node.startsWith('#/components/requestBodies/')) {
-        const compRequestBody = node.replace('#/components/requestBodies/', '');
-        comps.requestBodies[compRequestBody] = {...comps.requestBodies[compRequestBody], used: true};
-      }
-      if (node.startsWith('#/components/headers/')) {
-        const compHeader = node.replace('#/components/headers/', '');
-        comps.headers[compHeader] = {...comps.headers[compHeader], used: true};
+      for (let type of ['schemas','responses','parameters','examples','requestBodies','headers']) {
+        const prefix = `#/components/${type}/`;
+        if (node.startsWith(prefix)) {
+          const name = node.slice(prefix.length);
+          comps[type][name] = Object.assign(comps[type][name] || {}, { used: true });
+        }
       }
     }
 
@@ -651,6 +634,7 @@ async function openapiFilter(oaObj, options) {
     examples:{}, requestBodies:{}, headers:{} };
   const rootRefs = new Set();
 
+  // Traverse $ref in components
   traverse(jsonObj).forEach(function(node) {
     if (this.key !== '$ref' || typeof node !== 'string') return;
     const m = node.match(/^#\/components\/([^\/]+)\/(.+)$/);
@@ -666,7 +650,7 @@ async function openapiFilter(oaObj, options) {
     }
   });
 
-  // 2) BFS to mark all reachable components
+  // Mark visited components
   const visited = new Set();
   const queue   = [...rootRefs];
   while (queue.length) {
@@ -681,13 +665,14 @@ async function openapiFilter(oaObj, options) {
     }
   }
 
-  // 3) collect everything *not* visited as unused
-  // const unusedComp = { schemas:[], responses:[], parameters:[], examples:[], requestBodies:[], headers:[] };
+  // Mark not visited as unused
   for (const t of ['schemas','responses','parameters','examples','requestBodies','headers']) {
     unusedComp[t] = Object
       .keys(comps[t]||{})
       .filter(k => !visited.has(`${t}:${k}`));
   }
+
+  // TODO rework this logic
   unusedComp.meta = {
     total: unusedComp.schemas.length
          + unusedComp.responses.length
@@ -697,7 +682,7 @@ async function openapiFilter(oaObj, options) {
          + unusedComp.headers.length
   };
 
-  // Update options.unusedComp with the newly identified unused components
+  // Update options.unusedComp with all identified unused components
   if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
   if (optFs.includes('responses'))
     options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
@@ -709,6 +694,7 @@ async function openapiFilter(oaObj, options) {
     options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
   if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
 
+  // TODO rework this logic
   // Update unusedComp.meta.total after each recursion
   options.unusedComp.meta.total =
     options.unusedComp.schemas.length +
