@@ -14,8 +14,8 @@ const destroyOutput = false;
 // Load tests
 const tests = !localTesting
   ? fs.readdirSync(__dirname).filter(file => {
-    return fs.statSync(path.join(__dirname, file)).isDirectory() && !file.startsWith('_');
-  })
+      return fs.statSync(path.join(__dirname, file)).isDirectory() && !file.startsWith('_');
+    })
   : ['yaml-filter-unused-components-path'];
 
 describe('openapi-format tests', () => {

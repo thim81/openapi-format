@@ -246,11 +246,11 @@ async function openapiFilter(oaObj, options) {
 
     // Register components usage
     if (this.key === '$ref' && typeof node === 'string') {
-      for (let type of ['schemas','responses','parameters','examples','requestBodies','headers']) {
+      for (let type of ['schemas', 'responses', 'parameters', 'examples', 'requestBodies', 'headers']) {
         const prefix = `#/components/${type}/`;
         if (node.startsWith(prefix)) {
           const name = node.slice(prefix.length);
-          comps[type][name] = Object.assign(comps[type][name] || {}, { used: true });
+          comps[type][name] = Object.assign(comps[type][name] || {}, {used: true});
         }
       }
     }
@@ -630,21 +630,20 @@ async function openapiFilter(oaObj, options) {
   unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key].used);
   unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key].used);
 
-  const refGraph = { schemas:{}, responses:{}, parameters:{},
-    examples:{}, requestBodies:{}, headers:{} };
+  const refGraph = {schemas: {}, responses: {}, parameters: {}, examples: {}, requestBodies: {}, headers: {}};
   const rootRefs = new Set();
 
   // Traverse $ref in components
-  traverse(jsonObj).forEach(function(node) {
+  traverse(jsonObj).forEach(function (node) {
     if (this.key !== '$ref' || typeof node !== 'string') return;
     const m = node.match(/^#\/components\/([^\/]+)\/(.+)$/);
     if (!m) return;
     const [, tgtType, tgtKey] = m;
     if (this.path[0] === 'components') {
-      const [ , ownType, ownKey ] = this.path;
-      refGraph[ownType]      ||= {};
+      const [, ownType, ownKey] = this.path;
+      refGraph[ownType] ||= {};
       refGraph[ownType][ownKey] ||= [];
-      refGraph[ownType][ownKey].push({ type: tgtType, key: tgtKey });
+      refGraph[ownType][ownKey].push({type: tgtType, key: tgtKey});
     } else {
       rootRefs.add(`${tgtType}:${tgtKey}`);
     }
@@ -652,7 +651,7 @@ async function openapiFilter(oaObj, options) {
 
   // Mark visited components
   const visited = new Set();
-  const queue   = [...rootRefs];
+  const queue = [...rootRefs];
   while (queue.length) {
     const id = queue.shift();
     if (visited.has(id)) continue;
@@ -666,20 +665,19 @@ async function openapiFilter(oaObj, options) {
   }
 
   // Mark not visited as unused
-  for (const t of ['schemas','responses','parameters','examples','requestBodies','headers']) {
-    unusedComp[t] = Object
-      .keys(comps[t]||{})
-      .filter(k => !visited.has(`${t}:${k}`));
+  for (const t of ['schemas', 'responses', 'parameters', 'examples', 'requestBodies', 'headers']) {
+    unusedComp[t] = Object.keys(comps[t] || {}).filter(k => !visited.has(`${t}:${k}`));
   }
 
   // TODO rework this logic
   unusedComp.meta = {
-    total: unusedComp.schemas.length
-         + unusedComp.responses.length
-         + unusedComp.parameters.length
-         + unusedComp.examples.length
-         + unusedComp.requestBodies.length
-         + unusedComp.headers.length
+    total:
+      unusedComp.schemas.length +
+      unusedComp.responses.length +
+      unusedComp.parameters.length +
+      unusedComp.examples.length +
+      unusedComp.requestBodies.length +
+      unusedComp.headers.length
   };
 
   // Update options.unusedComp with all identified unused components
