@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.25.4] - 2025-04-24
+
+- fix: Performance degradation when filtering unused components ( #147)
+
 ## [1.25.3] - 2025-04-23
 
 - Filtering: Improved the unused components removal ( #147)

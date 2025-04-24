@@ -245,30 +245,13 @@ async function openapiFilter(oaObj, options) {
     }
 
     // Register components usage
-    if (this.key === '$ref') {
-      if (node.startsWith('#/components/schemas/')) {
-        const compSchema = node.replace('#/components/schemas/', '');
-        comps.schemas[compSchema] = {...comps.schemas[compSchema], used: true};
-      }
-      if (node.startsWith('#/components/responses/')) {
-        const compResp = node.replace('#/components/responses/', '');
-        comps.responses[compResp] = {...comps.responses[compResp], used: true};
-      }
-      if (node.startsWith('#/components/parameters/')) {
-        const compParam = node.replace('#/components/parameters/', '');
-        comps.parameters[compParam] = {...comps.parameters[compParam], used: true};
-      }
-      if (node.startsWith('#/components/examples/')) {
-        const compExample = node.replace('#/components/examples/', '');
-        comps.examples[compExample] = {...comps.examples[compExample], used: true};
-      }
-      if (node.startsWith('#/components/requestBodies/')) {
-        const compRequestBody = node.replace('#/components/requestBodies/', '');
-        comps.requestBodies[compRequestBody] = {...comps.requestBodies[compRequestBody], used: true};
-      }
-      if (node.startsWith('#/components/headers/')) {
-        const compHeader = node.replace('#/components/headers/', '');
-        comps.headers[compHeader] = {...comps.headers[compHeader], used: true};
+    if (this.key === '$ref' && typeof node === 'string') {
+      for (let type of ['schemas','responses','parameters','examples','requestBodies','headers']) {
+        const prefix = `#/components/${type}/`;
+        if (node.startsWith(prefix)) {
+          const name = node.slice(prefix.length);
+          comps[type][name] = Object.assign(comps[type][name] || {}, { used: true });
+        }
       }
     }
 
@@ -647,64 +630,59 @@ async function openapiFilter(oaObj, options) {
   unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key].used);
   unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key].used);
 
-  // Identify components that are only used by other unused components
-  let foundNewUnused = true;
-  while (foundNewUnused) {
-    foundNewUnused = false;
+  const refGraph = { schemas:{}, responses:{}, parameters:{},
+    examples:{}, requestBodies:{}, headers:{} };
+  const rootRefs = new Set();
 
-    // Check each component type
-    for (const compType of ['schemas', 'responses', 'parameters', 'examples', 'requestBodies', 'headers']) {
-      // Get all components of this type that are currently marked as used
-      const usedComps = Object.keys(comps[compType] || {}).filter(
-        key => comps[compType][key].used && !unusedComp[compType].includes(key)
-      );
+  // Traverse $ref in components
+  traverse(jsonObj).forEach(function(node) {
+    if (this.key !== '$ref' || typeof node !== 'string') return;
+    const m = node.match(/^#\/components\/([^\/]+)\/(.+)$/);
+    if (!m) return;
+    const [, tgtType, tgtKey] = m;
+    if (this.path[0] === 'components') {
+      const [ , ownType, ownKey ] = this.path;
+      refGraph[ownType]      ||= {};
+      refGraph[ownType][ownKey] ||= [];
+      refGraph[ownType][ownKey].push({ type: tgtType, key: tgtKey });
+    } else {
+      rootRefs.add(`${tgtType}:${tgtKey}`);
+    }
+  });
 
-      // For each used component, check if it's only used by unused components
-      for (const compKey of usedComps) {
-        let isOnlyUsedByUnusedComps = true;
-
-        // Check if this component is used in paths (directly used)
-        traverse(jsonObj.paths || {}).forEach(function (node) {
-          if (this.key === '$ref' && node === `#/components/${compType}/${compKey}`) {
-            isOnlyUsedByUnusedComps = false;
-            this.stop();
-          }
-        });
-
-        if (isOnlyUsedByUnusedComps) {
-          // Check if this component is used by any component that is not in the unused list
-          for (const otherCompType of ['schemas', 'responses', 'parameters', 'examples', 'requestBodies', 'headers']) {
-            const otherUsedComps = Object.keys(comps[otherCompType] || {}).filter(
-              key => comps[otherCompType][key].used && !unusedComp[otherCompType].includes(key)
-            );
-
-            for (const otherCompKey of otherUsedComps) {
-              if (otherCompKey === compKey && otherCompType === compType) continue; // Skip self-reference
-
-              traverse(jsonObj.components?.[otherCompType]?.[otherCompKey] || {}).forEach(function (node) {
-                if (this.key === '$ref' && node === `#/components/${compType}/${compKey}`) {
-                  isOnlyUsedByUnusedComps = false;
-                  this.stop();
-                }
-              });
-
-              if (!isOnlyUsedByUnusedComps) break;
-            }
-
-            if (!isOnlyUsedByUnusedComps) break;
-          }
-        }
-
-        // If this component is only used by unused components, mark it as unused
-        if (isOnlyUsedByUnusedComps) {
-          unusedComp[compType].push(compKey);
-          foundNewUnused = true;
-        }
-      }
+  // Mark visited components
+  const visited = new Set();
+  const queue   = [...rootRefs];
+  while (queue.length) {
+    const id = queue.shift();
+    if (visited.has(id)) continue;
+    visited.add(id);
+    const [type, key] = id.split(':');
+    const edges = (refGraph[type] && refGraph[type][key]) || [];
+    for (const {type: ct, key: ck} of edges) {
+      const childId = `${ct}:${ck}`;
+      if (!visited.has(childId)) queue.push(childId);
     }
   }
 
-  // Update options.unusedComp with the newly identified unused components
+  // Mark not visited as unused
+  for (const t of ['schemas','responses','parameters','examples','requestBodies','headers']) {
+    unusedComp[t] = Object
+      .keys(comps[t]||{})
+      .filter(k => !visited.has(`${t}:${k}`));
+  }
+
+  // TODO rework this logic
+  unusedComp.meta = {
+    total: unusedComp.schemas.length
+         + unusedComp.responses.length
+         + unusedComp.parameters.length
+         + unusedComp.examples.length
+         + unusedComp.requestBodies.length
+         + unusedComp.headers.length
+  };
+
+  // Update options.unusedComp with all identified unused components
   if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
   if (optFs.includes('responses'))
     options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
@@ -716,6 +694,7 @@ async function openapiFilter(oaObj, options) {
     options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
   if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
 
+  // TODO rework this logic
   // Update unusedComp.meta.total after each recursion
   options.unusedComp.meta.total =
     options.unusedComp.schemas.length +

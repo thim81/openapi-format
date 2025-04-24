@@ -8,7 +8,7 @@ const {run} = require('../bin/cli');
 const {parseFile, stringify, writeFile} = require('../openapi-format');
 
 // SELECTIVE TESTING DEBUG
-const localTesting = true;
+const localTesting = false;
 const destroyOutput = false;
 
 // Load tests
