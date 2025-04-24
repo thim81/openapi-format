@@ -8,15 +8,15 @@ const {run} = require('../bin/cli');
 const {parseFile, stringify, writeFile} = require('../openapi-format');
 
 // SELECTIVE TESTING DEBUG
-const localTesting = false;
+const localTesting = true;
 const destroyOutput = false;
 
 // Load tests
 const tests = !localTesting
   ? fs.readdirSync(__dirname).filter(file => {
-      return fs.statSync(path.join(__dirname, file)).isDirectory() && !file.startsWith('_');
-    })
-  : ['overlay-preserve-required'];
+    return fs.statSync(path.join(__dirname, file)).isDirectory() && !file.startsWith('_');
+  })
+  : ['yaml-filter-unused-components-path'];
 
 describe('openapi-format tests', () => {
   let consoleLogSpy, consoleWarnSpy;
@@ -34,6 +34,8 @@ describe('openapi-format tests', () => {
   tests.forEach(test => {
     describe(test, () => {
       it('should match expected output', async () => {
+        const start = process.hrtime();
+
         let options = {};
         let configFileOptions = {};
         let inputFilename = null;
@@ -133,8 +135,14 @@ describe('openapi-format tests', () => {
           console.error('error', error);
         }
 
-        // Assert results with output
-        expect(result).toStrictEqual(snap);
+        try {
+          // Assert results with output
+          expect(result).toStrictEqual(snap);
+        } finally {
+          const [sec, nano] = process.hrtime(start);
+          const ms = (sec * 1e3 + nano / 1e6).toFixed(2);
+          process.stderr.write(`Test "${test}" took ${ms} ms\n`);
+        }
       });
     });
   });
