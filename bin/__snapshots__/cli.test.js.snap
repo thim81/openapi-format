@@ -114,22 +114,22 @@ OpenAPI-Format CLI settings:
 Removed unused components:
 - components/schemas		 "UcErrorModel"
 - components/schemas		 "UcCustomer"
-- components/schemas		 "UcUnused"
 - components/schemas		 "Address"
+- components/schemas		 "UcUnused"
 - components/schemas		 "ErrorModel"
 - components/responses		 "UcGeneralError"
 - components/parameters		 "UcOffsetParam"
 - components/parameters		 "UcLimitParam"
+- components/examples		 "tshirt"
 - components/examples		 "uctshirt"
 - components/examples		 "uctshirt-unused"
-- components/examples		 "tshirt"
 - components/requestBodies	 "UcNewItem"
 - components/requestBodies	 "Pet"
 - components/requestBodies	 "UserArray"
 - components/requestBodies	 "UnusedArray"
-- components/headers		 "X-RateLimit-Unused"
 - components/headers		 "X-RateLimit-Limit"
 - components/headers		 "X-RateLimit-Remaining"
+- components/headers		 "X-RateLimit-Unused"
 Total components removed: 18
 [32m================================================================================[0m
 [32m✅  OpenAPI filtered & formatted successfully[0m
