@@ -1,4 +1,10 @@
 inverseFlagValues:
     - x-release: preview
     - x-release: dev
-
+unusedComponents:
+  - schemas
+  - parameters
+  - examples
+  - headers
+  - requestBodies
+  - responses

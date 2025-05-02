@@ -1,4 +1,11 @@
 inverseFlags:
   - x-visibility
   - x-stage
+unusedComponents:
+  - schemas
+  - parameters
+  - examples
+  - headers
+  - requestBodies
+  - responses
 

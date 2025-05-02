@@ -529,8 +529,7 @@ async function openapiFilter(oaObj, options) {
 
     // Keep fields matching the inverseFlags
     if (
-      inverseFilterFlags.length > 0 &&
-      ((this.path[0] === 'paths' && this.level === 3) || (this.path[0] === 'components' && this.level === 3))
+      inverseFilterFlags.length > 0 && (this.path[0] === 'paths' && this.level === 3)
     ) {
       const itmObj = node;
       const matchesInverseFlag = inverseFilterFlags.some(flagKey => {
@@ -545,8 +544,7 @@ async function openapiFilter(oaObj, options) {
 
     // Keep fields matching the inverseFlagValues
     if (
-      inverseFilterFlagValuesKeys.length > 0 &&
-      ((this.path[0] === 'paths' && this.level === 3) || (this.path[0] === 'components' && this.level === 3))
+      inverseFilterFlagValuesKeys.length > 0 && (this.path[0] === 'paths' && this.level === 3)
     ) {
       const itmObj = node;
       const matchesInverseFlag = inverseFilterFlagValues.some(flagObj => {
