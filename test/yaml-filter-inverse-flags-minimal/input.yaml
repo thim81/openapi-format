@@ -1,0 +1,40 @@
+openapi: 3.1.0
+info:
+  title: Entity Manager API
+  version: 1.0.0
+paths:
+  /entities:
+    get:
+      x-public: true
+      operationId: entityIndex
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Entity'
+  /entities2:
+    get:
+      operationId: entityIndex
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Entity'
+components:
+  schemas:
+    Entity:
+      properties:
+        uuid:
+          type: string
