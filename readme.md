@@ -422,7 +422,7 @@ paths:
             x-exclude: true
 ```
 
-=> **inverseFlags**: This option does the inverse filtering, by keeping only the path operations, tags, x-tagGroups that match the flag(s). This is a very aggressive option to keep only the items that are needed. The components can best be filtered out, by using the "[unusedComponents](https://github.com/thim81/openapi-format#filter---unusedcomponents)" filter option.
+=> **inverseFlags**: This option does the inverse filtering, by keeping only the path operations, tags, x-tagGroups that match the flag(s). This is a very aggressive option to keep only the items that are needed but it will keep the components. The components can best be filtered out, by using the "[unusedComponents](https://github.com/thim81/openapi-format#filter---unusedcomponents)" filter option.
 
 ### Filter - flagValues/inverseFlagValues
 
@@ -478,7 +478,7 @@ paths:
 
 Have a look at [flagValues](test/yaml-filter-custom-flagsvalue-value) and [flagValues for array values](test/yaml-filter-custom-flagsvalue-array) for a practical example.
 
-=> **inverseFlagValues**: This option does the inverse filtering, by keeping only the path operations, tags, x-tagGroups that match the flag with the specific value. This is a very aggressive option to keep only the items that are needed.  The components can best be filtered out, by using the "[unusedComponents](https://github.com/thim81/openapi-format#filter---unusedcomponents)" filter option.
+=> **inverseFlagValues**: This option does the inverse filtering, by keeping only the path operations, tags, x-tagGroups that match the flag with the specific value. This is a very aggressive option to keep only the items that are needed but it will keep the components. The components can best be filtered out, by using the "[unusedComponents](https://github.com/thim81/openapi-format#filter---unusedcomponents)" filter option.
 
 ### Filter - responseContent/inverseResponseContent
 
