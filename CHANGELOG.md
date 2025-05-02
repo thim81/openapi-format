@@ -1,5 +1,11 @@
 ## unreleased
 
+## [1.26.0] - 2025-05-02
+
+- improvement: Inverse filter keeps components (#153)
+
+The inverse filtering keeps only the path operations, tags, x-tagGroups that match the filter rule. This is a very aggressive option to keep only the items that are needed, but it will keep all the components.  The components can best be filtered out, by using the inverse filters in combination with the "[unusedComponents](https://github.com/thim81/openapi-format#filter---unusedcomponents)" filter option.
+
 ## [1.25.4] - 2025-04-24
 
 - fix: Performance degradation when filtering unused components ( #147)
