@@ -1067,6 +1067,40 @@ $ openapi-format openapi.json -o openapi-formatted.json --sortComponentsFile ./t
 This will sort all elements in the components ( components/schemas, components/parameters, components/headers,
 components/requestBodies, components/responses, ...) section by alphabet.
 
+- Format an OpenAPI document, including sorting properties within schema components alphabetically
+
+```shell
+$ openapi-format openapi.json -o openapi-formatted.json --sortComponentProps
+```
+
+This will sort all properties within schema components alphabetically. For example:
+
+**before**
+```yaml
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        lastName:
+          type: string
+        firstName:
+          type: string
+```
+
+**after**
+```yaml
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+```
+
 ## CLI filter usage
 
 - Format an OpenAPI document by filtering fields, default sorting and saves it as a new file

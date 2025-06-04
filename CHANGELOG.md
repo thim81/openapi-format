@@ -1,5 +1,7 @@
 ## unreleased
 
+- Sorting: Added sortComponentsProps feature
+
 ## [1.26.0] - 2025-05-02
 
 - improvement: Inverse filter keeps components (#153)
