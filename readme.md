@@ -147,7 +147,7 @@ Arguments:
 
 Options:
 
-  --output, -o          Save the formated OpenAPI file as JSON/YAML             [path]
+  --output, -o          Save the formatted OpenAPI file as JSON/YAML            [path]
 
   --sortFile            The file to specify custom OpenAPI fields ordering      [path]
   --casingFile          The file to specify casing rules                        [path]
@@ -193,7 +193,7 @@ Options:
 | --no-sort            |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                      | optional |
 | --keepComments       |               | don't remove the comments from the OpenAPI YAML file                        | boolean      | FALSE                      | optional |
 | --sortComponentsFile |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json | optional |
-| --no-bunlde          |               | don't bundle the local and remote $ref in the OpenAPI document              | boolean      | FALSE                      | optional |
+| --no-bundle          |               | don't bundle the local and remote $ref in the OpenAPI document              | boolean      | FALSE                      | optional |
 | --split              |               | split the OpenAPI document into a multi-file structure                      | boolean      | FALSE                      | optional |
 | --rename             |               | rename the OpenAPI title                                                    | string       |                            | optional |
 | --convertTo          |               | convert the OpenAPI document to OpenAPI version 3.1                         | string       |                            | optional |
