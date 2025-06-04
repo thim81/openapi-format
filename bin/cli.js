@@ -26,6 +26,7 @@ program
   .option('--no-sort', `don't sort the OpenAPI file`)
   .option('--keepComments', `don't remove the comments from the OpenAPI YAML file`, false)
   .option('--sortComponentsFile <sortComponentsFile>', 'the file with components to sort alphabetically')
+  .option('--sortComponentsProps', 'sort properties within schema components alphabetically', false)
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
   .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document')
   .option('--convertTo <oaVersion>', 'convert the OpenAPI document to OpenAPI version 3.1')
