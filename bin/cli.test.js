@@ -395,7 +395,7 @@ describe('openapi-format CLI command', () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
-  it('should use the sortComponentProps option', async () => {
+  it('should use the sortComponentsProps option', async () => {
     const path = `test/yaml-sort-component-props`;
     const inputFile = `${path}/input.yaml`;
     const outputFile = `${path}/output.yaml`;

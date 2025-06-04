@@ -331,16 +331,6 @@ OpenAPI-Format CLI settings:
 "
 `;
 
-exports[`openapi-format CLI command should use the sortComponentProps option 1`] = `
-"================================================================================
-OpenAPI-Format CLI settings:
-- Input file:		test/yaml-sort-component-props/input.yaml
-[32m================================================================================[0m
-[32m✅  OpenAPI formatted successfully[0m
-[32m================================================================================[0m
-"
-`;
-
 exports[`openapi-format CLI command should use the sortComponentsFile 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
@@ -357,7 +347,6 @@ exports[`openapi-format CLI command should use the sortComponentsProps option 1`
 "================================================================================
 OpenAPI-Format CLI settings:
 - Sort file:		(defaultSort.json)
-- Sort Components file:	test/yaml-sort-component-props/customSortComponents.yaml
 - Input file:		test/yaml-sort-component-props/input.yaml
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
