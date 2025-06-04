@@ -1062,8 +1062,91 @@ Phil Sturgeon](https://www.openapis.org/blog/2021/02/16/migrating-from-openapi-3
 $ openapi-format openapi.json -o openapi-formatted.json --sortComponentsFile ./test/json-sort-components/customSortComponents.json
 ```
 
-This will sort all elements in the components ( components/schemas, components/parameters, components/headers,
-components/requestBodies, components/responses, ...) section by alphabet.
+This will sort all elements in the components (components/schemas, components/parameters, components/headers,
+components/requestBodies, components/responses, ...) section alphabetically. The file specified by `--sortComponentsFile` should contain an array of component types to sort.
+
+Example of a customSortComponents.json file:
+```json
+["schemas", "parameters", "headers", "requestBodies", "responses", "securitySchemes"]
+```
+
+**before**
+```yaml
+components:
+  schemas:
+    Order:
+      type: object
+      # properties...
+    Customer:
+      type: object
+      # properties...
+    Address:
+      type: object
+      # properties...
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      # configuration...
+    api_key:
+      type: apiKey
+      # configuration...
+```
+
+**after**
+```yaml
+components:
+  schemas:
+    Address:
+      type: object
+      # properties...
+    Customer:
+      type: object
+      # properties...
+    Order:
+      type: object
+      # properties...
+  securitySchemes:
+    api_key:
+      type: apiKey
+      # configuration...
+    petstore_auth:
+      type: oauth2
+      # configuration...
+```
+
+- Format an OpenAPI document, including sorting properties within schema components alphabetically
+
+```shell
+$ openapi-format openapi.json -o openapi-formatted.json --sortComponentsProps
+```
+
+This will sort all properties within schema components alphabetically. For example:
+
+**before**
+```yaml
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        lastName:
+          type: string
+        firstName:
+          type: string
+```
+
+**after**
+```yaml
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+```
 
 ## CLI filter usage
 
