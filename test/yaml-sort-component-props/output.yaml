@@ -1,0 +1,16 @@
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+    AccountDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string

@@ -79,6 +79,19 @@ async function openapiSort(oaObj, options) {
         this.update(node);
       }
 
+      // Sort properties within components by alphabet
+      if (
+        options.sortComponentsProps &&
+        this.key === 'properties' &&
+        this.path[0] === 'components' &&
+        this.path[1] === 'schemas'
+      ) {
+        // debugStep = 'Properties within components sorting by alphabet'
+        let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the properties object
+        node = prioritySort(sortedObj, []); // Sort alphabetically
+        this.update(node);
+      }
+
       // Inline parameters sorting by alphabet
       if (
         this.path[0] !== 'components' &&

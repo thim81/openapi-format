@@ -18,15 +18,16 @@ OpenAPI-Format CLI settings:
 ================================================================================
 
 OpenAPI-Format CLI options:
-|--------------|---------------------------------------------------|
-| sort         | false                                             |
-| keepComments | true                                              |
-| lineWidth    | -1                                                |
-| bundle       | true                                              |
-| split        | false                                             |
-| filterFile   | test/yaml-no-sort-keep-comments/customFilter.yaml |
-| verbose      | 3                                                 |
-|--------------|---------------------------------------------------|
+|---------------------|---------------------------------------------------|
+| sort                | false                                             |
+| keepComments        | true                                              |
+| sortComponentsProps | false                                             |
+| lineWidth           | -1                                                |
+| bundle              | true                                              |
+| split               | false                                             |
+| filterFile          | test/yaml-no-sort-keep-comments/customFilter.yaml |
+| verbose             | 3                                                 |
+|---------------------|---------------------------------------------------|
 
 [32m================================================================================[0m
 [32m✅  OpenAPI filtered & formatted successfully[0m
@@ -91,6 +92,7 @@ Options:
   --no-sort                                  don't sort the OpenAPI file
   --keepComments                             don't remove the comments from the OpenAPI YAML file (default: false)
   --sortComponentsFile <sortComponentsFile>  the file with components to sort alphabetically
+  --sortComponentsProps                      sort properties within schema components alphabetically (default: false)
   --lineWidth <lineWidth>                    max line width of YAML output (default: -1)
   --rename <oaTitle>                         overwrite the title in the OpenAPI document
   --convertTo <oaVersion>                    convert the OpenAPI document to OpenAPI version 3.1
@@ -228,15 +230,16 @@ OpenAPI-Format CLI settings:
 ================================================================================
 
 OpenAPI-Format CLI options:
-|--------------|-------|
-| sort         | false |
-| keepComments | false |
-| lineWidth    | -1    |
-| bundle       | true  |
-| split        | false |
-| convertTo    | 3.1   |
-| verbose      | 3     |
-|--------------|-------|
+|---------------------|-------|
+| sort                | false |
+| keepComments        | false |
+| sortComponentsProps | false |
+| lineWidth           | -1    |
+| bundle              | true  |
+| split               | false |
+| convertTo           | 3.1   |
+| verbose             | 3     |
+|---------------------|-------|
 
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
@@ -334,6 +337,17 @@ OpenAPI-Format CLI settings:
 - Sort file:		(defaultSort.json)
 - Sort Components file:	test/yaml-sort-components/customSortComponents.yaml
 - Input file:		test/yaml-sort-components/input.yaml
+[32m================================================================================[0m
+[32m✅  OpenAPI formatted successfully[0m
+[32m================================================================================[0m
+"
+`;
+
+exports[`openapi-format CLI command should use the sortComponentsProps option 1`] = `
+"================================================================================
+OpenAPI-Format CLI settings:
+- Sort file:		(defaultSort.json)
+- Input file:		test/yaml-sort-component-props/input.yaml
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
 [32m================================================================================[0m
