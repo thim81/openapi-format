@@ -150,7 +150,13 @@ async function openapiSort(oaObj, options) {
           // Deep sort list of properties
           let sortedObj = JSON.parse(JSON.stringify(node)); // Deep copy of the object
           for (let keyRes in sortedObj) {
-            sortedObj[keyRes] = prioritySort(sortedObj[keyRes], sortSet[this.key]);
+            if (
+              typeof sortedObj[keyRes] === 'object' &&
+              !Array.isArray(sortedObj[keyRes]) &&
+              sortedObj[keyRes] !== null
+            ) {
+              sortedObj[keyRes] = prioritySort(sortedObj[keyRes], sortSet[this.key]);
+            }
           }
           this.update(sortedObj);
         } else {

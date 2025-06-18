@@ -1,0 +1,9 @@
+openapi: 3.0.3
+components:
+  properties:
+    type: object
+    required:
+      - datetime
+    properties:
+      datetime:
+        type: string
