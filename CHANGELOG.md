@@ -1,6 +1,9 @@
 ## unreleased
 
-- Sorting: Added sortComponentsProps feature
+## [1.27.0] - 2025-06-18
+
+- Sorting: Added sortComponentsProps feature (#165)
+- fix: Prevent sorting of required array properties (#166)
 
 ## [1.26.0] - 2025-05-02
 
