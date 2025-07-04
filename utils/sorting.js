@@ -40,7 +40,12 @@ function propComparator(priorityArr) {
     if (ia !== -1) {
       return ib !== -1 ? ia - ib : -1;
     }
-    return ib !== -1 || a > b ? 1 : a < b ? -1 : 0;
+    if (ib !== -1) {
+      return 1;
+    }
+    const aLower = a.toLowerCase();
+    const bLower = b.toLowerCase();
+    return aLower > bLower ? 1 : aLower < bLower ? -1 : 0;
   };
 }
 
