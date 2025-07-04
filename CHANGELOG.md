@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.27.1] - 2025-07-04
+
+- Sorting: ignore casing when sorting component properties (#165)
+
 ## [1.27.0] - 2025-06-18
 
 - Sorting: Added sortComponentsProps feature (#165)

@@ -14,6 +14,145 @@ components:
           type: string
         firstName:
           type: string
+    Schema:
+      description: |-
+        The `Schema` object allows the definition of input and output data types.
+        These types can be objects, but also primitives and arrays.
+        Represents a select subset of an [OpenAPI 3.0 schema
+        object](https://spec.openapis.org/oas/v3.0.3#schema).
+      type: object
+      properties:
+        anyOf:
+          description: >-
+            Optional. The value should be validated against any (one or more) of the
+            subschemas
+
+            in the list.
+          type: array
+          items:
+            $ref: '#/components/schemas/Schema'
+        default:
+          description: >-
+            Optional. Default value of the field. Per JSON Schema, this field is
+            intended for
+
+            documentation generators and doesn't affect validation. Thus it's
+            included
+
+            here and ignored so that developers who send schemas with a `default`
+            field
+
+            don't get unknown-field errors.
+        description:
+          description: >-
+            Optional. A brief description of the parameter. This could contain
+            examples of use.
+
+            Parameter description may be formatted as Markdown.
+          type: string
+        enum:
+          description: >-
+            Optional. Possible values of the element of Type.STRING with enum
+            format.
+
+            For example we can define an Enum Direction as :
+
+            {type:STRING, format:enum, enum:["EAST", NORTH", "SOUTH", "WEST"]}
+          type: array
+          items:
+            type: string
+        example:
+          description: >-
+            Optional. Example of the object. Will only populated when the object is
+            the root.
+        format:
+          description: >-
+            Optional. The format of the data. This is used only for primitive
+            datatypes.
+
+            Supported formats:
+             for NUMBER type: float, double
+             for INTEGER type: int32, int64
+             for STRING type: enum, date-time
+          type: string
+        items:
+          description: Optional. Schema of the elements of Type.ARRAY.
+          allOf:
+            - $ref: '#/components/schemas/Schema'
+        maxItems:
+          description: Optional. Maximum number of the elements for Type.ARRAY.
+          type: string
+          format: int64
+        maximum:
+          description: Optional. Maximum value of the Type.INTEGER and Type.NUMBER
+          type: number
+          format: double
+        maxLength:
+          description: Optional. Maximum length of the Type.STRING
+          type: string
+          format: int64
+        maxProperties:
+          description: Optional. Maximum number of the properties for Type.OBJECT.
+          type: string
+          format: int64
+        minimum:
+          description: |-
+            Optional. SCHEMA FIELDS FOR TYPE INTEGER and NUMBER
+            Minimum value of the Type.INTEGER and Type.NUMBER
+          type: number
+          format: double
+        minItems:
+          description: Optional. Minimum number of the elements for Type.ARRAY.
+          type: string
+          format: int64
+        minLength:
+          description: |-
+            Optional. SCHEMA FIELDS FOR TYPE STRING
+            Minimum length of the Type.STRING
+          type: string
+          format: int64
+        minProperties:
+          description: Optional. Minimum number of the properties for Type.OBJECT.
+          type: string
+          format: int64
+        nullable:
+          description: Optional. Indicates if the value may be null.
+          type: boolean
+        pattern:
+          description: >-
+            Optional. Pattern of the Type.STRING to restrict a string to a regular
+            expression.
+          type: string
+        properties:
+          description: Optional. Properties of Type.OBJECT.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Schema'
+        propertyOrdering:
+          description: >-
+            Optional. The order of the properties.
+
+            Not a standard field in open api spec. Used to determine the order of
+            the
+
+            properties in the response.
+          type: array
+          items:
+            type: string
+        required:
+          description: Optional. Required properties of Type.OBJECT.
+          type: array
+          items:
+            type: string
+        title:
+          description: Optional. The title of the schema.
+          type: string
+        type:
+          description: Required. Data type.
+          allOf:
+            - $ref: '#/components/schemas/Type'
+      required:
+        - type
     CountTokensResponse:
       description: |-
         A response from `CountTokens`.
