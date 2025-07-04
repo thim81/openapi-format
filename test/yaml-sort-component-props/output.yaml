@@ -26,17 +26,13 @@ components:
           type: integer
           format: int32
         cacheTokensDetails:
-          description: >-
-            Output only. List of modalities that were processed in the cached
-            content.
+          description: Output only. List of modalities that were processed in the cached content.
           type: array
           items:
             $ref: '#/components/schemas/ModalityTokenCount'
           readOnly: true
         promptTokensDetails:
-          description: >-
-            Output only. List of modalities that were processed in the request
-            input.
+          description: Output only. List of modalities that were processed in the request input.
           type: array
           items:
             $ref: '#/components/schemas/ModalityTokenCount'

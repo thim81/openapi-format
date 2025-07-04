@@ -21,10 +21,6 @@ components:
         It returns the model's `token_count` for the `prompt`.
       type: object
       properties:
-        cachedContentTokenCount:
-          description: Number of tokens in the cached part of the prompt (the cached content).
-          type: integer
-          format: int32
         cacheTokensDetails:
           description: >-
             Output only. List of modalities that were processed in the cached
@@ -33,6 +29,10 @@ components:
           items:
             $ref: '#/components/schemas/ModalityTokenCount'
           readOnly: true
+        cachedContentTokenCount:
+          description: Number of tokens in the cached part of the prompt (the cached content).
+          type: integer
+          format: int32
         promptTokensDetails:
           description: >-
             Output only. List of modalities that were processed in the request
