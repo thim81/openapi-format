@@ -23,53 +23,36 @@ components:
       type: object
       properties:
         anyOf:
-          description: >-
-            Optional. The value should be validated against any (one or more) of the
-            subschemas
-
+          description: |-
+            Optional. The value should be validated against any (one or more) of the subschemas
             in the list.
           type: array
           items:
             $ref: '#/components/schemas/Schema'
         default:
-          description: >-
-            Optional. Default value of the field. Per JSON Schema, this field is
-            intended for
-
-            documentation generators and doesn't affect validation. Thus it's
-            included
-
-            here and ignored so that developers who send schemas with a `default`
-            field
-
+          description: |-
+            Optional. Default value of the field. Per JSON Schema, this field is intended for
+            documentation generators and doesn't affect validation. Thus it's included
+            here and ignored so that developers who send schemas with a `default` field
             don't get unknown-field errors.
         description:
-          description: >-
-            Optional. A brief description of the parameter. This could contain
-            examples of use.
-
+          description: |-
+            Optional. A brief description of the parameter. This could contain examples of use.
             Parameter description may be formatted as Markdown.
           type: string
         enum:
-          description: >-
-            Optional. Possible values of the element of Type.STRING with enum
-            format.
-
+          description: |-
+            Optional. Possible values of the element of Type.STRING with enum format.
             For example we can define an Enum Direction as :
-
             {type:STRING, format:enum, enum:["EAST", NORTH", "SOUTH", "WEST"]}
           type: array
           items:
             type: string
         example:
-          description: >-
-            Optional. Example of the object. Will only populated when the object is
-            the root.
+          description: Optional. Example of the object. Will only populated when the object is the root.
         format:
-          description: >-
-            Optional. The format of the data. This is used only for primitive
-            datatypes.
-
+          description: |-
+            Optional. The format of the data. This is used only for primitive datatypes.
             Supported formats:
              for NUMBER type: float, double
              for INTEGER type: int32, int64
@@ -119,9 +102,7 @@ components:
           description: Optional. Indicates if the value may be null.
           type: boolean
         pattern:
-          description: >-
-            Optional. Pattern of the Type.STRING to restrict a string to a regular
-            expression.
+          description: Optional. Pattern of the Type.STRING to restrict a string to a regular expression.
           type: string
         properties:
           description: Optional. Properties of Type.OBJECT.
@@ -129,12 +110,9 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/Schema'
         propertyOrdering:
-          description: >-
+          description: |-
             Optional. The order of the properties.
-
-            Not a standard field in open api spec. Used to determine the order of
-            the
-
+            Not a standard field in open api spec. Used to determine the order of the
             properties in the response.
           type: array
           items:
