@@ -14,3 +14,38 @@ components:
           type: string
         firstName:
           type: string
+    CountTokensResponse:
+      description: |-
+        A response from `CountTokens`.
+
+        It returns the model's `token_count` for the `prompt`.
+      type: object
+      properties:
+        cachedContentTokenCount:
+          description: Number of tokens in the cached part of the prompt (the cached content).
+          type: integer
+          format: int32
+        cacheTokensDetails:
+          description: >-
+            Output only. List of modalities that were processed in the cached
+            content.
+          type: array
+          items:
+            $ref: '#/components/schemas/ModalityTokenCount'
+          readOnly: true
+        promptTokensDetails:
+          description: >-
+            Output only. List of modalities that were processed in the request
+            input.
+          type: array
+          items:
+            $ref: '#/components/schemas/ModalityTokenCount'
+          readOnly: true
+        totalTokens:
+          description: >-
+            The number of tokens that the `Model` tokenizes the `prompt` into.
+            Always
+
+            non-negative.
+          type: integer
+          format: int32
