@@ -1,6 +1,6 @@
 ## unreleased
 
-## [1.27.2] - 2025-07-04
+## [1.27.2] - 2025-07-14
 
 - Sorting: fix encodeLargeNumbers to respect comma values (#170)
 
