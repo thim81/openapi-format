@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.27.2] - 2025-07-04
+
+- Sorting: fix encodeLargeNumbers to respect comma values (#170)
+
 ## [1.27.1] - 2025-07-04
 
 - Sorting: ignore casing when sorting component properties (#165)

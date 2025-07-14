@@ -395,6 +395,12 @@ describe('openapi-format CLI file tests', () => {
       const output = encodeLargeNumbers(input);
       expect(output).toBe(' "large: "123456789.123456789===",\n key": "123",\n "other": "456"');
     });
+
+    test('should not modify numbers that are part of a comma separated string', () => {
+      const input = 'location: 10.12345678912345, 10.12345678912345';
+      const output = encodeLargeNumbers(input);
+      expect(output).toBe(input);
+    });
   });
 
   describe('addQuotesToRefInString function', () => {
