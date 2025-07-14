@@ -1,0 +1,39 @@
+openapi: 3.0.0
+info:
+  title: TEST API
+  version: 1.0.0
+paths:
+  /test:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                location: string
+                test_property: string
+            examples:
+              Example1:
+                $ref: '#/components/examples/Test1'
+              Example2:
+                $ref: '#/components/examples/Test2'
+      responses:
+        '201':
+          description: Succcess
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type: string
+components:
+  examples:
+    Test1:
+      value:
+        location: '10.12345678912345, 10.12345678912345'
+        test_property: test
+    Test2:
+      value:
+        location: '10.12345678912345, 10.12345678912345'
+        test_property: test

@@ -279,7 +279,7 @@ async function getRemoteFile(filePath) {
  */
 function encodeLargeNumbers(inputContent) {
   // Convert large number value safely before parsing
-  const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)\b(?!\.[0-9])(,|\n)/g; // match > : 123456789.123456789
+  const regexEncodeLargeNumber = /: ([0-9]+(\.[0-9]+)?)(?!\.[0-9])(,(?!\s*[0-9])|\n)/g; // match > : 123456789.123456789
   return inputContent.replace(regexEncodeLargeNumber, rawInput => {
     const endChar = rawInput.endsWith(',') ? ',' : '\n';
     const rgx = new RegExp(endChar, 'g');
