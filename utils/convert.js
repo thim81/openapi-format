@@ -40,7 +40,12 @@ function setInObject(obj, key, value, index) {
 }
 
 /**
- * Convert nullable property to type
+ * converts:
+ *   `type: 'thing'` -> `type: ['thing']`
+ *   `type: 'thing', nullable: true` -> `type: ['thing', 'null']`
+ *   `anyOf: ['thing'], nullable: true` -> `anyOf: ['thing', {type: 'null'}]`
+ *   `oneOf: ['thing'], nullable: true` -> `oneOf: ['thing', {type: 'null'}]`
+ *
  * @param {object} obj
  * @returns {*}
  */
@@ -49,12 +54,20 @@ function convertNullable(obj) {
   if (obj.nullable === undefined) return obj;
 
   let dto = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
-  const types = [dto.type.toString()];
-  if (dto.nullable === true) {
-    types.push('null');
+  // Update for 3.1
+  if (obj.type) {
+    const types = [dto.type.toString()];
+    if (dto.nullable === true) {
+      types.push('null');
+    }
+    dto = setInObject(dto, 'type', types, 'type');
+  } else if (dto.nullable === true && Array.isArray(dto.oneOf)) {
+    const withNullType = dto.oneOf.concat({type: 'null'});
+    dto = setInObject(dto, 'oneOf', withNullType, 'oneOf');
+  } else if (dto.nullable === true && Array.isArray(dto.anyOf)) {
+    const withNullType = dto.anyOf.concat({type: 'null'});
+    dto = setInObject(dto, 'anyOf', withNullType, 'anyOf');
   }
-  // Update 3.1 type
-  dto = setInObject(dto, 'type', types, 'type');
   // Remove 3.0 prop
   delete dto.nullable;
   return dto;
