@@ -60,5 +60,6 @@ module.exports = {
   isFunction: isFunction,
   isArray: isArray,
   isElement: isElement,
+  isUndefined: isUndefined,
   isset: isset
 };

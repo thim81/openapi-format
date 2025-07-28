@@ -1,4 +1,4 @@
-const {isObject, isArray, isNumber, isString} = require('./types');
+const {isObject, isArray, isNumber, isString, isUndefined} = require('./types');
 
 /**
  * Add property to object at certain position
@@ -18,14 +18,14 @@ function setInObject(obj, key, value, index) {
   for (let prop in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, prop)) {
       // If the indexes match, add the new item
-      if (i === index && isNumber(index) && key && value) {
+      if (i === index && isNumber(index) && key && !isUndefined(value)) {
         dto[key] = value;
       }
       // Add the current item in the loop to the temp obj
       dto[prop] = obj[prop];
 
       // Add/overwrite item
-      if (isString(index) && i === ordering.indexOf(index) && key && value) {
+      if (isString(index) && i === ordering.indexOf(index) && key && !isUndefined(value)) {
         dto[key] = value;
       }
       // Increase the count

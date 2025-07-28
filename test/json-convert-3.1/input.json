@@ -3436,6 +3436,39 @@
           "name": "##default"
         },
         "type": "object"
+      },
+      "FalseyExclusiveMinMax": {
+        "properties": {
+          "minIsZero": {
+            "type": "integer",
+            "maximum": 1,
+            "minimum": 0,
+            "exclusiveMaximum": true,
+            "exclusiveMinimum": true
+          },
+          "maxIsZero": {
+            "type": "integer",
+            "maximum": 0,
+            "minimum": 1,
+            "exclusiveMaximum": true,
+            "exclusiveMinimum": true
+          },
+          "bothAreZero": {
+            "type": "integer",
+            "maximum": 0,
+            "minimum": 0,
+            "exclusiveMaximum": true,
+            "exclusiveMinimum": true
+          },
+          "nonExclusive": {
+            "type": "integer",
+            "maximum": 0,
+            "minimum": 0,
+            "exclusiveMinimum": false,
+            "exclusiveMaximum": false
+          }
+        },
+        "type": "object"
       }
     },
     "requestBodies": {

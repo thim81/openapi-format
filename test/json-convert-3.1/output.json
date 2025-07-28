@@ -3915,6 +3915,31 @@
           "name": "##default"
         },
         "type": "object"
+      },
+      "FalseyExclusiveMinMax": {
+        "properties": {
+          "minIsZero": {
+            "type": "integer",
+            "exclusiveMaximum": 1,
+            "exclusiveMinimum": 0
+          },
+          "maxIsZero": {
+            "type": "integer",
+            "exclusiveMaximum": 0,
+            "exclusiveMinimum": 1
+          },
+          "bothAreZero": {
+            "type": "integer",
+            "exclusiveMaximum": 0,
+            "exclusiveMinimum": 0
+          },
+          "nonExclusive": {
+            "type": "integer",
+            "maximum": 0,
+            "minimum": 0
+          }
+        },
+        "type": "object"
       }
     },
     "requestBodies": {
