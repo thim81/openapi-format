@@ -1,7 +1,6 @@
 'use strict';
 
 const testUtils = require('./__utils__/test-utils');
-const of = require('./../openapi-format');
 const {
   convertNullable,
   convertExclusiveMinimum,
