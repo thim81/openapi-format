@@ -1120,10 +1120,10 @@ async function openapiConvertVersion(oaObj, options) {
   traverse(jsonObj).forEach(function (node) {
     if (typeof node === 'object' && node !== null) {
       // Change components/schemas - properties
-      if (node.type) {
-        // Change type > nullable
-        node = convertNullable(node);
 
+      // Change anyOf/oneOf/type > nullable
+      node = convertNullable(node);
+      if (node.type) {
         // Change type > example
         node = convertExample(node);
 
@@ -1135,9 +1135,8 @@ async function openapiConvertVersion(oaObj, options) {
 
         // Change type > single enum
         node = convertConst(node);
-
-        this.update(node);
       }
+      this.update(node);
 
       // Change components/schemas - schema
       if (node.schema) {

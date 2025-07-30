@@ -3496,6 +3496,62 @@
           }
         }
       }
+    },
+    "/one-of-nullable": {
+      "patch": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/User"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Customer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      }
+    },
+    "/any-of-nullable": {
+      "patch": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/User"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Customer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      }
     }
   },
   "externalDocs": {
@@ -3857,6 +3913,31 @@
         },
         "xml": {
           "name": "##default"
+        },
+        "type": "object"
+      },
+      "FalseyExclusiveMinMax": {
+        "properties": {
+          "minIsZero": {
+            "type": "integer",
+            "exclusiveMaximum": 1,
+            "exclusiveMinimum": 0
+          },
+          "maxIsZero": {
+            "type": "integer",
+            "exclusiveMaximum": 0,
+            "exclusiveMinimum": 1
+          },
+          "bothAreZero": {
+            "type": "integer",
+            "exclusiveMaximum": 0,
+            "exclusiveMinimum": 0
+          },
+          "nonExclusive": {
+            "type": "integer",
+            "maximum": 0,
+            "minimum": 0
+          }
         },
         "type": "object"
       }
