@@ -1,5 +1,10 @@
 ## unreleased
 
+## [1.27.3] - 2025-07-30
+
+- Convert: convert nullable for anyOf oneOf to 3.1 (#172)
+- Convert: convert 0 correctly for exclusiveMinimum and exclusiveMaximum (#174)
+
 ## [1.27.2] - 2025-07-14
 
 - Sorting: fix encodeLargeNumbers to respect comma values (#170)
