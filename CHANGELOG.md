@@ -1,5 +1,8 @@
 ## unreleased
 
+- Improvement: Added safe checks for invalid YAML
+- CLI - Fix relative path generation in $ref when splitting document (#175)
+
 ## [1.27.3] - 2025-07-30
 
 - Convert: convert nullable for anyOf oneOf to 3.1 (#172)
