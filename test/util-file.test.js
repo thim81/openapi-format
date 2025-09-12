@@ -448,7 +448,6 @@ describe('openapi-format CLI file tests', () => {
     });
 
     test('should handle null when extracting OpenAPI info', () => {
-      const mockOpenApi = require('./__utils__/mockOpenApi.json');
       const result = analyzeOpenApi(null);
 
       expect(result).toEqual({
@@ -461,6 +460,37 @@ describe('openapi-format CLI file tests', () => {
         responseContent: [],
         requestContent: [],
         tags: []
+      });
+    });
+
+    test('should ignore null path items when extracting OpenAPI info', () => {
+      const mockOpenApi = {
+        openapi: '3.0.0',
+        info: {title: 'x', version: '1'},
+        paths: {
+          '/pets': {
+            get: {
+              responses: {
+                200: {description: 'ok'}
+              }
+            }
+          },
+          '/empty': null
+        }
+      };
+
+      const result = analyzeOpenApi(mockOpenApi);
+
+      expect(result).toEqual({
+        flags: [],
+        tags: [],
+        operationIds: [],
+        paths: ['/pets', '/empty'],
+        methods: ['GET'],
+        operations: ['GET::/pets'],
+        responseContent: [],
+        requestContent: [],
+        flagValues: []
       });
     });
   });

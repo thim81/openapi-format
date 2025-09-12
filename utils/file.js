@@ -359,47 +359,51 @@ function analyzeOpenApi(oaObj) {
       paths.push(path);
       const pathItem = oaObj.paths[path];
 
-      Object.keys(pathItem).forEach(method => {
-        methods.add(method.toUpperCase());
-        const operation = pathItem[method];
-        operations.push(`${method.toUpperCase()}::${path}`);
+      if (pathItem && typeof pathItem === 'object') {
+        Object.keys(pathItem).forEach(method => {
+          methods.add(method.toUpperCase());
+          const operation = pathItem[method];
+          operations.push(`${method.toUpperCase()}::${path}`);
 
-        if (operation?.tags && Array.isArray(operation.tags)) {
-          operation.tags.forEach(tag => {
-            if (tag.startsWith('x-')) {
-              flags.add(tag);
-            } else {
-              tags.add(tag);
-            }
-          });
-        }
-
-        if (operation?.operationId) {
-          operationIds.push(operation.operationId);
-        }
-
-        if (operation?.requestBody?.content) {
-          Object.keys(operation.requestBody.content).forEach(contentType => {
-            requestContent.add(contentType);
-          });
-        }
-
-        if (operation?.responses) {
-          Object.values(operation.responses).forEach(response => {
-            if (response?.content) {
-              Object.keys(response.content).forEach(contentType => {
-                responseContent.add(contentType);
+          if (operation && typeof operation === 'object') {
+            if (operation?.tags && Array.isArray(operation.tags)) {
+              operation.tags.forEach(tag => {
+                if (tag.startsWith('x-')) {
+                  flags.add(tag);
+                } else {
+                  tags.add(tag);
+                }
               });
             }
-          });
-        }
 
-        Object.keys(operation).forEach(key => {
-          if (key.startsWith('x-')) {
-            flagValues.add(`${key}: ${operation[key]}`);
+            if (operation?.operationId) {
+              operationIds.push(operation.operationId);
+            }
+
+            if (operation?.requestBody?.content) {
+              Object.keys(operation.requestBody.content).forEach(contentType => {
+                requestContent.add(contentType);
+              });
+            }
+
+            if (operation?.responses) {
+              Object.values(operation.responses).forEach(response => {
+                if (response?.content) {
+                  Object.keys(response.content).forEach(contentType => {
+                    responseContent.add(contentType);
+                  });
+                }
+              });
+            }
+
+            Object.keys(operation).forEach(key => {
+              if (key.startsWith('x-')) {
+                flagValues.add(`${key}: ${operation[key]}`);
+              }
+            });
           }
         });
-      });
+      }
     });
   }
 

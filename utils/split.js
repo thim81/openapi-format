@@ -60,7 +60,11 @@ async function writeComponents(components, options) {
       const filePath = path.join(fileDir, `${componentName}.${ext}`);
 
       // Update any component references within components
-      const updatedComponent = convertComponentsToRef(components[componentType][componentName], ext, path.join('components', componentType));
+      const updatedComponent = convertComponentsToRef(
+        components[componentType][componentName],
+        ext,
+        path.join('components', componentType)
+      );
 
       // Write each component (schema, parameter, etc.) to its own YAML file
       await writeFile(filePath, updatedComponent, options);
