@@ -13,7 +13,7 @@ function increaseVerbosity(dummyValue, previous) {
 }
 
 program
-  .argument('[oaFile]')
+  .arguments('[oaFile]')
   .usage('<file> [options]')
   .description('Format an OpenAPI document by ordering, formatting and filtering fields.')
   .option('-o, --output <output>', 'save the formatted OpenAPI file as JSON/YAML')
@@ -59,7 +59,6 @@ async function run(oaFile, options) {
   let cliLog = {};
   const consoleLine = process.stdout.columns ? '='.repeat(process.stdout.columns) : '='.repeat(80);
 
-  
   infoOut(`${consoleLine}`); // LOG - horizontal rule
   infoOut(`OpenAPI-Format CLI settings:`); // LOG - config file
 
@@ -218,7 +217,8 @@ async function run(oaFile, options) {
     const extendsRef = options?.overlaySet?.extends;
     if (extendsRef) {
       // Resolve local relative paths against the overlay file location
-      const isRemote = typeof extendsRef === 'string' && (extendsRef.startsWith('http://') || extendsRef.startsWith('https://'));
+      const isRemote =
+        typeof extendsRef === 'string' && (extendsRef.startsWith('http://') || extendsRef.startsWith('https://'));
       if (isRemote) {
         oaFile = extendsRef;
       } else {
@@ -250,12 +250,33 @@ async function run(oaFile, options) {
     resObj = await openapiFormat.parseFile(oaFile, fileOptions);
     input = resObj;
   } catch (err) {
-    if (err.code !== 'ENOENT') {
-      console.error('\x1b[31m', `Input file error - Failed to read file: ${err.message}`);
+    // If input file missing but overlay extends is present, fallback to extends
+    const extendsRef = options?.overlaySet?.extends;
+    if (err.code === 'ENOENT' && extendsRef) {
+      const isRemote =
+        typeof extendsRef === 'string' && (extendsRef.startsWith('http://') || extendsRef.startsWith('https://'));
+      if (isRemote) {
+        oaFile = extendsRef;
+      } else {
+        const baseDir = options?.overlayFile ? path.dirname(path.resolve(options.overlayFile)) : process.cwd();
+        oaFile = path.isAbsolute(extendsRef) ? extendsRef : path.resolve(baseDir, extendsRef);
+      }
+      infoOut(`- Input file (extends):\t${oaFile}`);
+      try {
+        resObj = await openapiFormat.parseFile(oaFile, fileOptions);
+        input = resObj;
+      } catch (err2) {
+        console.error('\x1b[31m', `Input file error - Failed to read file: ${err2.message}`);
+        process.exit(1);
+      }
+    } else {
+      if (err.code !== 'ENOENT') {
+        console.error('\x1b[31m', `Input file error - Failed to read file: ${err.message}`);
+        process.exit(1);
+      }
+      console.error('\x1b[31m', `Input file error - Failed to read file: ${oaFile}`);
       process.exit(1);
     }
-    console.error('\x1b[31m', `Input file error - Failed to read file: ${oaFile}`);
-    process.exit(1);
   }
 
   // Generate elements for OpenAPI document

@@ -1,0 +1,5 @@
+overlay: 1.0.0
+info:
+  title: Remote Extends Overlay
+  version: 1.0.0
+extends: 'https://raw.githubusercontent.com/thim81/openapi-format/main/test/overlay-combi/input.yaml'
