@@ -1217,6 +1217,27 @@ example:
 $ openapi-format openapi.yaml --overlayFile overlay.yaml -o openapi-updated.yaml
 ```
 
+You can also let the overlay declare the base OpenAPI document using the top-level `extends` property. When `extends` is present, the input file argument becomes optional:
+
+```yaml
+overlay: 1.0.0
+info:
+  title: Overlay for Tic Tac Toe
+  version: 1.0.0
+extends: 'https://raw.githubusercontent.com/OAI/learn.openapis.org/refs/heads/main/examples/v3.1/tictactoe.yaml'
+# actions: [...]  # optional
+```
+
+CLI usage with `extends` (no input file argument):
+
+```shell
+$ openapi-format --overlayFile overlay.yaml -o openapi-updated.yaml
+```
+
+Notes:
+- `extends` supports both local paths and remote `http(s)` URLs.
+- Local relative paths are resolved relative to the overlay file’s location.
+
 ## CLI generate usage
 
 - Generate OpenAPI elements and saves it as a new file

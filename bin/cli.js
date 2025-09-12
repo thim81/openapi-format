@@ -13,7 +13,7 @@ function increaseVerbosity(dummyValue, previous) {
 }
 
 program
-  .arguments('<oaFile>')
+  .argument('[oaFile]')
   .usage('<file> [options]')
   .description('Format an OpenAPI document by ordering, formatting and filtering fields.')
   .option('-o, --output <output>', 'save the formatted OpenAPI file as JSON/YAML')
@@ -59,11 +59,7 @@ async function run(oaFile, options) {
   let cliLog = {};
   const consoleLine = process.stdout.columns ? '='.repeat(process.stdout.columns) : '='.repeat(80);
 
-  if (!oaFile) {
-    console.error('Please provide a file path for the OpenAPI document');
-    return;
-  }
-
+  
   infoOut(`${consoleLine}`); // LOG - horizontal rule
   infoOut(`OpenAPI-Format CLI settings:`); // LOG - config file
 
@@ -216,13 +212,34 @@ async function run(oaFile, options) {
     }
   }
 
+  // Allow missing input file if overlay extends is provided
+  if (!oaFile) {
+    const extendsRef = options?.overlaySet?.extends;
+    if (extendsRef) {
+      // Resolve local relative paths against the overlay file location
+      const isRemote = typeof extendsRef === 'string' && (extendsRef.startsWith('http://') || extendsRef.startsWith('https://'));
+      if (isRemote) {
+        oaFile = extendsRef;
+      } else {
+        const baseDir = options?.overlayFile ? path.dirname(path.resolve(options.overlayFile)) : process.cwd();
+        oaFile = path.isAbsolute(extendsRef) ? extendsRef : path.resolve(baseDir, extendsRef);
+      }
+      infoOut(`- Input file (extends):\t${oaFile}`);
+    } else {
+      console.error('Please provide an input file or an overlay with an "extends" property');
+      return;
+    }
+  }
+
   let resObj = {};
   let output = {};
   let input = {};
   let fileOptions = {keepComments: options.keepComments ?? false, bundle: options.bundle ?? true};
 
   try {
-    infoOut(`- Input file:\t\t${oaFile}`); // LOG - Input file
+    if (!options?.overlaySet?.extends) {
+      infoOut(`- Input file:\t\t${oaFile}`); // LOG - Input file (standard)
+    }
 
     // Parse input content
     resObj = await openapiFormat.parseFile(oaFile, fileOptions);
