@@ -14,7 +14,7 @@ async function openapiOverlay(oaObj, options) {
   let totalActions = overlayDoc?.actions?.length || 0; // Total actions provided
   let usedActions = []; // Initialize usedActions array
 
-  overlayDoc?.actions.forEach(action => {
+  (overlayDoc?.actions || []).forEach(action => {
     const {target, update, remove} = action;
 
     if (!target) {

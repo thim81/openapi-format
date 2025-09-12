@@ -1,0 +1,6 @@
+overlay: 1.0.0
+info:
+  title: Local Extends Overlay
+  version: 1.0.0
+extends: './base.yaml'
+
