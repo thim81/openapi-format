@@ -214,6 +214,7 @@ async function run(oaFile, options) {
 
   // Allow missing input file if overlay extends is provided
   if (!oaFile) {
+    const hasOverlay = !!options?.overlaySet;
     const extendsRef = options?.overlaySet?.extends;
     if (extendsRef) {
       // Resolve local relative paths against the overlay file location
@@ -226,7 +227,11 @@ async function run(oaFile, options) {
       }
       infoOut(`- Input file (extends):\t${oaFile}`);
     } else {
-      console.error('Please provide an input file or an overlay with an "extends" property');
+      if (!hasOverlay) {
+        console.error('Please provide a file path for the OpenAPI document');
+      } else {
+        console.error('Please provide an input file or an overlay with an "extends" property');
+      }
       return;
     }
   }
