@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.28.0] - 2025-09-12
+
 - Overlay: Support "extends" for referencing OpenAPI documents (#176)
 - Improvement: Added safe checks for invalid YAML
 - CLI: Fix relative path generation in $ref when splitting document (#175)
