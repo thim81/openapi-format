@@ -1,0 +1,98 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/public-endpoint": {
+      "get": {
+        "summary": "Public endpoint",
+        "x-stoplight": {
+          "id": "public-get"
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/internal-endpoint": {
+      "post": {
+        "summary": "Internal endpoint",
+        "x-internal": true,
+        "x-stoplight": {
+          "id": "internal-post"
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/another-internal": {
+      "put": {
+        "summary": "Another internal endpoint",
+        "x-internal": true,
+        "x-stoplight": {
+          "id": "another-internal"
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "x-stoplight": {
+              "id": "param-id"
+            },
+            "schema": {
+              "type": "string",
+              "x-stoplight": {
+                "id": "param-schema"
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "x-stoplight": {
+            "id": "request-body"
+          },
+          "content": {
+            "application/json": {
+              "schema": {
+                "x-stoplight": {
+                  "id": "request-schema"
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "x-stoplight": {
+              "id": "response-200"
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TestSchema": {
+        "type": "object",
+        "x-stoplight": {
+          "id": "test-schema"
+        },
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

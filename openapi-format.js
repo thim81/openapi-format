@@ -490,9 +490,20 @@ async function openapiFilter(oaObj, options) {
           const arrayItem = this.parent.parent.node;
           const filteredArray = arrayItem.filter(item => !item[this.key]);
           this.parent.parent.update(filteredArray);
-        } else {
+        } else if (this.parent?.node && typeof this.parent.remove === 'function') {
           // debugFilterStep = 'Filter - Single field - flags'
-          this.parent.remove();
+          try {
+            this.parent.remove();
+          } catch (e) {
+            // Fallback if direct removal fails due to missing parent context
+            // This can happen when parent nodes have already been removed during traversal
+            // The error occurs inside neotraverse when state.parent becomes undefined
+            if (e.message.includes('Cannot read properties of undefined')) {
+              // Silently handle this known traversal edge case
+            } else {
+              console.warn(`Failed to remove node at path ${this.path?.join?.('.')}: ${e.message}`);
+            }
+          }
         }
       }
 
