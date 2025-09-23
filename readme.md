@@ -14,7 +14,7 @@ Additional features include powerful filtering options based on flags, tags, met
 To quickly standardize OpenAPI documents there is support for generating the operationIds and apply casing rules for consistency.
 
 The CLI can split large OpenAPI documents into modular, multi-file structures for easier management. 
-For upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0 document to OpenAPI 3.1.
+For upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0 or 3.1 document to OpenAPI 3.1 or 3.2.
 
 With the newly added OpenAPI Overlay support, users can overlay changes onto existing OpenAPI documents, to extend and customize the OpenAPI document.
 
@@ -79,7 +79,8 @@ Postman collections, test suites, ...
 - [x] Generate OpenAPI elements for consistency
 - [x] Bundle local and remote references in the OpenAPI document
 - [x] Split the OpenAPI document into a multi-file structure
-- [x] Convert OpenAPI 3.0 documents to OpenAPI 3.1 
+- [x] Convert OpenAPI 3.0 documents to OpenAPI 3.1 or 3.2
+- [x] Convert OpenAPI 3.1 documents to OpenAPI 3.2
 - [x] Rename the OpenAPI title
 - [x] Support OpenAPI documents in JSON format
 - [x] Support OpenAPI documents in YAML format
@@ -165,7 +166,7 @@ Options:
 
   --rename              Rename the OpenAPI title                              [string]
 
-  --convertTo           convert the OpenAPI document to OpenAPI version 3.1   [string]
+  --convertTo           convert the OpenAPI document to OpenAPI version 3.1 or 3.2   [string]
 
   --configFile          The file with the OpenAPI-format CLI options            [path]
 
@@ -198,7 +199,7 @@ Options:
 | --no-bundle           |               | don't bundle the local and remote $ref in the OpenAPI document              | boolean      | FALSE                      | optional |
 | --split               |               | split the OpenAPI document into a multi-file structure                      | boolean      | FALSE                      | optional |
 | --rename              |               | rename the OpenAPI title                                                    | string       |                            | optional |
-| --convertTo           |               | convert the OpenAPI document to OpenAPI version 3.1                         | string       |                            | optional |
+| --convertTo           |               | convert the OpenAPI document to OpenAPI version 3.1 or 3.2                  | string       |                            | optional |
 | --configFile          | -c            | the file with all the format config options                                 | path to file |                            | optional |
 | --lineWidth           |               | max line width of YAML output                                               | number       | -1 (Infinity)              | optional |
 | --json                |               | prints the file to stdout as JSON                                           |              | FALSE                      | optional |
@@ -1424,15 +1425,16 @@ which results in
 
 > 🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
 
-- Format & convert the OpenAPI document to OpenAPI version 3.1
+- Format & convert the OpenAPI document to OpenAPI version 3.1 or 3.2
 
-openapi-format can help you to upgrade your current OpenAPI 3.0.x document to the latest version OpenAPI 3.1.
+openapi-format can help you to upgrade your current OpenAPI 3.0.x document to OpenAPI 3.1 or 3.2.
 
 ```shell
 $ openapi-format openapi.json -o openapi-3.1.json --convertTo "3.1"
+$ openapi-format openapi.json -o openapi-3.2.json --convertTo "3.2"
 ```
 
-which results in all the changes described in the [migration guide from Phil Sturgeon](https://www.openapis.org/blog/2021/02/16/migrating-from-openapi-3-0-to-3-1-0)
+Using `3.1` results in all the changes described in the [migration guide from Phil Sturgeon](https://www.openapis.org/blog/2021/02/16/migrating-from-openapi-3-0-to-3-1-0), while the `3.2` target aligns with the new capabilities highlighted in [OpenAPI 3.2 is here](https://quobix.com/articles/openapi-3.2/).
 
 **before**
 
@@ -1451,6 +1453,8 @@ which results in all the changes described in the [migration guide from Phil Stu
     "info": {
         "title": "OpenAPI Petstore - OpenAPI",
 ```
+
+When converting to 3.2 the `openapi` field will be set to `3.2.0`, preparing the document for features like hierarchical tags, the `QUERY` HTTP method, and reusable media types introduced in the 3.2 release.
 
 ## CLI configuration usage
 

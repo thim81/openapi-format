@@ -26,7 +26,8 @@ const {
   convertConst,
   convertExclusiveMinimum,
   convertExclusiveMaximum,
-  setInObject
+  setInObject,
+  resolveConvertTargetVersion
 } = require('./utils/convert');
 const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi, readFile} = require('./utils/file');
 const {parseTpl, getOperation} = require('./utils/parseTpl');
@@ -1107,7 +1108,8 @@ async function openapiConvertVersion(oaObj, options) {
   // let debugConvertVersionStep = '' // uncomment // debugConvertVersionStep below to see which sort part is triggered
 
   // Change OpenAPI version
-  jsonObj.openapi = '3.1.0';
+  const targetVersionInfo = resolveConvertTargetVersion(options) || {normalized: '3.1.0'};
+  jsonObj.openapi = targetVersionInfo.normalized;
 
   // Change x-webhooks to webhooks
   if (jsonObj['x-webhooks']) {

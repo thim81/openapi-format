@@ -4,6 +4,7 @@ const openapiFormat = require('../openapi-format');
 const program = require('commander');
 const {infoTable, infoOut, logOut, debugOut} = require('../utils/logging');
 const {stringify} = require('../openapi-format');
+const {resolveConvertTargetVersion} = require('../utils/convert');
 const fs = require('fs');
 const path = require('path');
 
@@ -29,7 +30,7 @@ program
   .option('--sortComponentsProps', 'sort properties within schema components alphabetically', false)
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
   .option('--rename <oaTitle>', 'overwrite the title in the OpenAPI document')
-  .option('--convertTo <oaVersion>', 'convert the OpenAPI document to OpenAPI version 3.1')
+  .option('--convertTo <oaVersion>', 'convert the OpenAPI document to OpenAPI version 3.1 or 3.2')
   .option('--no-bundle', `don't bundle the local and remote $ref in the OpenAPI document`, false)
   .option('--split', 'split the OpenAPI document into a multi-file structure', false)
   .option('--json', 'print the file to stdout as JSON')
@@ -324,14 +325,12 @@ async function run(oaFile, options) {
     if (resFormat.data) resObj = resFormat.data;
   }
 
-  // Convert the OpenAPI document to OpenAPI 3.1
-  if (
-    (options.convertTo && options.convertTo.toString() === '3.1') ||
-    (options.convertToVersion && options.convertToVersion === 3.1)
-  ) {
+  // Convert the OpenAPI document to a supported OpenAPI version
+  const convertVersionInfo = resolveConvertTargetVersion(options);
+  if (convertVersionInfo) {
     const resVersion = await openapiFormat.openapiConvertVersion(resObj, options);
     if (resVersion.data) resObj = resVersion.data;
-    debugOut(`- OAS version converted to: "${options.convertTo}"`, options.verbose); // LOG - Conversion title
+    debugOut(`- OAS version converted to: "${convertVersionInfo.label}"`, options.verbose); // LOG - Conversion title
   }
 
   // Rename title OpenAPI document

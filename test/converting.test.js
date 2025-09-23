@@ -14,11 +14,31 @@ const {
 const {describe, it, expect} = require('@jest/globals');
 
 describe('openapi-format CLI converting tests', () => {
-  describe('yaml-convert to 3.1', () => {
-    it('yaml-convert-3.1 - should match expected output', async () => {
-      const testName = 'yaml-convert-3.1';
+  describe('yaml-convert 3.0 to 3.1', () => {
+    it('yaml-convert-3.0-3.1 - should match expected output', async () => {
+      const testName = 'yaml-convert-3.0-3.1';
       const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
       // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  });
+
+  describe('yaml-convert 3.0 to 3.2', () => {
+    it('yaml-convert-3.0-3.2 - should match expected output', async () => {
+      const testName = 'yaml-convert-3.0-3.2';
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  });
+
+  describe('yaml-convert 3.1 to 3.2', () => {
+    it('yaml-convert-3.1-3.2 - should match expected output', async () => {
+      const testName = 'yaml-convert-3.1-3.2';
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
       expect(result.code).toBe(0);
       expect(result.stdout).toContain('formatted successfully');
       expect(outputAfter).toStrictEqual(outputBefore);

@@ -182,6 +182,54 @@ function convertMultiPartBinary(obj) {
   return dto;
 }
 
+/**
+ * Resolve the OpenAPI target version for conversion.
+ * Supports converting to OpenAPI 3.1 and 3.2.
+ *
+ * @param {object|string|number} value Version value coming from options.
+ * @returns {{label: string, normalized: string}|undefined}
+ */
+function normalizeConvertVersion(value) {
+  if (value === undefined || value === null) return undefined;
+
+  const versionString = value.toString().trim();
+  if (versionString === '') return undefined;
+
+  const match = versionString.match(/^(\d+)\.(\d+)(?:\.(\d+))?$/);
+  if (!match) return undefined;
+
+  const [, major, minor] = match;
+  const label = `${major}.${minor}`;
+
+  switch (label) {
+    case '3.1':
+      return {label, normalized: '3.1.0'};
+    case '3.2':
+      return {label, normalized: '3.2.0'};
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * Resolve the conversion target information from available options.
+ *
+ * @param {object} [options]
+ * @returns {{label: string, normalized: string}|undefined}
+ */
+function resolveConvertTargetVersion(options = {}) {
+  const candidates = [options.convertTargetVersion, options.convertTo, options.convertToVersion];
+
+  for (const candidate of candidates) {
+    const normalized = normalizeConvertVersion(candidate);
+    if (normalized) {
+      return normalized;
+    }
+  }
+
+  return undefined;
+}
+
 module.exports = {
   setInObject: setInObject,
   convertNullable: convertNullable,
@@ -190,5 +238,7 @@ module.exports = {
   convertExclusiveMaximum: convertExclusiveMaximum,
   convertConst: convertConst,
   convertImageBase64: convertImageBase64,
-  convertMultiPartBinary: convertMultiPartBinary
+  convertMultiPartBinary: convertMultiPartBinary,
+  normalizeConvertVersion: normalizeConvertVersion,
+  resolveConvertTargetVersion: resolveConvertTargetVersion
 };

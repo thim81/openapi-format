@@ -1,0 +1,107 @@
+openapi: 3.2.0               # 3.2 change: bump version (3.2 is backward-compatible with 3.1)
+$self: https://api.example.com/openapi.yaml   # 3.2 optional: document identity for better $ref resolution
+
+info:
+  title: Minimal 3.2 (migrated from 3.0)
+  version: 1.0.0
+
+servers:
+  - name: Production          # 3.2 optional: Server Object can have a `name` to aid docs/UX
+    url: https://api.example.com
+
+# 3.2 optional: structured tags (hierarchy / kinds). Not required, but replaces common x-tagGroups/x-displayName hacks.
+tags:
+  - name: items
+    summary: Items
+    description: Operations on items
+    kind: nav                  # nav/badge/audience
+  - name: uploads
+    summary: Uploads
+    description: Upload endpoints
+    kind: nav
+
+paths:
+  /items:
+    get:
+      summary: List items
+      tags: [items]            # 3.2 optional: use structured tags
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Item"
+
+  /upload-binary:
+    post:
+      summary: Upload a raw binary file
+      tags: [uploads]
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema: {}         # 3.1/3.2 change vs 3.0: empty schema is fine for raw binary
+      responses:
+        "204":
+          description: No Content
+
+  /upload-base64:
+    post:
+      summary: Upload a base64 image
+      tags: [uploads]
+      requestBody:
+        required: true
+        content:
+          image/png:
+            schema:
+              type: string
+              contentEncoding: base64        # 3.1/3.2 change: use contentEncoding instead of format: byte/base64
+              contentMediaType: image/png    # 3.1/3.2 change: optional but clearer than format hints
+      responses:
+        "204":
+          description: No Content
+
+  /upload-multipart:
+    post:
+      summary: Upload via multipart
+      tags: [uploads]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: integer
+                fileName:
+                  type: string
+                  contentMediaType: application/octet-stream   # 3.1/3.2 change: prefer contentMediaType for file parts
+      responses:
+        "204":
+          description: No Content
+
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          exclusiveMinimum: 1    # 3.1/3.2 change vs 3.0: numeric value; drop the sibling `minimum`
+        name:
+          type: [string, "null"] # 3.1/3.2 change vs 3.0: replace `nullable: true`
+          examples:              # 3.2 guidance: prefer JSON Schema `examples` over deprecated singular `example`
+            - "fedora"
+      required: [id]
+      # 3.1/3.2 optional: you MAY declare `$schema` on schema roots to pick a dialect
+      # $schema: "https://json-schema.org/draft/2020-12/schema"
+
+# 3.2 optional (not used above, but new in 3.2):
+# - New HTTP verb `QUERY`, or non-standard methods via `additionalOperations`
+# - Sequential/streaming media types (e.g., text/event-stream, application/json-seq)
+# - OAuth2 Device Authorization flow / oauth2MetadataUrl
+# - Discriminator `defaultMapping`, optional discriminator value
