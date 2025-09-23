@@ -27,6 +27,8 @@ const {
   convertExclusiveMinimum,
   convertExclusiveMaximum,
   setInObject,
+  convertTagDisplayName,
+  convertTagGroups,
   resolveConvertTargetVersion
 } = require('./utils/convert');
 const {parseFile, writeFile, stringify, detectFormat, parseString, analyzeOpenApi, readFile} = require('./utils/file');
@@ -1108,8 +1110,15 @@ async function openapiConvertVersion(oaObj, options) {
   // let debugConvertVersionStep = '' // uncomment // debugConvertVersionStep below to see which sort part is triggered
 
   // Change OpenAPI version
-  const targetVersionInfo = resolveConvertTargetVersion(options) || {normalized: '3.1.0'};
+  const targetVersionInfo = resolveConvertTargetVersion(options) || {label: '3.1', normalized: '3.1.0'};
+  const targetVersionLabel = targetVersionInfo.label;
   jsonObj.openapi = targetVersionInfo.normalized;
+
+  const isTargetVersion32 = targetVersionLabel === '3.2';
+
+  if (isTargetVersion32) {
+    jsonObj = convertTagGroups(jsonObj);
+  }
 
   // Change x-webhooks to webhooks
   if (jsonObj['x-webhooks']) {
@@ -1137,6 +1146,10 @@ async function openapiConvertVersion(oaObj, options) {
 
         // Change type > single enum
         node = convertConst(node);
+      }
+
+      if (isTargetVersion32) {
+        node = convertTagDisplayName(node);
       }
       this.update(node);
 

@@ -4,18 +4,18 @@ info:
   version: 1.0.0
 servers:
   - url: 'https://api.example.com'
-x-tagGroups:
-  - name: Core
-    tags:
-      - items
-  - name: Uploads
-    tags:
-      - uploads
 tags:
   - name: items
     description: Operations on items
+    parent: core
+    kind: nav
   - name: uploads
+    summary: Uploads
     description: Upload endpoints
+    kind: nav
+  - name: core
+    summary: Core
+    kind: nav
 paths:
   /items:
     get:
