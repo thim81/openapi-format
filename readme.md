@@ -89,7 +89,8 @@ Postman collections, test suites, ...
 - [x] Use as a Module
 - [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
-- [x] Support for OpenAPI 3.1 (beta)
+- [x] Support for OpenAPI 3.1
+- [x] Support for OpenAPI 3.2
 - [x] Online playground (https://openapi-format-playground.vercel.app/)
 
 ## Online playground
@@ -1423,8 +1424,6 @@ which results in
 ```
 
 ## CLI convertTo usage
-
-> 🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
 
 - Format & convert the OpenAPI document to OpenAPI version 3.1 or 3.2
 
