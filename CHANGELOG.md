@@ -1,7 +1,8 @@
 ## unreleased
 
-- CLI: convert an OpenAPI 3.0 document to an OpenAPI version 3.2
-- CLI: convert an OpenAPI 3.1 document to an OpenAPI version 3.2
+- Sort & Filter: Added support for OpenAPI 3.2 (#182)
+- CLI: convert an OpenAPI 3.0 document to an OpenAPI version 3.2 (#181)
+- CLI: convert an OpenAPI 3.1 document to an OpenAPI version 3.2 (#181)
 
 ## [1.28.0] - 2025-09-12
 
