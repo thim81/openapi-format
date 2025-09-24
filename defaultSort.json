@@ -1,6 +1,7 @@
 {
   "root": ["openapi", "info", "servers", "paths", "components", "tags", "x-tagGroups", "externalDocs"],
   "get": ["operationId", "summary", "description", "parameters", "requestBody", "responses"],
+  "query": ["operationId", "summary", "description", "parameters", "requestBody", "responses"],
   "post": ["operationId", "summary", "description", "parameters", "requestBody", "responses"],
   "put": ["operationId", "summary", "description", "parameters", "requestBody", "responses"],
   "patch": ["operationId", "summary", "description", "parameters", "requestBody", "responses"],
@@ -9,7 +10,7 @@
   "requestBody": ["description", "required", "content"],
   "responses": ["description", "headers", "content", "links"],
   "content": [],
-  "components": ["parameters", "schemas"],
+  "components": ["parameters", "schemas", "mediaTypes"],
   "schema": ["description", "type", "items", "properties", "format", "example", "default"],
   "schemas": ["description", "type", "items", "properties", "format", "example", "default"],
   "properties": ["description", "type", "items", "format", "example", "default", "enum"]

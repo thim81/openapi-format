@@ -122,7 +122,7 @@ function sortPathsByTags(paths) {
     const methodsA = a[1];
     const methodsB = b[1];
 
-    const tagsOrder = ['get', 'post', 'put', 'delete', 'patch', 'options', 'head'];
+    const tagsOrder = ['get', 'query', 'post', 'put', 'delete', 'patch', 'options', 'head'];
 
     let tagA = '';
     let tagB = '';
@@ -168,8 +168,8 @@ function isMatchOperationItem(operationPath, operationMethod, target) {
       // Wildcard support
       if (targetMethod.includes('*')) {
         // These are the methods supported in the PathItem schema
-        // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#pathItemObject
-        targetMethod = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
+        // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.2.0.md#path-item-object
+        targetMethod = ['get', 'query', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
       }
       return (
         operationMethod &&

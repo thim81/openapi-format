@@ -282,7 +282,12 @@ function convertTagGroups(obj) {
       if (groupDescription) {
         parentTag = setInObject(parentTag, 'description', groupDescription, 'summary');
       }
-      parentTag = setInObject(parentTag, 'kind', 'nav', groupDescription ? 'description' : groupName ? 'summary' : 'name');
+      parentTag = setInObject(
+        parentTag,
+        'kind',
+        'nav',
+        groupDescription ? 'description' : groupName ? 'summary' : 'name'
+      );
       tags.push(parentTag);
       parentEntry = {index: tags.length - 1, tag: parentTag};
       tagEntries.set(parentTag.name, parentEntry);
@@ -323,11 +328,7 @@ function convertTagGroups(obj) {
 
       let childTag = childEntry.tag;
       if (!childTag.parent) {
-        const insertParentAfter = childTag.description
-          ? 'description'
-          : childTag.summary
-          ? 'summary'
-          : 'name';
+        const insertParentAfter = childTag.description ? 'description' : childTag.summary ? 'summary' : 'name';
         childTag = setInObject(childTag, 'parent', parentName, insertParentAfter);
         converted = true;
       }
@@ -335,10 +336,10 @@ function convertTagGroups(obj) {
         const insertKindAfter = childTag.parent
           ? 'parent'
           : childTag.description
-          ? 'description'
-          : childTag.summary
-          ? 'summary'
-          : 'name';
+            ? 'description'
+            : childTag.summary
+              ? 'summary'
+              : 'name';
         childTag = setInObject(childTag, 'kind', 'nav', insertKindAfter);
         converted = true;
       }

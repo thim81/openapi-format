@@ -203,6 +203,16 @@ describe('openapi-format CLI sorting tests', () => {
     });
   });
 
+  describe('yaml-sort-query', () => {
+    it('yaml-sort-query - should match expected output', async () => {
+      const testName = 'yaml-sort-query';
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  });
+
   describe('yaml-sort-paths', () => {
     it('yaml-sort-paths by alphabet - should match expected output', async () => {
       const testName = 'yaml-sort-paths-alphabet';
@@ -238,6 +248,16 @@ describe('openapi-format CLI sorting tests', () => {
     it('isMatchOperationItem - should return false', async () => {
       const res = isMatchOperationItem(null, null, null);
       expect(res).toEqual(false);
+    });
+
+    it('isMatchOperationItem - should support QUERY operations', () => {
+      const res = isMatchOperationItem('/items', 'query', 'QUERY::/items');
+      expect(res).toEqual(true);
+    });
+
+    it('isMatchOperationItem - wildcard should match QUERY operations', () => {
+      const res = isMatchOperationItem('/items', 'query', '*::/items');
+      expect(res).toEqual(true);
     });
 
     it('arraySort - should sort an array of objects in ascending order', () => {

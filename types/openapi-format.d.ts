@@ -34,6 +34,7 @@ declare module 'openapi-format' {
   interface OpenAPISortSet {
     root?: Array<'openapi' | 'info' | 'servers' | 'paths' | 'components' | 'tags' | 'x-tagGroups' | 'externalDocs'>
     get?: Array<'operationId' | 'summary' | 'description' | 'parameters' | 'requestBody' | 'responses'>
+    query?: Array<'operationId' | 'summary' | 'description' | 'parameters' | 'requestBody' | 'responses'>
     post?: Array<'operationId' | 'summary' | 'description' | 'parameters' | 'requestBody' | 'responses'>
     put?: Array<'operationId' | 'summary' | 'description' | 'parameters' | 'requestBody' | 'responses'>
     patch?: Array<'operationId' | 'summary' | 'description' | 'parameters' | 'requestBody' | 'responses'>
@@ -42,7 +43,7 @@ declare module 'openapi-format' {
     requestBody?: Array<'description' | 'required' | 'content'>
     responses?: Array<'description' | 'headers' | 'content' | 'links'>
     content?: Array<string>
-    components?: Array<'parameters' | 'schemas'>
+    components?: Array<'parameters' | 'schemas' | 'mediaTypes'>
     schema?: Array<'description' | 'type' | 'items' | 'properties' | 'format' | 'example' | 'default'>
     schemas?: Array<'description' | 'type' | 'items' | 'properties' | 'format' | 'example' | 'default'>
     properties?: Array<'description' | 'type' | 'items' | 'format' | 'example' | 'default' | 'enum'>

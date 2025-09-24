@@ -136,6 +136,26 @@ describe('openapi-format CLI filtering tests', () => {
     });
   });
 
+  describe('yaml-filter-query-operations', () => {
+    it('yaml-filter-query-operations - should match expected output', async () => {
+      const testName = 'yaml-filter-query-operations';
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  });
+
+  describe('yaml-filter-query-methods', () => {
+    it('yaml-filter-query-methods - should match expected output', async () => {
+      const testName = 'yaml-filter-query-methods';
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  });
+
   describe('yaml-filter-custom-tags', () => {
     it('yaml-filter-custom-tags - should match expected output', async () => {
       const testName = 'yaml-filter-custom-tags';
@@ -240,6 +260,16 @@ describe('openapi-format CLI filtering tests', () => {
       const testName = 'yaml-filter-unused-components';
       const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
       // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  });
+
+  describe('yaml-filter-unused-components-mediatypes', () => {
+    it('yaml-filter-unused-components-mediatypes - should match expected output', async () => {
+      const testName = 'yaml-filter-unused-components-mediatypes';
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
       expect(result.code).toBe(0);
       expect(result.stdout).toContain('formatted successfully');
       expect(outputAfter).toStrictEqual(outputBefore);

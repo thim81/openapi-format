@@ -223,11 +223,7 @@ describe('openapi-format CLI converting tests', () => {
 
     it('convertTagGroups - should convert x-tagGroups to native tag relationships', async () => {
       const doc = {
-        tags: [
-          {name: 'products'},
-          {name: 'books', description: 'Books operations'},
-          {name: 'cds'}
-        ],
+        tags: [{name: 'products'}, {name: 'books', description: 'Books operations'}, {name: 'cds'}],
         'x-tagGroups': [
           {
             name: 'Products',
