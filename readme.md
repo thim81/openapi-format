@@ -89,7 +89,8 @@ Postman collections, test suites, ...
 - [x] Use as a Module
 - [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
-- [x] Support for OpenAPI 3.1 (beta)
+- [x] Support for OpenAPI 3.1
+- [x] Support for OpenAPI 3.2
 - [x] Online playground (https://openapi-format-playground.vercel.app/)
 
 ## Online playground
@@ -395,7 +396,7 @@ Strict matching example: `"GET::/pets"`
 This will target only the "GET" method and the specific path "/pets"
 
 Method wildcard matching example: `"*::/pets"`
-This will target all methods ('get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace') and the specific
+This will target all methods ('get', 'query', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace') and the specific
 path "/pets"
 
 Path wildcard matching example: `"GET::/pets/*"`
@@ -638,6 +639,7 @@ Supported component types that can be marked as "unused":
 - headers
 - requestBodies
 - responses
+- mediaTypes
 
 ### Filter - textReplace
 
@@ -1422,8 +1424,6 @@ which results in
 ```
 
 ## CLI convertTo usage
-
-> 🏗 BETA NOTICE: This feature is considered BETA since we are investigating the configuration syntax and extra formatting/casing capabilities.
 
 - Format & convert the OpenAPI document to OpenAPI version 3.1 or 3.2
 

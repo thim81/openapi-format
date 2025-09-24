@@ -1,0 +1,36 @@
+openapi: 3.2.0
+info:
+  title: Query operations filtering
+  version: 1.0.0
+paths:
+  /items:
+    query:
+      summary: Query items
+      description: Search items with a request body
+      operationId: queryItems
+      responses:
+        '200':
+          description: Successful query
+    get:
+      summary: List items
+      operationId: listItems
+      responses:
+        '200':
+          description: Successful retrieval
+  /search:
+    query:
+      summary: Search catalogue
+      operationId: searchItems
+      responses:
+        '200':
+          description: Search response
+components:
+  mediaTypes:
+    CollectionJson:
+      schema:
+        type: object
+        properties:
+          items:
+            type: array
+            items:
+              type: string

@@ -196,8 +196,9 @@ async function openapiFilter(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
   let defaultFilter = options.defaultFilter || (await parseFile(__dirname + '/defaultFilter.json'));
   let filterSet = Object.assign({}, defaultFilter, options.filterSet);
-  const httpVerbs = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'];
+  const httpVerbs = ['get', 'query', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'];
   const fixedFlags = ['x-openapi-format-filter'];
+  const componentTypes = ['schemas', 'responses', 'parameters', 'examples', 'requestBodies', 'headers', 'mediaTypes'];
   options.unusedDepth = options.unusedDepth || 0;
 
   // Merge object filters
@@ -232,26 +233,22 @@ async function openapiFilter(oaObj, options) {
   const inverseFilterFlagHash = inverseFilterFlagValues.map(o => JSON.stringify(o));
 
   // Initiate components tracking
-  const comps = {
-    schemas: {},
-    responses: {},
-    parameters: {},
-    examples: {},
-    requestBodies: {},
-    headers: {},
-    meta: {total: 0}
-  };
+  const comps = componentTypes.reduce(
+    (acc, type) => {
+      acc[type] = {};
+      return acc;
+    },
+    {meta: {total: 0}}
+  );
 
   // Prepare unused components
-  let unusedComp = {
-    schemas: [],
-    responses: [],
-    parameters: [],
-    examples: [],
-    requestBodies: [],
-    headers: [],
-    meta: {total: 0}
-  };
+  let unusedComp = componentTypes.reduce(
+    (acc, type) => {
+      acc[type] = [];
+      return acc;
+    },
+    {meta: {total: 0}}
+  );
   // Use options.unusedComp to collect unused components during multiple recursion
   if (!options.unusedComp) options.unusedComp = JSON.parse(JSON.stringify(unusedComp));
 
@@ -268,7 +265,7 @@ async function openapiFilter(oaObj, options) {
 
     // Register components usage
     if (this.key === '$ref' && typeof node === 'string') {
-      for (let type of ['schemas', 'responses', 'parameters', 'examples', 'requestBodies', 'headers']) {
+      for (let type of componentTypes) {
         const prefix = `#/components/${type}/`;
         if (node.startsWith(prefix)) {
           const name = node.slice(prefix.length);
@@ -639,14 +636,14 @@ async function openapiFilter(oaObj, options) {
   const optFs = get(options, 'filterSet.unusedComponents', []) || [];
 
   // Identify components that are directly unused (not referenced anywhere)
-  unusedComp.schemas = Object.keys(comps.schemas || {}).filter(key => !comps.schemas[key].used);
-  unusedComp.responses = Object.keys(comps.responses || {}).filter(key => !comps.responses[key].used);
-  unusedComp.parameters = Object.keys(comps.parameters || {}).filter(key => !comps.parameters[key].used);
-  unusedComp.examples = Object.keys(comps.examples || {}).filter(key => !comps.examples[key].used);
-  unusedComp.requestBodies = Object.keys(comps.requestBodies || {}).filter(key => !comps.requestBodies[key].used);
-  unusedComp.headers = Object.keys(comps.headers || {}).filter(key => !comps.headers[key].used);
+  componentTypes.forEach(type => {
+    unusedComp[type] = Object.keys(comps[type] || {}).filter(key => !comps[type][key].used);
+  });
 
-  const refGraph = {schemas: {}, responses: {}, parameters: {}, examples: {}, requestBodies: {}, headers: {}};
+  const refGraph = componentTypes.reduce((acc, type) => {
+    acc[type] = {};
+    return acc;
+  }, {});
   const rootRefs = new Set();
 
   // Traverse $ref in components
@@ -681,42 +678,28 @@ async function openapiFilter(oaObj, options) {
   }
 
   // Mark not visited as unused
-  for (const t of ['schemas', 'responses', 'parameters', 'examples', 'requestBodies', 'headers']) {
+  for (const t of componentTypes) {
     unusedComp[t] = Object.keys(comps[t] || {}).filter(k => !visited.has(`${t}:${k}`));
   }
 
   // TODO rework this logic
   unusedComp.meta = {
-    total:
-      unusedComp.schemas.length +
-      unusedComp.responses.length +
-      unusedComp.parameters.length +
-      unusedComp.examples.length +
-      unusedComp.requestBodies.length +
-      unusedComp.headers.length
+    total: componentTypes.reduce((acc, type) => acc + (unusedComp[type]?.length || 0), 0)
   };
 
   // Update options.unusedComp with all identified unused components
-  if (optFs.includes('schemas')) options.unusedComp.schemas = [...options.unusedComp.schemas, ...unusedComp.schemas];
-  if (optFs.includes('responses'))
-    options.unusedComp.responses = [...options.unusedComp.responses, ...unusedComp.responses];
-  if (optFs.includes('parameters'))
-    options.unusedComp.parameters = [...options.unusedComp.parameters, ...unusedComp.parameters];
-  if (optFs.includes('examples'))
-    options.unusedComp.examples = [...options.unusedComp.examples, ...unusedComp.examples];
-  if (optFs.includes('requestBodies'))
-    options.unusedComp.requestBodies = [...options.unusedComp.requestBodies, ...unusedComp.requestBodies];
-  if (optFs.includes('headers')) options.unusedComp.headers = [...options.unusedComp.headers, ...unusedComp.headers];
+  componentTypes.forEach(type => {
+    if (optFs.includes(type)) {
+      options.unusedComp[type] = [...options.unusedComp[type], ...unusedComp[type]];
+    }
+  });
 
   // TODO rework this logic
   // Update unusedComp.meta.total after each recursion
-  options.unusedComp.meta.total =
-    options.unusedComp.schemas.length +
-    options.unusedComp.responses.length +
-    options.unusedComp.parameters.length +
-    options.unusedComp.examples.length +
-    options.unusedComp.requestBodies.length +
-    options.unusedComp.headers.length;
+  options.unusedComp.meta.total = componentTypes.reduce(
+    (acc, type) => acc + (options.unusedComp[type]?.length || 0),
+    0
+  );
 
   // Clean-up jsonObj
   traverse(jsonObj).forEach(function (node) {
@@ -806,15 +789,13 @@ async function openapiFilter(oaObj, options) {
   }
 
   // Prepare totalComp for the final result
-  const totalComp = {
-    schemas: Object.keys(comps.schemas),
-    responses: Object.keys(comps.responses),
-    parameters: Object.keys(comps.parameters),
-    examples: Object.keys(comps.examples),
-    requestBodies: Object.keys(comps.requestBodies),
-    headers: Object.keys(comps.headers),
-    meta: {total: comps.meta.total}
-  };
+  const totalComp = componentTypes.reduce(
+    (acc, type) => {
+      acc[type] = Object.keys(comps[type]);
+      return acc;
+    },
+    {meta: {total: comps.meta.total}}
+  );
 
   // Return result object
   return {data: jsonObj, resultData: {unusedComp: unusedComp, totalComp: totalComp}};
@@ -1099,7 +1080,7 @@ async function openapiSplit(oaObj, options = {}) {
 
 /**
  * OpenAPI convert version function
- * Convert OpenAPI from version 3.0 to 3.1
+ * Convert OpenAPI from version 3.0 to 3.1 or 3.2
  * @param {object} oaObj OpenAPI document
  * @param {object} options OpenAPI-format convert options
  * @returns {object} converted OpenAPI document

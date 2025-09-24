@@ -1,0 +1,26 @@
+openapi: 3.2.0
+info:
+  title: Media type reuse
+  version: 1.0.0
+paths:
+  /items:
+    post:
+      operationId: createItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            $ref: '#/components/mediaTypes/CollectionJson'
+      responses:
+        '201':
+          description: Created
+components:
+  mediaTypes:
+    CollectionJson:
+      schema:
+        type: object
+        properties:
+          data:
+            type: array
+            items:
+              type: string

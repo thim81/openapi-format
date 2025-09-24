@@ -1,0 +1,40 @@
+openapi: 3.2.0
+info:
+  title: Query sort example
+  version: 1.0.0
+paths:
+  /search:
+    query:
+      operationId: searchContent
+      summary: Search for content
+      description: Query endpoint description
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Provide a search payload
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                q:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+    get:
+      operationId: getCached
+      summary: Fetch cached results
+      responses:
+        '200':
+          description: Successful retrieval
+components:
+  mediaTypes:
+    SearchJson:
+      schema:
+        type: object

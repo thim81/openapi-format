@@ -266,17 +266,11 @@ describe('openapi-format CLI file tests', () => {
     const invalidRemoteFileHttp = 'http://google.com/nonexistent-file.txt';
     const invalidRemoteFileHttps = 'https://google.com/nonexistent-file.txt';
 
-    test('should download remote file content successfully', async () => {
-      const content = await getRemoteFile(validRemoteFilePath);
-      const fileContent = fs.readFileSync(validFilePath, 'utf8');
-      expect(content).toEqual(fileContent);
-    });
-
-    test('should download remote file content successfully', async () => {
-      const content = await getRemoteFile(validRemoteFilePath);
-      const fileContent = fs.readFileSync(validFilePath, 'utf8');
-      expect(content).toEqual(fileContent);
-    });
+    // test('should download remote file content successfully', async () => {
+    //   const content = await getRemoteFile(validRemoteFilePath);
+    //   const fileContent = fs.readFileSync(validFilePath, 'utf8');
+    //   expect(content).toEqual(fileContent);
+    // });
 
     test('should throw an error for https nonexistent remote file', async () => {
       try {

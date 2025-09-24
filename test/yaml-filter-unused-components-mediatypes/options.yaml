@@ -1,0 +1,5 @@
+verbose: true
+output: output.yaml
+filterSet:
+  unusedComponents:
+    - mediaTypes
