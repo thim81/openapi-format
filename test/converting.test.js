@@ -9,16 +9,38 @@ const {
   convertConst,
   convertImageBase64,
   convertMultiPartBinary,
+  convertTagDisplayName,
+  convertTagGroups,
   setInObject
 } = require('../utils/convert');
 const {describe, it, expect} = require('@jest/globals');
 
 describe('openapi-format CLI converting tests', () => {
-  describe('yaml-convert to 3.1', () => {
-    it('yaml-convert-3.1 - should match expected output', async () => {
-      const testName = 'yaml-convert-3.1';
+  describe('yaml-convert 3.0 to 3.1', () => {
+    it('yaml-convert-3.0-3.1 - should match expected output', async () => {
+      const testName = 'yaml-convert-3.0-3.1';
       const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
       // console.log('result',result)
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  });
+
+  describe('yaml-convert 3.0 to 3.2', () => {
+    it('yaml-convert-3.0-3.2 - should match expected output', async () => {
+      const testName = 'yaml-convert-3.0-3.2';
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  });
+
+  describe('yaml-convert 3.1 to 3.2', () => {
+    it('yaml-convert-3.1-3.2 - should match expected output', async () => {
+      const testName = 'yaml-convert-3.1-3.2';
+      const {result, input, outputBefore, outputAfter} = await testUtils.loadTest(testName);
       expect(result.code).toBe(0);
       expect(result.stdout).toContain('formatted successfully');
       expect(outputAfter).toStrictEqual(outputBefore);
@@ -185,6 +207,52 @@ describe('openapi-format CLI converting tests', () => {
       });
     });
 
+    it('convertTagDisplayName - should convert x-displayName to summary', async () => {
+      const tag = {
+        name: 'products',
+        'x-displayName': 'Product APIs',
+        description: 'All product operations'
+      };
+      const res = convertTagDisplayName(tag);
+      expect(res).toStrictEqual({
+        name: 'products',
+        summary: 'Product APIs',
+        description: 'All product operations'
+      });
+    });
+
+    it('convertTagGroups - should convert x-tagGroups to native tag relationships', async () => {
+      const doc = {
+        tags: [
+          {name: 'products'},
+          {name: 'books', description: 'Books operations'},
+          {name: 'cds'}
+        ],
+        'x-tagGroups': [
+          {
+            name: 'Products',
+            description: 'All product operations',
+            tags: ['books', 'cds']
+          }
+        ]
+      };
+
+      const res = convertTagGroups(doc);
+      expect(res['x-tagGroups']).toBeUndefined();
+      const productsTag = res.tags.find(tag => tag.name === 'products');
+      const booksTag = res.tags.find(tag => tag.name === 'books');
+      const cdsTag = res.tags.find(tag => tag.name === 'cds');
+
+      expect(productsTag).toMatchObject({
+        name: 'products',
+        summary: 'Products',
+        description: 'All product operations',
+        kind: 'nav'
+      });
+      expect(booksTag).toMatchObject({name: 'books', parent: 'products', kind: 'nav'});
+      expect(cdsTag).toMatchObject({name: 'cds', parent: 'products', kind: 'nav'});
+    });
+
     it('convertImageBase64 - should convert an image upload with base64 encoding', async () => {
       const obj = {
         schema: {
@@ -264,6 +332,10 @@ describe('openapi-format CLI converting tests', () => {
       expect(resExclusiveMinimum).toStrictEqual(obj);
       const resExclusiveMaximum = convertExclusiveMaximum(obj);
       expect(resExclusiveMaximum).toStrictEqual(obj);
+      const resTagDisplayName = convertTagDisplayName(obj);
+      expect(resTagDisplayName).toStrictEqual(obj);
+      const resTagGroups = convertTagGroups(obj);
+      expect(resTagGroups).toStrictEqual(obj);
     });
   });
 });

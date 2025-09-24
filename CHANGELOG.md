@@ -1,5 +1,8 @@
 ## unreleased
 
+- CLI: convert an OpenAPI 3.0 document to an OpenAPI version 3.2
+- CLI: convert an OpenAPI 3.1 document to an OpenAPI version 3.2
+
 ## [1.28.0] - 2025-09-12
 
 - Overlay: Support "extends" for referencing OpenAPI documents (#176)

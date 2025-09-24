@@ -1,0 +1,97 @@
+openapi: 3.2.0
+info:
+  title: Minimal 3.1 (designed for 3.2 migration)
+  version: 1.0.0
+servers:
+  - url: 'https://api.example.com'
+tags:
+  - name: items
+    description: Operations on items
+    parent: core
+    kind: nav
+  - name: uploads
+    summary: Uploads
+    description: Upload endpoints
+    kind: nav
+  - name: core
+    summary: Core
+    kind: nav
+paths:
+  /items:
+    get:
+      summary: List items
+      tags:
+        - items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+  /upload-binary:
+    post:
+      summary: Upload a raw binary file
+      tags:
+        - uploads
+      requestBody:
+        required: true
+        content:
+          application/octet-stream: {}
+      responses:
+        '204':
+          description: No Content
+  /upload-base64:
+    post:
+      summary: Upload a base64 image
+      tags:
+        - uploads
+      requestBody:
+        required: true
+        content:
+          image/png:
+            schema:
+              type: string
+              contentEncoding: base64
+              contentMediaType: image/png
+      responses:
+        '204':
+          description: No Content
+  /upload-multipart:
+    post:
+      summary: Upload via multipart
+      tags:
+        - uploads
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: integer
+                fileName:
+                  type: string
+                  contentMediaType: application/octet-stream
+      responses:
+        '204':
+          description: No Content
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          exclusiveMinimum: 1
+        name:
+          type:
+            - string
+            - 'null'
+          examples:
+            - fedora
+      required:
+        - id

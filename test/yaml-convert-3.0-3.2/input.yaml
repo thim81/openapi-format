@@ -1,0 +1,79 @@
+openapi: 3.0.3  # 3.1 change: set to `3.1.1`
+info:
+  title: Minimal 3.0 with 3.1 upgrade hints
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+paths:
+  /items:
+    get:
+      summary: List items
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Item"
+  /upload-binary:
+    post:
+      summary: Upload a raw binary file
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary   # 3.1 change: you can just use an empty schema {} for raw binary media type
+      responses:
+        "204":
+          description: No Content
+  /upload-base64:
+    post:
+      summary: Upload a base64 image
+      requestBody:
+        required: true
+        content:
+          image/png:
+            schema:
+              type: string
+              format: base64   # 3.1 change: replace with `contentEncoding: base64`
+      responses:
+        "204":
+          description: No Content
+  /upload-multipart:
+    post:
+      summary: Upload via multipart
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: integer
+                fileName:
+                  type: string
+                  format: binary  # 3.1 change: use `contentMediaType: application/octet-stream` (string stays a string)
+      responses:
+        "204":
+          description: No Content
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          exclusiveMinimum: true   # 3.1 change: set `exclusiveMinimum: 1` and remove `minimum`
+        name:
+          type: string
+          nullable: true           # 3.1 change: replace with `type: [string, "null"]`
+          example: "fedora"        # 3.1 change: replace with `examples: ["fedora"]`
+      required: [id]
+      # 3.1 enhancement (optional): inside any schema you may declare `$schema`
+      # (not valid in 3.0) e.g. `$schema: "https://json-schema.org/draft/2020-12/schema"`

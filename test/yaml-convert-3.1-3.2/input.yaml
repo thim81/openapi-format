@@ -1,0 +1,114 @@
+openapi: 3.1.1  # 3.2 change: bump to `3.2.0`
+info:
+  title: Minimal 3.1 (designed for 3.2 migration)
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+    # 3.2 change: add `name: Production` (new optional field in 3.2 to improve docs/UX)
+
+# 3.1-era tag grouping using a vendor extension (common practice before 3.2)
+x-tagGroups:
+  - name: Core
+    tags: [items]
+  - name: Uploads
+    tags: [uploads]
+  # 3.2 replace: remove `x-tagGroups` and switch to structured `tags` with `kind`, `summary`, etc.
+
+tags:
+  - name: items
+    description: Operations on items
+    # 3.2 change: add `summary:` (optional) and `kind: nav` if you adopt structured tags
+  - name: uploads
+    description: Upload endpoints
+    # 3.2 change: add `summary:` and `kind: nav` if you adopt structured tags
+
+paths:
+  /items:
+    get:
+      summary: List items
+      tags: [items]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Item"
+
+  /upload-binary:
+    post:
+      summary: Upload a raw binary file
+      tags: [uploads]
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema: {}  # 3.2 change: none required (this already matches 3.1/3.2 guidance)
+      responses:
+        "204":
+          description: No Content
+
+  /upload-base64:
+    post:
+      summary: Upload a base64 image
+      tags: [uploads]
+      requestBody:
+        required: true
+        content:
+          image/png:
+            schema:
+              type: string
+              contentEncoding: base64
+              contentMediaType: image/png
+              # 3.2 change: none required (already the recommended style)
+      responses:
+        "204":
+          description: No Content
+
+  /upload-multipart:
+    post:
+      summary: Upload via multipart
+      tags: [uploads]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: integer
+                fileName:
+                  type: string
+                  contentMediaType: application/octet-stream
+                  # 3.2 change: none required (already preferred)
+      responses:
+        "204":
+          description: No Content
+
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          exclusiveMinimum: 1      # 3.2 change: none required (already numeric style)
+        name:
+          type: [string, "null"]
+          example: "fedora"        # 3.2 change: prefer `examples: ["fedora"]` over singular `example`
+          # (singular `example` is still allowed, but 3.2 guidance leans toward `examples`)
+      required: [id]
+      # (Optional in 3.1 and 3.2) You MAY specify a dialect if desired:
+      # $schema: "https://json-schema.org/draft/2020-12/schema"
+
+# 3.2 change (optional, recommended for discoverability at the root):
+# Add `$self: https://api.example.com/openapi.yaml` to declare the document’s canonical URI.
+
+# 3.2-only (not represented in 3.1, but candidates to ADD during migration if useful):
+# - Structured `tags` with `kind` (nav/badge/audience), `summary`.
+# - `servers[].name`.
+# - `$self` at the top level.
+# - New features like QUERY method or streaming media types (add only if relevant).
