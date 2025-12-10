@@ -60,7 +60,9 @@ async function openapiOverlay(oaObj, options) {
       // Handle update actions
       targets.forEach(node => {
         if (node.parent && node.key !== undefined) {
-          node.parent[node.key] = deepMerge(node.value, update);
+          // make a copy of the update object any further updates aren't applied
+          // multiple times to the same object
+          node.parent[node.key] = deepMerge(node.value, structuredClone(update));
         }
       });
     }

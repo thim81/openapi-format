@@ -1,0 +1,32 @@
+actions:
+
+# apply an overlay to add an object from this overlay into the original OpenAPI schema
+# this should be applied as a copy to each target, not a reference
+  - target: $..child
+    update:
+      oneOf:
+        - type: object
+          properties:
+            type:
+              const: a
+            a:
+              type: object
+        - type: object
+          properties:
+            type:
+              const: b
+            b:
+              type: object
+
+# apply a further overlay to the above overlaid object
+# as the above overlaid object should be a copy, we shouldn't keep
+# adding the overlay multiple times to the same referenced object
+  - target: $..child.oneOf[0].properties.a
+    update:
+      oneOf:
+        - type: object
+          properties:
+            type:
+              const: c
+            c:
+              type: object
