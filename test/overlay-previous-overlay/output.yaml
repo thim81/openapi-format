@@ -1,0 +1,77 @@
+type: object
+properties:
+  parent:
+    type: object
+    properties:
+      one:
+        type: object
+        properties:
+          child:
+            oneOf:
+              - type: object
+                properties:
+                  type:
+                    const: a
+                  a:
+                    type: object
+                    oneOf:
+                      - type: object
+                        properties:
+                          type:
+                            const: c
+                          c:
+                            type: object
+              - type: object
+                properties:
+                  type:
+                    const: b
+                  b:
+                    type: object
+      two:
+        type: object
+        properties:
+          child:
+            oneOf:
+              - type: object
+                properties:
+                  type:
+                    const: a
+                  a:
+                    type: object
+                    oneOf:
+                      - type: object
+                        properties:
+                          type:
+                            const: c
+                          c:
+                            type: object
+              - type: object
+                properties:
+                  type:
+                    const: b
+                  b:
+                    type: object
+      three:
+        type: object
+        properties:
+          child:
+            oneOf:
+              - type: object
+                properties:
+                  type:
+                    const: a
+                  a:
+                    type: object
+                    oneOf:
+                      - type: object
+                        properties:
+                          type:
+                            const: c
+                          c:
+                            type: object
+              - type: object
+                properties:
+                  type:
+                    const: b
+                  b:
+                    type: object

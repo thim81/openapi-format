@@ -1,0 +1,17 @@
+type: object
+properties:
+  parent:
+    type: object
+    properties:
+      one:
+        type: object
+        properties:
+          child: {}
+      two:
+        type: object
+        properties:
+          child: {}
+      three:
+        type: object
+        properties:
+          child: {}
