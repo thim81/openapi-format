@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.29.1] - 2025-12-15
+
+- Overlay: fix copy `update` object to avoid applying to references (#183)
+
 ## [1.29.0] - 2025-09-24
 
 - Sort & Filter: Added support for OpenAPI 3.2 (#182)
