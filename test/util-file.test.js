@@ -48,19 +48,19 @@ describe('openapi-format CLI file tests', () => {
       expect(parsedContent).toEqual(JSON.parse(fs.readFileSync(inputFilePath, 'utf8')));
     });
 
-    test('should throw an error for invalid file', () => {
+    test('should throw an error for invalid file', async () => {
       const inputFilePath = 'nonexistentfile.yaml';
-      expect(async () => await parseFile(inputFilePath)).rejects.toThrowError('ENOENT');
+      await expect(parseFile(inputFilePath)).rejects.toThrow(/ENOENT/);
     });
 
-    test('should throw an error for invalid YAML content', () => {
+    test('should throw an error for invalid YAML content', async () => {
       const inputFilePath = path.join(__dirname, 'test-files', 'invalid.yaml');
-      expect(async () => await parseFile(inputFilePath)).rejects.toThrowError('ENOENT');
+      await expect(parseFile(inputFilePath)).rejects.toThrow(/ENOENT/);
     });
 
-    test('should throw an error for invalid JSON content', () => {
+    test('should throw an error for invalid JSON content', async () => {
       const inputFilePath = path.join(__dirname, 'test-files', 'invalid.json');
-      expect(async () => await parseFile(inputFilePath)).rejects.toThrowError('ENOENT');
+      await expect(parseFile(inputFilePath)).rejects.toThrow(/ENOENT/);
     });
   });
 
@@ -273,19 +273,11 @@ describe('openapi-format CLI file tests', () => {
     // });
 
     test('should throw an error for https nonexistent remote file', async () => {
-      try {
-        await getRemoteFile(invalidRemoteFileHttps);
-      } catch (err) {
-        expect(err.message).toMatch(/404 Not Found/);
-      }
+      await expect(getRemoteFile(invalidRemoteFileHttps)).rejects.toThrow(/404/);
     });
 
     test('should throw an error for http nonexistent remote file', async () => {
-      try {
-        await getRemoteFile(invalidRemoteFileHttp);
-      } catch (err) {
-        expect(err.message).toMatch(/404 Not Found/);
-      }
+      await expect(getRemoteFile(invalidRemoteFileHttp)).rejects.toThrow(/404/);
     });
   });
 
