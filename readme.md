@@ -41,6 +41,7 @@ With the newly added OpenAPI Overlay support, users can overlay changes onto exi
 * [CLI rename usage](#cli-rename-usage)
 * [CLI convertTo usage](#cli-convertto-usage)
 * [CLI configuration usage](#cli-configuration-usage)
+* [Programmatic usage](#programmatic-usage)
 * [Credits](#credits)
 
 ## Use-cases
@@ -1561,6 +1562,92 @@ Example of a .openapiformatrc file:
       "tags": ["internal", "beta"]
   }
 }
+```
+
+## Programmatic usage
+
+The CLI is the primary interface, but all formatting utilities are exposed as module functions as well:
+
+```js
+const {
+  openapiSort,
+  getDefaultSortSet,
+  getDefaultSortComponentsSet
+} = require('openapi-format');
+
+const document = /* your OpenAPI document */;
+const sorted = await openapiSort(document, {
+  sortSet: await getDefaultSortSet(),
+  sortComponentsSet: await getDefaultSortComponentsSet()
+});
+```
+
+Both `sortSet` and `sortComponentsSet` are optional when you call `openapiSort`. When omitted, openapi-format automatically applies the built-in defaults (the same ones the CLI uses). The helper functions `getDefaultSortSet` and `getDefaultSortComponentsSet` are provided in case you want to start from the defaults and tweak them before invoking `openapiSort` in your own scripts.
+
+### Sorting with minimal setup
+
+```js
+const {openapiSort} = require('openapi-format');
+const fs = require('fs');
+
+const document = JSON.parse(fs.readFileSync('spec.json', 'utf8'));
+const {data} = await openapiSort(document, {sort: true});
+
+fs.writeFileSync('spec.sorted.json', JSON.stringify(data, null, 2));
+```
+
+### Sorting with custom tweaks
+
+```js
+const {
+  openapiSort,
+  getDefaultSortSet
+} = require('openapi-format');
+
+const sortSet = await getDefaultSortSet();
+sortSet.get = ['summary', 'description', 'responses']; // override GET priority
+
+const {data} = await openapiSort(document, {
+  sort: true,
+  sortSet,
+  sortComponentsSet: ['schemas', 'responses']
+});
+```
+
+### Mixing in other utilities
+
+```js
+const {openapiFilter, openapiGenerate} = require('openapi-format');
+
+let draft = /* load OpenAPI */;
+draft = (await openapiFilter(draft, {
+  filterSet: {tags: ['public']}
+})).data;
+
+draft = (await openapiGenerate(draft, {
+  generateSet: {
+    operationIdTemplate: '<method>_<pathPart1>_<pathPart2>'
+  }
+})).data;
+```
+
+### Using the file helpers for YAML/JSON OpenAPI documents
+
+The module also exports the same helpers the CLI relies on for smart parsing/writing (large-number handling, YAML comments, remote loading, etc.) of OpenAPI documents:
+
+```js
+const {
+  parseFile,
+  stringify,
+  writeFile,
+  openapiSort
+} = require('openapi-format');
+
+const input = await parseFile('openapi.yaml'); // local path or remote URL
+const {data} = await openapiSort(input, {sort: true});
+
+const output = await stringify(data, {format: 'yaml', lineWidth: -1});
+await writeFile('openapi.sorted.yaml', output, {format: 'yaml'});
 ```
 
 ## AsyncAPI documents
