@@ -1,5 +1,8 @@
 ## unreleased
 
+- Removed commander dependency
+- Bumped dependencies
+
 ## [1.29.1] - 2025-12-15
 
 - Overlay: fix copy `update` object to avoid applying to references (#183)

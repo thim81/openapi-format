@@ -38,7 +38,6 @@
     "@stoplight/yaml": "^4.3.0",
     "api-ref-bundler": "^0.4.3",
     "case-anything": "2.1.10",
-    "commander": "^7.2.0",
     "jsonpath-plus": "^10.3.0",
     "neotraverse": "^0.6.18"
   },

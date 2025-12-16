@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const openapiFormat = require('../openapi-format');
-const program = require('commander');
+const program = require('../utils/command');
 const {infoTable, infoOut, logOut, debugOut} = require('../utils/logging');
 const {stringify} = require('../openapi-format');
 const {resolveConvertTargetVersion} = require('../utils/convert');
