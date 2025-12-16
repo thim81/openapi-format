@@ -7,6 +7,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v2
       with:
@@ -14,9 +17,16 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Read package version
+      id: pkg
+      run: echo "version=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+
     - name: Build and push ghcr.io
       id: build-and-push
       uses: docker/build-push-action@v3.1.0
       with:
+        context: .
         push: true
-        tags: ghcr.io/${{ github.repository }}:latest
+        tags: |
+          ghcr.io/${{ github.repository }}:${{ steps.pkg.outputs.version }}
+          ghcr.io/${{ github.repository }}:latest
