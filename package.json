@@ -57,6 +57,7 @@
     "utils/convert.js",
     "utils/file.js",
     "utils/filtering.js",
+    "utils/command.js",
     "utils/logging.js",
     "utils/overlay.js",
     "utils/parseTpl.js",
