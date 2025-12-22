@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.29.2] - 2025-12-22
+
 - Doc: Added documentation for module usage
 - Module: Handle default sort sets
 - Removed commander dependency

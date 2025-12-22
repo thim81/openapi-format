@@ -1587,22 +1587,32 @@ Both `sortSet` and `sortComponentsSet` are optional when you call `openapiSort`.
 ### Sorting with minimal setup
 
 ```js
-const {openapiSort} = require('openapi-format');
-const fs = require('fs');
+const {
+  parseFile,
+  stringify,
+  writeFile,
+  openapiSort
+} = require('openapi-format');
 
-const document = JSON.parse(fs.readFileSync('spec.json', 'utf8'));
-const {data} = await openapiSort(document, {sort: true});
+const input = await parseFile('spec.json'); // local path or remote URL
+const {data} = await openapiSort(input, {sort: true});
 
-fs.writeFileSync('spec.sorted.json', JSON.stringify(data, null, 2));
+const output = await stringify(data, {format: 'json'});
+await writeFile('spec.sorted.json', output, {format: 'json'});
 ```
 
 ### Sorting with custom tweaks
 
 ```js
 const {
+  parseFile,
+  stringify,
+  writeFile,
   openapiSort,
   getDefaultSortSet
 } = require('openapi-format');
+
+const document = await parseFile('spec.json');
 
 const sortSet = await getDefaultSortSet();
 sortSet.get = ['summary', 'description', 'responses']; // override GET priority
@@ -1612,6 +1622,9 @@ const {data} = await openapiSort(document, {
   sortSet,
   sortComponentsSet: ['schemas', 'responses']
 });
+
+const output = await stringify(data, {format: 'json'});
+await writeFile('spec.sorted.json', output, {format: 'json'});
 ```
 
 ### Mixing in other utilities
@@ -1619,7 +1632,7 @@ const {data} = await openapiSort(document, {
 ```js
 const {openapiFilter, openapiGenerate} = require('openapi-format');
 
-let draft = /* load OpenAPI */;
+let draft = await parseFile('spec.json');
 draft = (await openapiFilter(draft, {
   filterSet: {tags: ['public']}
 })).data;
