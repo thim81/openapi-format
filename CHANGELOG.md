@@ -1,5 +1,7 @@
 ## unreleased
 
+- Doc: Added documentation for module usage
+- Module: Handle default sort sets
 - Removed commander dependency
 - Bumped dependencies
 

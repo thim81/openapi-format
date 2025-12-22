@@ -51,7 +51,7 @@ declare module 'openapi-format' {
   }
 
   interface OpenAPISortOptions {
-    sortSet: OpenAPISortSet
+    sortSet?: OpenAPISortSet
     sortComponentsSet?: string[]
   }
 
@@ -153,6 +153,16 @@ declare module 'openapi-format' {
     oaObj: OpenAPIV3.Document,
     options: OpenAPISortOptions
   ): Promise<OpenAPIResult>
+
+  /**
+   * Returns the default sorting configuration used by openapi-format.
+   */
+  export function getDefaultSortSet(): Promise<OpenAPISortSet>
+
+  /**
+   * Returns the default components sorting configuration used by openapi-format.
+   */
+  export function getDefaultSortComponentsSet(): Promise<string[]>
 
   /**
    * Filters the properties of an OpenAPI document based on the specified filter configuration.

@@ -36,6 +36,18 @@ const {parseTpl, getOperation} = require('./utils/parseTpl');
 const {writePaths, writeComponents, writeSplitOpenAPISpec} = require('./utils/split');
 const {dirname, extname} = require('path');
 const {openapiOverlay, resolveJsonPath, resolveJsonPathValue} = require('./utils/overlay');
+const defaultSortSetJson = require('./defaultSort.json');
+const defaultSortComponentsJson = require('./defaultSortComponents.json');
+
+const cloneJson = obj => JSON.parse(JSON.stringify(obj));
+
+async function getDefaultSortSet() {
+  return cloneJson(defaultSortSetJson);
+}
+
+async function getDefaultSortComponentsSet() {
+  return cloneJson(defaultSortComponentsJson);
+}
 
 /**
  * OpenAPI sort function
@@ -60,8 +72,8 @@ async function openapiSort(oaObj, options) {
   }
 
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
-  let sortSet = options.sortSet || (await parseFile(__dirname + '/defaultSort.json'));
-  let sortComponentsSet = options.sortComponentsSet || (await parseFile(__dirname + '/defaultSortComponents.json'));
+  let sortSet = options.sortSet || (await getDefaultSortSet());
+  let sortComponentsSet = options.sortComponentsSet || (await getDefaultSortComponentsSet());
   let debugStep = ''; // uncomment // debugStep below to see which sort part is triggered
 
   // Recursive traverse through OpenAPI document
@@ -1191,6 +1203,8 @@ module.exports = {
   openapiFilter: openapiFilter,
   openapiGenerate: openapiGenerate,
   openapiSort: openapiSort,
+  getDefaultSortSet,
+  getDefaultSortComponentsSet,
   openapiChangeCase: openapiChangeCase,
   openapiOverlay: openapiOverlay,
   openapiSplit: openapiSplit,
