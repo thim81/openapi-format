@@ -22,5 +22,8 @@
   },
   "no-sort": false,
   "lineWidth": 80,
-  "rename": "Updated API"
+  "rename": "Updated API",
+  "keepComments": true,
+  "sortComponentsProps": true,
+  "split": false
 }

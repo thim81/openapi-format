@@ -146,6 +146,63 @@ describe('openapi-format CLI command', () => {
     fs.readFileSync.mockRestore();
   });
 
+  it('should respect boolean options from .openapiformatrc', async () => {
+    // Create a temporary .openapiformatrc file with boolean options
+    const defaultConfigPath = '.openapiformatrc';
+    const configContent = {
+      keepComments: true,
+      sortComponentsProps: true,
+      split: false
+    };
+
+    // Write the config file
+    fs.writeFileSync(defaultConfigPath, JSON.stringify(configContent, null, 2));
+
+    try {
+      const inputFile = `test/yaml-no-sort-keep-comments/input.yaml`;
+      let result = await testUtils.cli([inputFile, '--no-sort'], '.');
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      expect(result.stdout).toMatchSnapshot();
+      // The output should preserve comments due to keepComments: true in config
+      expect(result.stderr).toContain('#');
+    } finally {
+      // Clean up - remove the temporary config file
+      if (fs.existsSync(defaultConfigPath)) {
+        fs.unlinkSync(defaultConfigPath);
+      }
+    }
+  });
+
+  it('should use config file boolean options when set', async () => {
+    // Create a config file with boolean options set to non-default values
+    const defaultConfigPath = '.openapiformatrc';
+    const configContent = {
+      keepComments: true,
+      sortComponentsProps: true,
+      split: false,
+      sort: false
+    };
+
+    // Write the config file
+    fs.writeFileSync(defaultConfigPath, JSON.stringify(configContent, null, 2));
+
+    try {
+      const inputFile = `test/yaml-no-sort-keep-comments/input.yaml`;
+      // Config file values should be applied
+      let result = await testUtils.cli([inputFile], '.');
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      // The output should preserve comments due to config file setting
+      expect(result.stderr).toContain('#');
+    } finally {
+      // Clean up - remove the temporary config file
+      if (fs.existsSync(defaultConfigPath)) {
+        fs.unlinkSync(defaultConfigPath);
+      }
+    }
+  });
+
   it('should use the casingFile', async () => {
     const path = `test/yaml-casing`;
     const inputFile = `${path}/input.yaml`;
