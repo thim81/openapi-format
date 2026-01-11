@@ -163,7 +163,7 @@ describe('openapi-format CLI command', () => {
       let result = await testUtils.cli([inputFile, '--no-sort'], '.');
       expect(result.code).toBe(0);
       expect(result.stdout).toContain('formatted successfully');
-      expect(result.stdout).toMatchSnapshot();
+      expect(cleanCwd(result.stdout)).toMatchSnapshot();
       // The output should preserve comments due to keepComments: true in config
       expect(result.stderr).toContain('#');
     } finally {
@@ -507,4 +507,14 @@ describe('openapi-format CLI command', () => {
 function sanitize(str) {
   if (!str) return str;
   return str.replace(/^\s+|\s+$/g, '').trim();
+}
+
+/**
+ * Clean up the current working directory of the CLI
+ * @param {string} str
+ * @returns {*|string}
+ */
+function cleanCwd(str) {
+  if (!str) return str;
+  return str.split(process.cwd()).join('<CWD>').replace(/^\s+|\s+$/g, '').trim();
 }

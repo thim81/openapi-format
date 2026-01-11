@@ -1,5 +1,7 @@
 ## unreleased
 
+- CLI: Fix optional config file boolean options (#188)
+
 ## [1.29.2] - 2025-12-22
 
 - Doc: Added documentation for module usage

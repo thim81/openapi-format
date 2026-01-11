@@ -135,12 +135,11 @@ Options:
 exports[`openapi-format CLI command should respect boolean options from .openapiformatrc 1`] = `
 "================================================================================
 OpenAPI-Format CLI settings:
-- .openapiformatrc:	/Users/joseph/oss/openapi-format/.openapiformatrc
+- .openapiformatrc:	<CWD>/.openapiformatrc
 - Input file:		test/yaml-no-sort-keep-comments/input.yaml
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
-[32m================================================================================[0m
-"
+[32m================================================================================[0m"
 `;
 
 exports[`openapi-format CLI command should show unused components 1`] = `
