@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.29.3] - 2026-01-11
+
 - CLI: Fix optional config file boolean options (#188)
 
 ## [1.29.2] - 2025-12-22
