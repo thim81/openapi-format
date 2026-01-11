@@ -516,5 +516,9 @@ function sanitize(str) {
  */
 function cleanCwd(str) {
   if (!str) return str;
-  return str.split(process.cwd()).join('<CWD>').replace(/^\s+|\s+$/g, '').trim();
+  return str
+    .split(process.cwd())
+    .join('<CWD>')
+    .replace(/^\s+|\s+$/g, '')
+    .trim();
 }
