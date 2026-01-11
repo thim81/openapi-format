@@ -90,9 +90,14 @@ async function run(oaFile, options) {
 
   // Merge .openapiformatrc and configOptions
   configOptions = Object.assign({}, defaultOptions, configOptions);
+  // Preserve config file values for options that have CLI defaults
+  // These must be set before Object.assign to prevent CLI defaults from overwriting config values
   options.lineWidth = configOptions?.lineWidth ?? options.lineWidth;
   options.sort = configOptions?.sort ?? options.sort;
   options.bundle = configOptions?.bundle ?? options.bundle;
+  options.keepComments = configOptions?.keepComments ?? options.keepComments;
+  options.sortComponentsProps = configOptions?.sortComponentsProps ?? options.sortComponentsProps;
+  options.split = configOptions?.split ?? options.split;
 
   // Merge configOptions and CLI options
   options = Object.assign({}, configOptions, options);
