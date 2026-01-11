@@ -6,4 +6,13 @@ info:
     First line of markdown content.
 
     Second line of markdown content.
-paths: {}
+paths:
+  /test:
+    get:
+      description: |-
+        Path description line 1.
+
+        Path description line 2.
+      responses:
+        '200':
+          description: OK

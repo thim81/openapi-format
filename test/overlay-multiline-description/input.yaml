@@ -3,4 +3,10 @@ info:
   title: Test API
   version: 1.0.0
   description: Original description
-paths: {}
+paths:
+  /test:
+    get:
+      description: Old path description
+      responses:
+        '200':
+          description: OK
