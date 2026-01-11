@@ -1,0 +1,13 @@
+actions:
+  - target: $.info
+    update:
+      description: |-
+        First line of markdown content.
+
+        Second line of markdown content.
+  - target: $.paths['/test'].get
+    update:
+      description: |-
+        Path description line 1.
+
+        Path description line 2.

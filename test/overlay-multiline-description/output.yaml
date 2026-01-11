@@ -1,0 +1,18 @@
+openapi: 3.0.0
+info:
+  title: Test API
+  version: 1.0.0
+  description: |-
+    First line of markdown content.
+
+    Second line of markdown content.
+paths:
+  /test:
+    get:
+      description: |-
+        Path description line 1.
+
+        Path description line 2.
+      responses:
+        '200':
+          description: OK
