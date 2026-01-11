@@ -1,0 +1,9 @@
+openapi: 3.0.0
+info:
+  title: Test API
+  version: 1.0.0
+  description: |-
+    First line of markdown content.
+
+    Second line of markdown content.
+paths: {}

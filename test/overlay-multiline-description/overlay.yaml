@@ -1,0 +1,7 @@
+actions:
+  - target: $.info
+    update:
+      description: |-
+        First line of markdown content.
+
+        Second line of markdown content.
