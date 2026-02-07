@@ -26,6 +26,7 @@ With the newly added OpenAPI Overlay support, users can overlay changes onto exi
     + [Local Installation (recommended)](#local-installation-recommended)
     + [Global Installation](#global-installation)
     + [NPX usage](#npx-usage)
+    + [Codex skill usage](#codex-skill-usage)
 * [Command Line Interface](#command-line-interface)
 * [OpenAPI format CLI options](#openapi-format-cli-options)
 * [OpenAPI sort configuration options](#openapi-sort-configuration-options)
@@ -137,6 +138,20 @@ To execute the CLI without installing it via npm, use the npx method
 
 ```shell
 $ npx openapi-format your-openapi-file.yaml
+```
+
+### Codex skill usage
+
+To install the `openapi-format` skill from this repository:
+
+```shell
+$ npx skills add https://github.com/thim81/openapi-format --skill openapi-format
+```
+
+Then use it in Codex by explicitly referencing the skill in your prompt, for example:
+
+```text
+Using $openapi-format, create a minimal filter config to remove internal endpoints and give me the CLI command.
 ```
 
 ## Command Line Interface
