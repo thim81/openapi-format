@@ -38,7 +38,7 @@
     "@stoplight/yaml": "^4.3.0",
     "api-ref-bundler": "^0.4.3",
     "case-anything": "2.1.10",
-    "jsonpath-plus": "^10.3.0",
+    "jsonpath-rfc9535": "^1.3.0",
     "neotraverse": "^0.6.18"
   },
   "devDependencies": {
@@ -46,7 +46,7 @@
     "openapi-types": "^12.1.3"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.19.0"
   },
   "files": [
     "README.md",

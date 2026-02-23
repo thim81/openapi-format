@@ -1,4 +1,4 @@
-const {JSONPath} = require('jsonpath-plus');
+const {exec} = require('jsonpath-rfc9535');
 
 /**
  * Applies an overlay to an OpenAPI Specification (OAS).
@@ -94,15 +94,22 @@ function resolveJsonPath(obj, path) {
   }
 
   try {
-    const nodes = JSONPath({path, json: obj, resultType: 'all'});
+    const lengthCompatNodes = resolveArrayLengthCompat(obj, path);
+    if (lengthCompatNodes) {
+      return lengthCompatNodes;
+    }
 
-    return nodes.map(({path: matchPath, value, parent, parentProperty}) => {
-      return {
+    const nodes = [];
+    exec(obj, path, (value, matchPath) => {
+      const {parent, key} = resolveParentAndKey(obj, matchPath);
+      nodes.push({
         value,
         parent,
-        key: parentProperty
-      };
+        key
+      });
     });
+
+    return nodes;
   } catch (err) {
     console.error(`Error resolving JSONPath: ${err.message}`);
     return [];
@@ -119,6 +126,58 @@ function resolveJsonPath(obj, path) {
 function resolveJsonPathValue(obj, path) {
   const nodes = resolveJsonPath(obj, path);
   return nodes.map(node => node.value);
+}
+
+/**
+ * Builds parent/key metadata from an RFC 9535 path array.
+ *
+ * @param {Object|Array} obj - Source object.
+ * @param {Array<string|number>} matchPath - Path array from jsonpath-rfc9535 callback.
+ * @returns {{ parent: any, key: string|number|undefined }}
+ */
+function resolveParentAndKey(obj, matchPath) {
+  if (!Array.isArray(matchPath) || matchPath.length === 0) {
+    return {parent: undefined, key: undefined};
+  }
+
+  const key = matchPath[matchPath.length - 1];
+  let parent = obj;
+
+  for (let i = 0; i < matchPath.length - 1; i++) {
+    parent = parent?.[matchPath[i]];
+  }
+
+  return {parent, key};
+}
+
+/**
+ * Compatibility shim for array `.length` access used by existing tests.
+ *
+ * @param {Object|Array} obj - Source object.
+ * @param {string} path - JSONPath expression.
+ * @returns {Array<{ value: any; parent: any; key: string | number }>|null}
+ */
+function resolveArrayLengthCompat(obj, path) {
+  const lengthDotMatch = path.match(/^(.*)\.length$/);
+  const lengthBracketMatch = path.match(/^(.*)\[['"]length['"]\]$/);
+  const parentPath = lengthDotMatch?.[1] || lengthBracketMatch?.[1];
+
+  if (!parentPath || !parentPath.startsWith('$')) {
+    return null;
+  }
+
+  const parentNodes = [];
+  exec(obj, parentPath, (value, matchPath) => {
+    parentNodes.push({value, matchPath});
+  });
+
+  return parentNodes
+    .filter(node => Array.isArray(node.value))
+    .map(node => ({
+      value: node.value.length,
+      parent: node.value,
+      key: 'length'
+    }));
 }
 
 /**
