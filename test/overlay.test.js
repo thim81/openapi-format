@@ -1,6 +1,9 @@
 'use strict';
 
+const path = require('path');
+
 const {openapiOverlay, resolveJsonPathValue, deepMerge} = require('../utils/overlay');
+const {parseFile} = require('../openapi-format');
 
 const {describe, it, expect} = require('@jest/globals');
 
@@ -404,6 +407,12 @@ describe('resolveJsonPathValue tests', () => {
     expect(result).toEqual([{id: 2}]);
   });
 
+  it('should handle RFC 9535 filtering without surrounding parentheses', () => {
+    const obj = {items: [{id: 1}, {id: 2}, {id: 3}]};
+    const result = resolveJsonPathValue(obj, '$.items[?@.id==2]');
+    expect(result).toEqual([{id: 2}]);
+  });
+
   it('should handle array slicing', () => {
     const obj = {items: [1, 2, 3, 4, 5]};
     const result = resolveJsonPathValue(obj, '$.items[1:4]');
@@ -426,5 +435,60 @@ describe('resolveJsonPathValue tests', () => {
     const obj = '';
     const result = resolveJsonPathValue(obj, '$.paths..summary');
     expect(result).toEqual([]);
+  });
+
+  it('should apply overlay action using RFC 9535 filter without parentheses', async () => {
+    const baseOAS = {
+      security: [{cookieAuth: []}, {bearerAuth: []}]
+    };
+    const overlaySet = {
+      actions: [
+        {
+          target: '$.security[?@.cookieAuth]',
+          update: {'x-applied': true}
+        }
+      ]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.security).toEqual([{cookieAuth: [], 'x-applied': true}, {bearerAuth: []}]);
+    expect(result.resultData.totalUsedActions).toBe(1);
+  });
+
+  it('should apply overlay action to an escaped key path', async () => {
+    const baseOAS = {
+      'x.map': {
+        value: 1
+      }
+    };
+    const overlaySet = {
+      actions: [
+        {
+          target: "$['x.map']",
+          update: {updated: true}
+        }
+      ]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data['x.map']).toEqual({value: 1, updated: true});
+    expect(result.resultData.totalUsedActions).toBe(1);
+  });
+
+  it('should preserve independent copies when applying a second overlay to prior overlay results', async () => {
+    const dir = path.join(__dirname, 'overlay-previous-overlay');
+    const input = await parseFile(path.join(dir, 'input.yaml'));
+    const overlaySet = await parseFile(path.join(dir, 'overlay.yaml'));
+
+    const firstPass = await openapiOverlay(input, {overlaySet: {actions: [overlaySet.actions[0]]}});
+    const firstPassMatches = resolveJsonPathValue(firstPass.data, '$..child.oneOf[0].properties.a');
+    expect(firstPassMatches.length).toBe(3);
+
+    const result = await openapiOverlay(input, {overlaySet});
+    const aBranches = result.data.properties.parent.properties;
+
+    expect(aBranches.one.properties.child.oneOf[0].properties.a.oneOf).toBeDefined();
+    expect(aBranches.two.properties.child.oneOf[0].properties.a.oneOf).toBeDefined();
+    expect(aBranches.three.properties.child.oneOf[0].properties.a.oneOf).toBeDefined();
   });
 });

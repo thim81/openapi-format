@@ -1,4 +1,4 @@
-const {JSONPath} = require('jsonpath-plus');
+const {paths: jsonPathPaths} = require('jsonpathly');
 
 /**
  * Applies an overlay to an OpenAPI Specification (OAS).
@@ -62,7 +62,7 @@ async function openapiOverlay(oaObj, options) {
         if (node.parent && node.key !== undefined) {
           // make a copy of the update object any further updates aren't applied
           // multiple times to the same object
-          node.parent[node.key] = deepMerge(node.value, structuredClone(update));
+          node.parent[node.key] = deepMerge(node.value, cloneJsonLike(update));
         }
       });
     }
@@ -94,15 +94,14 @@ function resolveJsonPath(obj, path) {
   }
 
   try {
-    const nodes = JSONPath({path, json: obj, resultType: 'all'});
+    const lengthCompatNodes = resolveArrayLengthCompat(obj, path);
+    if (lengthCompatNodes) {
+      return lengthCompatNodes;
+    }
 
-    return nodes.map(({path: matchPath, value, parent, parentProperty}) => {
-      return {
-        value,
-        parent,
-        key: parentProperty
-      };
-    });
+    const enginePath = normalizeJsonPathForEngine(path);
+    const matchPaths = jsonPathPaths(obj, enginePath);
+    return matchPaths.map(matchPath => resolveNodeFromNormalizedPath(obj, matchPath));
   } catch (err) {
     console.error(`Error resolving JSONPath: ${err.message}`);
     return [];
@@ -119,6 +118,165 @@ function resolveJsonPath(obj, path) {
 function resolveJsonPathValue(obj, path) {
   const nodes = resolveJsonPath(obj, path);
   return nodes.map(node => node.value);
+}
+
+/**
+ * Normalizes RFC-style filter selectors for engines that prefer `?(@...)`.
+ * jsonpathly v3 supports both forms, but keeping this shim is harmless and
+ * preserves compatibility if parser behavior changes.
+ *
+ * @param {string} path - JSONPath expression.
+ * @returns {string}
+ */
+function normalizeJsonPathForEngine(path) {
+  return path.replace(/\[\?(@|\$)([^\]]*)\]/g, '[?($1$2)]');
+}
+
+/**
+ * Resolves node metadata from a jsonpathly normalized path string.
+ *
+ * @param {Object|Array} obj - Source object.
+ * @param {string} normalizedPath - RFC 9535 normalized path (e.g. $['a'][0]['b']).
+ * @returns {{ value: any, parent: any, key: string|number|undefined }}
+ */
+function resolveNodeFromNormalizedPath(obj, normalizedPath) {
+  const segments = parseNormalizedPath(normalizedPath);
+
+  if (segments.length === 0) {
+    return {value: obj, parent: undefined, key: undefined};
+  }
+
+  const key = segments[segments.length - 1];
+  let parent = obj;
+
+  for (let i = 0; i < segments.length - 1; i++) {
+    parent = parent?.[segments[i]];
+  }
+
+  return {
+    value: parent?.[key],
+    parent,
+    key
+  };
+}
+
+/**
+ * Parses jsonpathly normalized paths (RFC 9535 bracket notation) into segments.
+ *
+ * @param {string} normalizedPath - Normalized path string.
+ * @returns {Array<string|number>}
+ */
+function parseNormalizedPath(normalizedPath) {
+  if (normalizedPath === '$') {
+    return [];
+  }
+
+  if (typeof normalizedPath !== 'string' || !normalizedPath.startsWith('$')) {
+    throw new Error(`Invalid normalized path: ${normalizedPath}`);
+  }
+
+  const segments = [];
+  let i = 1;
+
+  while (i < normalizedPath.length) {
+    if (normalizedPath[i] !== '[') {
+      throw new Error(`Invalid normalized path: ${normalizedPath}`);
+    }
+    i++;
+
+    if (normalizedPath[i] === "'") {
+      i++;
+      let token = '';
+      while (i < normalizedPath.length) {
+        const ch = normalizedPath[i];
+        if (ch === '\\') {
+          i++;
+          if (i >= normalizedPath.length) {
+            throw new Error(`Invalid normalized path: ${normalizedPath}`);
+          }
+          token += normalizedPath[i];
+          i++;
+          continue;
+        }
+        if (ch === "'") {
+          i++;
+          break;
+        }
+        token += ch;
+        i++;
+      }
+      if (normalizedPath[i] !== ']') {
+        throw new Error(`Invalid normalized path: ${normalizedPath}`);
+      }
+      i++;
+      segments.push(token);
+      continue;
+    }
+
+    let token = '';
+    while (i < normalizedPath.length && normalizedPath[i] !== ']') {
+      token += normalizedPath[i];
+      i++;
+    }
+    if (normalizedPath[i] !== ']') {
+      throw new Error(`Invalid normalized path: ${normalizedPath}`);
+    }
+    i++;
+    if (!/^-?\d+$/.test(token)) {
+      throw new Error(`Invalid normalized path segment: ${normalizedPath}`);
+    }
+    segments.push(Number(token));
+  }
+
+  return segments;
+}
+
+/**
+ * Compatibility shim for array `.length` access used by existing tests.
+ *
+ * @param {Object|Array} obj - Source object.
+ * @param {string} path - JSONPath expression.
+ * @returns {Array<{ value: any; parent: any; key: string | number }>|null}
+ */
+function resolveArrayLengthCompat(obj, path) {
+  const lengthDotMatch = path.match(/^(.*)\.length$/);
+  const lengthBracketMatch = path.match(/^(.*)\[['"]length['"]\]$/);
+  const parentPath = lengthDotMatch?.[1] || lengthBracketMatch?.[1];
+
+  if (!parentPath || !parentPath.startsWith('$')) {
+    return null;
+  }
+
+  const parentNodes = resolveJsonPath(obj, parentPath);
+  return parentNodes
+    .filter(node => Array.isArray(node.value))
+    .map(node => ({
+      value: node.value.length,
+      parent: node.value,
+      key: 'length'
+    }));
+}
+
+/**
+ * Clone JSON-like values (plain objects/arrays/primitives) in the local realm.
+ *
+ * @param {any} value - Value to clone.
+ * @returns {any}
+ */
+function cloneJsonLike(value) {
+  if (Array.isArray(value)) {
+    return value.map(cloneJsonLike);
+  }
+
+  if (value && typeof value === 'object') {
+    const cloned = {};
+    for (const key in value) {
+      cloned[key] = cloneJsonLike(value[key]);
+    }
+    return cloned;
+  }
+
+  return value;
 }
 
 /**
