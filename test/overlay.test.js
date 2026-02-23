@@ -1,6 +1,9 @@
 'use strict';
 
+const path = require('path');
+
 const {openapiOverlay, resolveJsonPathValue, deepMerge} = require('../utils/overlay');
+const {parseFile} = require('../openapi-format');
 
 const {describe, it, expect} = require('@jest/globals');
 
@@ -470,5 +473,22 @@ describe('resolveJsonPathValue tests', () => {
     const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.data['x.map']).toEqual({value: 1, updated: true});
     expect(result.resultData.totalUsedActions).toBe(1);
+  });
+
+  it('should preserve independent copies when applying a second overlay to prior overlay results', async () => {
+    const dir = path.join(__dirname, 'overlay-previous-overlay');
+    const input = await parseFile(path.join(dir, 'input.yaml'));
+    const overlaySet = await parseFile(path.join(dir, 'overlay.yaml'));
+
+    const firstPass = await openapiOverlay(input, {overlaySet: {actions: [overlaySet.actions[0]]}});
+    const firstPassMatches = resolveJsonPathValue(firstPass.data, '$..child.oneOf[0].properties.a');
+    expect(firstPassMatches.length).toBe(3);
+
+    const result = await openapiOverlay(input, {overlaySet});
+    const aBranches = result.data.properties.parent.properties;
+
+    expect(aBranches.one.properties.child.oneOf[0].properties.a.oneOf).toBeDefined();
+    expect(aBranches.two.properties.child.oneOf[0].properties.a.oneOf).toBeDefined();
+    expect(aBranches.three.properties.child.oneOf[0].properties.a.oneOf).toBeDefined();
   });
 });

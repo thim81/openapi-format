@@ -62,7 +62,7 @@ async function openapiOverlay(oaObj, options) {
         if (node.parent && node.key !== undefined) {
           // make a copy of the update object any further updates aren't applied
           // multiple times to the same object
-          node.parent[node.key] = deepMerge(node.value, structuredClone(update));
+          node.parent[node.key] = deepMerge(node.value, cloneJsonLike(update));
         }
       });
     }
@@ -178,6 +178,30 @@ function resolveArrayLengthCompat(obj, path) {
       parent: node.value,
       key: 'length'
     }));
+}
+
+/**
+ * Clone JSON-like values (plain objects/arrays/primitives) in the local realm.
+ * Using structuredClone here caused cross-realm arrays under Jest that jsonpath-rfc9535
+ * would not traverse reliably in follow-up overlay actions.
+ *
+ * @param {any} value - Value to clone.
+ * @returns {any}
+ */
+function cloneJsonLike(value) {
+  if (Array.isArray(value)) {
+    return value.map(cloneJsonLike);
+  }
+
+  if (value && typeof value === 'object') {
+    const cloned = {};
+    for (const key in value) {
+      cloned[key] = cloneJsonLike(value[key]);
+    }
+    return cloned;
+  }
+
+  return value;
 }
 
 /**
