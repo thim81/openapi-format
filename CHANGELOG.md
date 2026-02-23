@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.29.4] - 2026-02-23
+
+- Overlay: refactor: Switch to jsonpathly library for RFC 9535 compliance (#190)
+
 ## [1.29.3] - 2026-01-11
 
 - CLI: Fix optional config file boolean options (#188)
