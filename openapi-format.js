@@ -381,6 +381,7 @@ async function openapiFilter(oaObj, options) {
       // Filter out object matching the inverse "tags"
       if (
         inverseFilterArray.length > 0 &&
+        inverseFilterFlags.length === 0 &&
         this.key === 'tags' &&
         !inverseFilterArray.some(i => node.includes(i)) &&
         this.parent.parent !== undefined
@@ -390,7 +391,12 @@ async function openapiFilter(oaObj, options) {
       }
 
       // Filter out the top level tags matching the inverse "tags"
-      if (inverseFilterArray.length > 0 && this.key === 'tags' && this.parent.parent === undefined) {
+      if (
+        inverseFilterArray.length > 0 &&
+        inverseFilterFlags.length === 0 &&
+        this.key === 'tags' &&
+        this.parent.parent === undefined
+      ) {
         // debugFilterStep = 'Filter - inverse top tags'
         node = node.filter(value => inverseFilterArray.includes(value.name));
         this.update(node);
@@ -437,6 +443,7 @@ async function openapiFilter(oaObj, options) {
       // Keep fields matching the inverseFlags array
       if (
         inverseFilterFlags.length > 0 &&
+        inverseFilterArray.length === 0 &&
         (this.path[0] === 'tags' || this.path[0] === 'x-tagGroups') &&
         this.level === 1
       ) {
@@ -551,23 +558,36 @@ async function openapiFilter(oaObj, options) {
       }
     }
 
-    // Filter out operations not matching inverseFilterArray
-    if (inverseFilterArray.length > 0 && this.parent && this.parent.parent && this.parent.parent.key === 'paths') {
-      if (node.tags === undefined || !inverseFilterArray.some(i => node.tags.includes(i))) {
-        this.delete();
-      }
-    }
+    // Filter operations for inverseTags / inverseFlags.
+    // When both are configured, treat them as a union (keep if either matches).
+    if (
+      this.path[0] === 'paths' &&
+      this.level === 3 &&
+      this.parent &&
+      this.parent.parent &&
+      this.parent.parent.key === 'paths'
+    ) {
+      const hasInverseTags = inverseFilterArray.length > 0;
+      const hasInverseFlags = inverseFilterFlags.length > 0;
+      if (hasInverseTags || hasInverseFlags) {
+        const operation = node || {};
+        const matchesInverseTag =
+          hasInverseTags && Array.isArray(operation.tags)
+            ? inverseFilterArray.some(i => operation.tags.includes(i))
+            : false;
+        const matchesInverseFlag = hasInverseFlags
+          ? inverseFilterFlags.some(flagKey => operation.hasOwnProperty(flagKey))
+          : false;
+        const shouldKeep =
+          hasInverseTags && hasInverseFlags
+            ? matchesInverseTag || matchesInverseFlag
+            : hasInverseTags
+              ? matchesInverseTag
+              : matchesInverseFlag;
 
-    // Keep fields matching the inverseFlags
-    if (inverseFilterFlags.length > 0 && this.path[0] === 'paths' && this.level === 3) {
-      const itmObj = node;
-      const matchesInverseFlag = inverseFilterFlags.some(flagKey => {
-        return itmObj.hasOwnProperty(flagKey);
-      });
-
-      if (!matchesInverseFlag) {
-        // debugFilterStep = 'Filter - Single field - inverseFlags'
-        this.remove();
+        if (!shouldKeep) {
+          this.delete();
+        }
       }
     }
 
@@ -635,6 +655,25 @@ async function openapiFilter(oaObj, options) {
       node = replaceRes;
     }
   });
+
+  // Keep top-level tags that are still referenced by remaining operations.
+  // Apply this only when inverseTags and inverseFlags are both configured.
+  // (inverseFlags-only mode should preserve the existing flagged-tag behavior.)
+  if (Array.isArray(jsonObj.tags) && inverseFilterArray.length > 0 && inverseFilterFlags.length > 0) {
+    const usedTags = new Set();
+    if (jsonObj.paths && typeof jsonObj.paths === 'object') {
+      Object.values(jsonObj.paths).forEach(pathItem => {
+        if (pathItem && typeof pathItem === 'object') {
+          Object.values(pathItem).forEach(operation => {
+            if (operation && typeof operation === 'object' && Array.isArray(operation.tags)) {
+              operation.tags.forEach(tag => usedTags.add(tag));
+            }
+          });
+        }
+      });
+    }
+    jsonObj.tags = jsonObj.tags.filter(tagObj => tagObj && usedTags.has(tagObj.name));
+  }
 
   // Calculate comps.meta.total at the end
   // comps.meta.total = Object.keys(comps.schemas).length +
