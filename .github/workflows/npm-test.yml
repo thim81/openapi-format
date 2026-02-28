@@ -27,3 +27,9 @@ jobs:
 
       - name: Run Unit Tests
         run: npm run test
+
+      - name: Check Type Export Parity
+        run: npm run check:exports
+
+      - name: Check TypeScript Consumer
+        run: npm run check:_types
