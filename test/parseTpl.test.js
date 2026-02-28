@@ -196,6 +196,26 @@ describe('parseTpl', () => {
     const result = parseTpl(dto);
     expect(result).toBe('{{{trainMonetaryAmount}}}');
   });
+
+  it('keeps placeholder text when casing getter changes during replacement', () => {
+    const options = {};
+    let readCount = 0;
+    Object.defineProperty(options, 'casing', {
+      get() {
+        readCount += 1;
+        return readCount === 1 ? 'camelCase' : '';
+      }
+    });
+
+    const dto = {
+      template: '{{<tag>Id}}',
+      oaOperation: oaOperation,
+      dynamicValues: {},
+      options
+    };
+    const result = parseTpl(dto);
+    expect(result).toBe('{{TrainId}}');
+  });
 });
 
 describe('hasTpl', () => {
@@ -221,5 +241,20 @@ describe('hasTpl', () => {
     const templateWithMultipleTags = '<example> <example>';
     const result = hasTpl(templateWithMultipleTags);
     expect(result).toBe(true);
+  });
+});
+
+describe('getOperation', () => {
+  it('returns undefined when path exists but method does not', () => {
+    const oa = {
+      paths: {
+        '/trains/{id}': {
+          get: {operationId: 'trainDetails'}
+        }
+      }
+    };
+
+    const result = getOperation('/trains/{id}', 'post', oa);
+    expect(result).toBeUndefined();
   });
 });
