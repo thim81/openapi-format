@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.29.5] - 2026-02-28
+
+- Types: Update Typescript typings (#194)
+
 ## [1.29.4] - 2026-02-23
 
 - Overlay: refactor: Switch to jsonpathly library for RFC 9535 compliance (#190)
