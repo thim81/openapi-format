@@ -2,3 +2,21 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: Swagger Petstore
+paths:
+  /pets:
+    get:
+      operationId: findPets
+      responses:
+        '200':
+          description: pet response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        id:
+          type: integer

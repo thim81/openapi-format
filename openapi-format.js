@@ -794,10 +794,36 @@ async function openapiFilter(oaObj, options) {
     options.unusedDepth === 0 ||
     (stripUnused.length > 0 && unusedComp.meta.total > 0 && options.unusedDepth <= 10)
   ) {
-    options.unusedDepth++;
-    const resultObj = await openapiFilter(jsonObj, options);
+    const stripFlagsSet = new Set(stripFlags);
+    // If a flag is both inverse-kept and stripped in the same pass, recursive
+    // filtering would otherwise remove previously matched operations.
+    const hasInverseFlagsStripConflict = inverseFilterFlags.some(flag => stripFlagsSet.has(flag));
+    // Same conflict check for inverseFlagValues, based on the flag key of each object.
+    const hasInverseFlagValuesStripConflict = inverseFilterFlagValues.some(flagObj =>
+      stripFlagsSet.has(Object.keys(flagObj || {})[0])
+    );
+
+    // Recurse with inverse flag filters disabled only for this conflict case.
+    // This keeps the first-pass inverse selection intact while still allowing
+    // cleanup recursion (unused components, empty objects, etc.).
+    const recurseOptions =
+      hasInverseFlagsStripConflict || hasInverseFlagValuesStripConflict
+        ? {
+            ...options,
+            filterSet: {
+              ...(options.filterSet || {}),
+              inverseFlags: [],
+              inverseFlagValues: []
+            }
+          }
+        : options;
+
+    // Preserve recursion depth semantics regardless of whether we cloned options.
+    recurseOptions.unusedDepth = (recurseOptions.unusedDepth || 0) + 1;
+    const resultObj = await openapiFilter(jsonObj, recurseOptions);
     jsonObj = resultObj.data;
-    unusedComp = JSON.parse(JSON.stringify(options.unusedComp));
+    // Carry forward unused component tracking from the recurse options object.
+    unusedComp = JSON.parse(JSON.stringify(recurseOptions.unusedComp));
   }
 
   // Prepare totalComp for the final result

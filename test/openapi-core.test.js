@@ -26,7 +26,7 @@ describe('openapi-format core API', () => {
     expect(result.data.tags).toEqual([{name: 'pets'}]);
   });
 
-  it('openapiFilter inverseFlags + stripFlags currently removes previously kept operations after recurse', async () => {
+  it('openapiFilter should keep inverseFlags-matched operations when stripFlags removes the same key', async () => {
     const doc = {
       openapi: '3.0.0',
       info: {title: 'API', version: '1.0.0'},
@@ -42,17 +42,28 @@ describe('openapi-format core API', () => {
     expect(onlyInverse.data.paths).toHaveProperty('/pets.get');
 
     const inverseAndStrip = await openapiFilter(doc, {filterSet: {inverseFlags: ['x-public'], stripFlags: ['x-public']}});
-    expect(inverseAndStrip.data.paths).toBeUndefined();
+    expect(inverseAndStrip.data.paths).toHaveProperty('/pets.get');
+    expect(inverseAndStrip.data.paths['/pets'].get['x-public']).toBeUndefined();
+    expect(inverseAndStrip.data.paths['/pets'].post).toBeUndefined();
   });
 
-  it('adding responses to unusedComponents does not change inverseFlags+stripFlags outcome', async () => {
+  it('adding responses to unusedComponents should not remove still-referenced schemas', async () => {
     const doc = {
       openapi: '3.0.0',
       info: {title: 'API', version: '1.0.0'},
       paths: {
         '/pets': {
-          get: {'x-public': true, responses: {'200': {description: 'ok'}}},
-          post: {responses: {'200': {description: 'ok'}}}
+          get: {
+            'x-public': true,
+            responses: {
+              '200': {description: 'ok', content: {'application/json': {schema: {$ref: '#/components/schemas/Pet'}}}}
+            }
+          },
+          post: {
+            responses: {
+              '200': {description: 'ok', content: {'application/json': {schema: {$ref: '#/components/schemas/Pet'}}}}
+            }
+          }
         }
       },
       components: {
@@ -73,7 +84,8 @@ describe('openapi-format core API', () => {
     const resultWithResponses = await openapiFilter(doc, {filterSet: withResponses});
 
     expect(resultBase.data).toEqual(resultWithResponses.data);
-    expect(resultWithResponses.data.paths).toBeUndefined();
+    expect(resultWithResponses.data.paths).toHaveProperty('/pets.get');
+    expect(resultWithResponses.data.components.schemas).toHaveProperty('Pet');
   });
 
   it('openapiChangeCase should apply summary, description and securitySchemes ref casing', async () => {
