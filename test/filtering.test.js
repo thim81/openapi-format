@@ -320,6 +320,16 @@ describe('openapi-format CLI filtering tests', () => {
     });
   });
 
+  describe('yaml-filter-inverse-flags-inverse-tags', () => {
+    it('yaml-filter-inverse-flags-inverse-tags - should match expected output', async () => {
+      const testName = 'yaml-filter-inverse-flags-inverse-tags';
+      const {result, outputBefore, outputAfter} = await testUtils.loadTest(testName);
+      expect(result.code).toBe(0);
+      expect(result.stdout).toContain('formatted successfully');
+      expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  });
+
   describe('isUsedComp', () => {
     it('returns false for non-object input', () => {
       expect(isUsedComp(null, 'schemas')).toBe(false);
