@@ -536,7 +536,7 @@ describe('resolveJsonPath parser edge cases', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     const {resolveJsonPathValue} = loadOverlayWithMockedPaths(["$['a\\"]);
 
-    const result = resolveJsonPathValue({"a\\": 1}, '$.a');
+    const result = resolveJsonPathValue({'a\\': 1}, '$.a');
 
     expect(result).toEqual([]);
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Invalid normalized path'));

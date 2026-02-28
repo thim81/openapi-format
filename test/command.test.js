@@ -48,11 +48,11 @@ describe('MiniCommander', () => {
 
     commander.parse(['node', '/tmp/cli.js', '--unknown']);
     expect(exits[0].code).toBe('commander.unknownOption');
-    expect(exits[0].message).toContain("--unknown");
+    expect(exits[0].message).toContain('--unknown');
 
     commander.parse(['node', '/tmp/cli.js', '--file']);
     expect(exits[1].code).toBe('commander.missingArgument');
-    expect(exits[1].message).toContain("--file");
+    expect(exits[1].message).toContain('--file');
   });
 
   it('parses long options, no-* options and positional args', () => {
@@ -102,10 +102,15 @@ describe('MiniCommander', () => {
     let capturedOptions;
 
     commander
-      .option('--include [value]', 'include values', (value, previous) => {
-        const list = Array.isArray(previous) ? previous : [];
-        return value === undefined ? list : list.concat(value);
-      }, [])
+      .option(
+        '--include [value]',
+        'include values',
+        (value, previous) => {
+          const list = Array.isArray(previous) ? previous : [];
+          return value === undefined ? list : list.concat(value);
+        },
+        []
+      )
       .action((arg, options) => {
         capturedOptions = options;
       });
