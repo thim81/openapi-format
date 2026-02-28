@@ -1,7 +1,16 @@
 'use strict';
 
 const testUtils = require('./__utils__/test-utils');
-const {isMatchOperationItem, arraySort} = require('../utils/sorting');
+const {
+  isMatchOperationItem,
+  arraySort,
+  sortObjectByKeyNameList,
+  propComparator,
+  prioritySort,
+  sortPathsByAlphabet,
+  pathToRegExp,
+  matchPath
+} = require('../utils/sorting');
 const {describe, it, expect} = require('@jest/globals');
 
 describe('openapi-format CLI sorting tests', () => {
@@ -358,6 +367,46 @@ describe('openapi-format CLI sorting tests', () => {
 
       const sortedArray = arraySort(inputArray, 'name');
       expect(sortedArray).toEqual(expectedSortedArray);
+    });
+
+    it('sortObjectByKeyNameList - should use provided key order array', () => {
+      const input = {b: 2, a: 1, c: 3};
+      const result = sortObjectByKeyNameList(input, ['c', 'a']);
+      expect(Object.keys(result)).toEqual(['c', 'a', 'b']);
+    });
+
+    it('propComparator - should return 0 for equal values and non-array priorities', () => {
+      const byPriority = propComparator(['a', 'b']);
+      expect(byPriority('a', 'a')).toBe(0);
+
+      const noPriority = propComparator(null);
+      expect(noPriority('x', 'y')).toBe(0);
+    });
+
+    it('prioritySort - should return input unchanged for non-object values', () => {
+      expect(prioritySort(null, ['a'])).toBeNull();
+      expect(prioritySort('value', ['a'])).toBe('value');
+    });
+
+    it('sortPathsByAlphabet - should hit equal comparator branch', () => {
+      const entriesSpy = jest.spyOn(Object, 'entries').mockReturnValue([
+        ['/same/path', {get: {}}],
+        ['/same/path', {post: {}}]
+      ]);
+      const fromEntriesSpy = jest.spyOn(Object, 'fromEntries');
+
+      sortPathsByAlphabet({placeholder: {}});
+
+      expect(fromEntriesSpy).toHaveBeenCalled();
+      entriesSpy.mockRestore();
+      fromEntriesSpy.mockRestore();
+    });
+
+    it('pathToRegExp and matchPath - should support named params in strict matching', () => {
+      const regex = pathToRegExp('/messages/:id');
+      expect(regex).toBeInstanceOf(RegExp);
+      expect(matchPath('/messages/:id', '/messages/123')).toBe(true);
+      expect(matchPath('/messages/:id', '/messages/123/users')).toBe(false);
     });
   });
 });
