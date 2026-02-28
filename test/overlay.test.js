@@ -492,3 +492,63 @@ describe('resolveJsonPathValue tests', () => {
     expect(aBranches.three.properties.child.oneOf[0].properties.a.oneOf).toBeDefined();
   });
 });
+
+describe('resolveJsonPath parser edge cases', () => {
+  function loadOverlayWithMockedPaths(pathsToReturn) {
+    jest.resetModules();
+    jest.doMock('jsonpathly', () => ({
+      paths: () => pathsToReturn
+    }));
+    return require('../utils/overlay');
+  }
+
+  it('logs and returns [] for invalid normalized path root', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const {resolveJsonPathValue} = loadOverlayWithMockedPaths(['not-root']);
+
+    const result = resolveJsonPathValue({a: 1}, '$.a');
+
+    expect(result).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Invalid normalized path: not-root'));
+    consoleSpy.mockRestore();
+  });
+
+  it('logs and returns [] for malformed path segments', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    let overlay = loadOverlayWithMockedPaths(['$.bad']);
+    expect(overlay.resolveJsonPathValue({a: 1}, '$.a')).toEqual([]);
+
+    overlay = loadOverlayWithMockedPaths(["$['abc'"]);
+    expect(overlay.resolveJsonPathValue({abc: 1}, '$.a')).toEqual([]);
+
+    overlay = loadOverlayWithMockedPaths(['$[123']);
+    expect(overlay.resolveJsonPathValue({123: 1}, '$.a')).toEqual([]);
+
+    overlay = loadOverlayWithMockedPaths(['$[abc]']);
+    expect(overlay.resolveJsonPathValue({abc: 1}, '$.a')).toEqual([]);
+
+    expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+
+  it('logs and returns [] for malformed escaped quoted token', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const {resolveJsonPathValue} = loadOverlayWithMockedPaths(["$['a\\"]);
+
+    const result = resolveJsonPathValue({'a\\': 1}, '$.a');
+
+    expect(result).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Invalid normalized path'));
+    consoleSpy.mockRestore();
+  });
+
+  it('parses escaped quote segments in normalized paths', () => {
+    const {resolveJsonPathValue} = loadOverlayWithMockedPaths(["$['a\\'b']"]);
+    const obj = {"a'b": 123};
+
+    const result = resolveJsonPathValue(obj, '$.ignored');
+
+    expect(result).toEqual([123]);
+  });
+});
