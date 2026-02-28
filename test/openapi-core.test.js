@@ -32,8 +32,8 @@ describe('openapi-format core API', () => {
       info: {title: 'API', version: '1.0.0'},
       paths: {
         '/pets': {
-          get: {'x-public': true, responses: {'200': {description: 'ok'}}},
-          post: {responses: {'200': {description: 'ok'}}}
+          get: {'x-public': true, responses: {200: {description: 'ok'}}},
+          post: {responses: {200: {description: 'ok'}}}
         }
       }
     };
@@ -41,7 +41,9 @@ describe('openapi-format core API', () => {
     const onlyInverse = await openapiFilter(doc, {filterSet: {inverseFlags: ['x-public']}});
     expect(onlyInverse.data.paths).toHaveProperty('/pets.get');
 
-    const inverseAndStrip = await openapiFilter(doc, {filterSet: {inverseFlags: ['x-public'], stripFlags: ['x-public']}});
+    const inverseAndStrip = await openapiFilter(doc, {
+      filterSet: {inverseFlags: ['x-public'], stripFlags: ['x-public']}
+    });
     expect(inverseAndStrip.data.paths).toHaveProperty('/pets.get');
     expect(inverseAndStrip.data.paths['/pets'].get['x-public']).toBeUndefined();
     expect(inverseAndStrip.data.paths['/pets'].post).toBeUndefined();
@@ -56,12 +58,12 @@ describe('openapi-format core API', () => {
           get: {
             'x-public': true,
             responses: {
-              '200': {description: 'ok', content: {'application/json': {schema: {$ref: '#/components/schemas/Pet'}}}}
+              200: {description: 'ok', content: {'application/json': {schema: {$ref: '#/components/schemas/Pet'}}}}
             }
           },
           post: {
             responses: {
-              '200': {description: 'ok', content: {'application/json': {schema: {$ref: '#/components/schemas/Pet'}}}}
+              200: {description: 'ok', content: {'application/json': {schema: {$ref: '#/components/schemas/Pet'}}}}
             }
           }
         }
