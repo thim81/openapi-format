@@ -26,6 +26,56 @@ describe('openapi-format core API', () => {
     expect(result.data.tags).toEqual([{name: 'pets'}]);
   });
 
+  it('openapiFilter inverseFlags + stripFlags currently removes previously kept operations after recurse', async () => {
+    const doc = {
+      openapi: '3.0.0',
+      info: {title: 'API', version: '1.0.0'},
+      paths: {
+        '/pets': {
+          get: {'x-public': true, responses: {'200': {description: 'ok'}}},
+          post: {responses: {'200': {description: 'ok'}}}
+        }
+      }
+    };
+
+    const onlyInverse = await openapiFilter(doc, {filterSet: {inverseFlags: ['x-public']}});
+    expect(onlyInverse.data.paths).toHaveProperty('/pets.get');
+
+    const inverseAndStrip = await openapiFilter(doc, {filterSet: {inverseFlags: ['x-public'], stripFlags: ['x-public']}});
+    expect(inverseAndStrip.data.paths).toBeUndefined();
+  });
+
+  it('adding responses to unusedComponents does not change inverseFlags+stripFlags outcome', async () => {
+    const doc = {
+      openapi: '3.0.0',
+      info: {title: 'API', version: '1.0.0'},
+      paths: {
+        '/pets': {
+          get: {'x-public': true, responses: {'200': {description: 'ok'}}},
+          post: {responses: {'200': {description: 'ok'}}}
+        }
+      },
+      components: {
+        schemas: {
+          Pet: {type: 'object'}
+        }
+      }
+    };
+
+    const base = {
+      inverseFlags: ['x-public'],
+      stripFlags: ['x-public'],
+      unusedComponents: ['schemas', 'parameters', 'examples', 'headers', 'requestBodies']
+    };
+    const withResponses = {...base, unusedComponents: [...base.unusedComponents, 'responses']};
+
+    const resultBase = await openapiFilter(doc, {filterSet: base});
+    const resultWithResponses = await openapiFilter(doc, {filterSet: withResponses});
+
+    expect(resultBase.data).toEqual(resultWithResponses.data);
+    expect(resultWithResponses.data.paths).toBeUndefined();
+  });
+
   it('openapiChangeCase should apply summary, description and securitySchemes ref casing', async () => {
     const doc = {
       openapi: '3.0.0',

@@ -8,7 +8,7 @@ const {run} = require('../bin/cli');
 const {parseFile, stringify, writeFile} = require('../openapi-format');
 
 // SELECTIVE TESTING DEBUG
-const localTesting = false;
+const localTesting = true;
 const destroyOutput = false;
 
 // Load tests
@@ -16,7 +16,7 @@ const tests = !localTesting
   ? fs.readdirSync(__dirname).filter(file => {
       return fs.statSync(path.join(__dirname, file)).isDirectory() && !file.startsWith('_');
     })
-  : ['yaml-sort-component-props'];
+  : ['yaml-filter-inverse-flags-stripFlags'];
 
 describe('openapi-format tests', () => {
   let consoleLogSpy, consoleWarnSpy;
