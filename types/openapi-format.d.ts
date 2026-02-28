@@ -64,6 +64,8 @@ declare module 'openapi-format' {
     flagValues?: string[]
     inverseMethods?: string[]
     inverseTags?: string[]
+    inverseFlags?: string[],
+    inverseFlagValues: string[];
     inverseOperationIds?: string[]
     responseContent?: string[]
     inverseResponseContent?: string[]
