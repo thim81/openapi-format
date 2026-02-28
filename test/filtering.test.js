@@ -1,6 +1,7 @@
 'use strict';
 
 const testUtils = require('./__utils__/test-utils');
+const {isUsedComp} = require('../utils/filtering');
 const {describe, it, expect} = require('@jest/globals');
 
 describe('openapi-format CLI filtering tests', () => {
@@ -306,6 +307,25 @@ describe('openapi-format CLI filtering tests', () => {
       expect(result.code).toBe(0);
       expect(result.stdout).toContain('formatted successfully');
       expect(outputAfter).toStrictEqual(outputBefore);
+    });
+  });
+
+  describe('isUsedComp', () => {
+    it('returns false for non-object input', () => {
+      expect(isUsedComp(null, 'schemas')).toBe(false);
+    });
+
+    it('returns false for non-string prop', () => {
+      expect(isUsedComp({schemas: {used: true}}, 1)).toBe(false);
+    });
+
+    it('returns false when used flag is missing or false', () => {
+      expect(isUsedComp({schemas: {}}, 'schemas')).toBe(false);
+      expect(isUsedComp({schemas: {used: false}}, 'schemas')).toBe(false);
+    });
+
+    it('returns true when used flag is true', () => {
+      expect(isUsedComp({schemas: {used: true}}, 'schemas')).toBe(true);
     });
   });
 });
