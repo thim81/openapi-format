@@ -1,0 +1,11 @@
+inverseFlags:
+  - x-public
+stripFlags:
+  - x-public
+unusedComponents:
+  - schemas
+  - parameters
+  - examples
+  - headers
+  - requestBodies
+  - responses

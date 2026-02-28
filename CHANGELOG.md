@@ -2,6 +2,7 @@
 
 ## [1.29.5] - 2026-02-28
 
+- Filter: preserve inverse flag filtering with stripFlags (#193)
 - Types: Update Typescript typings (#194)
 
 ## [1.29.4] - 2026-02-23
