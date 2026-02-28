@@ -32,4 +32,4 @@ jobs:
         run: npm run check:exports
 
       - name: Check TypeScript Consumer
-        run: npm run check:_types
+        run: npm run check:types
