@@ -2,4 +2,38 @@ openapi: 3.0.0
 info:
   title: API
   version: 1.0.0
-tags: []
+tags:
+  - name: foo
+  - name: bar
+paths:
+  /foo-op:
+    get:
+      operationId: fooOp
+      tags:
+        - foo
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Foo'
+  /public-op:
+    get:
+      operationId: publicOp
+      tags:
+        - bar
+      x-public: true
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bar'
+components:
+  schemas:
+    Foo:
+      type: object
+    Bar:
+      type: object
