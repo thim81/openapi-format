@@ -231,6 +231,28 @@ describe('openapi-format CLI overlay tests', () => {
     ]);
   });
 
+  it('should spread update arrays into array targets', async () => {
+    const baseOAS = {
+      servers: [{url: 'https://api.example.com'}, {url: 'https://api.backup.example.com'}]
+    };
+    const overlaySet = {
+      actions: [
+        {
+          target: '$.servers',
+          update: [{url: 'https://api.eu.example.com'}, {url: 'https://api.us.example.com'}]
+        }
+      ]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.servers).toEqual([
+      {url: 'https://api.example.com'},
+      {url: 'https://api.backup.example.com'},
+      {url: 'https://api.eu.example.com'},
+      {url: 'https://api.us.example.com'}
+    ]);
+  });
+
   it('should replace primitive values when using update', async () => {
     const baseOAS = {info: {title: 'Old title'}};
     const overlaySet = {
@@ -287,6 +309,23 @@ describe('openapi-format CLI overlay tests', () => {
     expect(result.data.servers).toEqual([
       {url: 'https://api.example.com'},
       {url: 'https://api.backup.example.com'}
+    ]);
+  });
+
+  it('should spread copied arrays into array targets', async () => {
+    const baseOAS = {
+      servers: [{url: 'https://api.example.com'}],
+      serverPool: [{url: 'https://api.eu.example.com'}, {url: 'https://api.us.example.com'}]
+    };
+    const overlaySet = {
+      actions: [{target: '$.servers', copy: true, from: '$.serverPool'}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.servers).toEqual([
+      {url: 'https://api.example.com'},
+      {url: 'https://api.eu.example.com'},
+      {url: 'https://api.us.example.com'}
     ]);
   });
 

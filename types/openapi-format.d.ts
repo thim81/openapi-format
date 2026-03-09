@@ -103,7 +103,7 @@ declare module 'openapi-format' {
 
   export interface OpenAPIOverlayAction {
     target: string;
-    update?: Record<string, unknown>;
+    update?: unknown;
     remove?: boolean;
     copy?: boolean;
     from?: string;
