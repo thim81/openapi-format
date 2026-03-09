@@ -1201,22 +1201,25 @@ operationIds:
 The OpenAPI Overlay functionality allows users to apply actions such as updates and removals to an OpenAPI Specification (OAS). This feature is useful for dynamically modifying OAS documents during development, testing, or publishing workflows.
 
 ### What is an OpenAPI Overlay?
-An [OpenAPI Overlay](https://spec.openapis.org/overlay/v1.0.0.html) is a specification that defines a structured set of actions to be applied to an existing OpenAPI document. It enables:
+An [OpenAPI Overlay](https://spec.openapis.org/overlay/v1.1.0.html) is a specification that defines a structured set of actions to be applied to an existing OpenAPI document. It enables:
 
 - Updating existing fields, such as descriptions, parameters, or endpoints.
 - Adding new fields or objects to the OpenAPI document.
 - Removing fields or objects that are no longer relevant.
+- Copying values from one location in the source document to another location.
 
 An overlay document follows the structure below:
 
-```
-overlay: 1.0.0
+```yaml
+overlay: 1.1.0
 info:
   title: Example Overlay
+  description: Overlay to add docs metadata and copy values
   version: 1.0.0
+x-overlay-owner: docs-team
 actions:
-  - target: "$"   // JSONPath definition of the targetted element of the document
-    update: // The action to be applied: update or remove
+  - target: "$"   # JSONPath definition of the targeted element of the document
+    update:       # The action to be applied: update, remove, or copy
       info:
         description: "Updated description for the OpenAPI specification."
   - target: "$.paths['/example']"
@@ -1225,9 +1228,12 @@ actions:
         description: "Updated GET description for /example endpoint."
   - target: "$.paths['/example'].get.parameters"
     remove: true   # Example of removing an element
+  - target: "$.info.title"
+    copy: true
+    from: "$.info.version"
 ```
 
-Fore more information about the OpenAPI Overlay options, see [OpenAPI Overlay Specification 1.0.0](https://www.openapis.org/blog/2024/10/22/announcing-overlay-specification) 
+Fore more information about the OpenAPI Overlay options, see [OpenAPI Overlay Specification 1.1.0](https://spec.openapis.org/overlay/v1.1.0.html).
 
 Use the `--overlayFile` option to specify the overlay file and apply it to your OpenAPI document.
 
@@ -1239,10 +1245,11 @@ $ openapi-format openapi.yaml --overlayFile overlay.yaml -o openapi-updated.yaml
 You can also let the overlay declare the base OpenAPI document using the top-level `extends` property. When `extends` is present, the input file argument becomes optional:
 
 ```yaml
-overlay: 1.0.0
+overlay: 1.1.0
 info:
   title: Overlay for Tic Tac Toe
   version: 1.0.0
+  description: Overlay for docs-only adjustments
 extends: 'https://raw.githubusercontent.com/OAI/learn.openapis.org/refs/heads/main/examples/v3.1/tictactoe.yaml'
 # actions: [...]  # optional
 ```
@@ -1256,6 +1263,11 @@ $ openapi-format --overlayFile overlay.yaml -o openapi-updated.yaml
 Notes:
 - `extends` supports both local paths and remote `http(s)` URLs.
 - Local relative paths are resolved relative to the overlay file’s location.
+- `.overlay.yaml` is the recommended file naming convention for overlays.
+- Overlay actions are processed in strict mode and validated before applying:
+  - `target` must be valid JSONPath.
+  - At least one of `update`, `remove`, or `copy` must be present.
+  - `copy: true` requires `from`, and `from` must resolve to exactly one source node.
 
 ## CLI generate usage
 

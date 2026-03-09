@@ -9,62 +9,81 @@ const {paths: jsonPathPaths} = require('jsonpathly');
  */
 async function openapiOverlay(oaObj, options) {
   const overlayDoc = options?.overlaySet;
+  const overlayVersion = overlayDoc?.overlay;
 
   let unusedActions = [...(overlayDoc?.actions || [])]; // Track unused actions
   let totalActions = overlayDoc?.actions?.length || 0; // Total actions provided
   let usedActions = []; // Initialize usedActions array
 
-  (overlayDoc?.actions || []).forEach(action => {
-    const {target, update, remove} = action;
+  if (!isSupportedOverlayVersion(overlayVersion)) {
+    console.error(
+      `Unsupported overlay version "${overlayVersion}". Supported versions are 1.0.x and 1.1.x.`
+    );
+    return {
+      data: oaObj,
+      resultData: {
+        unusedActions,
+        usedActions,
+        totalActions,
+        totalUsedActions: 0,
+        totalUnusedActions: unusedActions.length
+      }
+    };
+  }
 
-    if (!target) {
-      console.error('Action with missing target');
+  (overlayDoc?.actions || []).forEach((action, index) => {
+    const {target, update, remove, copy, from} = action || {};
+    const actionLabel = `Overlay action #${index + 1}`;
+
+    const validationError = validateOverlayAction(action, actionLabel);
+    if (validationError) {
+      console.error(validationError);
       return;
     }
 
-    // Explicitly handle the `$` target for the root object
-    if (target === '$') {
-      if (update) {
-        oaObj = deepMerge(oaObj, update);
-        usedActions.push(action);
-        unusedActions = unusedActions.filter(a => a !== action);
+    let actionUsed = false;
+
+    // remove (first)
+    if (remove === true) {
+      if (target === '$') {
+        console.error(`${actionLabel}: remove is not supported at target "$".`);
+      } else {
+        const removed = applyRemoveAction(oaObj, target);
+        actionUsed = actionUsed || removed;
       }
-      if (remove) {
-        console.error('Remove operations are not supported at the root level.');
-      }
-      return;
     }
 
-    // Resolve JSONPath for other targets
-    const targets = resolveJsonPath(oaObj, target);
+    // update (second)
+    if (hasOwn(action, 'update')) {
+      const updated = applyUpdateAction({
+        root: oaObj,
+        target,
+        update,
+        actionLabel
+      });
+      actionUsed = actionUsed || updated.used;
+      if (updated.root !== undefined) {
+        oaObj = updated.root;
+      }
+    }
 
-    if (targets.length > 0) {
-      // Mark this action as used
+    // copy (third)
+    if (copy === true) {
+      const copied = applyCopyAction({
+        root: oaObj,
+        target,
+        from,
+        actionLabel
+      });
+      actionUsed = actionUsed || copied.used;
+      if (copied.root !== undefined) {
+        oaObj = copied.root;
+      }
+    }
+
+    if (actionUsed) {
       usedActions.push(action);
       unusedActions = unusedActions.filter(a => a !== action);
-    }
-
-    if (remove) {
-      // Handle remove actions
-      targets.forEach(node => {
-        if (node.parent && node.key !== undefined) {
-          if (Array.isArray(node.parent)) {
-            // Splice array item instead of setting it to null
-            node.parent.splice(node.key, 1);
-          } else {
-            delete node.parent[node.key];
-          }
-        }
-      });
-    } else if (update) {
-      // Handle update actions
-      targets.forEach(node => {
-        if (node.parent && node.key !== undefined) {
-          // make a copy of the update object any further updates aren't applied
-          // multiple times to the same object
-          node.parent[node.key] = deepMerge(node.value, cloneJsonLike(update));
-        }
-      });
     }
   });
 
@@ -81,6 +100,207 @@ async function openapiOverlay(oaObj, options) {
   };
 }
 
+function hasOwn(obj, key) {
+  return !!obj && Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+function isSupportedOverlayVersion(version) {
+  if (version === undefined || version === null) {
+    return true;
+  }
+
+  if (typeof version !== 'string') {
+    return false;
+  }
+
+  return /^1\.(0|1)\.\d+$/.test(version);
+}
+
+function validateOverlayAction(action, actionLabel) {
+  if (!action || typeof action !== 'object' || Array.isArray(action)) {
+    return `${actionLabel}: action must be an object.`;
+  }
+
+  if (typeof action.target !== 'string' || !action.target.startsWith('$')) {
+    return `${actionLabel}: action target must be a JSONPath string starting with "$".`;
+  }
+
+  const hasUpdate = hasOwn(action, 'update');
+  const hasRemove = hasOwn(action, 'remove');
+  const hasCopy = hasOwn(action, 'copy');
+
+  if (!hasUpdate && !hasRemove && !hasCopy) {
+    return `${actionLabel}: action must define at least one of "update", "remove", or "copy".`;
+  }
+
+  if (hasRemove && action.remove !== true) {
+    return `${actionLabel}: "remove" must be set to true when present.`;
+  }
+
+  if (hasCopy) {
+    if (action.copy !== true) {
+      return `${actionLabel}: "copy" must be set to true when present.`;
+    }
+    if (typeof action.from !== 'string' || !action.from.startsWith('$')) {
+      return `${actionLabel}: "from" must be a JSONPath string starting with "$" when "copy" is enabled.`;
+    }
+  }
+
+  return null;
+}
+
+function applyRemoveAction(root, targetPath) {
+  const targets = resolveJsonPath(root, targetPath);
+  if (targets.length === 0) {
+    return false;
+  }
+
+  targets.forEach(node => {
+    if (node.parent && node.key !== undefined) {
+      if (Array.isArray(node.parent) && typeof node.key === 'number') {
+        node.parent.splice(node.key, 1);
+      } else {
+        delete node.parent[node.key];
+      }
+    }
+  });
+  return true;
+}
+
+function applyUpdateAction({root, target, update, actionLabel}) {
+  if (target === '$') {
+    if (isPlainObject(root) && isPlainObject(update)) {
+      return {root: deepMerge(root, cloneJsonLike(update)), used: true};
+    }
+    console.error(
+      `${actionLabel}: update at target "$" requires both root and update to be JSON objects.`
+    );
+    return {root, used: false};
+  }
+
+  const targets = resolveJsonPath(root, target);
+  if (targets.length === 0) {
+    return {root, used: false};
+  }
+
+  let used = false;
+  targets.forEach(node => {
+    if (!node.parent || node.key === undefined) {
+      return;
+    }
+
+    const result = applyValueByTargetType({
+      targetValue: node.value,
+      incomingValue: update,
+      mode: 'update',
+      actionLabel
+    });
+
+    if (result.ok) {
+      node.parent[node.key] = result.value;
+      used = true;
+    }
+  });
+
+  return {root, used};
+}
+
+function applyCopyAction({root, target, from, actionLabel}) {
+  const fromNodes = resolveJsonPath(root, from);
+  if (fromNodes.length !== 1) {
+    console.error(
+      `${actionLabel}: "from" must resolve to exactly one node, resolved ${fromNodes.length}.`
+    );
+    return {root, used: false};
+  }
+
+  const sourceValue = cloneJsonLike(fromNodes[0].value);
+
+  if (target === '$') {
+    if (isPlainObject(root) && isPlainObject(sourceValue)) {
+      return {root: deepMerge(root, cloneJsonLike(sourceValue)), used: true};
+    }
+    console.error(
+      `${actionLabel}: copy at target "$" requires both root and source to be JSON objects.`
+    );
+    return {root, used: false};
+  }
+
+  const targets = resolveJsonPath(root, target);
+  if (targets.length === 0) {
+    return {root, used: false};
+  }
+
+  let used = false;
+  targets.forEach(node => {
+    if (!node.parent || node.key === undefined) {
+      return;
+    }
+
+    const result = applyValueByTargetType({
+      targetValue: node.value,
+      incomingValue: sourceValue,
+      mode: 'copy',
+      actionLabel
+    });
+
+    if (result.ok) {
+      node.parent[node.key] = result.value;
+      used = true;
+    }
+  });
+
+  return {root, used};
+}
+
+function applyValueByTargetType({targetValue, incomingValue, mode, actionLabel}) {
+  if (Array.isArray(targetValue)) {
+    return {
+      ok: true,
+      value: [...targetValue, cloneJsonLike(incomingValue)]
+    };
+  }
+
+  if (isPlainObject(targetValue)) {
+    if (!isPlainObject(incomingValue)) {
+      console.error(
+        `${actionLabel}: ${mode} type mismatch - object target requires object value.`
+      );
+      return {ok: false, value: targetValue};
+    }
+
+    return {
+      ok: true,
+      value: deepMerge(cloneJsonLike(targetValue), cloneJsonLike(incomingValue))
+    };
+  }
+
+  if (!isPrimitiveLike(incomingValue)) {
+    console.error(
+      `${actionLabel}: ${mode} type mismatch - primitive target requires primitive value.`
+    );
+    return {ok: false, value: targetValue};
+  }
+
+  return {
+    ok: true,
+    value: incomingValue
+  };
+}
+
+function isPlainObject(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isPrimitiveLike(value) {
+  return (
+    value === null ||
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean'
+  );
+}
+
 /**
  * Resolves JSONPath expressions to matching nodes in an object.
  *
@@ -89,7 +309,7 @@ async function openapiOverlay(oaObj, options) {
  * @returns {Array} - An array of matching nodes, each with { parent, key, value }.
  */
 function resolveJsonPath(obj, path) {
-  if (typeof path !== 'string' || !path.startsWith('$') || obj.length === 0) {
+  if (typeof path !== 'string' || !path.startsWith('$') || obj == null || obj.length === 0) {
     return [];
   }
 

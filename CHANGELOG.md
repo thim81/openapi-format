@@ -1,5 +1,11 @@
 ## unreleased
 
+- Overlay: add OpenAPI Overlay 1.1.0 support
+- Overlay: add `copy` action support with strict `from` validation
+- Overlay: enforce strict action validation and type compatibility for update/copy actions
+- Types: extend overlay typings with `copy`, `from`, and overlay metadata fields
+- Docs: update overlay examples and guidance to 1.1.0
+
 ## [1.29.5] - 2026-02-28
 
 - Filter: combine inverseTags and inverseFlag (#192)

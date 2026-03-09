@@ -105,11 +105,24 @@ declare module 'openapi-format' {
     target: string;
     update?: Record<string, unknown>;
     remove?: boolean;
+    copy?: boolean;
+    from?: string;
     description?: string;
+    [key: `x-${string}`]: unknown;
+  }
+
+  export interface OpenAPIOverlayDocumentInfo {
+    title?: string;
+    version?: string;
+    description?: string;
+    [key: string]: unknown;
   }
 
   export interface OpenAPIOverlayOptions {
     overlaySet: {
+      overlay?: string;
+      info?: OpenAPIOverlayDocumentInfo;
+      extends?: string;
       actions: OpenAPIOverlayAction[];
       [key: string]: unknown;
     };
