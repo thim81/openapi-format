@@ -255,9 +255,10 @@ function applyCopyAction({root, target, from, actionLabel}) {
 
 function applyValueByTargetType({targetValue, incomingValue, mode, actionLabel}) {
   if (Array.isArray(targetValue)) {
+    const incomingArray = Array.isArray(incomingValue) ? incomingValue : [incomingValue];
     return {
       ok: true,
-      value: [...targetValue, cloneJsonLike(incomingValue)]
+      value: [...targetValue, ...cloneJsonLike(incomingArray)]
     };
   }
 
