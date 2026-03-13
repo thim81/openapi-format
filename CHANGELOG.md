@@ -1,5 +1,7 @@
 ## unreleased
 
+- feat: improve CLI playground URL handling
+
 ## [1.29.5] - 2026-02-28
 
 - Filter: combine inverseTags and inverseFlag (#192)
