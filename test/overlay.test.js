@@ -16,7 +16,9 @@ describe('openapi-format CLI overlay tests', () => {
     };
 
     await openapiOverlay(baseOAS, {overlaySet});
-    expect(consoleSpy).toHaveBeenCalledWith('Action with missing target');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Overlay action #1: action target must be a JSONPath string starting with "$".'
+    );
     consoleSpy.mockRestore();
   });
 
@@ -81,7 +83,7 @@ describe('openapi-format CLI overlay tests', () => {
     };
 
     await openapiOverlay(baseOAS, {overlaySet});
-    expect(consoleSpy).toHaveBeenCalledWith('Remove operations are not supported at the root level.');
+    expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: remove is not supported at target "$".');
     consoleSpy.mockRestore();
   });
 
@@ -214,6 +216,200 @@ describe('openapi-format CLI overlay tests', () => {
       name: 'Old Contact',
       email: 'contact@example.com'
     });
+  });
+
+  it('should append update values to array targets', async () => {
+    const baseOAS = {servers: [{url: 'https://api.example.com'}]};
+    const overlaySet = {
+      actions: [{target: '$.servers', update: {url: 'https://api.backup.example.com'}}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.servers).toEqual([{url: 'https://api.example.com'}, {url: 'https://api.backup.example.com'}]);
+  });
+
+  it('should spread update arrays into array targets', async () => {
+    const baseOAS = {
+      servers: [{url: 'https://api.example.com'}, {url: 'https://api.backup.example.com'}]
+    };
+    const overlaySet = {
+      actions: [
+        {
+          target: '$.servers',
+          update: [{url: 'https://api.eu.example.com'}, {url: 'https://api.us.example.com'}]
+        }
+      ]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.servers).toEqual([
+      {url: 'https://api.example.com'},
+      {url: 'https://api.backup.example.com'},
+      {url: 'https://api.eu.example.com'},
+      {url: 'https://api.us.example.com'}
+    ]);
+  });
+
+  it('should replace primitive values when using update', async () => {
+    const baseOAS = {info: {title: 'Old title'}};
+    const overlaySet = {
+      actions: [{target: '$.info.title', update: 'New title'}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.info.title).toBe('New title');
+  });
+
+  it('should reject type mismatch for primitive target update', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const baseOAS = {info: {title: 'Old title'}};
+    const overlaySet = {
+      actions: [{target: '$.info.title', update: {value: 'New title'}}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.info.title).toBe('Old title');
+    expect(result.resultData.totalUsedActions).toBe(0);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Overlay action #1: update type mismatch - primitive target requires primitive value.'
+    );
+    consoleSpy.mockRestore();
+  });
+
+  it('should copy object values into object targets', async () => {
+    const baseOAS = {
+      info: {title: 'My API', contact: {name: 'Support'}},
+      components: {}
+    };
+    const overlaySet = {
+      actions: [{target: '$.components', copy: true, from: '$.info'}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.components).toEqual({
+      title: 'My API',
+      contact: {name: 'Support'}
+    });
+    expect(result.resultData.totalUsedActions).toBe(1);
+  });
+
+  it('should append copied values to array targets', async () => {
+    const baseOAS = {
+      servers: [{url: 'https://api.example.com'}],
+      sourceServer: {url: 'https://api.backup.example.com'}
+    };
+    const overlaySet = {
+      actions: [{target: '$.servers', copy: true, from: '$.sourceServer'}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.servers).toEqual([{url: 'https://api.example.com'}, {url: 'https://api.backup.example.com'}]);
+  });
+
+  it('should spread copied arrays into array targets', async () => {
+    const baseOAS = {
+      servers: [{url: 'https://api.example.com'}],
+      serverPool: [{url: 'https://api.eu.example.com'}, {url: 'https://api.us.example.com'}]
+    };
+    const overlaySet = {
+      actions: [{target: '$.servers', copy: true, from: '$.serverPool'}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.servers).toEqual([
+      {url: 'https://api.example.com'},
+      {url: 'https://api.eu.example.com'},
+      {url: 'https://api.us.example.com'}
+    ]);
+  });
+
+  it('should replace primitive targets when copying primitive values', async () => {
+    const baseOAS = {
+      info: {title: 'Old title', description: 'New title'}
+    };
+    const overlaySet = {
+      actions: [{target: '$.info.title', copy: true, from: '$.info.description'}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.info.title).toBe('New title');
+  });
+
+  it('should reject copy action when from resolves zero nodes', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const baseOAS = {
+      info: {title: 'API'},
+      components: {}
+    };
+    const overlaySet = {
+      actions: [{target: '$.components', copy: true, from: '$.missing'}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.resultData.totalUsedActions).toBe(0);
+    expect(result.resultData.totalUnusedActions).toBe(1);
+    expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: "from" must resolve to exactly one node, resolved 0.');
+    consoleSpy.mockRestore();
+  });
+
+  it('should reject copy action when from resolves multiple nodes', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const baseOAS = {
+      servers: [{url: 'https://api.example.com'}, {url: 'https://api.backup.example.com'}],
+      components: {}
+    };
+    const overlaySet = {
+      actions: [{target: '$.components', copy: true, from: '$.servers[*]'}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.resultData.totalUsedActions).toBe(0);
+    expect(result.resultData.totalUnusedActions).toBe(1);
+    expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: "from" must resolve to exactly one node, resolved 2.');
+    consoleSpy.mockRestore();
+  });
+
+  it('should apply remove then update then copy in action order', async () => {
+    const baseOAS = {
+      info: {title: 'Old title'},
+      source: {description: 'Copied description'}
+    };
+    const overlaySet = {
+      actions: [
+        {
+          target: '$',
+          remove: true,
+          update: {info: {title: 'Updated title'}},
+          copy: true,
+          from: '$.source'
+        }
+      ]
+    };
+
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.info.title).toBe('Updated title');
+    expect(result.data.description).toBe('Copied description');
+    expect(result.resultData.totalUsedActions).toBe(1);
+    expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: remove is not supported at target "$".');
+    consoleSpy.mockRestore();
+  });
+
+  it('should reject unsupported overlay version', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const baseOAS = {openapi: '3.0.0', info: {title: 'Test API'}};
+    const overlaySet = {
+      overlay: '2.0.0',
+      actions: [{target: '$.info', update: {description: 'Ignored'}}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.info.description).toBeUndefined();
+    expect(result.resultData.totalUsedActions).toBe(0);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Unsupported overlay version "2.0.0". Supported versions are 1.0.x and 1.1.x.'
+    );
+    consoleSpy.mockRestore();
   });
 
   it('should add a new unique item to the array during deepMerge', () => {

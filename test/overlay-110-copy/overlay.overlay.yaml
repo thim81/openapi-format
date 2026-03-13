@@ -1,0 +1,13 @@
+overlay: 1.1.0
+info:
+  title: Overlay 1.1 copy
+  version: 1.0.0
+  description: Updates and copies metadata
+x-overlay-owner: tooling-team
+actions:
+  - target: $.info
+    update:
+      description: Applied by overlay 1.1.0
+  - target: $.info.title
+    copy: true
+    from: $.info.version

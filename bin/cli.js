@@ -421,7 +421,7 @@ async function run(oaFile, options) {
     const cliOut = [];
     cliLog.unusedActions.forEach(action => {
       cliOut.push(
-        `- Target: ${action.target}\n  Type: ${action.update ? 'update' : action.remove ? 'remove' : 'unknown'}`
+        `- Target: ${action.target}\n  Type: ${action.update ? 'update' : action.remove ? 'remove' : action.copy ? 'copy' : 'unknown'}`
       );
     });
 

@@ -11,5 +11,5 @@ actions:
     remove: true
   - target: $.servers
     update:
-      - url: 'https://api.new-example.com'
-        description: New server
+      url: 'https://api.new-example.com'
+      description: New server
