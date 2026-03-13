@@ -102,10 +102,10 @@ The [OpenAPI-Format Playground](https://playground.openapi-format.com/) is a web
 You can also explore the website at [openapi-format.com](https://openapi-format.com/).
 
 <a href="https://playground.openapi-format.com/" target="_blank" title="OpenAPI-format Playground" rel="nofollow">
-<img src="https://openapi-format.com/screenshots/openapi-format-playground-code-view.png" alt="OpenAPI-format Playground code view" width="70%"><br>
-<img src="https://openapi-format.com/screenshots/openapi-format-playground-preview-view.png" alt="OpenAPI-format Playground preview view" width="34%">
-<img src="https://openapi-format.com/screenshots/openapi-format-playground-diff-view.png" alt="OpenAPI-format Playground diff view" width="34%">
-<img src="https://openapi-format.com/screenshots/openapi-format-playground-overlay-actions.png" alt="OpenAPI-format Playground overlay actions" width="34%">
+<img src="https://openapi-format.com/screenshots/openapi-format-playground-code-view.png" alt="OpenAPI-format Playground code view" width="76%"><br>
+<img src="https://openapi-format.com/screenshots/openapi-format-playground-preview-view.png" alt="OpenAPI-format Playground preview view" width="25%">
+<img src="https://openapi-format.com/screenshots/openapi-format-playground-diff-view.png" alt="OpenAPI-format Playground diff view" width="25%">
+<img src="https://openapi-format.com/screenshots/openapi-format-playground-overlay-actions.png" alt="OpenAPI-format Playground overlay actions" width="25%">
 </a>
 
 More info about the playground features and usage can be found on the [website](https://openapi-format.com/).
