@@ -16,9 +16,7 @@ async function openapiOverlay(oaObj, options) {
   let usedActions = []; // Initialize usedActions array
 
   if (!isSupportedOverlayVersion(overlayVersion)) {
-    console.error(
-      `Unsupported overlay version "${overlayVersion}". Supported versions are 1.0.x and 1.1.x.`
-    );
+    console.error(`Unsupported overlay version "${overlayVersion}". Supported versions are 1.0.x and 1.1.x.`);
     return {
       data: oaObj,
       resultData: {
@@ -172,9 +170,7 @@ function applyUpdateAction({root, target, update, actionLabel}) {
     if (isPlainObject(root) && isPlainObject(update)) {
       return {root: deepMerge(root, cloneJsonLike(update)), used: true};
     }
-    console.error(
-      `${actionLabel}: update at target "$" requires both root and update to be JSON objects.`
-    );
+    console.error(`${actionLabel}: update at target "$" requires both root and update to be JSON objects.`);
     return {root, used: false};
   }
 
@@ -208,9 +204,7 @@ function applyUpdateAction({root, target, update, actionLabel}) {
 function applyCopyAction({root, target, from, actionLabel}) {
   const fromNodes = resolveJsonPath(root, from);
   if (fromNodes.length !== 1) {
-    console.error(
-      `${actionLabel}: "from" must resolve to exactly one node, resolved ${fromNodes.length}.`
-    );
+    console.error(`${actionLabel}: "from" must resolve to exactly one node, resolved ${fromNodes.length}.`);
     return {root, used: false};
   }
 
@@ -220,9 +214,7 @@ function applyCopyAction({root, target, from, actionLabel}) {
     if (isPlainObject(root) && isPlainObject(sourceValue)) {
       return {root: deepMerge(root, cloneJsonLike(sourceValue)), used: true};
     }
-    console.error(
-      `${actionLabel}: copy at target "$" requires both root and source to be JSON objects.`
-    );
+    console.error(`${actionLabel}: copy at target "$" requires both root and source to be JSON objects.`);
     return {root, used: false};
   }
 
@@ -264,9 +256,7 @@ function applyValueByTargetType({targetValue, incomingValue, mode, actionLabel})
 
   if (isPlainObject(targetValue)) {
     if (!isPlainObject(incomingValue)) {
-      console.error(
-        `${actionLabel}: ${mode} type mismatch - object target requires object value.`
-      );
+      console.error(`${actionLabel}: ${mode} type mismatch - object target requires object value.`);
       return {ok: false, value: targetValue};
     }
 
@@ -277,9 +267,7 @@ function applyValueByTargetType({targetValue, incomingValue, mode, actionLabel})
   }
 
   if (!isPrimitiveLike(incomingValue)) {
-    console.error(
-      `${actionLabel}: ${mode} type mismatch - primitive target requires primitive value.`
-    );
+    console.error(`${actionLabel}: ${mode} type mismatch - primitive target requires primitive value.`);
     return {ok: false, value: targetValue};
   }
 
@@ -294,12 +282,7 @@ function isPlainObject(value) {
 }
 
 function isPrimitiveLike(value) {
-  return (
-    value === null ||
-    typeof value === 'string' ||
-    typeof value === 'number' ||
-    typeof value === 'boolean'
-  );
+  return value === null || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
 }
 
 /**

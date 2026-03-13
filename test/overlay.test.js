@@ -225,10 +225,7 @@ describe('openapi-format CLI overlay tests', () => {
     };
 
     const result = await openapiOverlay(baseOAS, {overlaySet});
-    expect(result.data.servers).toEqual([
-      {url: 'https://api.example.com'},
-      {url: 'https://api.backup.example.com'}
-    ]);
+    expect(result.data.servers).toEqual([{url: 'https://api.example.com'}, {url: 'https://api.backup.example.com'}]);
   });
 
   it('should spread update arrays into array targets', async () => {
@@ -306,10 +303,7 @@ describe('openapi-format CLI overlay tests', () => {
     };
 
     const result = await openapiOverlay(baseOAS, {overlaySet});
-    expect(result.data.servers).toEqual([
-      {url: 'https://api.example.com'},
-      {url: 'https://api.backup.example.com'}
-    ]);
+    expect(result.data.servers).toEqual([{url: 'https://api.example.com'}, {url: 'https://api.backup.example.com'}]);
   });
 
   it('should spread copied arrays into array targets', async () => {
@@ -354,9 +348,7 @@ describe('openapi-format CLI overlay tests', () => {
     const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.resultData.totalUsedActions).toBe(0);
     expect(result.resultData.totalUnusedActions).toBe(1);
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Overlay action #1: "from" must resolve to exactly one node, resolved 0.'
-    );
+    expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: "from" must resolve to exactly one node, resolved 0.');
     consoleSpy.mockRestore();
   });
 
@@ -373,9 +365,7 @@ describe('openapi-format CLI overlay tests', () => {
     const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.resultData.totalUsedActions).toBe(0);
     expect(result.resultData.totalUnusedActions).toBe(1);
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Overlay action #1: "from" must resolve to exactly one node, resolved 2.'
-    );
+    expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: "from" must resolve to exactly one node, resolved 2.');
     consoleSpy.mockRestore();
   });
 
