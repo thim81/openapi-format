@@ -13,7 +13,7 @@ output cleanly indented JSON or YAML.
 Additional features include powerful filtering options based on flags, tags, methods, operationIDs, and even unused components.
 To quickly standardize OpenAPI documents there is support for generating the operationIds and apply casing rules for consistency.
 
-The CLI can split large OpenAPI documents into modular, multi-file structures for easier management. 
+The CLI can split large OpenAPI documents into modular, multi-file structures for easier management.
 For upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0 or 3.1 document to OpenAPI 3.1 or 3.2.
 
 With the newly added OpenAPI Overlay support, users can overlay changes onto existing OpenAPI documents, to extend and customize the OpenAPI document.
@@ -93,19 +93,22 @@ Postman collections, test suites, ...
 - [x] Support for OpenAPI 3.0
 - [x] Support for OpenAPI 3.1
 - [x] Support for OpenAPI 3.2
-- [x] Online playground (https://openapi-format-playground.vercel.app/)
+- [x] Online playground ([playground.openapi-format.com](https://playground.openapi-format.com/))
 
 ## Online playground
 
-The [OpenAPI-Format Playground](https://openapi-format-playground.vercel.app/) is a web-based tool for formatting and sorting OpenAPI documents, powered by the openapi-format CLI.
+The [OpenAPI-Format Playground](https://playground.openapi-format.com/) is a web-based tool for formatting, sorting, filtering, previewing, and comparing OpenAPI documents, powered by the `openapi-format` CLI.
 
-<a href="https://openapi-format-playground.vercel.app/" target="_blank" title="OpenAPI-format Playground" rel="nofollow">
-<img src="https://raw.githubusercontent.com/thim81/openapi-format/main/assets/openapi-format-playground.png" alt="OpenAPI-format Playground" width="50%"><br>
-<img src="https://raw.githubusercontent.com/thim81/openapi-format/main/assets/openapi-format-playground-diff.png" alt="OpenAPI-format Playground Diff viewer" width="25%">
-<img src="https://raw.githubusercontent.com/thim81/openapi-format/main/assets/openapi-format-playground-filter.png" alt="OpenAPI-format Playground Filter UI" width="25%">
+You can also explore the website at [openapi-format.com](https://openapi-format.com/).
+
+<a href="https://playground.openapi-format.com/" target="_blank" title="OpenAPI-format Playground" rel="nofollow">
+<img src="https://openapi-format.com/screenshots/openapi-format-playground-code-view.png" alt="OpenAPI-format Playground code view" width="76%"><br>
+<img src="https://openapi-format.com/screenshots/openapi-format-playground-preview-view.png" alt="OpenAPI-format Playground preview view" width="25%">
+<img src="https://openapi-format.com/screenshots/openapi-format-playground-diff-view.png" alt="OpenAPI-format Playground diff view" width="25%">
+<img src="https://openapi-format.com/screenshots/openapi-format-playground-overlay-actions.png" alt="OpenAPI-format Playground overlay actions" width="25%">
 </a>
 
-More info about the features and usage, can be found in the [readme](https://github.com/thim81/openapi-format-playground?tab=readme-ov-file#features).
+More info about the playground features and usage can be found on the [website](https://openapi-format.com/).
 
 ## Installation
 
@@ -329,7 +332,7 @@ paths:
 ### Filter - tags
 
 => **tags**: Refers to the "tags" field from the "Operation
-  Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
+Object" https://spec.openapis.org/oas/v3.0.3.html#operationObject
 
 This will remove all fields and attached fields that match the tags. In the example below, this would mean that all
 items with the tags `pet` or `user` would be removed from the OpenAPI document.
@@ -1031,7 +1034,7 @@ $ openapi-format https://raw.githubusercontent.com/OAI/OpenAPI-Specification/mai
 $ openapi-format openapi.json -o openapi.yaml
 ```
 
-- Format an OpenAPI document using a configuration file containing all the options that would otherwise be passed via the CLI. 
+- Format an OpenAPI document using a configuration file containing all the options that would otherwise be passed via the CLI.
 
 ```shell
 $ openapi-format openapi.yaml --configFile openapi-format-options.json
@@ -1233,7 +1236,7 @@ actions:
     from: "$.info.version"
 ```
 
-Fore more information about the OpenAPI Overlay options, see [OpenAPI Overlay Specification 1.1.0](https://spec.openapis.org/overlay/v1.1.0.html).
+For more information about the OpenAPI Overlay options, see [OpenAPI Overlay Specification 1.1.0](https://spec.openapis.org/overlay/v1.1.0.html).
 
 Use the `--overlayFile` option to specify the overlay file and apply it to your OpenAPI document.
 
@@ -1378,7 +1381,7 @@ Example: Splitting the Document
 $ openapi-format openapi.json -o ./openapi-split/openapi.yaml --split
 ```
 
-This command will take the openapi.json and split it into multiple files, stored under the ./openapi-split/ directory. 
+This command will take the openapi.json and split it into multiple files, stored under the ./openapi-split/ directory.
 
 The resulting structure might look like this:
 
@@ -1400,7 +1403,7 @@ The main openapi.yaml file will contain references to these newly created files 
 
 ###  Bundling the OpenAPI Document
 
-The `--no-bundle` option allows you to control whether local and remote $ref references are bundled into the final document. 
+The `--no-bundle` option allows you to control whether local and remote $ref references are bundled into the final document.
 
 By default, all $ref references are dereferenced, resulting in a single, self-contained OpenAPI file. However, in some cases, you might prefer to keep the $ref references intact, especially if you're working with external references or want to maintain a modular structure.
 
@@ -1537,42 +1540,42 @@ You can either pass the settings inline or reference an external file using the 
 
 - **sortSet** / **sortFile**: Sort the fields in the OpenAPI document based on the order defined in the sort settings.
 
-  - Inline: Pass the sort order directly using sortSet in the config file.
-  - File: Use sortFile to specify the path to a local or remote JSON/YAML file containing custom sorting rules.
+    - Inline: Pass the sort order directly using sortSet in the config file.
+    - File: Use sortFile to specify the path to a local or remote JSON/YAML file containing custom sorting rules.
 
 - **casingSet** / **casingFile**: Define the casing convention for operationId, parameters, properties, etc.
 
-  - Inline:
-    ```json
-    "casingSet": {
-      "operationId": "camelCase",
-      "properties": "PascalCase"
-    }
-    ```
+    - Inline:
+      ```json
+      "casingSet": {
+        "operationId": "camelCase",
+        "properties": "PascalCase"
+      }
+      ```
 
-  - File: Use casingFile to specify the path to a local or remote JSON/YAML file containing casing rules.
+    - File: Use casingFile to specify the path to a local or remote JSON/YAML file containing casing rules.
 
 - **filterSet** / **filterFile**: Filter out specific tags, paths, or components from the OpenAPI document.
 
-  - Inline:
-    ```json
-    "filterSet": {
-      "tags": ["internal", "beta"]
-    }
-    ```
+    - Inline:
+      ```json
+      "filterSet": {
+        "tags": ["internal", "beta"]
+      }
+      ```
 
-  - File: Use filterFile to specify the path to a local or remote JSON/YAML file containing filter rules.
+    - File: Use filterFile to specify the path to a local or remote JSON/YAML file containing filter rules.
 
 - **generateSet** / **generateFile**: Automatically generate operationId, summary, and other elements based on predefined templates.
 
-  - Inline:
-    ```json
-    "generateSet": {
-      "operationIdTemplate": "<method>_<pathPart2>_Handler"
-    }
-    ```
+    - Inline:
+      ```json
+      "generateSet": {
+        "operationIdTemplate": "<method>_<pathPart2>_Handler"
+      }
+      ```
 
-  - File: Use generateFile to specify the path to a local or remote JSON/YAML file containing generate rules.
+    - File: Use generateFile to specify the path to a local or remote JSON/YAML file containing generate rules.
 
 
 ### Using .openapiformatrc
