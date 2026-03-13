@@ -420,7 +420,6 @@ async function run(oaFile, options) {
 
     const cliOut = [];
     cliLog.unusedActions.forEach(action => {
-      const description = action.description || 'No description provided';
       cliOut.push(
         `- Target: ${action.target}\n  Type: ${action.update ? 'update' : action.remove ? 'remove' : 'unknown'}`
       );
@@ -441,7 +440,10 @@ async function run(oaFile, options) {
 
   if (options?.playground) {
     try {
-      const playgroundEndpoint = 'https://openapi-format-playground.vercel.app/api/share';
+      const playgroundEndpoints = [
+        'https://playground.openapi-format.com/api/share',
+        'https://openapi-format-playground.vercel.app/api/share'
+      ];
       const config = {};
 
       if (options.sortSet !== undefined) config.sortSet = await stringify(options.sortSet);
@@ -458,14 +460,20 @@ async function run(oaFile, options) {
       };
 
       if (!process.env.CI) {
-        const response = await fetch(playgroundEndpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Source: 'openapi-format-cli'
-          },
-          body: JSON.stringify(payload)
-        });
+        let response;
+        for (const playgroundEndpoint of playgroundEndpoints) {
+          response = await fetch(playgroundEndpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Source: 'openapi-format-cli'
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) break;
+          if (response.status !== 405) break;
+        }
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
