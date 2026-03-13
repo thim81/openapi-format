@@ -3,6 +3,7 @@
 - Overlay: add OpenAPI Overlay 1.1.0 support
 - Overlay: add `copy` action support with strict `from` validation
 - Overlay: enforce strict action validation and type compatibility for update/copy actions
+- CLI: improve CLI playground URL handling
 - Types: extend overlay typings with `copy`, `from`, and overlay metadata fields
 - Docs: update overlay examples and guidance to 1.1.0
 

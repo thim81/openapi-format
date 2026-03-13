@@ -338,17 +338,43 @@ describe('openapi-format CLI command', () => {
     fs.unlinkSync(outputPath);
   });
 
-  it.skip('should generate a playground share URL', async () => {
+  it('should handle --playground in CI mode', async () => {
     const path = `test/yaml-filter-custom`;
     const inputFile = `${path}/input.yaml`;
-    const outputFile = `${path}/output.yaml`;
-    const output = await getLocalFile(outputFile);
     const setting = `${path}/customFilter.yaml`;
 
-    let result = await testUtils.cli([inputFile, `--filterFile ${setting}`, `--playground`], '.');
-    // console.log('result', result)
+    let result = await testUtils.cli([inputFile, `--filterFile ${setting}`, `--playground`], '.', {CI: 'true'});
     expect(result.code).toBe(0);
-    expect(result.stdout).toContain('🌐');
+    expect(result.stderr).toContain('Running in CI/CD environment, no Share URL generated');
+  });
+
+  it('should handle -p in CI mode', async () => {
+    const path = `test/yaml-filter-custom`;
+    const inputFile = `${path}/input.yaml`;
+    const setting = `${path}/customFilter.yaml`;
+
+    let result = await testUtils.cli([inputFile, `--filterFile ${setting}`, `-p`], '.', {CI: 'true'});
+    expect(result.code).toBe(0);
+    expect(result.stderr).toContain('Running in CI/CD environment, no Share URL generated');
+  });
+
+  it('should handle playground share URL generation based on environment', async () => {
+    const path = `test/yaml-filter-custom`;
+    const inputFile = `${path}/input.yaml`;
+    const setting = `${path}/customFilter.yaml`;
+    const args = [inputFile, `--filterFile ${setting}`, `--playground`];
+
+    console.log('playground request args:', args);
+    let result = await testUtils.cli(args, '.');
+    console.log('playground response stdout:', result.stdout);
+    console.log('playground response stderr:', result.stderr);
+    expect(result.code).toBe(0);
+    if (process.env.CI) {
+      expect(result.stderr).toContain('Running in CI/CD environment, no Share URL generated');
+    } else {
+      expect(result.stdout).toContain('🌐');
+      expect(result.stdout).toContain('playground.openapi-format.com');
+    }
   });
 
   it('should use the sortComponentsFile', async () => {

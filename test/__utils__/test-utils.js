@@ -42,9 +42,9 @@ async function loadTest(folder, inputType = 'yaml', outType = 'yaml') {
   };
 }
 
-function cli(args, cwd) {
+function cli(args, cwd, envOverrides = {}) {
   return new Promise(resolve => {
-    const env = {...process.env};
+    const env = {...process.env, ...envOverrides};
     if (env.FORCE_COLOR && env.NO_COLOR) {
       delete env.NO_COLOR;
     }
