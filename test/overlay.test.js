@@ -446,7 +446,9 @@ describe('openapi-format CLI overlay tests', () => {
       expect(result.data.info.title).toBe('Sample API');
       expect(result.resultData.totalUsedActions).toBe(0);
       expect(result.resultData.totalUnusedActions).toBe(1);
-      expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: "copy" is only supported for overlay 1.1.x documents.');
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Overlay action #1: "copy" is only supported for overlay 1.1.x documents.'
+      );
       consoleSpy.mockRestore();
     });
 
