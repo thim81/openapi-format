@@ -412,6 +412,94 @@ describe('openapi-format CLI overlay tests', () => {
     consoleSpy.mockRestore();
   });
 
+  describe('copy action semantics', () => {
+    it('should treat copy with zero target matches as successful no-op without error', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const baseOAS = {
+        info: {title: 'API', version: '1.0.0'},
+        paths: {}
+      };
+      const overlaySet = {
+        overlay: '1.1.0',
+        actions: [{target: '$.components.schemas[*]', copy: true, from: '$.info.version'}]
+      };
+
+      const result = await openapiOverlay(baseOAS, {overlaySet});
+      expect(result.data).toEqual(baseOAS);
+      expect(result.resultData.totalUsedActions).toBe(1);
+      expect(result.resultData.totalUnusedActions).toBe(0);
+      expect(consoleSpy).not.toHaveBeenCalled();
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('version compatibility', () => {
+    it('should reject copy actions for overlay 1.0.0 documents', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const baseOAS = {info: {title: 'Sample API', version: '1.0.0'}};
+      const overlaySet = {
+        overlay: '1.0.0',
+        actions: [{target: '$.info.title', copy: true, from: '$.info.version'}]
+      };
+
+      const result = await openapiOverlay(baseOAS, {overlaySet});
+      expect(result.data.info.title).toBe('Sample API');
+      expect(result.resultData.totalUsedActions).toBe(0);
+      expect(result.resultData.totalUnusedActions).toBe(1);
+      expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: "copy" is only supported for overlay 1.1.x documents.');
+      consoleSpy.mockRestore();
+    });
+
+    it('should allow copy actions for overlay 1.1.0 documents', async () => {
+      const baseOAS = {info: {title: 'Sample API', version: '1.0.0'}};
+      const overlaySet = {
+        overlay: '1.1.0',
+        actions: [{target: '$.info.title', copy: true, from: '$.info.version'}]
+      };
+
+      const result = await openapiOverlay(baseOAS, {overlaySet});
+      expect(result.data.info.title).toBe('1.0.0');
+      expect(result.resultData.totalUsedActions).toBe(1);
+      expect(result.resultData.totalUnusedActions).toBe(0);
+    });
+  });
+
+  describe('primitive targeting compatibility', () => {
+    it('should preserve legacy primitive-parent merge behavior for overlay 1.0.0', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const baseOAS = {info: {title: 'Old title'}};
+      const overlaySet = {
+        overlay: '1.0.0',
+        actions: [{target: '$.info.title', update: {value: 'New title'}}]
+      };
+
+      const result = await openapiOverlay(baseOAS, {overlaySet});
+      expect(result.data.info.title).toEqual({value: 'New title'});
+      expect(result.resultData.totalUsedActions).toBe(1);
+      expect(result.resultData.totalUnusedActions).toBe(0);
+      expect(consoleSpy).not.toHaveBeenCalled();
+      consoleSpy.mockRestore();
+    });
+
+    it('should enforce primitive strictness for overlay 1.1.0', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const baseOAS = {info: {title: 'Old title'}};
+      const overlaySet = {
+        overlay: '1.1.0',
+        actions: [{target: '$.info.title', update: {value: 'New title'}}]
+      };
+
+      const result = await openapiOverlay(baseOAS, {overlaySet});
+      expect(result.data.info.title).toBe('Old title');
+      expect(result.resultData.totalUsedActions).toBe(0);
+      expect(result.resultData.totalUnusedActions).toBe(1);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Overlay action #1: update type mismatch - primitive target requires primitive value.'
+      );
+      consoleSpy.mockRestore();
+    });
+  });
+
   it('should add a new unique item to the array during deepMerge', () => {
     const target = [{name: 'param1', in: 'query', description: 'First parameter'}];
     const source = [{name: 'param2', in: 'query', description: 'Second parameter'}];

@@ -33,7 +33,7 @@ async function openapiOverlay(oaObj, options) {
     const {target, update, remove, copy, from} = action || {};
     const actionLabel = `Overlay action #${index + 1}`;
 
-    const validationError = validateOverlayAction(action, actionLabel);
+    const validationError = validateOverlayAction(action, actionLabel, overlayVersion);
     if (validationError) {
       console.error(validationError);
       return;
@@ -57,7 +57,8 @@ async function openapiOverlay(oaObj, options) {
         root: oaObj,
         target,
         update,
-        actionLabel
+        actionLabel,
+        overlayVersion
       });
       actionUsed = actionUsed || updated.used;
       if (updated.root !== undefined) {
@@ -114,7 +115,32 @@ function isSupportedOverlayVersion(version) {
   return /^1\.(0|1)\.\d+$/.test(version);
 }
 
-function validateOverlayAction(action, actionLabel) {
+function isOverlay11x(version) {
+  if (version === undefined || version === null) {
+    return true;
+  }
+
+  if (typeof version !== 'string') {
+    return false;
+  }
+
+  const normalized = version.trim();
+  if (normalized === '') {
+    return true;
+  }
+
+  return /^1\.1\.\d+$/.test(normalized);
+}
+
+function isOverlay10x(version) {
+  if (typeof version !== 'string') {
+    return false;
+  }
+
+  return /^1\.0\.\d+$/.test(version.trim());
+}
+
+function validateOverlayAction(action, actionLabel, overlayVersion) {
   if (!action || typeof action !== 'object' || Array.isArray(action)) {
     return `${actionLabel}: action must be an object.`;
   }
@@ -136,6 +162,9 @@ function validateOverlayAction(action, actionLabel) {
   }
 
   if (hasCopy) {
+    if (!isOverlay11x(overlayVersion)) {
+      return `${actionLabel}: "copy" is only supported for overlay 1.1.x documents.`;
+    }
     if (action.copy !== true) {
       return `${actionLabel}: "copy" must be set to true when present.`;
     }
@@ -165,7 +194,7 @@ function applyRemoveAction(root, targetPath) {
   return true;
 }
 
-function applyUpdateAction({root, target, update, actionLabel}) {
+function applyUpdateAction({root, target, update, actionLabel, overlayVersion}) {
   if (target === '$') {
     if (isPlainObject(root) && isPlainObject(update)) {
       return {root: deepMerge(root, cloneJsonLike(update)), used: true};
@@ -182,6 +211,12 @@ function applyUpdateAction({root, target, update, actionLabel}) {
   let used = false;
   targets.forEach(node => {
     if (!node.parent || node.key === undefined) {
+      return;
+    }
+
+    if (isOverlay10x(overlayVersion)) {
+      node.parent[node.key] = deepMerge(node.value, cloneJsonLike(update));
+      used = true;
       return;
     }
 
@@ -220,7 +255,7 @@ function applyCopyAction({root, target, from, actionLabel}) {
 
   const targets = resolveJsonPath(root, target);
   if (targets.length === 0) {
-    return {root, used: false};
+    return {root, used: true};
   }
 
   let used = false;
