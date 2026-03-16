@@ -112,7 +112,12 @@ function isSupportedOverlayVersion(version) {
     return false;
   }
 
-  return /^1\.(0|1)\.\d+$/.test(version);
+  const normalized = version.trim();
+  if (normalized === '') {
+    return true;
+  }
+
+  return /^1\.(0|1)\.\d+$/.test(normalized);
 }
 
 function isOverlay11x(version) {

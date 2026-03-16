@@ -464,6 +464,19 @@ describe('openapi-format CLI overlay tests', () => {
       expect(result.resultData.totalUsedActions).toBe(1);
       expect(result.resultData.totalUnusedActions).toBe(0);
     });
+
+    it('should treat blank overlay version as latest and allow copy', async () => {
+      const baseOAS = {info: {title: 'Sample API', version: '1.0.0'}};
+      const overlaySet = {
+        overlay: '   ',
+        actions: [{target: '$.info.title', copy: true, from: '$.info.version'}]
+      };
+
+      const result = await openapiOverlay(baseOAS, {overlaySet});
+      expect(result.data.info.title).toBe('1.0.0');
+      expect(result.resultData.totalUsedActions).toBe(1);
+      expect(result.resultData.totalUnusedActions).toBe(0);
+    });
   });
 
   describe('primitive targeting compatibility', () => {
