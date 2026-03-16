@@ -1,6 +1,5 @@
 ## unreleased
 
-
 ## [1.30.0] - 2026-03-16
 
 - Overlay: add OpenAPI Overlay 1.1.0 support
