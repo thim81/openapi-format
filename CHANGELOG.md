@@ -1,5 +1,8 @@
 ## unreleased
 
+
+## [1.30.0] - 2026-03-16
+
 - Overlay: add OpenAPI Overlay 1.1.0 support
 - Overlay: add `copy` action support with strict `from` validation
 - Overlay: enforce strict action validation and type compatibility for update/copy actions
