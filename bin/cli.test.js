@@ -364,10 +364,10 @@ describe('openapi-format CLI command', () => {
     const setting = `${path}/customFilter.yaml`;
     const args = [inputFile, `--filterFile ${setting}`, `--playground`];
 
-    console.log('playground request args:', args);
+    // console.log('playground request args:', args);
     let result = await testUtils.cli(args, '.');
-    console.log('playground response stdout:', result.stdout);
-    console.log('playground response stderr:', result.stderr);
+    // console.log('playground response stdout:', result.stdout);
+    // console.log('playground response stderr:', result.stderr);
     expect(result.code).toBe(0);
     if (process.env.CI) {
       expect(result.stderr).toContain('Running in CI/CD environment, no Share URL generated');

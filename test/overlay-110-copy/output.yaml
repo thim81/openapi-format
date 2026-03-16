@@ -1,0 +1,13 @@
+openapi: 3.0.3
+info:
+  title: 1.0.0
+  version: 1.0.0
+  description: Applied by overlay 1.1.0
+paths: {}
+components:
+  schemas:
+    Source:
+      type: object
+      properties:
+        id:
+          type: string
