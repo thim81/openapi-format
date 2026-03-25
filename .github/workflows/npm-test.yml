@@ -2,7 +2,7 @@ name: Node Tests CI
 on:
   push:
     branches:
-      - '*' # Trigger on all branches
+      - main
   pull_request:
     branches:
       - '*' # Trigger on all branches

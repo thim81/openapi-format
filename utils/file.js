@@ -28,7 +28,7 @@ async function parseString(str, options = {}) {
     try {
       const result = yaml.parseWithPointers(encodedContent, {attachComments: options?.keepComments || false});
       options.yamlComments = result.comments;
-      const obj = result.data;
+      const obj = normalizeYamlBlockScalarNewlines(result.data);
       if (typeof obj === 'object') {
         return obj;
       } else {
@@ -336,6 +336,35 @@ function decodeLargeNumbers(output, isJson = false) {
  */
 function addQuotesToRefInString(yamlString) {
   return yamlString.replace(/(\$ref:\s*)([^"'\s>]+)/g, '$1"$2"');
+}
+
+/**
+ * Normalize a parser artifact where block scalars with indentation indicators
+ * gain a spurious leading newline during YAML parsing.
+ * This keeps genuine blank first lines intact by only stripping a single
+ * leading newline when the string also has a trailing newline.
+ * @param {*} value - Parsed YAML value.
+ * @returns {*} Normalized value.
+ */
+function normalizeYamlBlockScalarNewlines(value) {
+  if (typeof value === 'string') {
+    if (value.startsWith('\n') && !value.startsWith('\n\n') && value.endsWith('\n')) {
+      return value.slice(1);
+    }
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(item => normalizeYamlBlockScalarNewlines(item));
+  }
+
+  if (value && typeof value === 'object') {
+    for (const key of Object.keys(value)) {
+      value[key] = normalizeYamlBlockScalarNewlines(value[key]);
+    }
+  }
+
+  return value;
 }
 
 /**

@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.30.1] - 2026-03-26
+
+- CLI: Fix normalize YAML block scalar newlines (#202)
+
 ## [1.30.0] - 2026-03-16
 
 - Overlay: add OpenAPI Overlay 1.1.0 support
