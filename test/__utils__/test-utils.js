@@ -1,5 +1,5 @@
 const fs = require('fs');
-const sy = require('@stoplight/yaml');
+const os = require('os');
 const {exec} = require('child_process');
 const path = require('path');
 const {parseFile, stringify} = require('../../utils/file');
@@ -13,6 +13,7 @@ async function loadTest(folder, inputType = 'yaml', outType = 'yaml') {
   const inputPath = `./test/${folder}/${inputFile}`;
   const outputFile = `output.${outType}`;
   const outputPath = `./test/${folder}/${outputFile}`;
+  const tmpOutput = path.join(os.tmpdir(), `openapi-format-${folder}-output.${outType}`);
 
   try {
     input = await parseFile(inputPath);
@@ -26,10 +27,10 @@ async function loadTest(folder, inputType = 'yaml', outType = 'yaml') {
     // File not found = {} will be used
   }
 
-  let result = await cli([`${inputFile}`, `--configFile options.yaml`], testPath);
+  let result = await cli([`${inputFile}`, `--configFile options.yaml`, `--output ${tmpOutput}`], testPath);
 
   try {
-    outputAfter = await parseFile(outputPath);
+    outputAfter = await parseFile(tmpOutput);
   } catch (err) {
     //
   }
