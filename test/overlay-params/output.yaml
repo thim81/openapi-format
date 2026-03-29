@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: Datasource API
   description: API to work with Datasources.
-  termsOfService: 'urn:tos'''
+  termsOfService: urn:tos'
 paths:
   /timeseries:
     get:

@@ -11,12 +11,12 @@ info:
     - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6
   title: Swagger Petstore - OpenAPI 3.0
-  termsOfService: 'http://swagger.io/terms/'
+  termsOfService: http://swagger.io/terms/
   contact:
     email: apiteam@swagger.io
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
 servers:
   - url: /v3
 paths:
@@ -65,15 +65,15 @@ paths:
           description: Validation exception
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
   /pet/findByTags:
     get:
       operationId: findPetsByTags
       summary: Finds Pets by tags
-      description: 'Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.'
+      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
       parameters:
         - name: tags
           in: query
@@ -102,11 +102,11 @@ paths:
           description: Invalid tag value
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
-  '/pet/{petId}':
+  /pet/{petId}:
     get:
       operationId: getPetById
       summary: Find pet by ID
@@ -136,8 +136,8 @@ paths:
       security:
         - api_key: []
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
     post:
@@ -167,8 +167,8 @@ paths:
           description: Invalid input
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
     delete:
@@ -194,11 +194,11 @@ paths:
           description: Invalid pet value
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
-  '/pet/{petId}/uploadImage':
+  /pet/{petId}/uploadImage:
     post:
       operationId: uploadFile
       summary: uploads an image
@@ -232,8 +232,8 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
   /store/inventory:
@@ -284,7 +284,7 @@ paths:
       tags:
         - store
       x-swagger-router-controller: OrderController
-  '/store/order/{orderId}':
+  /store/order/{orderId}:
     get:
       operationId: getOrderById
       summary: Find purchase order by ID
@@ -445,7 +445,7 @@ paths:
           description: successful operation
       tags:
         - user
-  '/user/{username}':
+  /user/{username}:
     get:
       operationId: getUserByName
       summary: Get user by user name
@@ -752,10 +752,10 @@ components:
       type: oauth2
       flows:
         implicit:
-          authorizationUrl: 'https://petstore.swagger.io/oauth/authorize'
+          authorizationUrl: https://petstore.swagger.io/oauth/authorize
           scopes:
-            'write:pets': modify pets in your account
-            'read:pets': read your pets
+            write:pets: modify pets in your account
+            read:pets: read your pets
     api_key:
       type: apiKey
       name: api_key
@@ -765,4 +765,4 @@ tags:
     description: Everything about your Pets
 externalDocs:
   description: Find out more about Swagger
-  url: 'http://swagger.io'
+  url: http://swagger.io

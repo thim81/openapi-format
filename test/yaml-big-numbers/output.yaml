@@ -31,9 +31,9 @@ components:
   examples:
     Test1:
       value:
-        location: '10.12345678912345, 10.12345678912345'
+        location: 10.12345678912345, 10.12345678912345
         test_property: test
     Test2:
       value:
-        location: '10.12345678912345, 10.12345678912345'
+        location: 10.12345678912345, 10.12345678912345
         test_property: test
