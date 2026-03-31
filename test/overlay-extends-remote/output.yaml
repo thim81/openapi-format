@@ -5,4 +5,3 @@ info:
 servers:
   - url: 'https://api.example.com'
     description: Default server
-    

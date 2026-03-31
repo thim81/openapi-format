@@ -52,13 +52,13 @@ describe('openapi-format tests', () => {
         if (fs.existsSync(configFilename)) {
           // Load options file
           configFileOptions = await parseFile(configFilename);
-          configFileOptions.sort = !configFileOptions['no-sort'];
-          if (configFileOptions['no-sort'] && configFileOptions['no-sort'] === true) {
+          configFileOptions.sort = configFileOptions.sort ?? true;
+          configFileOptions.bundle = configFileOptions.bundle ?? true;
+          if (configFileOptions['no-sort']) {
             configFileOptions.sort = !configFileOptions['no-sort'];
             delete configFileOptions['no-sort'];
           }
-          configFileOptions.bundle = !configFileOptions['no-bundle'];
-          if (configFileOptions['no-sort'] && configFileOptions['no-bundle'] === true) {
+          if (configFileOptions['no-bundle']) {
             configFileOptions.bundle = !configFileOptions['no-bundle'];
             delete configFileOptions['no-bundle'];
           }
@@ -128,8 +128,7 @@ describe('openapi-format tests', () => {
 
         try {
           if (!readOutput) {
-            // Write OpenAPI string to file
-            await writeFile(outputFilename, result, options);
+            fs.writeFileSync(outputFilename, result, 'utf8');
           }
         } catch (error) {
           console.error('error', error);
