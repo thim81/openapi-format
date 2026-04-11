@@ -1699,18 +1699,6 @@ For handling AsyncAPI documents, we have created a separate
 package [asyncapi-format](https://github.com/thim81/asyncapi-format) to allow customisation specific for AsyncAPI
 use-cases.
 
-## Stoplight Studio
-
-We have adopted the YAML parsing style from [Stoplight Studio](https://stoplight.io/studio/), by leveraging
-the [@stoplight/yaml](https://www.npmjs.com/package/@stoplight/yaml) package for handling the parsing of OpenAPI YAML
-files.
-
-By using the Stoplight YAML parsing, the results will be slightly different from when using a normal YAML parsing
-library, like [js-to-yaml](https://www.npmjs.com/package/js-yaml). We appreciate the Stoplight Studio tool, since it is
-an excellent GUI for working with OpenAPI documents for non-OpenAPI experts who will be contributing changes. By
-adopting the Stoplight Studio YAML parsing, the potential risk of merge conflicts will be lowered, which is the main
-reason why we opted for using the @stoplight/yaml package.
-
 ## Credits
 
 This package is inspired by
