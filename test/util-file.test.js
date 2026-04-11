@@ -15,7 +15,7 @@ const {
   detectFormat,
   analyzeOpenApi
 } = require('../utils/file');
-const yaml = require('@stoplight/yaml');
+const yaml = require('yaml');
 const {describe} = require('@jest/globals');
 
 describe('openapi-format CLI file tests', () => {
@@ -124,7 +124,7 @@ describe('openapi-format CLI file tests', () => {
 
       const result = await stringify(obj, options);
 
-      const expectedYAML = yaml.safeStringify(obj, {lineWidth: 80});
+      const expectedYAML = yaml.stringify(obj, {lineWidth: 80, singleQuote: true});
       expect(result).toEqual(expectedYAML);
     });
 
@@ -144,7 +144,7 @@ describe('openapi-format CLI file tests', () => {
 
       const result = await stringify(obj, options);
 
-      const expectedYAML = yaml.safeStringify(obj, {lineWidth: Infinity});
+      const expectedYAML = yaml.stringify(obj, {lineWidth: 0, singleQuote: true});
       expect(result).toEqual(expectedYAML);
     });
 
@@ -154,7 +154,7 @@ describe('openapi-format CLI file tests', () => {
 
       const result = await stringify(obj, options);
 
-      const expectedYAML = yaml.safeStringify(obj, {lineWidth: Infinity});
+      const expectedYAML = yaml.stringify(obj, {lineWidth: 0, singleQuote: true});
       expect(result).toEqual(expectedYAML);
     });
 
@@ -192,6 +192,12 @@ describe('openapi-format CLI file tests', () => {
       const invalidString = '#name 1John\nage 30#'; // Invalid YAML
       const result = await parseString(invalidString, {format: 'yaml'});
       expect(result).toBeInstanceOf(SyntaxError);
+    });
+
+    it('should quote unquoted $ref value starting with #', async () => {
+      const yamlString = 'schema:\n  $ref: #/components/schemas/Example';
+      const result = await parseString(yamlString);
+      expect(result).toEqual({schema: {$ref: '#/components/schemas/Example'}});
     });
   });
 
@@ -390,10 +396,10 @@ describe('openapi-format CLI file tests', () => {
   });
 
   describe('addQuotesToRefInString function', () => {
-    test('should add " quotes to $ref in string', () => {
+    test('should add \' quotes to $ref in string', () => {
       const input = '$ref: #/components/schemas/Example';
       const output = addQuotesToRefInString(input);
-      expect(output).toBe('$ref: "#/components/schemas/Example"');
+      expect(output).toBe("$ref: '#/components/schemas/Example'");
     });
 
     test('should keep double quotes to $ref in string', () => {

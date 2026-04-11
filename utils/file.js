@@ -1,9 +1,116 @@
 const fs = require('fs');
 const bundler = require('api-ref-bundler');
-const yaml = require('@stoplight/yaml');
+const yaml = require('yaml');
 const http = require('http');
 const https = require('https');
 const {dirname} = require('path');
+
+const COMMENT_TYPE = /** @type {const} */ ({
+  INLINE_VALUE: 'inlineValue',
+  INLINE_KEY: 'inlineKey',
+  BEFORE_KEY: 'beforeKey',
+  BEFORE_VALUE: 'beforeBlock'
+});
+
+/**
+ * @typedef {typeof COMMENT_TYPE[keyof typeof COMMENT_TYPE]} CommentType
+ */
+
+/**
+ * @typedef {Object} Comment
+ * @property {string[]} path
+ * @property {CommentType} type
+ * @property {string} text
+ */
+
+/**
+ * Walk a parsed YAML Document and extract comments keyed by their property path.
+ * @param {import('yaml').Document} doc
+ * @returns {Array<{path: string[], type: string, text: string}>}
+ */
+function extractComments(doc) {
+  /** @type {Comment[]} */
+  const comments = [];
+
+  yaml.visit(doc, {
+    // Comments in YAML are always attached to Pair nodes (key: value entries),
+    // so visiting only Pair is sufficient to capture all of them.
+    Pair(_, pair, path) {
+      if (!pair.key || pair.key.value == null) return;
+
+      const keyPath = [];
+      for (const ancestor of path) {
+        if (yaml.isPair(ancestor) && ancestor.key?.value != null) {
+          keyPath.push(String(ancestor.key.value));
+        }
+      }
+      keyPath.push(String(pair.key.value));
+
+      // inline key comment  (only on null explicit key mapping)
+      // ? key # comment
+      if (pair.key.comment != null) {
+        comments.push({path: keyPath, type: COMMENT_TYPE.INLINE_KEY, text: pair.key.comment});
+      }
+
+      // inline value comment
+      // key: value # comment
+      if (pair.value?.comment != null) {
+        comments.push({path: keyPath, type: COMMENT_TYPE.INLINE_VALUE, text: pair.value.comment});
+      }
+
+      // comment before a key
+      // # comment
+      // key: value
+      if (pair.key.commentBefore != null) {
+        comments.push({path: keyPath, type: COMMENT_TYPE.BEFORE_KEY, text: pair.key.commentBefore});
+      }
+
+      // comment before a value
+      // key: # comment
+      //   value
+      if (pair.value?.commentBefore != null) {
+        comments.push({path: keyPath, type: COMMENT_TYPE.BEFORE_VALUE, text: pair.value.commentBefore});
+      }
+    }
+  });
+
+  return comments;
+}
+
+/**
+ * Re-inject comments extracted by extractComments into a new YAML Document,
+ * matching nodes by key path.
+ * @param {import('yaml').Document} doc
+ * @param {Comment[]} comments
+ */
+function injectComments(doc, comments) {
+  for (const {path, type, text} of comments) {
+    const parentPath = path.slice(0, -1);
+    const key = path[path.length - 1];
+
+    const parentNode = parentPath.length === 0 ? doc.contents : doc.getIn(parentPath, true);
+
+    if (parentNode && yaml.isMap(parentNode)) {
+      const pair = parentNode.items.find(p => p.key && String(p.key.value) === key);
+      if (pair) {
+        switch (type) {
+          case COMMENT_TYPE.BEFORE_KEY:
+            pair.key.commentBefore = text;
+            break;
+          case COMMENT_TYPE.BEFORE_VALUE:
+            pair.value.commentBefore = text;
+            break;
+          case COMMENT_TYPE.INLINE_KEY:
+            pair.key.comment = text;
+            break;
+          case COMMENT_TYPE.INLINE_VALUE:
+            pair.value.comment = text;
+            break;
+        }
+      }
+    }
+  }
+}
 
 /**
  * Converts a string object to a JSON/YAML object.
@@ -26,9 +133,11 @@ async function parseString(str, options = {}) {
 
   if (toYaml) {
     try {
-      const result = yaml.parseWithPointers(encodedContent, {attachComments: options?.keepComments || false});
-      options.yamlComments = result.comments;
-      const obj = normalizeYamlBlockScalarNewlines(result.data);
+      const doc = yaml.parseDocument(encodedContent);
+      if (options?.keepComments) {
+        options.yamlComments = extractComments(doc);
+      }
+      const obj = doc.toJS();
       if (typeof obj === 'object') {
         return obj;
       } else {
@@ -163,18 +272,16 @@ async function stringify(obj, options = {}) {
     const toYaml = options.format !== 'json' && (!options.hasOwnProperty('json') || options.json !== true);
 
     if (toYaml) {
-      // Set YAML options
-      const yamlOptions = {};
-      yamlOptions.lineWidth =
-        (options.lineWidth && options.lineWidth === -1 ? Infinity : options.lineWidth) || Infinity;
-
-      if (options?.yamlComments && options?.keepComments === true) {
-        yamlOptions.comments = options.yamlComments;
-      }
+      const lineWidth = (options.lineWidth && options.lineWidth === -1 ? 0 : options.lineWidth) || 0;
 
       // Convert object to YAML string
-      output = yaml.safeStringify(obj, yamlOptions);
-      output = addQuotesToRefInString(output);
+      output = yaml.stringify(obj, {lineWidth, singleQuote: true});
+
+      if (options?.yamlComments?.length > 0 && options?.keepComments === true) {
+        const newDoc = yaml.parseDocument(output);
+        injectComments(newDoc, options.yamlComments);
+        output = newDoc.toString();
+      }
 
       // Decode large number YAML values safely before writing output
       output = decodeLargeNumbers(output);
@@ -335,36 +442,7 @@ function decodeLargeNumbers(output, isJson = false) {
  * @returns {string} YAML string with quotes.
  */
 function addQuotesToRefInString(yamlString) {
-  return yamlString.replace(/(\$ref:\s*)([^"'\s>]+)/g, '$1"$2"');
-}
-
-/**
- * Normalize a parser artifact where block scalars with indentation indicators
- * gain a spurious leading newline during YAML parsing.
- * This keeps genuine blank first lines intact by only stripping a single
- * leading newline when the string also has a trailing newline.
- * @param {*} value - Parsed YAML value.
- * @returns {*} Normalized value.
- */
-function normalizeYamlBlockScalarNewlines(value) {
-  if (typeof value === 'string') {
-    if (value.startsWith('\n') && !value.startsWith('\n\n') && value.endsWith('\n')) {
-      return value.slice(1);
-    }
-    return value;
-  }
-
-  if (Array.isArray(value)) {
-    return value.map(item => normalizeYamlBlockScalarNewlines(item));
-  }
-
-  if (value && typeof value === 'object') {
-    for (const key of Object.keys(value)) {
-      value[key] = normalizeYamlBlockScalarNewlines(value[key]);
-    }
-  }
-
-  return value;
+  return yamlString.replace(/(\$ref:\s*)([^"'\s>]+)/g, "$1'$2'");
 }
 
 /**

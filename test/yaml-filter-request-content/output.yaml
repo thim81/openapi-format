@@ -35,8 +35,8 @@ paths:
           description: Invalid input
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
 components:
   schemas:
     Category:
@@ -90,10 +90,10 @@ components:
       type: oauth2
       flows:
         implicit:
-          authorizationUrl: 'https://petstore.swagger.io/oauth/authorize'
+          authorizationUrl: https://petstore.swagger.io/oauth/authorize
           scopes:
-            'write:pets': modify pets in your account
-            'read:pets': read your pets
+            write:pets: modify pets in your account
+            read:pets: read your pets
     api_key:
       type: apiKey
       name: api_key

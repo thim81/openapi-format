@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: Test
 servers:
-  - url: 'https://example.de/test'
+  - url: https://example.de/test
 security:
   - bearerToken: []
 tags:

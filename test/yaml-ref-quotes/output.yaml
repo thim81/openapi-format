@@ -6,6 +6,6 @@ components:
       type: object
       properties:
         extern:
-          $ref: "domain-types.openapi.yaml#/components/schemas/Extern"
+          $ref: domain-types.openapi.yaml#/components/schemas/Extern
         intern:
-          $ref: "domain-types.openapi.yaml#/components/schemas/Extern"
+          $ref: domain-types.openapi.yaml#/components/schemas/Extern
