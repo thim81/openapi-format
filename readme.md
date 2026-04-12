@@ -111,6 +111,14 @@ More info about the playground features and usage can be found on the [website](
 
 ## Installation
 
+### NPX usage
+
+To execute the CLI without installing it via npm, use the npx method
+
+```shell
+$ npx openapi-format your-openapi-file.yaml
+```
+
 ### Local Installation (recommended)
 
 While possible to install globally, we recommend that you add the openapi-format CLI to the `node_modules` by using:
@@ -119,27 +127,10 @@ While possible to install globally, we recommend that you add the openapi-format
 $ npm install --save openapi-format
 ```
 
-or using yarn...
-
-```shell
-$ yarn add openapi-format
-```
-
-Note that this will require you to run the openapi-format CLI with `npx openapi-format your-openapi-file.yaml` or, if
-you are using an older versions of npm, `./node_modules/.bin/openapi-format your-openapi-file.yaml`.
-
 ### Global Installation
 
 ```shell
 $ npm install -g openapi-format
-```
-
-### NPX usage
-
-To execute the CLI without installing it via npm, use the npx method
-
-```shell
-$ npx openapi-format your-openapi-file.yaml
 ```
 
 ### Codex skill usage
