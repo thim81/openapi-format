@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.31.0] - 2026-04-12
+
+- refactor: replace stoplight/yaml with yaml (eemeli) (#206)
+
 ## [1.30.1] - 2026-03-26
 
 - CLI: Fix normalize YAML block scalar newlines (#202)

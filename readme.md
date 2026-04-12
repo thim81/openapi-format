@@ -16,7 +16,7 @@ To quickly standardize OpenAPI documents there is support for generating the ope
 The CLI can split large OpenAPI documents into modular, multi-file structures for easier management.
 For upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0 or 3.1 document to OpenAPI 3.1 or 3.2.
 
-With the newly added OpenAPI Overlay support, users can overlay changes onto existing OpenAPI documents, to extend and customize the OpenAPI document.
+With the OpenAPI Overlay support, users can overlay changes onto existing OpenAPI documents, to extend and customize the OpenAPI document.
 
 ## Table of content
 * [Use-cases](#use-cases)
@@ -67,7 +67,6 @@ Postman collections, test suites, ...
 - [x] Order OpenAPI fields in a default order
 - [x] Order OpenAPI fields in a custom order
 - [x] Order Components elements by alphabet
-- [x] Format the casing (camelCase,PascalCase, ...) of component elements
 - [x] Filter OpenAPI files based on methods
 - [x] Filter OpenAPI files based on flags
 - [x] Filter OpenAPI files based on flags values
@@ -75,7 +74,8 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on operationID's
 - [x] Filter OpenAPI files based on operations definition
 - [x] Filter OpenAPI files based on response content-types
-- [x] Apply OpenAPI overlay actions
+- [x] Format the casing (camelCase,PascalCase, ...) of component elements
+- [x] Apply OpenAPI Overlay actions
 - [x] Strip flags from OpenAPI files
 - [x] Strip unused components from OpenAPI files
 - [x] Generate OpenAPI elements for consistency
@@ -89,7 +89,6 @@ Postman collections, test suites, ...
 - [x] Format via CLI
 - [x] Format via local or remote config files
 - [x] Use as a Module
-- [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
 - [x] Support for OpenAPI 3.1
 - [x] Support for OpenAPI 3.2
@@ -1698,6 +1697,14 @@ await writeFile('openapi.sorted.yaml', output, {format: 'yaml'});
 For handling AsyncAPI documents, we have created a separate
 package [asyncapi-format](https://github.com/thim81/asyncapi-format) to allow customisation specific for AsyncAPI
 use-cases.
+
+## YAML handling
+
+As of `v1.31.0`, `openapi-format` uses `yaml` by [eemeli](https://github.com/eemeli/yaml) instead of `@stoplight/yaml`, thanks the contribution of [@guilhas07](https://github.com/guilhas07).
+
+This improves YAML comment preservation and fixes previous formatting issues where:
+- valid YAML strings were unnecessarily quoted
+- double-quoted strings were converted to single quotes
 
 ## Credits
 

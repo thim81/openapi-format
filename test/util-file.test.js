@@ -396,7 +396,7 @@ describe('openapi-format CLI file tests', () => {
   });
 
   describe('addQuotesToRefInString function', () => {
-    test('should add \' quotes to $ref in string', () => {
+    test("should add ' quotes to $ref in string", () => {
       const input = '$ref: #/components/schemas/Example';
       const output = addQuotesToRefInString(input);
       expect(output).toBe("$ref: '#/components/schemas/Example'");
