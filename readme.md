@@ -1701,7 +1701,7 @@ This improves YAML comment preservation and fixes previous formatting issues whe
 
 This package is inspired by
 the [@microsoft.azure/format-spec](https://www.npmjs.com/package/@microsoft.azure/format-spec) from [@fearthecowboy](https://github.com/fearthecowboy). The
-original code was not available on GitHub, with the last update being 3 years ago, so to improve support and extend it we
+original code was not available on GitHub, with the last update since 2018, so to improve support and extend it; we
 tried to reproduce the original functionality.
 
 The filter capabilities from `openapi-format` are inspired by the work from [@MikeRalphson](https://github.com/mikeralphson) on
