@@ -1691,7 +1691,7 @@ use-cases.
 
 ## YAML handling
 
-As of `v1.31.0`, `openapi-format` uses `yaml` by [eemeli](https://github.com/eemeli/yaml) instead of `@stoplight/yaml`, thanks the contribution of [@guilhas07](https://github.com/guilhas07).
+As of `v1.31.0`, `openapi-format` uses `yaml` by [eemeli](https://github.com/eemeli/yaml) instead of `@stoplight/yaml`, thanks to the contribution of [@guilhas07](https://github.com/guilhas07).
 
 This improves YAML comment preservation and fixes previous formatting issues where:
 - valid YAML strings were unnecessarily quoted
