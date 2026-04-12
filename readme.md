@@ -111,7 +111,7 @@ More info about the playground features and usage can be found on the [website](
 
 ## Installation
 
-### NPX usage
+### NPX usage (recommended)
 
 To execute the CLI without installing it via npm, use the npx method
 
@@ -119,7 +119,7 @@ To execute the CLI without installing it via npm, use the npx method
 $ npx openapi-format your-openapi-file.yaml
 ```
 
-### Local Installation (recommended)
+### Local Installation
 
 While possible to install globally, we recommend that you add the openapi-format CLI to the `node_modules` by using:
 
