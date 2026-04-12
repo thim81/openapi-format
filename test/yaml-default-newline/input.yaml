@@ -1,4 +1,11 @@
 openapi: 3.0.0
 info:
-  description: |2
-     Example
+  title: |2+
+    Maitains new line
+    Maitains new line
+
+  description: |2-
+    Strips new line
+
+  version: |2
+    Example

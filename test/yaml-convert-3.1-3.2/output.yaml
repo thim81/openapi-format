@@ -3,7 +3,7 @@ info:
   title: Minimal 3.1 (designed for 3.2 migration)
   version: 1.0.0
 servers:
-  - url: 'https://api.example.com'
+  - url: https://api.example.com
 tags:
   - name: items
     description: Operations on items

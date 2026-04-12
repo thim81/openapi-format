@@ -13,23 +13,23 @@ info:
     - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6-SNAPSHOT
   title: Swagger Petstore - OpenAPI 3.0
-  termsOfService: 'http://swagger.io/terms/'
+  termsOfService: http://swagger.io/terms/
   contact:
     email: apiteam@swagger.io
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
 tags:
   - name: user
     description: Everything about your users
     externalDocs:
       description: Find out more
-      url: 'http://swagger.io'
+      url: http://swagger.io
   - name: store
     description: Everything about your store
     externalDocs:
       description: Find out more
-      url: 'http://swagger.io'
+      url: http://swagger.io
 x-tagGroups:
   - name: Tag Group 2
     tags:
@@ -56,7 +56,7 @@ paths:
                   format: int32
       security:
         - api_key: []
-  '/store/order/{orderId}':
+  /store/order/{orderId}:
     get:
       tags:
         - store
@@ -216,7 +216,7 @@ paths:
       responses:
         default:
           description: successful operation
-  '/user/{username}':
+  /user/{username}:
     get:
       tags:
         - user
@@ -293,7 +293,7 @@ paths:
           description: User not found
 externalDocs:
   description: Find out more about Swagger
-  url: 'http://swagger.io'
+  url: http://swagger.io
 components:
   schemas:
     Order:
@@ -494,10 +494,10 @@ components:
       type: oauth2
       flows:
         implicit:
-          authorizationUrl: 'https://petstore.swagger.io/oauth/authorize'
+          authorizationUrl: https://petstore.swagger.io/oauth/authorize
           scopes:
-            'write:pets': modify pets in your account
-            'read:pets': read your pets
+            write:pets: modify pets in your account
+            read:pets: read your pets
     api_key:
       type: apiKey
       name: api_key

@@ -2,11 +2,11 @@ openapi: 3.0.3
 info:
   title: Marvel Universe API
   version: 1.0.0
-  description: 'API for retrieving, creating, updating, and deleting information about the Marvel Universe.'
+  description: API for retrieving, creating, updating, and deleting information about the Marvel Universe.
   x-logo:
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Marvel-Comics-Logo.svg/1280px-Marvel-Comics-Logo.svg.png'
+    url: https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Marvel-Comics-Logo.svg/1280px-Marvel-Comics-Logo.svg.png
 servers:
-  - url: 'http://localhost:3004/api'
+  - url: http://localhost:3004/api
     description: Production
 paths:
   /characters:
@@ -86,7 +86,7 @@ components:
         description:
           description: A brief description of the Marvel character.
           type: string
-          example: 'Genius, billionaire, playboy, philanthropist.'
+          example: Genius, billionaire, playboy, philanthropist.
           nullable: true
         powers:
           description: List of superpowers possessed by the Marvel character.
@@ -113,7 +113,7 @@ components:
               name: Iron Man
               first_name: Tony
               last_name: Stark
-              description: 'Genius, billionaire, playboy, philanthropist.'
+              description: Genius, billionaire, playboy, philanthropist.
               powers:
                 - Superhuman strength
                 - Powered armor suit

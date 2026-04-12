@@ -10,16 +10,16 @@ info:
     Some useful links:
     - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
     - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
-  termsOfService: 'http://swagger.io/terms/'
+  termsOfService: http://swagger.io/terms/
   contact:
     email: apiteam@swagger.io
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.5-SNAPSHOT
 externalDocs:
   description: Find out more about Swagger
-  url: 'http://swagger.io'
+  url: http://swagger.io
 servers:
   - url: /v3
 tags:
@@ -27,14 +27,14 @@ tags:
     description: Everything about your Pets
     externalDocs:
       description: Find out more
-      url: 'http://swagger.io'
+      url: http://swagger.io
   - name: store
     description: Operations about user
   - name: user
     description: Access to Petstore orders
     externalDocs:
       description: Find out more about our store
-      url: 'http://swagger.io'
+      url: http://swagger.io
 paths:
   /pet:
     put:
@@ -74,8 +74,8 @@ paths:
           description: Validation exception
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       x-openapi-router-controller: swagger_server.controllers.pet_controller
     post:
       tags:
@@ -110,8 +110,8 @@ paths:
           description: Invalid input
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       x-openapi-router-controller: swagger_server.controllers.pet_controller
   /pet/findByStatus:
     get:
@@ -153,15 +153,15 @@ paths:
           description: Invalid status value
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       x-openapi-router-controller: swagger_server.controllers.pet_controller
   /pet/findByTags:
     get:
       tags:
         - pet
       summary: Finds Pets by tags
-      description: 'Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.'
+      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
       operationId: find_pets_by_tags
       parameters:
         - name: tags
@@ -193,10 +193,10 @@ paths:
           description: Invalid tag value
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       x-openapi-router-controller: swagger_server.controllers.pet_controller
-  '/pet/{petId}':
+  /pet/{petId}:
     get:
       tags:
         - pet
@@ -230,8 +230,8 @@ paths:
       security:
         - api_key: []
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       x-openapi-router-controller: swagger_server.controllers.pet_controller
     post:
       tags:
@@ -269,8 +269,8 @@ paths:
           description: Invalid input
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       x-openapi-router-controller: swagger_server.controllers.pet_controller
     delete:
       tags:
@@ -299,10 +299,10 @@ paths:
           description: Invalid pet value
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       x-openapi-router-controller: swagger_server.controllers.pet_controller
-  '/pet/{petId}/uploadImage':
+  /pet/{petId}/uploadImage:
     post:
       tags:
         - pet
@@ -341,8 +341,8 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       x-openapi-router-controller: swagger_server.controllers.pet_controller
   /store/inventory:
     get:
@@ -395,7 +395,7 @@ paths:
           description: Invalid input
       x-swagger-router-controller: OrderController
       x-openapi-router-controller: swagger_server.controllers.store_controller
-  '/store/order/{orderId}':
+  /store/order/{orderId}:
     get:
       tags:
         - store
@@ -572,7 +572,7 @@ paths:
         default:
           description: successful operation
       x-openapi-router-controller: swagger_server.controllers.user_controller
-  '/user/{username}':
+  /user/{username}:
     get:
       tags:
         - user
@@ -689,7 +689,7 @@ components:
         petId: 198772
         quantity: 7
         id: 10
-        shipDate: '2000-01-23T04:56:07.000+00:00'
+        shipDate: 2000-01-23T04:56:07.000+00:00
         complete: true
         status: approved
       xml:
@@ -896,10 +896,10 @@ components:
       type: oauth2
       flows:
         implicit:
-          authorizationUrl: 'https://petstore.swagger.io/oauth/authorize'
+          authorizationUrl: https://petstore.swagger.io/oauth/authorize
           scopes:
-            'write:pets': modify pets in your account
-            'read:pets': read your pets
+            write:pets: modify pets in your account
+            read:pets: read your pets
       x-tokenInfoFunc: swagger_server.controllers.authorization_controller.check_petstore_auth
       x-scopeValidateFunc: swagger_server.controllers.authorization_controller.validate_scope_petstore_auth
     api_key:

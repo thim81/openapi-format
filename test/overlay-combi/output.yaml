@@ -5,7 +5,7 @@ info:
   description: An updated description
   contact:
     name: Support
-    url: 'https://example.com/contact'
+    url: https://example.com/contact
 servers:
-  - url: 'https://api.new-example.com'
+  - url: https://api.new-example.com
     description: New server

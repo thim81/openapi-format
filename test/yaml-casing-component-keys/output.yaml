@@ -11,12 +11,12 @@ info:
     - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6-SNAPSHOT
   title: Swagger Petstore - OpenAPI 3.0
-  termsOfService: 'http://swagger.io/terms/'
+  termsOfService: http://swagger.io/terms/
   contact:
     email: apiteam@swagger.io
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
 servers:
   - url: /v3
 paths:
@@ -66,8 +66,8 @@ paths:
           description: Invalid input
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
   /PetModel/findByStatus:
@@ -97,11 +97,11 @@ paths:
       security:
         - api_key: []
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
-  '/pet/{petId}':
+  /pet/{petId}:
     get:
       operationId: getPetById
       summary: Find pet by ID
@@ -131,8 +131,8 @@ paths:
       security:
         - api_key: []
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
     post:
@@ -156,8 +156,8 @@ paths:
           description: Invalid input
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
     delete:
@@ -183,8 +183,8 @@ paths:
           description: Invalid pet value
       security:
         - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
+            - write:pets
+            - read:pets
       tags:
         - pet
   /store/order:
@@ -215,7 +215,7 @@ paths:
       tags:
         - store
       x-swagger-router-controller: OrderController
-  '/user/{username}':
+  /user/{username}:
     get:
       operationId: getUserByName
       summary: Get user by user name
@@ -477,13 +477,13 @@ components:
     SampleExampleReports:
       value:
         id: bbadbeef-b3ab-40af-b05c-c0ffee6544cd
-        created: '2020-06-19T12:01:03.456Z'
-        lastAction: '2020-06-19T12:06:03.456Z'
+        created: 2020-06-19T12:01:03.456Z
+        lastAction: 2020-06-19T12:06:03.456Z
         status: Succeeded
         type: ListExport
-        resourceLocation: 'https://customername.example/export'
+        resourceLocation: https://customername.example/export
         properties:
-          reportLocation: 'https://customername.example/reports/ABC-123-DEF-456'
+          reportLocation: https://customername.example/reports/ABC-123-DEF-456
     SampleSendNotification:
       value:
         - reference: 1234567ABC
@@ -491,15 +491,15 @@ components:
             deviceToken: 1234567890AZERTYUIOP
             provider: apple
           content:
-            title: 'Hello world, content title'
-            message: 'Hello world, content message'
+            title: Hello world, content title
+            message: Hello world, content message
             badge: null
             sound: null
             buttons: []
             pushType: 2
             inAppNotification:
-              title: 'Hello world, inAppNotification title'
-              body: 'Hello world, inAppNotification body'
+              title: Hello world, inAppNotification title
+              body: Hello world, inAppNotification body
             expirationdate: null
             data:
               SMLTR_DEL_STATE: '2'
@@ -600,10 +600,10 @@ components:
       type: oauth2
       flows:
         implicit:
-          authorizationUrl: 'https://petstore.swagger.io/oauth/authorize'
+          authorizationUrl: https://petstore.swagger.io/oauth/authorize
           scopes:
-            'write:pets': modify pets in your account
-            'read:pets': read your pets
+            write:pets: modify pets in your account
+            read:pets: read your pets
     api_key:
       type: apiKey
       name: api_key
@@ -629,7 +629,7 @@ tags:
     description: Everything about your Pets
     externalDocs:
       description: Find out more
-      url: 'http://swagger.io'
+      url: http://swagger.io
 externalDocs:
   description: Find out more about Swagger
-  url: 'http://swagger.io'
+  url: http://swagger.io

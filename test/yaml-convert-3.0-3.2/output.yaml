@@ -3,7 +3,7 @@ info:
   title: Minimal 3.0 with 3.1 upgrade hints
   version: 1.0.0
 servers:
-  - url: 'https://api.example.com'
+  - url: https://api.example.com
 paths:
   /items:
     get:

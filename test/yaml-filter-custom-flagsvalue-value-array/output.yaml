@@ -1,5 +1,5 @@
 openapi: 3.0.1
 servers:
-  - url: 'https://server-d'
+  - url: https://server-d
     x-stage-e-exclude:
       - false

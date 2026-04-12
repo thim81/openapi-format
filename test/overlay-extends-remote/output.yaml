@@ -3,5 +3,5 @@ info:
   title: Original API
   version: 1.0.0
 servers:
-  - url: 'https://api.example.com'
+  - url: https://api.example.com
     description: Default server

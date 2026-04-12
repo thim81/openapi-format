@@ -31,11 +31,11 @@ components:
       properties:
         type:
           description: A URI reference that identifies the problem type
-          example: 'https://example.com/probs/permissions'
+          example: https://example.com/probs/permissions
           format: uri
           type: string
         title:
-          description: 'A short, human-readable summary of the problem type'
+          description: A short, human-readable summary of the problem type
           example: You do not have permissions to perform this action
           type: string
         status:
@@ -50,6 +50,6 @@ components:
           type: string
         instance:
           description: A URI reference that identifies the specific occurrence of the problem
-          example: 'https://example.com/account/12345/message/delete'
+          example: https://example.com/account/12345/message/delete
           format: uri
           type: string
