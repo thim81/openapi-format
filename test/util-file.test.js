@@ -419,6 +419,40 @@ describe('openapi-format CLI file tests', () => {
       const output = addQuotesToRefInString(input);
       expect(output).toBe(input);
     });
+
+    test('should parse unquoted local $ref values that start with #', async () => {
+      const yamlString = 'schema:\n  $ref: #/components/schemas/Example';
+      const result = await parseString(yamlString);
+
+      expect(result).toEqual({
+        schema: {
+          $ref: '#/components/schemas/Example'
+        }
+      });
+    });
+
+    test('should parse unquoted external $ref values with fragments', async () => {
+      const yamlString = 'schema:\n  $ref: ./common.yaml#/components/schemas/Example';
+      const result = await parseString(yamlString);
+
+      expect(result).toEqual({
+        schema: {
+          $ref: './common.yaml#/components/schemas/Example'
+        }
+      });
+    });
+
+    test('should stringify $ref values with quotes in YAML output', async () => {
+      const obj = {
+        schema: {
+          $ref: '#/components/schemas/Example'
+        }
+      };
+
+      const result = await stringify(obj, {format: 'yaml'});
+
+      expect(result).toContain("$ref: '#/components/schemas/Example'");
+    });
   });
 
   describe('analyzeOpenApi function', () => {
