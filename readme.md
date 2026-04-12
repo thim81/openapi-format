@@ -16,7 +16,7 @@ To quickly standardize OpenAPI documents there is support for generating the ope
 The CLI can split large OpenAPI documents into modular, multi-file structures for easier management.
 For upgrades, the openapi-format CLI offers the option to convert an OpenAPI 3.0 or 3.1 document to OpenAPI 3.1 or 3.2.
 
-With the newly added OpenAPI Overlay support, users can overlay changes onto existing OpenAPI documents, to extend and customize the OpenAPI document.
+With the OpenAPI Overlay support, users can overlay changes onto existing OpenAPI documents, to extend and customize the OpenAPI document.
 
 ## Table of content
 * [Use-cases](#use-cases)
@@ -67,7 +67,6 @@ Postman collections, test suites, ...
 - [x] Order OpenAPI fields in a default order
 - [x] Order OpenAPI fields in a custom order
 - [x] Order Components elements by alphabet
-- [x] Format the casing (camelCase,PascalCase, ...) of component elements
 - [x] Filter OpenAPI files based on methods
 - [x] Filter OpenAPI files based on flags
 - [x] Filter OpenAPI files based on flags values
@@ -75,7 +74,8 @@ Postman collections, test suites, ...
 - [x] Filter OpenAPI files based on operationID's
 - [x] Filter OpenAPI files based on operations definition
 - [x] Filter OpenAPI files based on response content-types
-- [x] Apply OpenAPI overlay actions
+- [x] Format the casing (camelCase,PascalCase, ...) of component elements
+- [x] Apply OpenAPI Overlay actions
 - [x] Strip flags from OpenAPI files
 - [x] Strip unused components from OpenAPI files
 - [x] Generate OpenAPI elements for consistency
@@ -89,7 +89,6 @@ Postman collections, test suites, ...
 - [x] Format via CLI
 - [x] Format via local or remote config files
 - [x] Use as a Module
-- [x] Aligned YAML parsing style with Stoplight Studio style
 - [x] Support for OpenAPI 3.0
 - [x] Support for OpenAPI 3.1
 - [x] Support for OpenAPI 3.2
@@ -112,30 +111,7 @@ More info about the playground features and usage can be found on the [website](
 
 ## Installation
 
-### Local Installation (recommended)
-
-While possible to install globally, we recommend that you add the openapi-format CLI to the `node_modules` by using:
-
-```shell
-$ npm install --save openapi-format
-```
-
-or using yarn...
-
-```shell
-$ yarn add openapi-format
-```
-
-Note that this will require you to run the openapi-format CLI with `npx openapi-format your-openapi-file.yaml` or, if
-you are using an older versions of npm, `./node_modules/.bin/openapi-format your-openapi-file.yaml`.
-
-### Global Installation
-
-```shell
-$ npm install -g openapi-format
-```
-
-### NPX usage
+### NPX usage (recommended)
 
 To execute the CLI without installing it via npm, use the npx method
 
@@ -143,7 +119,21 @@ To execute the CLI without installing it via npm, use the npx method
 $ npx openapi-format your-openapi-file.yaml
 ```
 
-### Codex skill usage
+### Local Installation
+
+While possible to install globally, we recommend that you add the openapi-format CLI to the `node_modules` by using:
+
+```shell
+$ npm install --save openapi-format
+```
+
+### Global Installation
+
+```shell
+$ npm install -g openapi-format
+```
+
+### AI (OpenAI Codex/Claude Code/...) skill usage
 
 To install the `openapi-format` skill from this repository:
 
@@ -151,7 +141,7 @@ To install the `openapi-format` skill from this repository:
 $ npx skills add https://github.com/thim81/openapi-format --skill openapi-format
 ```
 
-Then use it in Codex by explicitly referencing the skill in your prompt, for example:
+Then use it in Claude, Codex by explicitly referencing the skill in your prompt, for example:
 
 ```text
 Using $openapi-format, create a minimal filter config to remove internal endpoints and give me the CLI command.
@@ -243,22 +233,22 @@ the [defaultSort.json](https://github.com/thim81/openapi-format/blob/main/defaul
 You can easily modify this by specifying your own ordering per key, which can be passed on to the CLI (see below for an
 example on how to do this).
 
-| Key         | Ordered by                                                                                                      | OpenAPI reference                                                         |
-| ----------- | ----------------------------------------------------------------------------------------------------------------| ------------------------------------------------------------------------- |
-| root        | - openapi<br>\- info<br>\- servers<br>\- paths<br>\- components<br>\- tags<br>\- x-tagGroups<br>\- externalDocs | [openapi-object](https://spec.openapis.org/oas/v3.0.3.html#openapi-object)                  |
-| get         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                |
-| post        | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
-| put         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
-| patch       | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
-| delete      | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)                 |
-| parameters  | - name<br>\- in<br>\- description<br>\- required<br>\- schema                                                   | [parameterObject](https://spec.openapis.org/oas/v3.0.3.html#parameterObject)                 |
-| requestBody | - description<br>\- headers<br>\- content<br>\- links                                                           | [request-body-object](https://spec.openapis.org/oas/v3.0.3.html#request-body-object)             |
-| responses   | - description<br>\- headers<br>\- content<br>\- links                                                           | [responses-object](https://spec.openapis.org/oas/v3.0.3.html#responses-object)                |
-| content     | (By alphabet)                                                                                                   | [responses-object](https://spec.openapis.org/oas/v3.0.3.html#responses-object)                |
-| components  | - parameters<br>\- schemas                                                                                      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object)               |
-| schema      | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  | [schemaObject](https://spec.openapis.org/oas/v3.0.3.html#schemaObject)                    |
-| schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                           |
-| properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                           |
+| Key         | Ordered by                                                                                                      | OpenAPI reference                                                                    |
+|-------------|-----------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| root        | - openapi<br>\- info<br>\- servers<br>\- paths<br>\- components<br>\- tags<br>\- x-tagGroups<br>\- externalDocs | [openapi-object](https://spec.openapis.org/oas/v3.0.3.html#openapi-object)           |
+| get         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)         |
+| post        | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)         |
+| put         | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)         |
+| patch       | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)         |
+| delete      | - operationId<br>\- summary<br>\- description<br>\- parameters<br>\- requestBody<br>\- responses                | [operationObject](https://spec.openapis.org/oas/v3.0.3.html#operationObject)         |
+| parameters  | - name<br>\- in<br>\- description<br>\- required<br>\- schema                                                   | [parameterObject](https://spec.openapis.org/oas/v3.0.3.html#parameterObject)         |
+| requestBody | - description<br>\- headers<br>\- content<br>\- links                                                           | [request-body-object](https://spec.openapis.org/oas/v3.0.3.html#request-body-object) |
+| responses   | - description<br>\- headers<br>\- content<br>\- links                                                           | [responses-object](https://spec.openapis.org/oas/v3.0.3.html#responses-object)       |
+| content     | (By alphabet)                                                                                                   | [responses-object](https://spec.openapis.org/oas/v3.0.3.html#responses-object)       |
+| components  | - parameters<br>\- schemas                                                                                      | [components-object](https://spec.openapis.org/oas/v3.0.3.html#components-object)     |
+| schema      | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  | [schemaObject](https://spec.openapis.org/oas/v3.0.3.html#schemaObject)               |
+| schemas     | - description<br>\- type<br>\- items<br>\- properties<br>\- format<br>\- example<br>\- default                  |                                                                                      |
+| properties  | - description<br>\- type<br>\- items<br>\- format<br>\- example<br>\- default<br>\- enum                        |                                                                                      |
 
 Have a look at the folder [yaml-default](test/yaml-default) and compare the "output.yaml" (sorted document) with the "input.yaml" (original document), to see how openapi-format have sorted the OpenAPI document.
 
@@ -1699,11 +1689,19 @@ For handling AsyncAPI documents, we have created a separate
 package [asyncapi-format](https://github.com/thim81/asyncapi-format) to allow customisation specific for AsyncAPI
 use-cases.
 
+## YAML handling
+
+As of `v1.31.0`, `openapi-format` uses `yaml` by [eemeli](https://github.com/eemeli/yaml) instead of `@stoplight/yaml`, thanks to the contribution of [@guilhas07](https://github.com/guilhas07).
+
+This improves YAML comment preservation and fixes previous formatting issues where:
+- valid YAML strings were unnecessarily quoted
+- double-quoted strings were converted to single quotes
+
 ## Credits
 
 This package is inspired by
 the [@microsoft.azure/format-spec](https://www.npmjs.com/package/@microsoft.azure/format-spec) from [@fearthecowboy](https://github.com/fearthecowboy). The
-original code was not available on GitHub, with the last update being 3 years ago, so to improve support and extend it we
+original code was not available on GitHub, with the last update since 2018, so to improve support and extend it; we
 tried to reproduce the original functionality.
 
 The filter capabilities from `openapi-format` are inspired by the work from [@MikeRalphson](https://github.com/mikeralphson) on
