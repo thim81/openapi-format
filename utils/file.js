@@ -137,6 +137,7 @@ async function parseString(str, options = {}) {
       if (options?.keepComments) {
         options.yamlComments = extractComments(doc);
       }
+      options.yamlValueFormats = extractYamlValueFormats(doc);
       const obj = doc.toJS();
       if (typeof obj === 'object') {
         return obj;
@@ -277,10 +278,16 @@ async function stringify(obj, options = {}) {
       // Convert object to YAML string
       output = yaml.stringify(obj, {lineWidth, singleQuote: true});
 
-      if (options?.yamlComments?.length > 0 && options?.keepComments === true) {
+      if (
+        (options?.yamlComments?.length > 0 && options?.keepComments === true) ||
+        (options?.yamlValueFormats && Object.keys(options.yamlValueFormats).length > 0)
+      ) {
         const newDoc = yaml.parseDocument(output);
-        injectComments(newDoc, options.yamlComments);
-        output = newDoc.toString();
+        applyYamlValueFormats(newDoc, options.yamlValueFormats || {});
+        if (options?.yamlComments?.length > 0 && options?.keepComments === true) {
+          injectComments(newDoc, options.yamlComments);
+        }
+        output = newDoc.toString({lineWidth});
       }
 
       // Decode large number YAML values safely before writing output
@@ -398,6 +405,83 @@ function encodeLargeNumbers(inputContent) {
       return `: ${number}${endChar}`;
     }
   });
+}
+
+/**
+ * Extract YAML scalar formatting metadata that needs to be preserved when
+ * writing output.
+ * @param {import('yaml').Document} doc
+ * @returns {Record<string, number>}
+ */
+function extractYamlValueFormats(doc) {
+  /** @type {Record<string, number>} */
+  const formats = {};
+
+  yaml.visit(doc, {
+    Pair(_, pair, path) {
+      if (!pair.key || pair.key.value == null || pair.value == null) return;
+      if (String(pair.key.value) !== 'x-version') return;
+
+      const keyPath = [];
+      for (const ancestor of path) {
+        if (yaml.isPair(ancestor) && ancestor.key?.value != null) {
+          keyPath.push(String(ancestor.key.value));
+        }
+      }
+      keyPath.push(String(pair.key.value));
+
+      const rawSource = pair.value?.source;
+      if (typeof rawSource !== 'string') return;
+
+      const fractionDigits = getFractionDigits(rawSource);
+      if (fractionDigits > 0) {
+        formats[JSON.stringify(keyPath)] = fractionDigits;
+      }
+    }
+  });
+
+  return formats;
+}
+
+/**
+ * Preserve numeric formatting on YAML scalar nodes before stringification.
+ * @param {import('yaml').Document} doc
+ * @param {Record<string, number>} valueFormats
+ */
+function applyYamlValueFormats(doc, valueFormats) {
+  if (!valueFormats || Object.keys(valueFormats).length === 0) return;
+
+  yaml.visit(doc, {
+    Pair(_, pair, path) {
+      if (!pair.key || pair.key.value == null || pair.value == null) return;
+
+      const keyPath = [];
+      for (const ancestor of path) {
+        if (yaml.isPair(ancestor) && ancestor.key?.value != null) {
+          keyPath.push(String(ancestor.key.value));
+        }
+      }
+      keyPath.push(String(pair.key.value));
+
+      const fractionDigits = valueFormats[JSON.stringify(keyPath)];
+      if (fractionDigits != null && yaml.isScalar(pair.value) && typeof pair.value.value === 'number') {
+        pair.value.minFractionDigits = fractionDigits;
+      }
+    }
+  });
+}
+
+/**
+ * Determine the number of fraction digits in a numeric source string.
+ * @param {string} rawSource
+ * @returns {number}
+ */
+function getFractionDigits(rawSource) {
+  const decimalIndex = rawSource.indexOf('.');
+  if (decimalIndex === -1) return 0;
+  const exponentIndex = rawSource.search(/[eE]/);
+  const endIndex = exponentIndex === -1 ? rawSource.length : exponentIndex;
+  return Math.max(0, endIndex - decimalIndex - 1);
 }
 
 /**
@@ -537,6 +621,9 @@ module.exports = {
   stringify,
   writeFile,
   encodeLargeNumbers,
+  extractYamlValueFormats,
+  applyYamlValueFormats,
+  getFractionDigits,
   decodeLargeNumbers,
   getLocalFile,
   getRemoteFile,

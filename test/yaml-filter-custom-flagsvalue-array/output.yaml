@@ -73,7 +73,7 @@ paths:
       summary: Finds Pets by tags
       description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
       operationId: findPetsByTags
-      x-version: 3
+      x-version: 3.0
       parameters:
         - name: tags
           in: query

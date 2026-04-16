@@ -36,7 +36,7 @@ paths:
       description: Multiple status values can be provided with comma separated strings
       operationId: findPetsByStatus
       x-visibility: true
-      x-version: 2
+      x-version: 2.0
       parameters:
         - name: status
           in: query
