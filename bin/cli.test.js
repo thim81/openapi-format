@@ -426,6 +426,24 @@ describe('openapi-format CLI command', () => {
     expect(fs.readFileSync(tempOutputFile, 'utf8')).toBe(expectedOutput);
   });
 
+  it('should preserve x-version decimals in bundled YAML output', async () => {
+    const testName = 'yaml-default-bug-x-version-decimal-bundle';
+    const testPath = `test/${testName}`;
+    const inputFile = 'input.yaml';
+    const expectedOutputFile = `${testPath}/output.yaml`;
+    const tempOutputFile = path.join(os.tmpdir(), `openapi-format-${testName}-output.yaml`);
+    const expectedOutput = fs.readFileSync(expectedOutputFile, 'utf8');
+
+    const result = await testUtils.cli(
+      [inputFile, `--configFile options.yaml`, `--output ${tempOutputFile}`],
+      testPath
+    );
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(fs.readFileSync(tempOutputFile, 'utf8')).toBe(expectedOutput);
+  });
+
   it('should show unused components', async () => {
     const path = `test/yaml-filter-unused-components`;
     const inputFile = `${path}/input.yaml`;
