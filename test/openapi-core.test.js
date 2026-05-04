@@ -153,6 +153,81 @@ describe('openapi-format core API', () => {
 
     expect(result.data.paths['/pets'].get.parameters[0].name).toBe('cursor.createdAt');
   });
+
+  it('openapiChangeCase should keep configured separator characters for component schema keys and refs', async () => {
+    const doc = {
+      openapi: '3.0.0',
+      info: {title: 'API', version: '1.0.0'},
+      paths: {
+        '/pets': {
+          get: {
+            responses: {
+              200: {
+                description: 'ok',
+                content: {'application/json': {schema: {$ref: '#/components/schemas/Pet.v1'}}}
+              }
+            }
+          }
+        }
+      },
+      components: {
+        schemas: {
+          'Pet.v1': {type: 'object'}
+        }
+      }
+    };
+
+    const result = await openapiChangeCase(doc, {
+      casingSet: {
+        componentsSchemas: 'camelCase',
+        componentsSchemasKeepChars: ['.']
+      }
+    });
+
+    expect(Object.keys(result.data.components.schemas)).toContain('pet.v1');
+    expect(result.data.paths['/pets'].get.responses[200].content['application/json'].schema.$ref).toBe(
+      '#/components/schemas/pet.v1'
+    );
+  });
+
+  it('openapiChangeCase should keep configured separator characters for component parameter keys and refs', async () => {
+    const doc = {
+      openapi: '3.0.0',
+      info: {title: 'API', version: '1.0.0'},
+      paths: {
+        '/pets': {
+          get: {
+            parameters: [
+              {
+                $ref: '#/components/parameters/Cursor.v1'
+              }
+            ],
+            responses: {200: {description: 'ok'}}
+          }
+        }
+      },
+      components: {
+        parameters: {
+          'Cursor.v1': {
+            name: 'cursor.v1',
+            in: 'query',
+            schema: {type: 'string'}
+          }
+        }
+      }
+    };
+
+    const result = await openapiChangeCase(doc, {
+      casingSet: {
+        componentsParametersQuery: 'camelCase',
+        componentsParametersQueryKeepChars: ['.']
+      }
+    });
+
+    expect(Object.keys(result.data.components.parameters)).toContain('cursor.v1');
+    expect(result.data.components.parameters['cursor.v1'].name).toBe('cursor.v1');
+    expect(result.data.paths['/pets'].get.parameters[0].$ref).toBe('#/components/parameters/cursor.v1');
+  });
 });
 
 describe('openapiSplit API', () => {
