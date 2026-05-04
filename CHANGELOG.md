@@ -1,7 +1,5 @@
 ## unreleased
 
-## [1.31.1] - 2026-04-16
-
 - CLI: Fix YAML output to preserve x-version number formatting
 
 ## [1.31.0] - 2026-04-12
