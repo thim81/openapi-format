@@ -1,5 +1,7 @@
 ## unreleased
 
+- CLI: Fix YAML output to preserve x-version number formatting
+
 ## [1.31.0] - 2026-04-12
 
 - refactor: replace stoplight/yaml with yaml (eemeli) (#206)

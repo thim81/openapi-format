@@ -12,6 +12,8 @@ const COMMENT_TYPE = /** @type {const} */ ({
   BEFORE_VALUE: 'beforeBlock'
 });
 
+const YAML_VALUE_FORMATS_PROP = '__openapiFormatYamlValueFormats';
+
 /**
  * @typedef {typeof COMMENT_TYPE[keyof typeof COMMENT_TYPE]} CommentType
  */
@@ -137,6 +139,7 @@ async function parseString(str, options = {}) {
       if (options?.keepComments) {
         options.yamlComments = extractComments(doc);
       }
+      options.yamlValueFormats = extractYamlValueFormats(doc);
       const obj = doc.toJS();
       if (typeof obj === 'object') {
         return obj;
@@ -241,7 +244,13 @@ async function parseFile(filePath, options = {}) {
       // Handler to Resolve references
       const resolver = async sourcePath => {
         let refContent = await readFile(sourcePath, options);
-        return await parseString(refContent, options);
+        const refOptions = {...options, yamlValueFormats: {}};
+        const parsedRefContent = await parseString(refContent, refOptions);
+        if (parsedRefContent instanceof Error) {
+          return parsedRefContent;
+        }
+
+        return applyYamlValueFormatsMetadata(parsedRefContent, refOptions.yamlValueFormats || {});
       };
 
       const onErrorHook = msg => {
@@ -249,7 +258,9 @@ async function parseFile(filePath, options = {}) {
       };
 
       // Use the bundler to resolve external refs and bundle the document
-      return bundler.bundle(filePath, resolver, {ignoreSibling: false, hooks: {onError: onErrorHook}});
+      const bundled = await bundler.bundle(filePath, resolver, {ignoreSibling: false, hooks: {onError: onErrorHook}});
+      options.yamlValueFormats = collectYamlValueFormatsFromBundledTree(bundled);
+      return bundled;
     }
 
     // Parse file content as JSON/YAML
@@ -277,10 +288,16 @@ async function stringify(obj, options = {}) {
       // Convert object to YAML string
       output = yaml.stringify(obj, {lineWidth, singleQuote: true});
 
-      if (options?.yamlComments?.length > 0 && options?.keepComments === true) {
+      if (
+        (options?.yamlComments?.length > 0 && options?.keepComments === true) ||
+        (options?.yamlValueFormats && Object.keys(options.yamlValueFormats).length > 0)
+      ) {
         const newDoc = yaml.parseDocument(output);
-        injectComments(newDoc, options.yamlComments);
-        output = newDoc.toString();
+        applyYamlValueFormats(newDoc, options.yamlValueFormats || {});
+        if (options?.yamlComments?.length > 0 && options?.keepComments === true) {
+          injectComments(newDoc, options.yamlComments);
+        }
+        output = newDoc.toString({lineWidth});
       }
 
       // Decode large number YAML values safely before writing output
@@ -398,6 +415,198 @@ function encodeLargeNumbers(inputContent) {
       return `: ${number}${endChar}`;
     }
   });
+}
+
+/**
+ * Extract YAML scalar formatting metadata that needs to be preserved when
+ * writing output.
+ * @param {import('yaml').Document} doc
+ * @returns {Record<string, number>}
+ */
+function extractYamlValueFormats(doc) {
+  /** @type {Record<string, number>} */
+  const formats = {};
+
+  yaml.visit(doc, {
+    Pair(_, pair, path) {
+      if (!pair.key || pair.key.value == null || pair.value == null) return;
+      if (String(pair.key.value) !== 'x-version') return;
+
+      const keyPath = buildYamlValueFormatPath(path, String(pair.key.value));
+
+      const rawSource = pair.value?.source;
+      if (typeof rawSource !== 'string') return;
+
+      const fractionDigits = getFractionDigits(rawSource);
+      if (fractionDigits > 0) {
+        formats[JSON.stringify(keyPath)] = fractionDigits;
+      }
+    }
+  });
+
+  return formats;
+}
+
+/**
+ * Attach YAML scalar-format metadata to a parsed node and its descendants.
+ * @param {unknown} node
+ * @param {Record<string, number>} valueFormats
+ * @returns {unknown}
+ */
+function applyYamlValueFormatsMetadata(node, valueFormats) {
+  if (!node || typeof node !== 'object') {
+    return node;
+  }
+
+  const localValueFormats = valueFormats || {};
+  if (Object.keys(localValueFormats).length > 0) {
+    Object.defineProperty(node, YAML_VALUE_FORMATS_PROP, {
+      value: localValueFormats,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  }
+
+  if (Array.isArray(node)) {
+    node.forEach((item, index) => {
+      applyYamlValueFormatsMetadata(item, prefixYamlValueFormats(localValueFormats, String(index)));
+    });
+  } else {
+    Object.keys(node).forEach(key => {
+      if (key === YAML_VALUE_FORMATS_PROP) return;
+      applyYamlValueFormatsMetadata(node[key], prefixYamlValueFormats(localValueFormats, key));
+    });
+  }
+
+  return node;
+}
+
+/**
+ * Flatten YAML scalar-format metadata from a bundled tree and remove internal markers.
+ * @param {unknown} node
+ * @param {Record<string, number>} valueFormats
+ * @param {Array<string>} path
+ * @param {WeakSet<object>} seen
+ * @returns {Record<string, number>}
+ */
+function collectYamlValueFormatsFromBundledTree(node, valueFormats = {}, path = [], seen = new WeakSet()) {
+  if (!node || typeof node !== 'object' || seen.has(node)) {
+    return valueFormats;
+  }
+
+  seen.add(node);
+
+  const localValueFormats = node[YAML_VALUE_FORMATS_PROP];
+  if (localValueFormats && typeof localValueFormats === 'object') {
+    for (const [jsonPath, fractionDigits] of Object.entries(localValueFormats)) {
+      const localPath = JSON.parse(jsonPath);
+      const fullPath = [...path, ...localPath];
+      valueFormats[JSON.stringify(fullPath)] = fractionDigits;
+    }
+    delete node[YAML_VALUE_FORMATS_PROP];
+  }
+
+  if (Array.isArray(node)) {
+    node.forEach((item, index) => {
+      collectYamlValueFormatsFromBundledTree(item, valueFormats, [...path, String(index)], seen);
+    });
+  } else {
+    Object.keys(node).forEach(key => {
+      if (key === YAML_VALUE_FORMATS_PROP) return;
+      collectYamlValueFormatsFromBundledTree(node[key], valueFormats, [...path, key], seen);
+    });
+  }
+
+  return valueFormats;
+}
+
+/**
+ * Prefix every YAML scalar-format entry with a key path segment.
+ * @param {Record<string, number>} valueFormats
+ * @param {string} prefix
+ * @returns {Record<string, number>}
+ */
+function prefixYamlValueFormats(valueFormats, prefix) {
+  if (!valueFormats || Object.keys(valueFormats).length === 0) {
+    return {};
+  }
+
+  const prefixedValueFormats = {};
+  for (const [jsonPath, fractionDigits] of Object.entries(valueFormats)) {
+    const path = JSON.parse(jsonPath);
+    if (path.length === 0) continue;
+    if (String(path[0]) !== String(prefix)) continue;
+
+    prefixedValueFormats[JSON.stringify(path.slice(1))] = fractionDigits;
+  }
+
+  return prefixedValueFormats;
+}
+
+/**
+ * Preserve numeric formatting on YAML scalar nodes before stringification.
+ * @param {import('yaml').Document} doc
+ * @param {Record<string, number>} valueFormats
+ */
+function applyYamlValueFormats(doc, valueFormats) {
+  if (!valueFormats || Object.keys(valueFormats).length === 0) return;
+
+  yaml.visit(doc, {
+    Pair(_, pair, path) {
+      if (!pair.key || pair.key.value == null || pair.value == null) return;
+
+      const keyPath = buildYamlValueFormatPath(path, String(pair.key.value));
+
+      const fractionDigits = valueFormats[JSON.stringify(keyPath)];
+      if (fractionDigits != null && yaml.isScalar(pair.value) && typeof pair.value.value === 'number') {
+        pair.value.minFractionDigits = fractionDigits;
+      }
+    }
+  });
+}
+
+/**
+ * Determine the number of fraction digits in a numeric source string.
+ * @param {string} rawSource
+ * @returns {number}
+ */
+function getFractionDigits(rawSource) {
+  const decimalIndex = rawSource.indexOf('.');
+  if (decimalIndex === -1) return 0;
+  const exponentIndex = rawSource.search(/[eE]/);
+  const endIndex = exponentIndex === -1 ? rawSource.length : exponentIndex;
+  return Math.max(0, endIndex - decimalIndex - 1);
+}
+
+/**
+ * Build a stable YAML path that includes object keys and array indices.
+ * @param {Array<unknown>} path
+ * @param {string} leafKey
+ * @returns {string[]}
+ */
+function buildYamlValueFormatPath(path, leafKey) {
+  const keyPath = [];
+
+  for (let index = 0; index < path.length; index += 1) {
+    const ancestor = path[index];
+
+    if (yaml.isPair(ancestor) && ancestor.key?.value != null) {
+      keyPath.push(String(ancestor.key.value));
+      continue;
+    }
+
+    if (yaml.isSeq(ancestor)) {
+      const childNode = path[index + 1];
+      const itemIndex = ancestor.items.indexOf(childNode);
+      if (itemIndex !== -1) {
+        keyPath.push(String(itemIndex));
+      }
+    }
+  }
+
+  keyPath.push(leafKey);
+  return keyPath;
 }
 
 /**
@@ -537,6 +746,12 @@ module.exports = {
   stringify,
   writeFile,
   encodeLargeNumbers,
+  extractYamlValueFormats,
+  applyYamlValueFormatsMetadata,
+  collectYamlValueFormatsFromBundledTree,
+  applyYamlValueFormats,
+  prefixYamlValueFormats,
+  getFractionDigits,
   decodeLargeNumbers,
   getLocalFile,
   getRemoteFile,

@@ -346,6 +346,7 @@ async function run(oaFile, options) {
   }
 
   options.yamlComments = fileOptions.yamlComments || {};
+  options.yamlValueFormats = fileOptions.yamlValueFormats || {};
   if (options.output) {
     if (options.split !== true) {
       try {

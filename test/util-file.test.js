@@ -13,7 +13,12 @@ const {
   isJSON,
   isYaml,
   detectFormat,
-  analyzeOpenApi
+  analyzeOpenApi,
+  extractYamlValueFormats,
+  applyYamlValueFormats,
+  applyYamlValueFormatsMetadata,
+  collectYamlValueFormatsFromBundledTree,
+  getFractionDigits
 } = require('../utils/file');
 const yaml = require('yaml');
 const {describe} = require('@jest/globals');
@@ -198,6 +203,70 @@ describe('openapi-format CLI file tests', () => {
       const yamlString = 'schema:\n  $ref: #/components/schemas/Example';
       const result = await parseString(yamlString);
       expect(result).toEqual({schema: {$ref: '#/components/schemas/Example'}});
+    });
+
+    it('should preserve YAML scalar formatting metadata for x-version', () => {
+      const input = yaml.parseDocument(
+        `paths:\n  /pets:\n    post:\n      x-version: 2.0\n      summary: Add pet (v2)\n`
+      );
+      const formats = extractYamlValueFormats(input);
+      const output = yaml.parseDocument(
+        yaml.stringify(input.toJS({keepScalar: false}), {lineWidth: 0, singleQuote: true})
+      );
+
+      applyYamlValueFormats(output, formats);
+
+      expect(output.toString()).toContain('x-version: 2.0');
+      expect(getFractionDigits('2.0')).toBe(1);
+      expect(getFractionDigits('2')).toBe(0);
+    });
+
+    it('should preserve YAML scalar formatting metadata for x-version inside arrays', () => {
+      const input = yaml.parseDocument(
+        `paths:\n  /pets:\n    get:\n      variants:\n        - x-version: 1.0\n          summary: One decimal place\n        - x-version: 2.00\n          summary: Two decimal places\n`
+      );
+      const formats = extractYamlValueFormats(input);
+      const output = yaml.parseDocument(
+        yaml.stringify(input.toJS({keepScalar: false}), {lineWidth: 0, singleQuote: true})
+      );
+
+      applyYamlValueFormats(output, formats);
+
+      expect(formats).toEqual({
+        [JSON.stringify(['paths', '/pets', 'get', 'variants', '0', 'x-version'])]: 1,
+        [JSON.stringify(['paths', '/pets', 'get', 'variants', '1', 'x-version'])]: 2
+      });
+      expect(output.toString()).toContain('x-version: 1.0');
+      expect(output.toString()).toContain('x-version: 2.00');
+    });
+
+    it('should collect YAML scalar formatting metadata from bundled trees', () => {
+      const refTree = applyYamlValueFormatsMetadata(
+        {
+          post: {
+            'x-version': 2,
+            summary: 'Add pet (v2)'
+          }
+        },
+        {
+          [JSON.stringify(['post', 'x-version'])]: 1
+        }
+      );
+
+      const bundled = {
+        openapi: '3.0.3',
+        info: {title: 'API', version: '1.0.0'},
+        paths: {
+          '/pets': refTree
+        }
+      };
+
+      const formats = collectYamlValueFormatsFromBundledTree(bundled);
+
+      expect(formats).toEqual({
+        [JSON.stringify(['paths', '/pets', 'post', 'x-version'])]: 1
+      });
+      expect(Object.keys(refTree)).not.toContain('__openapiFormatYamlValueFormats');
     });
   });
 

@@ -4,3 +4,4 @@ node_modules
 .idea
 .tmp
 .agents
+/skills-lock.json

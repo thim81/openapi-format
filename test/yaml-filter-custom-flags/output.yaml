@@ -26,7 +26,7 @@ tags:
     description: Everything about your store
 x-tagGroups:
   - name: Pet Store
-    x-version: 1
+    x-version: 1.0
     tags:
       - pet
       - store
