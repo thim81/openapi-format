@@ -123,6 +123,36 @@ describe('openapi-format core API', () => {
     expect(result.data.paths['/pets'].get.summary).toBe('list-pets');
     expect(result.data.paths['/pets'].get.description).toBe('returns-all-pets');
   });
+
+  it('openapiChangeCase should keep configured separator characters for parameter names', async () => {
+    const doc = {
+      openapi: '3.0.0',
+      info: {title: 'API', version: '1.0.0'},
+      paths: {
+        '/pets': {
+          get: {
+            parameters: [
+              {
+                name: 'cursor.created_at',
+                in: 'query',
+                schema: {type: 'string'}
+              }
+            ],
+            responses: {200: {description: 'ok'}}
+          }
+        }
+      }
+    };
+
+    const result = await openapiChangeCase(doc, {
+      casingSet: {
+        parametersQuery: 'camelCase',
+        parametersQueryKeepChars: ['.']
+      }
+    });
+
+    expect(result.data.paths['/pets'].get.parameters[0].name).toBe('cursor.createdAt');
+  });
 });
 
 describe('openapiSplit API', () => {

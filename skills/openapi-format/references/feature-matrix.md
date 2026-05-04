@@ -74,13 +74,21 @@ Important behavior:
 | Option (`casingSet`) | Effect |
 |---|---|
 | `operationId` | Casing for operation IDs |
+| `operationIdKeepChars` | Extra characters to preserve while casing `operationId` |
+| `summary` / `description` | Casing for operation summaries and descriptions |
+| `summaryKeepChars` / `descriptionKeepChars` | Extra characters to preserve while casing summaries and descriptions |
 | `properties` | Casing for schema/path property keys and required names |
+| `propertiesKeepChars` | Extra characters to preserve while casing properties |
 | `parametersQuery` / `parametersHeader` / `parametersPath` / `parametersCookie` | Casing for inline parameter names by location |
+| `parametersQueryKeepChars` / `parametersHeaderKeepChars` / `parametersPathKeepChars` / `parametersCookieKeepChars` | Extra characters to preserve while casing inline parameter names |
 | `componentsSchemas` / `componentsExamples` / `componentsHeaders` / `componentsResponses` / `componentsRequestBodies` / `componentsSecuritySchemes` | Casing for component keys |
+| `componentsSchemasKeepChars` / `componentsExamplesKeepChars` / `componentsHeadersKeepChars` / `componentsResponsesKeepChars` / `componentsRequestBodiesKeepChars` / `componentsSecuritySchemesKeepChars` | Extra characters to preserve while casing component keys |
 | `componentsParametersQuery` / `componentsParametersHeader` / `componentsParametersPath` / `componentsParametersCookie` | Casing for `components.parameters` keys by parameter `in` |
+| `componentsParametersQueryKeepChars` / `componentsParametersHeaderKeepChars` / `componentsParametersPathKeepChars` / `componentsParametersCookieKeepChars` | Extra characters to preserve while casing `components.parameters` keys |
 
 Reference behavior:
 - Related `$ref` values are updated for renamed component keys.
+- Custom keep chars are merged with the built-in defaults (`$`, `@`).
 
 ## Generate
 

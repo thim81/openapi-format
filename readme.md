@@ -1327,11 +1327,17 @@ In this example, the customCasing.yaml file would contain the desired casing pre
 
 ```yaml
 operationId: snake_case
+operationIdKeepChars:
+  - .
 properties: camelCase
+propertiesKeepChars:
+  - .
 
 parametersQuery: kebab-case
 parametersHeader: kebab-case
 parametersPath: snake_case
+parametersQueryKeepChars:
+  - .
 
 componentsExamples: PascalCase
 componentsSchemas: camelCase
@@ -1343,14 +1349,20 @@ componentsSecuritySchemes: PascalCase
 componentsParametersQuery: snake_case
 componentsParametersHeader: kebab-case
 componentsParametersPath: camelCase
+componentsParametersQueryKeepChars:
+  - .
 ```
 
 **Casing Options:**
 In the customCasing.yaml, you can define the casing style for various OpenAPI properties, allowing you to customize the appearance of your document consistently.
 
 - `operationId`: Defines the casing for operation IDs. Example: snake_case, PascalCase, or camelCase.
+- `operationIdKeepChars`: Keeps selected characters while casing `operationId`. Example: `.` for dotted identifiers.
 - `properties`: Sets the casing for properties within components. Example: camelCase.
-- `parametersQuery`, `parametersHeader`, `parametersPath`: Define different casing styles for parameters based on their location (query, header, path). Example: snake_case, kebab-case.
+- `propertiesKeepChars`: Keeps selected characters while casing properties. Example: `.`.
+- `parametersQuery`, `parametersHeader`, `parametersPath`, `parametersCookie`: Define different casing styles for parameters based on their location (query, header, path, cookie). Example: snake_case, kebab-case.
+- `parametersQueryKeepChars`, `parametersHeaderKeepChars`, `parametersPathKeepChars`, `parametersCookieKeepChars`: Keep selected characters while casing inline parameters.
+- `componentsParametersQueryKeepChars`, `componentsParametersHeaderKeepChars`, `componentsParametersPathKeepChars`, `componentsParametersCookieKeepChars`: Keep selected characters while casing referenced parameters in `components.parameters`.
 - and many more
 
 See [OpenAPI formatting configuration options](#openapi-formatting-configuration-options) for the full list of casing options

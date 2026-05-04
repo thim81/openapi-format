@@ -69,19 +69,41 @@ declare module 'openapi-format' {
 
   export interface OpenAPICasingSet {
     operationId?: string;
+    operationIdKeepChars?: string[];
+    summary?: string;
+    summaryKeepChars?: string[];
+    description?: string;
+    descriptionKeepChars?: string[];
     properties?: string;
+    propertiesKeepChars?: string[];
     parametersQuery?: string;
+    parametersQueryKeepChars?: string[];
     parametersHeader?: string;
+    parametersHeaderKeepChars?: string[];
     parametersPath?: string;
+    parametersPathKeepChars?: string[];
+    parametersCookie?: string;
+    parametersCookieKeepChars?: string[];
     componentsExamples?: string;
+    componentsExamplesKeepChars?: string[];
     componentsSchemas?: string;
+    componentsSchemasKeepChars?: string[];
     componentsHeaders?: string;
+    componentsHeadersKeepChars?: string[];
     componentsResponses?: string;
+    componentsResponsesKeepChars?: string[];
     componentsRequestBodies?: string;
+    componentsRequestBodiesKeepChars?: string[];
     componentsSecuritySchemes?: string;
+    componentsSecuritySchemesKeepChars?: string[];
     componentsParametersQuery?: string;
+    componentsParametersQueryKeepChars?: string[];
     componentsParametersHeader?: string;
+    componentsParametersHeaderKeepChars?: string[];
     componentsParametersPath?: string;
+    componentsParametersPathKeepChars?: string[];
+    componentsParametersCookie?: string;
+    componentsParametersCookieKeepChars?: string[];
     [key: string]: unknown;
   }
 
@@ -199,7 +221,7 @@ declare module 'openapi-format' {
   export function detectFormat(input: string): Promise<'json' | 'yaml' | 'unknown'>;
   export function analyzeOpenApi(oaObj: OpenApiDocument): AnalyzeOpenApiResult;
 
-  export function changeCase(valueAsString: string, caseType: string): string;
+  export function changeCase(valueAsString: string, caseType: string, customKeepChars?: string[]): string;
   export function resolveJsonPath(obj: Record<string, unknown> | unknown[], path: string): JsonPathNode[];
   export function resolveJsonPathValue(obj: Record<string, unknown> | unknown[], path: string): unknown[];
 }

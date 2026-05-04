@@ -46,14 +46,15 @@ function changeParametersCasingEnabled(casingSet) {
  * Change Object keys case function
  * @param {object} obj
  * @param {string} caseType
+ * @param {string[]} customKeepChars Custom characters to keep
  * @returns {*}
  */
-function changeObjKeysCase(obj, caseType) {
+function changeObjKeysCase(obj, caseType, customKeepChars = null) {
   if (!isObject(obj)) return obj;
 
   const orgObj = JSON.parse(JSON.stringify(obj)); // Deep copy of the object
   let replacedItems = Object.keys(orgObj).map(key => {
-    const newKey = changeCase(key, caseType);
+    const newKey = changeCase(key, caseType, customKeepChars);
     return {[newKey]: orgObj[key]};
   });
   return Object.assign({}, ...replacedItems);
@@ -63,16 +64,45 @@ function changeObjKeysCase(obj, caseType) {
  * Change object keys case in array function
  * @param {object} node
  * @param {string} caseType
+ * @param {string[]} customKeepChars Custom characters to keep
  * @returns {*}
  */
-function changeArrayObjKeysCase(node, caseType) {
+function changeArrayObjKeysCase(node, caseType, customKeepChars = null) {
   if (!isArray(node)) return node;
 
   const casedNode = JSON.parse(JSON.stringify(node)); // Deep copy of the schema object
   for (let i = 0; i < casedNode.length; i++) {
-    casedNode[i] = changeObjKeysCase(casedNode[i], caseType);
+    casedNode[i] = changeObjKeysCase(casedNode[i], caseType, customKeepChars);
   }
   return casedNode;
+}
+
+/**
+ * Build the keep character list for case-anything.
+ * Always preserves the built-in defaults and appends any custom characters.
+ * @param {string[]} customKeepChars Custom characters to keep
+ * @returns {string[]}
+ */
+function normalizeKeepChars(customKeepChars = null) {
+  if (customKeepChars == null) {
+    return ['$', '@'];
+  }
+
+  if (!isArray(customKeepChars)) {
+    return customKeepChars;
+  }
+
+  if (customKeepChars.length === 0) {
+    return [];
+  }
+
+  const keepChars = ['$', '@'];
+  customKeepChars.forEach(char => {
+    if (!keepChars.includes(char)) {
+      keepChars.push(char);
+    }
+  });
+  return keepChars;
 }
 
 /**
@@ -84,7 +114,7 @@ function changeArrayObjKeysCase(node, caseType) {
  */
 function changeCase(valueAsString, caseType, customKeepChars = null) {
   if (!isString(valueAsString) || valueAsString === '') return valueAsString;
-  const keepChars = customKeepChars || ['$', '@'];
+  const keepChars = normalizeKeepChars(customKeepChars);
   const cleanedString = valueAsString.replace(/\[(.*?)]/g, (match, p1) => {
     return ' ' + p1.replace(/([A-Z])/g, ' $1') + ' ';
   });

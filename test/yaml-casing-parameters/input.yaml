@@ -121,7 +121,7 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: limitItems
+        - name: cursor.created_at
           in: query
           description: ID of pet to return
           required: true
