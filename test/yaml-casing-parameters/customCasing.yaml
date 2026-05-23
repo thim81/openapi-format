@@ -1,3 +1,5 @@
-parametersQuery: snake_case
+parametersQuery: camelCase
+parametersQueryKeepChars:
+  - .
 parametersHeader: snake_case
 parametersPath: snake_case

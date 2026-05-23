@@ -889,23 +889,24 @@ async function openapiChangeCase(oaObj, options) {
   let jsonObj = JSON.parse(JSON.stringify(oaObj)); // Deep copy of the schema object
   let defaultCasing = {}; // JSON.parse(fs.readFileSync(__dirname + "/defaultFilter.json", 'utf8'))
   let casingSet = Object.assign({}, defaultCasing, options.casingSet);
+  const getKeepChars = target => casingSet[`${target}KeepChars`];
 
   let debugCasingStep = ''; // uncomment // debugCasingStep below to see which sort part is triggered
 
   // Could add a default for all types pretty easily.
   const changeCasingKeyPlans = {
-    query: casingSet.componentsParametersQuery,
-    path: casingSet.componentsParametersPath,
-    header: casingSet.componentsParametersHeader,
-    cookie: casingSet.componentsParametersCookie
+    query: {case: casingSet.componentsParametersQuery, keep: getKeepChars('componentsParametersQuery')},
+    path: {case: casingSet.componentsParametersPath, keep: getKeepChars('componentsParametersPath')},
+    header: {case: casingSet.componentsParametersHeader, keep: getKeepChars('componentsParametersHeader')},
+    cookie: {case: casingSet.componentsParametersCookie, keep: getKeepChars('componentsParametersCookie')}
   };
 
   // Could add a default for all types pretty easily.
   const changeCasingNamePlans = {
-    query: casingSet.parametersQuery,
-    path: casingSet.parametersPath,
-    header: casingSet.parametersHeader,
-    cookie: casingSet.parametersCookie
+    query: {case: casingSet.parametersQuery, keep: getKeepChars('parametersQuery')},
+    path: {case: casingSet.parametersPath, keep: getKeepChars('parametersPath')},
+    header: {case: casingSet.parametersHeader, keep: getKeepChars('parametersHeader')},
+    cookie: {case: casingSet.parametersCookie, keep: getKeepChars('parametersCookie')}
   };
 
   // Initiate components tracking
@@ -920,17 +921,17 @@ async function openapiChangeCase(oaObj, options) {
       // Change components/schemas - names
       if (this.path[1] === 'schemas' && this.path.length === 2 && casingSet.componentsSchemas) {
         // debugCasingStep = 'Casing - components/schemas - names'
-        this.update(changeObjKeysCase(node, casingSet.componentsSchemas));
+        this.update(changeObjKeysCase(node, casingSet.componentsSchemas, getKeepChars('componentsSchemas')));
       }
       // Change components/examples - names
       if (this.path[1] === 'examples' && this.path.length === 2 && casingSet.componentsExamples) {
         // debugCasingStep = 'Casing - components/examples - names'
-        this.update(changeObjKeysCase(node, casingSet.componentsExamples));
+        this.update(changeObjKeysCase(node, casingSet.componentsExamples, getKeepChars('componentsExamples')));
       }
       // Change components/headers - names
       if (this.path[1] === 'headers' && this.path.length === 2 && casingSet.componentsHeaders) {
         // debugCasingStep = 'Casing - components/headers - names'
-        this.update(changeObjKeysCase(node, casingSet.componentsHeaders));
+        this.update(changeObjKeysCase(node, casingSet.componentsHeaders, getKeepChars('componentsHeaders')));
       }
       // Change components/parameters - in:query/in:headers/in:path/in:cookie - key
       if (
@@ -943,13 +944,14 @@ async function openapiChangeCase(oaObj, options) {
           const parameterFoundIn = orgObj[key].in;
           if (orgObj[key].in && changeCasingKeyPlans.hasOwnProperty(parameterFoundIn)) {
             const changeCasingKeyPlan = changeCasingKeyPlans[parameterFoundIn];
-            if (changeCasingKeyPlan) {
+            if (changeCasingKeyPlan && changeCasingKeyPlan.case) {
               // debugCasingStep = `Casing - components/parameters - in:${parameterFoundIn} - key`
-              const newKey = changeCase(key, changeCasingKeyPlan);
+              const newKey = changeCase(key, changeCasingKeyPlan.case, changeCasingKeyPlan.keep);
               comps.parameters[key] = newKey;
               return {[newKey]: orgObj[key]};
             }
           }
+          return {[key]: orgObj[key]};
         });
         this.update(Object.assign({}, ...replacedItems));
       }
@@ -957,9 +959,9 @@ async function openapiChangeCase(oaObj, options) {
       if (this.path[1] === 'parameters' && this.path.length === 3) {
         if (node.in && changeCasingNamePlans.hasOwnProperty(node.in)) {
           const changeCasingNamePlan = changeCasingNamePlans[node.in];
-          if (changeCasingNamePlan) {
+          if (changeCasingNamePlan.case) {
             // debugCasingStep = `Casing - path > parameters/${node.in} - name`
-            node.name = changeCase(node.name, changeCasingNamePlan);
+            node.name = changeCase(node.name, changeCasingNamePlan.case, changeCasingNamePlan.keep);
             this.update(node);
           }
         }
@@ -967,17 +969,21 @@ async function openapiChangeCase(oaObj, options) {
       // Change components/responses - names
       if (this.path[1] === 'responses' && this.path.length === 2 && casingSet.componentsResponses) {
         // debugCasingStep = 'Casing - components/responses - names'
-        this.update(changeObjKeysCase(node, casingSet.componentsResponses));
+        this.update(changeObjKeysCase(node, casingSet.componentsResponses, getKeepChars('componentsResponses')));
       }
       // Change components/requestBodies - names
       if (this.path[1] === 'requestBodies' && this.path.length === 2 && casingSet.componentsRequestBodies) {
         // debugCasingStep = 'Casing - components/requestBodies - names'
-        this.update(changeObjKeysCase(node, casingSet.componentsRequestBodies));
+        this.update(
+          changeObjKeysCase(node, casingSet.componentsRequestBodies, getKeepChars('componentsRequestBodies'))
+        );
       }
       // Change components/securitySchemes - names
       if (this.path[1] === 'securitySchemes' && this.path.length === 2 && casingSet.componentsSecuritySchemes) {
         // debugCasingStep = 'Casing - components/securitySchemes - names'
-        this.update(changeObjKeysCase(node, casingSet.componentsSecuritySchemes));
+        this.update(
+          changeObjKeysCase(node, casingSet.componentsSecuritySchemes, getKeepChars('componentsSecuritySchemes'))
+        );
       }
     }
   });
@@ -988,15 +994,29 @@ async function openapiChangeCase(oaObj, options) {
     if (this.key === '$ref') {
       if (node.startsWith('#/components/schemas/') && casingSet.componentsSchemas) {
         const compName = node.replace('#/components/schemas/', '');
-        this.update(`#/components/schemas/${changeCase(compName, casingSet.componentsSchemas)}`);
+        this.update(
+          `#/components/schemas/${changeCase(compName, casingSet.componentsSchemas, getKeepChars('componentsSchemas'))}`
+        );
       }
       if (node.startsWith('#/components/examples/') && casingSet.componentsExamples) {
         const compName = node.replace('#/components/examples/', '');
-        this.update(`#/components/examples/${changeCase(compName, casingSet.componentsExamples)}`);
+        this.update(
+          `#/components/examples/${changeCase(
+            compName,
+            casingSet.componentsExamples,
+            getKeepChars('componentsExamples')
+          )}`
+        );
       }
       if (node.startsWith('#/components/responses/') && casingSet.componentsResponses) {
         const compName = node.replace('#/components/responses/', '');
-        this.update(`#/components/responses/${changeCase(compName, casingSet.componentsResponses)}`);
+        this.update(
+          `#/components/responses/${changeCase(
+            compName,
+            casingSet.componentsResponses,
+            getKeepChars('componentsResponses')
+          )}`
+        );
       }
       if (node.startsWith('#/components/parameters/')) {
         const compName = node.replace('#/components/parameters/', '');
@@ -1006,37 +1026,51 @@ async function openapiChangeCase(oaObj, options) {
       }
       if (node.startsWith('#/components/headers/') && casingSet.componentsHeaders) {
         const compName = node.replace('#/components/headers/', '');
-        this.update(`#/components/headers/${changeCase(compName, casingSet.componentsHeaders)}`);
+        this.update(
+          `#/components/headers/${changeCase(compName, casingSet.componentsHeaders, getKeepChars('componentsHeaders'))}`
+        );
       }
       if (node.startsWith('#/components/requestBodies/') && casingSet.componentsRequestBodies) {
         const compName = node.replace('#/components/requestBodies/', '');
-        this.update(`#/components/requestBodies/${changeCase(compName, casingSet.componentsRequestBodies)}`);
+        this.update(
+          `#/components/requestBodies/${changeCase(
+            compName,
+            casingSet.componentsRequestBodies,
+            getKeepChars('componentsRequestBodies')
+          )}`
+        );
       }
       if (node.startsWith('#/components/securitySchemes/') && casingSet.componentsSecuritySchemes) {
         const compName = node.replace('#/components/securitySchemes/', '');
-        this.update(`#/components/securitySchemes/${changeCase(compName, casingSet.componentsSecuritySchemes)}`);
+        this.update(
+          `#/components/securitySchemes/${changeCase(
+            compName,
+            casingSet.componentsSecuritySchemes,
+            getKeepChars('componentsSecuritySchemes')
+          )}`
+        );
       }
     }
 
     // Change operationId
     if (this.key === 'operationId' && casingSet.operationId && this.path[0] === 'paths' && this.path.length === 4) {
       // debugCasingStep = 'Casing - Single field - OperationId'
-      this.update(changeCase(node, casingSet.operationId));
+      this.update(changeCase(node, casingSet.operationId, getKeepChars('operationId')));
     }
     // Change summary
     if (this.key === 'summary' && casingSet.summary) {
       // debugCasingStep = 'Casing - Single field - summary'
-      this.update(changeCase(node, casingSet.summary));
+      this.update(changeCase(node, casingSet.summary, getKeepChars('summary')));
     }
     // Change description
     if (this.key === 'description' && casingSet.description) {
       // debugCasingStep = 'Casing - Single field - description'
-      this.update(changeCase(node, casingSet.description));
+      this.update(changeCase(node, casingSet.description, getKeepChars('description')));
     }
     // Change paths > examples - name
     if (this.path[0] === 'paths' && this.key === 'examples' && casingSet.componentsExamples) {
       // debugCasingStep = 'Casing - Single field - examples name'
-      this.update(changeObjKeysCase(node, casingSet.componentsExamples));
+      this.update(changeObjKeysCase(node, casingSet.componentsExamples, getKeepChars('componentsExamples')));
     }
     // Change components/schemas - properties
     if (
@@ -1048,12 +1082,12 @@ async function openapiChangeCase(oaObj, options) {
       this.parent.key !== 'value'
     ) {
       // debugCasingStep = 'Casing - components/schemas - properties name'
-      this.update(changeObjKeysCase(node, casingSet.properties));
+      this.update(changeObjKeysCase(node, casingSet.properties, getKeepChars('properties')));
     }
     // Change components/schemas - required properties
     if (this.path[1] === 'schemas' && this.parent.key === 'required' && casingSet.properties) {
       // debugCasingStep = 'Casing - components/schemas - required properties'
-      this.update(changeCase(node, casingSet.properties));
+      this.update(changeCase(node, casingSet.properties, getKeepChars('properties')));
     }
     // Change paths > schema - properties
     if (
@@ -1065,12 +1099,14 @@ async function openapiChangeCase(oaObj, options) {
       this.parent.key !== 'value'
     ) {
       // debugCasingStep = 'Casing - paths > schema - properties name'
-      this.update(changeObjKeysCase(node, casingSet.properties));
+      this.update(changeObjKeysCase(node, casingSet.properties, getKeepChars('properties')));
     }
     // Change security - keys
     if (this.path[0] === 'paths' && this.key === 'security' && isArray(node) && casingSet.componentsSecuritySchemes) {
       // debugCasingStep = 'Casing - path > - security'
-      this.update(changeArrayObjKeysCase(node, casingSet.componentsSecuritySchemes));
+      this.update(
+        changeArrayObjKeysCase(node, casingSet.componentsSecuritySchemes, getKeepChars('componentsSecuritySchemes'))
+      );
     }
     // Change parameters - name
     if (this.path[0] === 'paths' && this.key === 'parameters' && changeParametersCasingEnabled(casingSet)) {
@@ -1081,9 +1117,9 @@ async function openapiChangeCase(oaObj, options) {
       for (let i = 0; i < params.length; i++) {
         if (params[i].in && changeCasingNamePlans.hasOwnProperty(params[i].in)) {
           const changeCasingNamePlan = changeCasingNamePlans[params[i].in];
-          if (changeCasingNamePlan) {
+          if (changeCasingNamePlan.case) {
             // debugCasingStep = 'Casing - path > parameters/query- name'
-            params[i].name = changeCase(params[i].name, changeCasingNamePlan);
+            params[i].name = changeCase(params[i].name, changeCasingNamePlan.case, changeCasingNamePlan.keep);
           }
         }
       }

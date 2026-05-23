@@ -165,8 +165,17 @@ describe('openapi-format CLI casing tests', () => {
     it('casing should keep default @$ characters', async () => {
       expect(of.changeCase('@openapi-format$}}', 'snake_case')).toBe('@openapi_format$');
     });
-    it('casing should remove all custom characters', async () => {
+    it('casing should keep custom dot characters and defaults', async () => {
+      expect(of.changeCase('cursor.created_at', 'camelCase', ['.'])).toBe('cursor.createdAt');
+    });
+    it('casing should merge custom characters with built-in defaults', async () => {
+      expect(of.changeCase('@openapi-$format.v2', 'camelCase', ['.'])).toBe('@openapi$format.v2');
+    });
+    it('casing should allow callers to disable built-in defaults with an empty array', async () => {
       expect(of.changeCase('@openapi-$format}}', 'snake_case', [])).toBe('openapi_format');
+    });
+    it('casing should keep default @$ characters when no custom keep chars are provided', async () => {
+      expect(of.changeCase('@openapi-$format}}', 'snake_case')).toBe('@openapi$format');
     });
   });
 });

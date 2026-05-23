@@ -121,7 +121,7 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: limit_items
+        - name: cursor.createdAt
           in: query
           description: ID of pet to return
           required: true
@@ -604,7 +604,7 @@ components:
       summary: A payload example for a notification
   parameters:
     skipParam:
-      name: skip_items
+      name: skipItems
       in: query
       description: number of items to skip
       required: true
@@ -612,7 +612,7 @@ components:
         type: integer
         format: int32
     limitParam:
-      name: $limit_param
+      name: $limitParam
       in: query
       description: max records to return
       required: true
