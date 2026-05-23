@@ -228,6 +228,55 @@ describe('openapi-format core API', () => {
     expect(result.data.components.parameters['cursor.v1'].name).toBe('cursor.v1');
     expect(result.data.paths['/pets'].get.parameters[0].$ref).toBe('#/components/parameters/cursor.v1');
   });
+
+  it('openapiChangeCase should leave unconfigured component parameter keys unchanged', async () => {
+    const doc = {
+      openapi: '3.0.0',
+      info: {title: 'API', version: '1.0.0'},
+      paths: {
+        '/pets': {
+          get: {
+            parameters: [
+              {
+                $ref: '#/components/parameters/Cursor.v1'
+              },
+              {
+                $ref: '#/components/parameters/X-Request-Id'
+              }
+            ],
+            responses: {200: {description: 'ok'}}
+          }
+        }
+      },
+      components: {
+        parameters: {
+          'Cursor.v1': {
+            name: 'cursor.v1',
+            in: 'query',
+            schema: {type: 'string'}
+          },
+          'X-Request-Id': {
+            name: 'X-Request-Id',
+            in: 'header',
+            schema: {type: 'string'}
+          }
+        }
+      }
+    };
+
+    const result = await openapiChangeCase(doc, {
+      casingSet: {
+        componentsParametersQuery: 'camelCase',
+        componentsParametersQueryKeepChars: ['.']
+      }
+    });
+
+    expect(Object.keys(result.data.components.parameters)).toContain('cursor.v1');
+    expect(Object.keys(result.data.components.parameters)).toContain('X-Request-Id');
+
+    expect(result.data.paths['/pets'].get.parameters[0].$ref).toBe('#/components/parameters/cursor.v1');
+    expect(result.data.paths['/pets'].get.parameters[1].$ref).toBe('#/components/parameters/X-Request-Id');
+  });
 });
 
 describe('openapiSplit API', () => {

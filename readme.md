@@ -1356,16 +1356,22 @@ componentsParametersQueryKeepChars:
 **Casing Options:**
 In the customCasing.yaml, you can define the casing style for various OpenAPI properties, allowing you to customize the appearance of your document consistently.
 
-- `operationId`: Defines the casing for operation IDs. Example: snake_case, PascalCase, or camelCase.
+For every casing option, you can optionally define a matching `*KeepChars` option. This follows the same per-element configuration model as the casing rules themselves: different OpenAPI elements can have different casing conventions, and they may also need to preserve different separator characters. For example, query parameters may preserve dots for nested parameter names, while component schemas may preserve dots for versioned names.
+
+- `operationId`: Defines the casing for operation IDs. Example: `snake_case`, `PascalCase`, or `camelCase`.
 - `operationIdKeepChars`: Keeps selected characters while casing `operationId`. Example: `.` for dotted identifiers.
-- `properties`: Sets the casing for properties within components. Example: camelCase.
-- `propertiesKeepChars`: Keeps selected characters while casing properties. Example: `.`.
-- `parametersQuery`, `parametersHeader`, `parametersPath`, `parametersCookie`: Define different casing styles for parameters based on their location (query, header, path, cookie). Example: snake_case, kebab-case.
-- `parametersQueryKeepChars`, `parametersHeaderKeepChars`, `parametersPathKeepChars`, `parametersCookieKeepChars`: Keep selected characters while casing inline parameters.
-- `componentsParametersQueryKeepChars`, `componentsParametersHeaderKeepChars`, `componentsParametersPathKeepChars`, `componentsParametersCookieKeepChars`: Keep selected characters while casing referenced parameters in `components.parameters`.
-- and many more
+- `properties`: Sets the casing for properties within schemas. Example: `camelCase`.
+- `propertiesKeepChars`: Keeps selected characters while casing schema properties. Example: `.` for dotted property names.
+- `parametersQuery`, `parametersHeader`, `parametersPath`, `parametersCookie`: Define different casing styles for parameters based on their location. Example: `camelCase` for query parameters, `kebab-case` for headers, or `snake_case` for path parameters.
+- `parametersQueryKeepChars`, `parametersHeaderKeepChars`, `parametersPathKeepChars`, `parametersCookieKeepChars`: Keep selected characters while casing inline parameter names.
+- `componentsSchemas`, `componentsExamples`, `componentsHeaders`, `componentsResponses`, `componentsRequestBodies`, `componentsSecuritySchemes`: Define casing styles for component keys.
+- `componentsSchemasKeepChars`, `componentsExamplesKeepChars`, `componentsHeadersKeepChars`, `componentsResponsesKeepChars`, `componentsRequestBodiesKeepChars`, `componentsSecuritySchemesKeepChars`: Keep selected characters while casing component keys.
+- `componentsParametersQuery`, `componentsParametersHeader`, `componentsParametersPath`, `componentsParametersCookie`: Define casing styles for reusable parameters in `components.parameters`, based on their `in` value.
+- `componentsParametersQueryKeepChars`, `componentsParametersHeaderKeepChars`, `componentsParametersPathKeepChars`, `componentsParametersCookieKeepChars`: Keep selected characters while casing reusable parameter keys in `components.parameters`.
 
 See [OpenAPI formatting configuration options](#openapi-formatting-configuration-options) for the full list of casing options
+
+Note: When custom keep characters are configured, they are merged with the default characters that `openapi-format` already preserves: `$` and `@`. To disable the default preserved characters for direct `changeCase` usage, pass an empty array as the custom keep characters.
 
 ## CLI Bundle & Split usage
 

@@ -944,13 +944,14 @@ async function openapiChangeCase(oaObj, options) {
           const parameterFoundIn = orgObj[key].in;
           if (orgObj[key].in && changeCasingKeyPlans.hasOwnProperty(parameterFoundIn)) {
             const changeCasingKeyPlan = changeCasingKeyPlans[parameterFoundIn];
-            if (changeCasingKeyPlan) {
+            if (changeCasingKeyPlan && changeCasingKeyPlan.case) {
               // debugCasingStep = `Casing - components/parameters - in:${parameterFoundIn} - key`
               const newKey = changeCase(key, changeCasingKeyPlan.case, changeCasingKeyPlan.keep);
               comps.parameters[key] = newKey;
               return {[newKey]: orgObj[key]};
             }
           }
+          return {[key]: orgObj[key]};
         });
         this.update(Object.assign({}, ...replacedItems));
       }
