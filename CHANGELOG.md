@@ -1,5 +1,8 @@
 ## unreleased
 
+## [1.32.1] - 2026-05-23
+
+- CLI: Handle emptied unusedComponents (#210)
 
 ## [1.32.0] - 2026-05-23
 
