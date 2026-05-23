@@ -1,0 +1,24 @@
+operationId: snake_case
+operationIdKeepChars:
+  - .
+properties: camelCase
+propertiesKeepChars:
+  - .
+parametersQuery: camelCase
+parametersQueryKeepChars:
+  - .
+parametersHeader: kebab-case
+parametersPath: snake_case
+componentsExamples: PascalCase
+componentsSchemas: PascalCase
+componentsSchemasKeepChars:
+  - .
+componentsHeaders: kebab-case
+componentsResponses: snake_case
+componentsRequestBodies: snake_case
+componentsSecuritySchemes: PascalCase
+componentsParametersQuery: snake_case
+componentsParametersQueryKeepChars:
+  - .
+componentsParametersHeader: kebab-case
+componentsParametersPath: camelCase

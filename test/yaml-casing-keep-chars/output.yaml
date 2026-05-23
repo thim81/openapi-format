@@ -1,0 +1,22 @@
+paths:
+  /users/{userId}:
+    get:
+      operationId: get_user.v_1
+      parameters:
+        - name: cursor.createdAt
+          in: query
+          description: Pagination cursor
+        - name: pageSize.v1
+          in: query
+          description: Page size hint
+components:
+  schemas:
+    Pet.V1:
+      type: object
+      properties:
+        accountId.v2:
+          type: string
+  parameters:
+    limit_page_param:
+      name: pageSize.v1
+      in: query
