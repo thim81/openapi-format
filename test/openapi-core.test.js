@@ -90,6 +90,30 @@ describe('openapi-format core API', () => {
     expect(resultWithResponses.data.components.schemas).toHaveProperty('Pet');
   });
 
+  it('openapiFilter should not crash when unusedComponents recurses over an empty securitySchemes type', async () => {
+    const doc = {
+      openapi: '3.0.0',
+      info: {title: 'API', version: '1.0.0'},
+      components: {
+        securitySchemes: {
+          MyAuth: {
+            type: 'http',
+            scheme: 'bearer'
+          }
+        }
+      },
+      paths: {}
+    };
+
+    await expect(
+      openapiFilter(doc, {
+        filterSet: {
+          unusedComponents: ['securitySchemes']
+        }
+      })
+    ).resolves.toHaveProperty('data');
+  });
+
   it('openapiChangeCase should apply summary, description and securitySchemes ref casing', async () => {
     const doc = {
       openapi: '3.0.0',
