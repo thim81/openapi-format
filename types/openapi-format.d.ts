@@ -127,7 +127,7 @@ declare module 'openapi-format' {
     target: string;
     update?: unknown;
     remove?: boolean;
-    copy?: boolean;
+    copy?: string | boolean;
     from?: string;
     description?: string;
     [key: `x-${string}`]: unknown;

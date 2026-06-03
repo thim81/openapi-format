@@ -1222,8 +1222,7 @@ actions:
   - target: "$.paths['/example'].get.parameters"
     remove: true   # Example of removing an element
   - target: "$.info.title"
-    copy: true
-    from: "$.info.version"
+    copy: "$.info.version"
 ```
 
 For more information about the OpenAPI Overlay options, see [OpenAPI Overlay Specification 1.1.0](https://spec.openapis.org/overlay/v1.1.0.html).
@@ -1260,7 +1259,8 @@ Notes:
 - Overlay actions are processed in strict mode and validated before applying:
   - `target` must be valid JSONPath.
   - At least one of `update`, `remove`, or `copy` must be present.
-  - `copy: true` requires `from`, and `from` must resolve to exactly one source node.
+  - `copy` must be a JSONPath string and resolve to exactly one source node.
+  - Legacy overlays using `copy: true` with `from` remain supported for compatibility, but new overlays should use `copy: "$.source.path"`.
 
 ## CLI generate usage
 
