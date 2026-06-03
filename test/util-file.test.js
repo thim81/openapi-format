@@ -221,7 +221,7 @@ describe('openapi-format CLI file tests', () => {
     });
 
     test('should use detected quote style for keys when YAML key quoting is required', async () => {
-      const obj = {responses: {'200': {description: 'ok'}}};
+      const obj = {responses: {200: {description: 'ok'}}};
 
       const result = await stringify(obj, {
         format: 'yaml',
@@ -327,7 +327,7 @@ describe('openapi-format CLI file tests', () => {
       const result = await parseString(yamlString, options);
 
       expect(result).toEqual({
-        responses: {'200': 'ok', '404': 'nope'},
+        responses: {200: 'ok', 404: 'nope'},
         meta: 'value'
       });
       expect(options.detectedYamlQuoteStyle).toBe('double');
