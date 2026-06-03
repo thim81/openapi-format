@@ -1,5 +1,10 @@
 ## unreleased
 
+## [1.33.0] - 2026-06-03
+
+- Overlay: Align overlay copy action with Overlay 1.1 (#212)
+- CLI: Keep quote preference (#213)
+
 ## [1.32.1] - 2026-05-23
 
 - CLI: Handle emptied unusedComponents (#210)
