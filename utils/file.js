@@ -180,6 +180,27 @@ function buildYamlStringifyOptions(lineWidth, options = {}) {
 }
 
 /**
+ * Extract YAML parse metadata that later stringify steps rely on.
+ * @param {import('yaml').Document} doc
+ * @param {object} [options]
+ */
+function applyYamlParseMetadata(doc, options = {}) {
+  const configuredQuoteStyle = options.yamlQuoteStyle || YAML_QUOTE_STYLE.DETECT;
+
+  if (options?.keepComments) {
+    options.yamlComments = extractComments(doc);
+  }
+
+  options.yamlValueFormats = extractYamlValueFormats(doc);
+
+  if (configuredQuoteStyle === YAML_QUOTE_STYLE.DETECT) {
+    const detectedQuoteStyle = detectYamlQuoteStyle(doc);
+    options.detectedYamlQuoteStyle = detectedQuoteStyle.style;
+    options.detectedYamlQuoteStyleHasQuotedScalars = detectedQuoteStyle.hasQuotedScalars;
+  }
+}
+
+/**
  * Converts a string object to a JSON/YAML object.
  * @param {string} str - The input string to be parsed (either JSON or YAML).
  * @param {object} options - Options to define the parsing behavior (e.g., keeping comments).
@@ -201,16 +222,7 @@ async function parseString(str, options = {}) {
   if (toYaml) {
     try {
       const doc = yaml.parseDocument(encodedContent);
-      const configuredQuoteStyle = options.yamlQuoteStyle || YAML_QUOTE_STYLE.DETECT;
-      if (options?.keepComments) {
-        options.yamlComments = extractComments(doc);
-      }
-      options.yamlValueFormats = extractYamlValueFormats(doc);
-      if (configuredQuoteStyle === YAML_QUOTE_STYLE.DETECT) {
-        const detectedQuoteStyle = detectYamlQuoteStyle(doc);
-        options.detectedYamlQuoteStyle = detectedQuoteStyle.style;
-        options.detectedYamlQuoteStyleHasQuotedScalars = detectedQuoteStyle.hasQuotedScalars;
-      }
+      applyYamlParseMetadata(doc, options);
       const obj = doc.toJS();
       if (typeof obj === 'object') {
         return obj;
@@ -310,6 +322,12 @@ async function parseFile(filePath, options = {}) {
   try {
     // Read local or remote file content and get format JSON or YAML
     let rawContent = await readFile(filePath, options);
+
+    if (options.format === 'yaml') {
+      const encodedContent = addQuotesToRefInString(encodeLargeNumbers(rawContent));
+      const doc = yaml.parseDocument(encodedContent);
+      applyYamlParseMetadata(doc, options);
+    }
 
     if (rawContent.includes('$ref') && options.bundle === true) {
       // Handler to Resolve references

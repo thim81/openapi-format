@@ -23,14 +23,14 @@ paths:
       tags:
         - items
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Item'
+                  $ref: "#/components/schemas/Item"
   /upload-binary:
     post:
       summary: Upload a raw binary file
@@ -41,7 +41,7 @@ paths:
         content:
           application/octet-stream: {}
       responses:
-        '204':
+        "204":
           description: No Content
   /upload-base64:
     post:
@@ -57,7 +57,7 @@ paths:
               contentEncoding: base64
               contentMediaType: image/png
       responses:
-        '204':
+        "204":
           description: No Content
   /upload-multipart:
     post:
@@ -77,7 +77,7 @@ paths:
                   type: string
                   contentMediaType: application/octet-stream
       responses:
-        '204':
+        "204":
           description: No Content
 components:
   schemas:
@@ -90,7 +90,7 @@ components:
         name:
           type:
             - string
-            - 'null'
+            - "null"
           examples:
             - fedora
       required:

@@ -217,6 +217,23 @@ describe('openapi-format CLI command', () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
+  it('should preserve detected root quote style when bundling refs', async () => {
+    const testName = 'yaml-quote-style-detect-bundle';
+    const testPath = `test/${testName}`;
+    const expectedOutputFile = `${testPath}/output.yaml`;
+    const tempOutputFile = path.join(os.tmpdir(), `openapi-format-${testName}-output.yaml`);
+    const expectedOutput = fs.readFileSync(expectedOutputFile, 'utf8');
+
+    const result = await testUtils.cli(
+      ['input.yaml', '--configFile options.yaml', `--output ${tempOutputFile}`],
+      testPath
+    );
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(fs.readFileSync(tempOutputFile, 'utf8')).toBe(expectedOutput);
+  });
+
   it('should keep JSON output unaffected by yamlQuoteStyle CLI option', async () => {
     const path = `test/json-default`;
     const inputFile = `${path}/input.json`;

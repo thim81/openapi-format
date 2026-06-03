@@ -1699,11 +1699,7 @@ const {
 const input = await parseFile('openapi.yaml'); // local path or remote URL
 const {data} = await openapiSort(input, {sort: true});
 
-const output = await stringify(data, {
-  format: 'yaml',
-  lineWidth: -1,
-  yamlQuoteStyle: 'detect'
-});
+const output = await stringify(data, {format: 'yaml', lineWidth: -1});
 await writeFile('openapi.sorted.yaml', output, {format: 'yaml'});
 ```
 
