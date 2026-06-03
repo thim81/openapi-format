@@ -168,6 +168,7 @@ Options:
 
   --no-sort             Don't sort the OpenAPI file                          [boolean]
   --keepComments        Don't remove the comments from the OpenAPI YAML file [boolean]
+  --yamlQuoteStyle      Preferred YAML quote style: single, double, detect    [string]
   --sortComponentsFile  The file with components to sort alphabetically         [path]
   --sortComponentsProps Sort properties within schema components alphabetically [boolean]
 
@@ -204,6 +205,7 @@ Options:
 | --overlayFile         | -l            | the file to specify OpenAPI overlay actions                                 | path to file |                            | optional |
 | --no-sort             |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                      | optional |
 | --keepComments        |               | don't remove the comments from the OpenAPI YAML file                        | boolean      | FALSE                      | optional |
+| --yamlQuoteStyle      |               | preferred YAML quote style for YAML output (`single`, `double`, `detect`)   | string       | detect                     | optional |
 | --sortComponentsFile  |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json | optional |
 | --sortComponentsProps |               | sort properties within schema components alphabetically                     | boolean      | FALSE                      | optional |
 | --no-bundle           |               | don't bundle the local and remote $ref in the OpenAPI document              | boolean      | FALSE                      | optional |
@@ -1222,8 +1224,7 @@ actions:
   - target: "$.paths['/example'].get.parameters"
     remove: true   # Example of removing an element
   - target: "$.info.title"
-    copy: true
-    from: "$.info.version"
+    copy: "$.info.version"
 ```
 
 For more information about the OpenAPI Overlay options, see [OpenAPI Overlay Specification 1.1.0](https://spec.openapis.org/overlay/v1.1.0.html).
@@ -1260,7 +1261,8 @@ Notes:
 - Overlay actions are processed in strict mode and validated before applying:
   - `target` must be valid JSONPath.
   - At least one of `update`, `remove`, or `copy` must be present.
-  - `copy: true` requires `from`, and `from` must resolve to exactly one source node.
+  - `copy` must be a JSONPath string and resolve to exactly one source node.
+  - Legacy overlays using `copy: true` with `from` remain supported for compatibility, but new overlays should use `copy: "$.source.path"`.
 
 ## CLI generate usage
 

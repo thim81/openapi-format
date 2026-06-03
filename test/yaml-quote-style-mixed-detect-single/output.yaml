@@ -1,0 +1,8 @@
+plainName: John
+quotedLabel: 'Hello: world'
+responses:
+  '200':
+    description: ok
+  '404':
+    description: 'Not: found'
+note: 'Label: A'

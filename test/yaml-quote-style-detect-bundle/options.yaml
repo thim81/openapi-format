@@ -1,0 +1,4 @@
+lineWidth: -1
+sort: false
+yamlQuoteStyle: detect
+output: output.yaml

@@ -116,6 +116,136 @@ describe('openapi-format CLI command', () => {
     expect(output).toStrictEqual(snap);
   });
 
+  it('should detect YAML quote style by default from config-driven output', async () => {
+    const testName = 'yaml-quote-style-detect';
+    const testPath = `test/${testName}`;
+    const expectedOutputFile = `${testPath}/output.yaml`;
+    const tempOutputFile = path.join(os.tmpdir(), `openapi-format-${testName}-output.yaml`);
+    const expectedOutput = fs.readFileSync(expectedOutputFile, 'utf8');
+
+    const result = await testUtils.cli(
+      ['input.yaml', '--configFile options.yaml', `--output ${tempOutputFile}`],
+      testPath
+    );
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(fs.readFileSync(tempOutputFile, 'utf8')).toBe(expectedOutput);
+  });
+
+  it('should apply yamlQuoteStyle from config files', async () => {
+    const testName = 'yaml-quote-style-config-double';
+    const testPath = `test/${testName}`;
+    const expectedOutputFile = `${testPath}/output.yaml`;
+    const tempOutputFile = path.join(os.tmpdir(), `openapi-format-${testName}-output.yaml`);
+    const expectedOutput = fs.readFileSync(expectedOutputFile, 'utf8');
+
+    const result = await testUtils.cli(
+      ['input.yaml', '--configFile options.yaml', `--output ${tempOutputFile}`],
+      testPath
+    );
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(fs.readFileSync(tempOutputFile, 'utf8')).toBe(expectedOutput);
+  });
+
+  it('should let the CLI yamlQuoteStyle flag override config file values', async () => {
+    const testName = 'yaml-quote-style-config-double';
+    const testPath = `test/${testName}`;
+    const tempOutputFile = path.join(os.tmpdir(), `openapi-format-${testName}-override-output.yaml`);
+
+    const result = await testUtils.cli(
+      ['input.yaml', '--configFile options.yaml', '--yamlQuoteStyle single', `--output ${tempOutputFile}`],
+      testPath
+    );
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(fs.readFileSync(tempOutputFile, 'utf8')).toContain("description: 'Hello: world'");
+    expect(fs.readFileSync(tempOutputFile, 'utf8')).not.toContain('description: "Hello: world"');
+  });
+
+  it('should not force quotes onto plain YAML strings for explicit yamlQuoteStyle values', async () => {
+    const testName = 'yaml-quote-style-config-double';
+    const testPath = `test/${testName}`;
+    const tempOutputFile = path.join(os.tmpdir(), `openapi-format-${testName}-plain-output.yaml`);
+
+    const result = await testUtils.cli(
+      ['input.yaml', '--configFile options.yaml', `--output ${tempOutputFile}`],
+      testPath
+    );
+
+    const output = fs.readFileSync(tempOutputFile, 'utf8');
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(output).toContain('name: John');
+    expect(output).not.toContain('name: "John"');
+    expect(output).not.toContain("name: 'John'");
+  });
+
+  it('should keep comments for YAML with explicit quote style', async () => {
+    const tempOutputFile = path.join(os.tmpdir(), 'openapi-format-yaml-quote-style-comments-output.yaml');
+    const result = await testUtils.cli(
+      [
+        'input.yaml',
+        '--filterFile customFilter.yaml',
+        '--configFile options.yaml',
+        '--keepComments',
+        '--yamlQuoteStyle double',
+        `--output ${tempOutputFile}`
+      ],
+      'test/yaml-no-sort-keep-comments'
+    );
+
+    const output = fs.readFileSync(tempOutputFile, 'utf8');
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(output).toContain('#');
+    expect(output).toContain('"');
+  });
+
+  it('should apply detected quote style uniformly to required quoted keys and values', async () => {
+    const path = 'test/yaml-preserve-example-props';
+    const inputFile = `${path}/input.yaml`;
+    const outputFile = `${path}/output.yaml`;
+    const output = await getLocalFile(outputFile);
+
+    const result = await testUtils.cli([inputFile, '--no-sort'], '.');
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
+  it('should preserve detected root quote style when bundling refs', async () => {
+    const testName = 'yaml-quote-style-detect-bundle';
+    const testPath = `test/${testName}`;
+    const expectedOutputFile = `${testPath}/output.yaml`;
+    const tempOutputFile = path.join(os.tmpdir(), `openapi-format-${testName}-output.yaml`);
+    const expectedOutput = fs.readFileSync(expectedOutputFile, 'utf8');
+
+    const result = await testUtils.cli(
+      ['input.yaml', '--configFile options.yaml', `--output ${tempOutputFile}`],
+      testPath
+    );
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(fs.readFileSync(tempOutputFile, 'utf8')).toBe(expectedOutput);
+  });
+
+  it('should keep JSON output unaffected by yamlQuoteStyle CLI option', async () => {
+    const path = `test/json-default`;
+    const inputFile = `${path}/input.json`;
+    const outputFile = `${path}/output.json`;
+    const output = await getLocalFile(outputFile);
+
+    let result = await testUtils.cli([inputFile, '--json', '--yamlQuoteStyle double'], '.');
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
+  });
+
   it('should load the default .openapiformatrc if configFile is not provided', async () => {
     // Mock the existence of the .openapiformatrc file
     const defaultConfigPath = '.openapiformatrc';

@@ -127,7 +127,7 @@ declare module 'openapi-format' {
     target: string;
     update?: unknown;
     remove?: boolean;
-    copy?: boolean;
+    copy?: string | boolean;
     from?: string;
     description?: string;
     [key: `x-${string}`]: unknown;
@@ -183,6 +183,7 @@ declare module 'openapi-format' {
     format?: string;
     json?: boolean;
     keepComments?: boolean;
+    yamlQuoteStyle?: 'single' | 'double' | 'detect';
     yamlComments?: Record<string, unknown>;
     lineWidth?: string | number;
     mode?: string;

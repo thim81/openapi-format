@@ -13,6 +13,11 @@ const COMMENT_TYPE = /** @type {const} */ ({
 });
 
 const YAML_VALUE_FORMATS_PROP = '__openapiFormatYamlValueFormats';
+const YAML_QUOTE_STYLE = /** @type {const} */ ({
+  SINGLE: 'single',
+  DOUBLE: 'double',
+  DETECT: 'detect'
+});
 
 /**
  * @typedef {typeof COMMENT_TYPE[keyof typeof COMMENT_TYPE]} CommentType
@@ -115,6 +120,87 @@ function injectComments(doc, comments) {
 }
 
 /**
+ * Detect the dominant quote style from a parsed YAML document.
+ * @param {import('yaml').Document} doc
+ * @returns {{style: 'single' | 'double', hasQuotedScalars: boolean}}
+ */
+function detectYamlQuoteStyle(doc) {
+  let singleQuotes = 0;
+  let doubleQuotes = 0;
+
+  yaml.visit(doc, {
+    Scalar(_, node) {
+      if (node.type === 'QUOTE_SINGLE') {
+        singleQuotes += 1;
+      }
+
+      if (node.type === 'QUOTE_DOUBLE') {
+        doubleQuotes += 1;
+      }
+    }
+  });
+
+  return {
+    style: doubleQuotes > singleQuotes ? YAML_QUOTE_STYLE.DOUBLE : YAML_QUOTE_STYLE.SINGLE,
+    hasQuotedScalars: singleQuotes + doubleQuotes > 0
+  };
+}
+
+/**
+ * Resolve the configured YAML quote style to an explicit mode.
+ * @param {object} [options]
+ * @returns {'single' | 'double'}
+ */
+function resolveYamlQuoteStyle(options = {}) {
+  const configuredQuoteStyle = options.yamlQuoteStyle || YAML_QUOTE_STYLE.DETECT;
+
+  if (configuredQuoteStyle === YAML_QUOTE_STYLE.DOUBLE) {
+    return YAML_QUOTE_STYLE.DOUBLE;
+  }
+
+  if (configuredQuoteStyle === YAML_QUOTE_STYLE.DETECT) {
+    return options.detectedYamlQuoteStyle || YAML_QUOTE_STYLE.SINGLE;
+  }
+
+  return YAML_QUOTE_STYLE.SINGLE;
+}
+
+/**
+ * Build YAML stringify/toString options, including quote-style control.
+ * @param {number} lineWidth
+ * @param {object} [options]
+ * @returns {{lineWidth: number, singleQuote: boolean}}
+ */
+function buildYamlStringifyOptions(lineWidth, options = {}) {
+  const style = resolveYamlQuoteStyle(options);
+  return {
+    lineWidth,
+    singleQuote: style !== YAML_QUOTE_STYLE.DOUBLE
+  };
+}
+
+/**
+ * Extract YAML parse metadata that later stringify steps rely on.
+ * @param {import('yaml').Document} doc
+ * @param {object} [options]
+ */
+function applyYamlParseMetadata(doc, options = {}) {
+  const configuredQuoteStyle = options.yamlQuoteStyle || YAML_QUOTE_STYLE.DETECT;
+
+  if (options?.keepComments) {
+    options.yamlComments = extractComments(doc);
+  }
+
+  options.yamlValueFormats = extractYamlValueFormats(doc);
+
+  if (configuredQuoteStyle === YAML_QUOTE_STYLE.DETECT) {
+    const detectedQuoteStyle = detectYamlQuoteStyle(doc);
+    options.detectedYamlQuoteStyle = detectedQuoteStyle.style;
+    options.detectedYamlQuoteStyleHasQuotedScalars = detectedQuoteStyle.hasQuotedScalars;
+  }
+}
+
+/**
  * Converts a string object to a JSON/YAML object.
  * @param {string} str - The input string to be parsed (either JSON or YAML).
  * @param {object} options - Options to define the parsing behavior (e.g., keeping comments).
@@ -136,10 +222,7 @@ async function parseString(str, options = {}) {
   if (toYaml) {
     try {
       const doc = yaml.parseDocument(encodedContent);
-      if (options?.keepComments) {
-        options.yamlComments = extractComments(doc);
-      }
-      options.yamlValueFormats = extractYamlValueFormats(doc);
+      applyYamlParseMetadata(doc, options);
       const obj = doc.toJS();
       if (typeof obj === 'object') {
         return obj;
@@ -240,6 +323,12 @@ async function parseFile(filePath, options = {}) {
     // Read local or remote file content and get format JSON or YAML
     let rawContent = await readFile(filePath, options);
 
+    if (options.format === 'yaml') {
+      const encodedContent = addQuotesToRefInString(encodeLargeNumbers(rawContent));
+      const doc = yaml.parseDocument(encodedContent);
+      applyYamlParseMetadata(doc, options);
+    }
+
     if (rawContent.includes('$ref') && options.bundle === true) {
       // Handler to Resolve references
       const resolver = async sourcePath => {
@@ -284,9 +373,10 @@ async function stringify(obj, options = {}) {
 
     if (toYaml) {
       const lineWidth = (options.lineWidth && options.lineWidth === -1 ? 0 : options.lineWidth) || 0;
+      const yamlStringifyOptions = buildYamlStringifyOptions(lineWidth, options);
 
       // Convert object to YAML string
-      output = yaml.stringify(obj, {lineWidth, singleQuote: true});
+      output = yaml.stringify(obj, yamlStringifyOptions);
 
       if (
         (options?.yamlComments?.length > 0 && options?.keepComments === true) ||
@@ -297,7 +387,7 @@ async function stringify(obj, options = {}) {
         if (options?.yamlComments?.length > 0 && options?.keepComments === true) {
           injectComments(newDoc, options.yamlComments);
         }
-        output = newDoc.toString({lineWidth});
+        output = newDoc.toString(yamlStringifyOptions);
       }
 
       // Decode large number YAML values safely before writing output

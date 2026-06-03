@@ -282,7 +282,7 @@ describe('openapi-format CLI overlay tests', () => {
       components: {}
     };
     const overlaySet = {
-      actions: [{target: '$.components', copy: true, from: '$.info'}]
+      actions: [{target: '$.components', copy: '$.info'}]
     };
 
     const result = await openapiOverlay(baseOAS, {overlaySet});
@@ -299,7 +299,7 @@ describe('openapi-format CLI overlay tests', () => {
       sourceServer: {url: 'https://api.backup.example.com'}
     };
     const overlaySet = {
-      actions: [{target: '$.servers', copy: true, from: '$.sourceServer'}]
+      actions: [{target: '$.servers', copy: '$.sourceServer'}]
     };
 
     const result = await openapiOverlay(baseOAS, {overlaySet});
@@ -312,7 +312,7 @@ describe('openapi-format CLI overlay tests', () => {
       serverPool: [{url: 'https://api.eu.example.com'}, {url: 'https://api.us.example.com'}]
     };
     const overlaySet = {
-      actions: [{target: '$.servers', copy: true, from: '$.serverPool'}]
+      actions: [{target: '$.servers', copy: '$.serverPool'}]
     };
 
     const result = await openapiOverlay(baseOAS, {overlaySet});
@@ -328,44 +328,58 @@ describe('openapi-format CLI overlay tests', () => {
       info: {title: 'Old title', description: 'New title'}
     };
     const overlaySet = {
-      actions: [{target: '$.info.title', copy: true, from: '$.info.description'}]
+      actions: [{target: '$.info.title', copy: '$.info.description'}]
     };
 
     const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.data.info.title).toBe('New title');
   });
 
-  it('should reject copy action when from resolves zero nodes', async () => {
+  it('should preserve legacy copy true with from source path', async () => {
+    const baseOAS = {
+      info: {title: 'Old title', description: 'Legacy title'}
+    };
+    const overlaySet = {
+      overlay: '1.1.0',
+      actions: [{target: '$.info.title', copy: true, from: '$.info.description'}]
+    };
+
+    const result = await openapiOverlay(baseOAS, {overlaySet});
+    expect(result.data.info.title).toBe('Legacy title');
+    expect(result.resultData.totalUsedActions).toBe(1);
+  });
+
+  it('should reject copy action when copy resolves zero nodes', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     const baseOAS = {
       info: {title: 'API'},
       components: {}
     };
     const overlaySet = {
-      actions: [{target: '$.components', copy: true, from: '$.missing'}]
+      actions: [{target: '$.components', copy: '$.missing'}]
     };
 
     const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.resultData.totalUsedActions).toBe(0);
     expect(result.resultData.totalUnusedActions).toBe(1);
-    expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: "from" must resolve to exactly one node, resolved 0.');
+    expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: "copy" must resolve to exactly one node, resolved 0.');
     consoleSpy.mockRestore();
   });
 
-  it('should reject copy action when from resolves multiple nodes', async () => {
+  it('should reject copy action when copy resolves multiple nodes', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     const baseOAS = {
       servers: [{url: 'https://api.example.com'}, {url: 'https://api.backup.example.com'}],
       components: {}
     };
     const overlaySet = {
-      actions: [{target: '$.components', copy: true, from: '$.servers[*]'}]
+      actions: [{target: '$.components', copy: '$.servers[*]'}]
     };
 
     const result = await openapiOverlay(baseOAS, {overlaySet});
     expect(result.resultData.totalUsedActions).toBe(0);
     expect(result.resultData.totalUnusedActions).toBe(1);
-    expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: "from" must resolve to exactly one node, resolved 2.');
+    expect(consoleSpy).toHaveBeenCalledWith('Overlay action #1: "copy" must resolve to exactly one node, resolved 2.');
     consoleSpy.mockRestore();
   });
 
@@ -380,8 +394,7 @@ describe('openapi-format CLI overlay tests', () => {
           target: '$',
           remove: true,
           update: {info: {title: 'Updated title'}},
-          copy: true,
-          from: '$.source'
+          copy: '$.source'
         }
       ]
     };
@@ -421,7 +434,7 @@ describe('openapi-format CLI overlay tests', () => {
       };
       const overlaySet = {
         overlay: '1.1.0',
-        actions: [{target: '$.components.schemas[*]', copy: true, from: '$.info.version'}]
+        actions: [{target: '$.components.schemas[*]', copy: '$.info.version'}]
       };
 
       const result = await openapiOverlay(baseOAS, {overlaySet});
@@ -439,7 +452,7 @@ describe('openapi-format CLI overlay tests', () => {
       const baseOAS = {info: {title: 'Sample API', version: '1.0.0'}};
       const overlaySet = {
         overlay: '1.0.0',
-        actions: [{target: '$.info.title', copy: true, from: '$.info.version'}]
+        actions: [{target: '$.info.title', copy: '$.info.version'}]
       };
 
       const result = await openapiOverlay(baseOAS, {overlaySet});
@@ -456,7 +469,7 @@ describe('openapi-format CLI overlay tests', () => {
       const baseOAS = {info: {title: 'Sample API', version: '1.0.0'}};
       const overlaySet = {
         overlay: '1.1.0',
-        actions: [{target: '$.info.title', copy: true, from: '$.info.version'}]
+        actions: [{target: '$.info.title', copy: '$.info.version'}]
       };
 
       const result = await openapiOverlay(baseOAS, {overlaySet});
@@ -469,7 +482,7 @@ describe('openapi-format CLI overlay tests', () => {
       const baseOAS = {info: {title: 'Sample API', version: '1.0.0'}};
       const overlaySet = {
         overlay: '   ',
-        actions: [{target: '$.info.title', copy: true, from: '$.info.version'}]
+        actions: [{target: '$.info.title', copy: '$.info.version'}]
       };
 
       const result = await openapiOverlay(baseOAS, {overlaySet});

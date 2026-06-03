@@ -30,7 +30,7 @@ async function openapiOverlay(oaObj, options) {
   }
 
   (overlayDoc?.actions || []).forEach((action, index) => {
-    const {target, update, remove, copy, from} = action || {};
+    const {target, update, remove, copy} = action || {};
     const actionLabel = `Overlay action #${index + 1}`;
 
     const validationError = validateOverlayAction(action, actionLabel, overlayVersion);
@@ -67,11 +67,11 @@ async function openapiOverlay(oaObj, options) {
     }
 
     // copy (third)
-    if (copy === true) {
+    if (hasOwn(action, 'copy')) {
       const copied = applyCopyAction({
         root: oaObj,
         target,
-        from,
+        sourcePath: getCopySourcePath(action),
         actionLabel
       });
       actionUsed = actionUsed || copied.used;
@@ -170,11 +170,8 @@ function validateOverlayAction(action, actionLabel, overlayVersion) {
     if (!isOverlay11x(overlayVersion)) {
       return `${actionLabel}: "copy" is only supported for overlay 1.1.x documents.`;
     }
-    if (action.copy !== true) {
-      return `${actionLabel}: "copy" must be set to true when present.`;
-    }
-    if (typeof action.from !== 'string' || !action.from.startsWith('$')) {
-      return `${actionLabel}: "from" must be a JSONPath string starting with "$" when "copy" is enabled.`;
+    if (typeof getCopySourcePath(action) !== 'string') {
+      return `${actionLabel}: "copy" must be a JSONPath string starting with "$" when present.`;
     }
   }
 
@@ -197,6 +194,18 @@ function applyRemoveAction(root, targetPath) {
     }
   });
   return true;
+}
+
+function getCopySourcePath(action) {
+  if (typeof action.copy === 'string' && action.copy.startsWith('$')) {
+    return action.copy;
+  }
+
+  if (action.copy === true && typeof action.from === 'string' && action.from.startsWith('$')) {
+    return action.from;
+  }
+
+  return undefined;
 }
 
 function applyUpdateAction({root, target, update, actionLabel, overlayVersion}) {
@@ -241,10 +250,10 @@ function applyUpdateAction({root, target, update, actionLabel, overlayVersion}) 
   return {root, used};
 }
 
-function applyCopyAction({root, target, from, actionLabel}) {
-  const fromNodes = resolveJsonPath(root, from);
+function applyCopyAction({root, target, sourcePath, actionLabel}) {
+  const fromNodes = resolveJsonPath(root, sourcePath);
   if (fromNodes.length !== 1) {
-    console.error(`${actionLabel}: "from" must resolve to exactly one node, resolved ${fromNodes.length}.`);
+    console.error(`${actionLabel}: "copy" must resolve to exactly one node, resolved ${fromNodes.length}.`);
     return {root, used: false};
   }
 
