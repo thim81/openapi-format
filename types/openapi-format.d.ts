@@ -183,6 +183,7 @@ declare module 'openapi-format' {
     format?: string;
     json?: boolean;
     keepComments?: boolean;
+    yamlQuoteStyle?: 'single' | 'double' | 'detect';
     yamlComments?: Record<string, unknown>;
     lineWidth?: string | number;
     mode?: string;

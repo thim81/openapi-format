@@ -168,6 +168,7 @@ Options:
 
   --no-sort             Don't sort the OpenAPI file                          [boolean]
   --keepComments        Don't remove the comments from the OpenAPI YAML file [boolean]
+  --yamlQuoteStyle      Preferred YAML quote style: single, double, detect    [string]
   --sortComponentsFile  The file with components to sort alphabetically         [path]
   --sortComponentsProps Sort properties within schema components alphabetically [boolean]
 
@@ -204,6 +205,7 @@ Options:
 | --overlayFile         | -l            | the file to specify OpenAPI overlay actions                                 | path to file |                            | optional |
 | --no-sort             |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                      | optional |
 | --keepComments        |               | don't remove the comments from the OpenAPI YAML file                        | boolean      | FALSE                      | optional |
+| --yamlQuoteStyle      |               | preferred YAML quote style for YAML output (`single`, `double`, `detect`)   | string       | detect                     | optional |
 | --sortComponentsFile  |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json | optional |
 | --sortComponentsProps |               | sort properties within schema components alphabetically                     | boolean      | FALSE                      | optional |
 | --no-bundle           |               | don't bundle the local and remote $ref in the OpenAPI document              | boolean      | FALSE                      | optional |
@@ -1697,7 +1699,11 @@ const {
 const input = await parseFile('openapi.yaml'); // local path or remote URL
 const {data} = await openapiSort(input, {sort: true});
 
-const output = await stringify(data, {format: 'yaml', lineWidth: -1});
+const output = await stringify(data, {
+  format: 'yaml',
+  lineWidth: -1,
+  yamlQuoteStyle: 'detect'
+});
 await writeFile('openapi.sorted.yaml', output, {format: 'yaml'});
 ```
 

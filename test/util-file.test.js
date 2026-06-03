@@ -172,6 +172,123 @@ describe('openapi-format CLI file tests', () => {
       const expectedJSON = JSON.stringify(obj, null, 2);
       expect(result).toEqual(expectedJSON);
     });
+
+    test('should not add quotes to plain YAML strings when yamlQuoteStyle is single', async () => {
+      const obj = {name: 'John'};
+
+      const result = await stringify(obj, {format: 'yaml', yamlQuoteStyle: 'single'});
+
+      expect(result).toContain('name: John');
+      expect(result).not.toContain("name: 'John'");
+    });
+
+    test('should not add quotes to plain YAML strings when yamlQuoteStyle is double', async () => {
+      const obj = {name: 'John'};
+
+      const result = await stringify(obj, {format: 'yaml', yamlQuoteStyle: 'double'});
+
+      expect(result).toContain('name: John');
+      expect(result).not.toContain('name: "John"');
+    });
+
+    test('should use single quotes when YAML quoting is required and yamlQuoteStyle is single', async () => {
+      const obj = {name: 'Hello: world'};
+
+      const result = await stringify(obj, {format: 'yaml', yamlQuoteStyle: 'single'});
+
+      expect(result).toContain("name: 'Hello: world'");
+    });
+
+    test('should use double quotes when YAML quoting is required and yamlQuoteStyle is double', async () => {
+      const obj = {name: 'Hello: world'};
+
+      const result = await stringify(obj, {format: 'yaml', yamlQuoteStyle: 'double'});
+
+      expect(result).toContain('name: "Hello: world"');
+    });
+
+    test('should use detected quote style when YAML quoting is required', async () => {
+      const obj = {name: 'Hello: world'};
+
+      const result = await stringify(obj, {
+        format: 'yaml',
+        yamlQuoteStyle: 'detect',
+        detectedYamlQuoteStyle: 'double',
+        detectedYamlQuoteStyleHasQuotedScalars: true
+      });
+
+      expect(result).toContain('name: "Hello: world"');
+    });
+
+    test('should use detected quote style for keys when YAML key quoting is required', async () => {
+      const obj = {responses: {'200': {description: 'ok'}}};
+
+      const result = await stringify(obj, {
+        format: 'yaml',
+        yamlQuoteStyle: 'detect',
+        detectedYamlQuoteStyle: 'single',
+        detectedYamlQuoteStyleHasQuotedScalars: true
+      });
+
+      expect(result).toContain("  '200':");
+      expect(result).not.toContain('  "200":');
+    });
+
+    test('should not add quotes in detect mode when YAML quoting is not required', async () => {
+      const obj = {name: 'John'};
+
+      const result = await stringify(obj, {
+        format: 'yaml',
+        yamlQuoteStyle: 'detect',
+        detectedYamlQuoteStyle: 'double',
+        detectedYamlQuoteStyleHasQuotedScalars: true
+      });
+
+      expect(result).toContain('name: John');
+      expect(result).not.toContain('name: "John"');
+    });
+
+    test('should preserve comments while honoring the resolved quote style', async () => {
+      const parsed = yaml.parseDocument('name: "Hello: world" # person\ncity: London\n');
+      const options = {
+        format: 'yaml',
+        yamlQuoteStyle: 'double',
+        keepComments: true,
+        yamlComments: [
+          {
+            path: ['name'],
+            type: 'inlineValue',
+            text: ' person'
+          }
+        ]
+      };
+
+      const result = await stringify(parsed.toJS(), options);
+
+      expect(result).toContain('name: "Hello: world" # person');
+    });
+
+    test('should preserve YAML value formats while honoring the resolved quote style', async () => {
+      const input = yaml.parseDocument('name: "Hello: world"\nx-version: 1.00\n');
+      const options = {
+        format: 'yaml',
+        yamlQuoteStyle: 'double',
+        yamlValueFormats: extractYamlValueFormats(input)
+      };
+
+      const result = await stringify(input.toJS({keepScalar: false}), options);
+
+      expect(result).toContain('name: "Hello: world"');
+      expect(result).toContain('x-version: 1.00');
+    });
+
+    test('should leave JSON output unchanged when yamlQuoteStyle is set', async () => {
+      const obj = {name: 'John'};
+
+      const result = await stringify(obj, {format: 'json', yamlQuoteStyle: 'double'});
+
+      expect(result).toEqual(JSON.stringify(obj, null, 2));
+    });
   });
 
   describe('parseString', () => {
@@ -191,6 +308,47 @@ describe('openapi-format CLI file tests', () => {
       const yamlString = 'name: John\nage: 30';
       const result = await parseString(yamlString);
       expect(result).toEqual({name: 'John', age: 30});
+    });
+
+    it('should detect dominant double quotes from YAML input', async () => {
+      const yamlString = 'name: "John"\ncity: "London"\ncountry: \'UK\'\n';
+      const options = {yamlQuoteStyle: 'detect'};
+
+      const result = await parseString(yamlString, options);
+
+      expect(result).toEqual({name: 'John', city: 'London', country: 'UK'});
+      expect(options.detectedYamlQuoteStyle).toBe('double');
+    });
+
+    it('should detect quote style from quoted keys when they dominate', async () => {
+      const yamlString = 'responses:\n  "200": ok\n  "404": nope\nmeta: \'value\'\n';
+      const options = {yamlQuoteStyle: 'detect'};
+
+      const result = await parseString(yamlString, options);
+
+      expect(result).toEqual({
+        responses: {'200': 'ok', '404': 'nope'},
+        meta: 'value'
+      });
+      expect(options.detectedYamlQuoteStyle).toBe('double');
+    });
+
+    it('should resolve tied YAML quote detection to single', async () => {
+      const yamlString = 'name: "John"\ncity: \'London\'\n';
+      const options = {yamlQuoteStyle: 'detect'};
+
+      await parseString(yamlString, options);
+
+      expect(options.detectedYamlQuoteStyle).toBe('single');
+    });
+
+    it('should resolve YAML quote detection without quoted scalars to single', async () => {
+      const yamlString = 'name: John\ncity: London\n';
+      const options = {yamlQuoteStyle: 'detect'};
+
+      await parseString(yamlString, options);
+
+      expect(options.detectedYamlQuoteStyle).toBe('single');
     });
 
     it('should return YAML parsing error if YAML parsing fail', async () => {

@@ -116,6 +116,7 @@ Options:
   -c, --configFile <configFile>              the file with the OpenAPI-format CLI options
   --no-sort                                  don't sort the OpenAPI file
   --keepComments                             don't remove the comments from the OpenAPI YAML file (default: false)
+  --yamlQuoteStyle <yamlQuoteStyle>          YAML quote style: single, double, or detect
   --sortComponentsFile <sortComponentsFile>  the file with components to sort alphabetically
   --sortComponentsProps                      sort properties within schema components alphabetically (default: false)
   --lineWidth <lineWidth>                    max line width of YAML output (default: -1)
