@@ -26,6 +26,7 @@ program
   .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options')
   .option('--no-sort', `don't sort the OpenAPI file`)
   .option('--keepComments', `don't remove the comments from the OpenAPI YAML file`, false)
+  .option('--yamlQuoteStyle <yamlQuoteStyle>', 'YAML quote style: single, double, or detect')
   .option('--sortComponentsFile <sortComponentsFile>', 'the file with components to sort alphabetically')
   .option('--sortComponentsProps', 'sort properties within schema components alphabetically', false)
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
@@ -245,7 +246,11 @@ async function run(oaFile, options) {
   let resObj = {};
   let output = {};
   let input = {};
-  let fileOptions = {keepComments: options.keepComments ?? false, bundle: options.bundle ?? true};
+  let fileOptions = {
+    keepComments: options.keepComments ?? false,
+    bundle: options.bundle ?? true,
+    yamlQuoteStyle: options.yamlQuoteStyle
+  };
 
   try {
     if (!options?.overlaySet?.extends) {
@@ -347,6 +352,8 @@ async function run(oaFile, options) {
 
   options.yamlComments = fileOptions.yamlComments || {};
   options.yamlValueFormats = fileOptions.yamlValueFormats || {};
+  options.detectedYamlQuoteStyle = fileOptions.detectedYamlQuoteStyle;
+  options.detectedYamlQuoteStyleHasQuotedScalars = fileOptions.detectedYamlQuoteStyleHasQuotedScalars;
   if (options.output) {
     if (options.split !== true) {
       try {

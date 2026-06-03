@@ -1,0 +1,9 @@
+openapi: 3.0.2
+info:
+  title: Repro
+  description: "Hello: world"
+paths: {}
+components:
+  schemas:
+    Thing:
+      $ref: "./thing.yaml#/components/schemas/Thing"

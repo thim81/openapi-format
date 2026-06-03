@@ -1,0 +1,12 @@
+openapi: 3.0.2
+info:
+  title: Repro
+  description: "Hello: world"
+paths: {}
+components:
+  schemas:
+    Thing:
+      type: object
+      properties:
+        id:
+          type: string
