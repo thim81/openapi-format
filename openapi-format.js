@@ -1089,6 +1089,10 @@ async function openapiChangeCase(oaObj, options) {
       // debugCasingStep = 'Casing - components/schemas - required properties'
       this.update(changeCase(node, casingSet.properties, getKeepChars('properties')));
     }
+    // Change discriminator propertyName to match properties casing
+    if (this.key === 'propertyName' && this.parent.key === 'discriminator' && casingSet.properties) {
+      this.update(changeCase(node, casingSet.properties, getKeepChars('properties')));
+    }
     // Change paths > schema - properties
     if (
       this.path[0] === 'paths' &&
