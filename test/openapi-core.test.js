@@ -421,10 +421,7 @@ describe('openapi-format core API', () => {
             }
           },
           AnimalEvent: {
-            oneOf: [
-              {$ref: '#/components/schemas/CatEvent'},
-              {$ref: '#/components/schemas/DogEvent'}
-            ],
+            oneOf: [{$ref: '#/components/schemas/CatEvent'}, {$ref: '#/components/schemas/DogEvent'}],
             discriminator: {
               propertyName: 'event_type'
             }
