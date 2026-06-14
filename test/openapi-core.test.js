@@ -90,6 +90,93 @@ describe('openapi-format core API', () => {
     expect(resultWithResponses.data.components.schemas).toHaveProperty('Pet');
   });
 
+  it('openapiFilter should keep schemas referenced by discriminator mapping', async () => {
+    const doc = {
+      openapi: '3.1.2',
+      info: {title: 'Example - OpenAPI 3.1.2', version: '0.0.1'},
+      paths: {
+        '/stuff': {
+          post: {
+            operationId: 'stuff',
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: {$ref: '#/components/schemas/Base'}
+                }
+              }
+            },
+            responses: {
+              200: {
+                description: 'successful',
+                content: {
+                  'application/json': {
+                    schema: {$ref: '#/components/schemas/Base'}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      components: {
+        schemas: {
+          Base: {
+            type: 'object',
+            properties: {
+              discriminatorProperty: {
+                type: 'string',
+                enum: ['derivedA', 'derivedB']
+              }
+            },
+            required: ['discriminatorProperty'],
+            discriminator: {
+              propertyName: 'discriminatorProperty',
+              mapping: {
+                derivedA: '#/components/schemas/DerivedA',
+                derivedB: '#/components/schemas/DerivedB'
+              }
+            }
+          },
+          DerivedA: {
+            allOf: [
+              {$ref: '#/components/schemas/Base'},
+              {
+                type: 'object',
+                properties: {a: {type: 'string'}},
+                required: ['a']
+              }
+            ]
+          },
+          DerivedB: {
+            allOf: [
+              {$ref: '#/components/schemas/Base'},
+              {
+                type: 'object',
+                properties: {b: {type: 'string'}},
+                required: ['b']
+              }
+            ]
+          },
+          Unused: {
+            type: 'object'
+          }
+        }
+      }
+    };
+
+    const result = await openapiFilter(doc, {
+      filterSet: {
+        unusedComponents: ['schemas']
+      }
+    });
+
+    expect(result.data.components.schemas).toHaveProperty('Base');
+    expect(result.data.components.schemas).toHaveProperty('DerivedA');
+    expect(result.data.components.schemas).toHaveProperty('DerivedB');
+    expect(result.data.components.schemas).not.toHaveProperty('Unused');
+  });
+
   it('openapiFilter should not crash when unusedComponents recurses over an empty securitySchemes type', async () => {
     const doc = {
       openapi: '3.0.0',

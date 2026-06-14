@@ -696,20 +696,41 @@ async function openapiFilter(oaObj, options) {
     return acc;
   }, {});
   const rootRefs = new Set();
+  const componentRefRegExp = /^#\/components\/([^\/]+)\/(.+)$/;
 
-  // Traverse $ref in components
-  traverse(jsonObj).forEach(function (node) {
-    if (this.key !== '$ref' || typeof node !== 'string') return;
-    const m = node.match(/^#\/components\/([^\/]+)\/(.+)$/);
+  const registerComponentRef = function (ctx, ref) {
+    if (typeof ref !== 'string') return;
+
+    const m = ref.match(componentRefRegExp);
     if (!m) return;
+
     const [, tgtType, tgtKey] = m;
-    if (this.path[0] === 'components') {
-      const [, ownType, ownKey] = this.path;
+    if (ctx.path[0] === 'components') {
+      const [, ownType, ownKey] = ctx.path;
       refGraph[ownType] ||= {};
       refGraph[ownType][ownKey] ||= [];
       refGraph[ownType][ownKey].push({type: tgtType, key: tgtKey});
-    } else {
-      rootRefs.add(`${tgtType}:${tgtKey}`);
+      return;
+    }
+
+    rootRefs.add(`${tgtType}:${tgtKey}`);
+  };
+
+  // Traverse component references, including discriminator mappings.
+  traverse(jsonObj).forEach(function (node) {
+    if (this.key === '$ref') {
+      registerComponentRef(this, node);
+      return;
+    }
+
+    if (
+      typeof node === 'string' &&
+      this.parent &&
+      this.parent.key === 'mapping' &&
+      this.parent.parent &&
+      this.parent.parent.key === 'discriminator'
+    ) {
+      registerComponentRef(this, node);
     }
   });
 
