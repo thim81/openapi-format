@@ -1,5 +1,7 @@
 ## unreleased
 
+- Filter: Keep discriminator in referenced schemas 
+
 ## [1.33.0] - 2026-06-03
 
 - Overlay: Align overlay copy action with Overlay 1.1 (#212)
