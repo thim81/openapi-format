@@ -1,6 +1,7 @@
 ## unreleased
 
-- Filter: Keep discriminator in referenced schemas 
+- Filter: Keep discriminator in referenced schemas (#218)
+- Casing: Transform discriminator propertyName (#216)
 
 ## [1.33.0] - 2026-06-03
 
