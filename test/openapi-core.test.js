@@ -388,6 +388,63 @@ describe('openapi-format core API', () => {
     expect(result.data.paths['/pets'].get.parameters[0].$ref).toBe('#/components/parameters/cursor.v1');
     expect(result.data.paths['/pets'].get.parameters[1].$ref).toBe('#/components/parameters/X-Request-Id');
   });
+
+  it('openapiChangeCase should transform discriminator propertyName with properties casing', async () => {
+    const doc = {
+      openapi: '3.1.0',
+      info: {title: 'Discriminator casing bug', version: '1.0.0'},
+      paths: {},
+      components: {
+        schemas: {
+          CatEvent: {
+            type: 'object',
+            properties: {
+              event_type: {
+                type: 'string',
+                const: 'CAT'
+              },
+              full_name: {
+                type: 'string'
+              }
+            }
+          },
+          DogEvent: {
+            type: 'object',
+            properties: {
+              event_type: {
+                type: 'string',
+                const: 'DOG'
+              },
+              breed: {
+                type: 'string'
+              }
+            }
+          },
+          AnimalEvent: {
+            oneOf: [
+              {$ref: '#/components/schemas/CatEvent'},
+              {$ref: '#/components/schemas/DogEvent'}
+            ],
+            discriminator: {
+              propertyName: 'event_type'
+            }
+          }
+        }
+      }
+    };
+
+    const result = await openapiChangeCase(doc, {
+      casingSet: {
+        properties: 'camelCase'
+      }
+    });
+
+    expect(result.data.components.schemas.CatEvent.properties).toHaveProperty('eventType');
+    expect(result.data.components.schemas.CatEvent.properties).toHaveProperty('fullName');
+    expect(result.data.components.schemas.DogEvent.properties).toHaveProperty('eventType');
+    expect(result.data.components.schemas.DogEvent.properties).toHaveProperty('breed');
+    expect(result.data.components.schemas.AnimalEvent.discriminator.propertyName).toBe('eventType');
+  });
 });
 
 describe('openapiSplit API', () => {
