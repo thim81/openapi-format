@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.33.2] - 2026-06-17
+
 - Config: Ship a JSON Schema for the configuration file (`schemas/openapi-format.schema.json`) (#223)
 
 ## [1.33.1] - 2026-06-14
