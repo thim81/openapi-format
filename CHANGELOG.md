@@ -1,5 +1,7 @@
 ## unreleased
 
+- CLI: add yamlCompat option for YAML 1.1
+
 ## [1.33.2] - 2026-06-17
 
 - Config: Ship a JSON Schema for the configuration file (`schemas/openapi-format.schema.json`) (#223)
@@ -20,7 +22,7 @@
 
 ## [1.32.0] - 2026-05-23
 
-- Casing - Configure characters to keep
+- Casing: Configure characters to keep
 - CLI: Fix YAML output to preserve x-version number formatting
 
 ## [1.31.0] - 2026-04-12
