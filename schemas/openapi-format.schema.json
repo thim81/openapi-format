@@ -1,0 +1,438 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openapi-format.com/schema/v1.json",
+  "title": "openapi-format configuration",
+  "description": "Schema for the openapi-format configuration file (openapi-format.json or .openapiformatrc). Mirrors the CLI options exposed by the openapi-format CLI; arbitrary extra keys are allowed at every level, matching the runtime type definitions.",
+  "type": "object",
+  "$defs": {
+    "CaseType": {
+      "type": "string",
+      "description": "Target casing style for casingSet entries. The runtime normalizes the input (e.g. 'pascalCase', 'PascalCase', 'PASCAL_CASE' all map to the same style), so the enum lists the canonical forms documented in the README. Any of those spellings are accepted.",
+      "enum": [
+        "camelCase",
+        "PascalCase",
+        "upperCamelCase",
+        "kebab-case",
+        "kebabCase",
+        "kebapCase",
+        "Train-Case",
+        "trainCase",
+        "Capital-Kebab-Case",
+        "Capital-Kebap-Case",
+        "snake_case",
+        "Ada_Case",
+        "CONSTANT_CASE",
+        "COBOL-CASE",
+        "dot.notation",
+        "Space case",
+        "Capital Case",
+        "lower case",
+        "UPPER CASE"
+      ]
+    },
+    "KeepChars": {
+      "type": "array",
+      "description": "Characters to preserve verbatim when applying a casing transformation (used by '*KeepChars' fields in casingSet).",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "SortPathsBy": {
+      "type": "string",
+      "description": "Strategy for ordering paths inside sortSet.",
+      "enum": ["original", "path", "tags"]
+    },
+    "OperationFields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["operationId", "summary", "description", "parameters", "requestBody", "responses"]
+      }
+    },
+    "RootFields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["openapi", "info", "servers", "paths", "components", "tags", "x-tagGroups", "externalDocs"]
+      }
+    },
+    "SortSet": {
+      "type": "object",
+      "description": "Inline override for the default field ordering. Any missing key falls back to the defaultSort.json shipped with openapi-format.",
+      "properties": {
+        "root": {"$ref": "#/$defs/RootFields"},
+        "get": {"$ref": "#/$defs/OperationFields"},
+        "post": {"$ref": "#/$defs/OperationFields"},
+        "put": {"$ref": "#/$defs/OperationFields"},
+        "patch": {"$ref": "#/$defs/OperationFields"},
+        "delete": {"$ref": "#/$defs/OperationFields"},
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["name", "in", "description", "required", "schema"]
+          }
+        },
+        "requestBody": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["description", "required", "content"]
+          }
+        },
+        "responses": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["description", "headers", "content", "links"]
+          }
+        },
+        "content": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["parameters", "schemas", "mediaTypes"]
+          }
+        },
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["description", "type", "items", "properties", "format", "example", "default"]
+          }
+        },
+        "schemas": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["description", "type", "items", "properties", "format", "example", "default"]
+          }
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["description", "type", "items", "format", "example", "default", "enum"]
+          }
+        },
+        "sortPathsBy": {"$ref": "#/$defs/SortPathsBy"}
+      },
+      "additionalProperties": true
+    },
+    "StringList": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "FlagValues": {
+      "type": "array",
+      "description": "List of JSON objects describing a flag value filter entry.",
+      "items": {"type": "object"}
+    },
+    "TextReplace": {
+      "type": "array",
+      "description": "Text replace rules applied to the OpenAPI document.",
+      "items": {"type": "object"}
+    },
+    "FilterSet": {
+      "type": "object",
+      "description": "Filtering rules. 'inverse*' keys are keep-filters; the rest are remove-filters.",
+      "properties": {
+        "methods": {"$ref": "#/$defs/StringList"},
+        "tags": {"$ref": "#/$defs/StringList"},
+        "operationIds": {"$ref": "#/$defs/StringList"},
+        "operations": {"$ref": "#/$defs/StringList"},
+        "flags": {"$ref": "#/$defs/StringList"},
+        "flagValues": {"$ref": "#/$defs/FlagValues"},
+        "inverseMethods": {"$ref": "#/$defs/StringList"},
+        "inverseTags": {"$ref": "#/$defs/StringList"},
+        "inverseOperationIds": {"$ref": "#/$defs/StringList"},
+        "inverseFlags": {"$ref": "#/$defs/StringList"},
+        "inverseFlagValues": {"$ref": "#/$defs/FlagValues"},
+        "responseContent": {"$ref": "#/$defs/StringList"},
+        "inverseResponseContent": {"$ref": "#/$defs/StringList"},
+        "requestContent": {"$ref": "#/$defs/StringList"},
+        "inverseRequestContent": {"$ref": "#/$defs/StringList"},
+        "unusedComponents": {"$ref": "#/$defs/StringList"},
+        "stripFlags": {"$ref": "#/$defs/StringList"},
+        "preserveEmptyObjects": {
+          "description": "When true, keeps empty objects in the output. When an array, keeps empty objects only for the listed parent paths.",
+          "oneOf": [{"type": "boolean"}, {"$ref": "#/$defs/StringList"}]
+        },
+        "textReplace": {"$ref": "#/$defs/TextReplace"}
+      },
+      "additionalProperties": true
+    },
+    "CasingSet": {
+      "type": "object",
+      "description": "Casing rules. Each '*' key accepts a CaseType; each '*KeepChars' companion accepts an array of characters to preserve.",
+      "properties": {
+        "operationId": {"$ref": "#/$defs/CaseType"},
+        "operationIdKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "summary": {"$ref": "#/$defs/CaseType"},
+        "summaryKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "description": {"$ref": "#/$defs/CaseType"},
+        "descriptionKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "properties": {"$ref": "#/$defs/CaseType"},
+        "propertiesKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "parametersQuery": {"$ref": "#/$defs/CaseType"},
+        "parametersQueryKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "parametersHeader": {"$ref": "#/$defs/CaseType"},
+        "parametersHeaderKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "parametersPath": {"$ref": "#/$defs/CaseType"},
+        "parametersPathKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "parametersCookie": {"$ref": "#/$defs/CaseType"},
+        "parametersCookieKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "componentsExamples": {"$ref": "#/$defs/CaseType"},
+        "componentsExamplesKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "componentsSchemas": {"$ref": "#/$defs/CaseType"},
+        "componentsSchemasKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "componentsHeaders": {"$ref": "#/$defs/CaseType"},
+        "componentsHeadersKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "componentsResponses": {"$ref": "#/$defs/CaseType"},
+        "componentsResponsesKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "componentsRequestBodies": {"$ref": "#/$defs/CaseType"},
+        "componentsRequestBodiesKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "componentsSecuritySchemes": {"$ref": "#/$defs/CaseType"},
+        "componentsSecuritySchemesKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "componentsParametersQuery": {"$ref": "#/$defs/CaseType"},
+        "componentsParametersQueryKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "componentsParametersHeader": {"$ref": "#/$defs/CaseType"},
+        "componentsParametersHeaderKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "componentsParametersPath": {"$ref": "#/$defs/CaseType"},
+        "componentsParametersPathKeepChars": {"$ref": "#/$defs/KeepChars"},
+        "componentsParametersCookie": {"$ref": "#/$defs/CaseType"},
+        "componentsParametersCookieKeepChars": {"$ref": "#/$defs/KeepChars"}
+      },
+      "additionalProperties": true
+    },
+    "GenerateSet": {
+      "type": "object",
+      "description": "Auto-generation rules for operationId, summary, and other elements.",
+      "properties": {
+        "operationIdTemplate": {
+          "type": "string",
+          "description": "Template used to render operationId values. Supports placeholders such as <method>, <pathPart1>, <pathPart2>."
+        },
+        "overwriteExisting": {
+          "type": "boolean",
+          "description": "When true, replaces values already present in the source document."
+        }
+      },
+      "additionalProperties": true
+    },
+    "OverlayAction": {
+      "type": "object",
+      "description": "A single OpenAPI Overlay action. Exactly one of 'update', 'remove', or 'copy' is expected at runtime; the schema permits any combination to stay close to the spec.",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "JSONPath expression that selects the element(s) the action applies to."
+        },
+        "update": {
+          "description": "Object merged into the selected element.",
+          "type": "object"
+        },
+        "remove": {
+          "type": "boolean",
+          "description": "When true, the selected element is removed."
+        },
+        "copy": {
+          "description": "JSONPath string (new style) or boolean (legacy, used with 'from') that drives a copy action.",
+          "oneOf": [{"type": "string"}, {"type": "boolean"}]
+        },
+        "from": {
+          "type": "string",
+          "description": "JSONPath used by the legacy 'copy: true' form."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the action."
+        }
+      },
+      "required": ["target"],
+      "additionalProperties": true
+    },
+    "OverlaySet": {
+      "type": "object",
+      "description": "Inline OpenAPI Overlay document. When 'extends' is set, the input file argument becomes optional.",
+      "properties": {
+        "overlay": {
+          "type": "string",
+          "description": "Overlay specification version (e.g. '1.0.0' or '1.1.0')."
+        },
+        "info": {
+          "type": "object",
+          "description": "Overlay document metadata.",
+          "properties": {
+            "title": {"type": "string"},
+            "version": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "additionalProperties": true
+        },
+        "extends": {
+          "type": "string",
+          "description": "Local path or http(s) URL pointing to the base OpenAPI document."
+        },
+        "actions": {
+          "type": "array",
+          "description": "Actions applied to the base document in order.",
+          "items": {"$ref": "#/$defs/OverlayAction"}
+        }
+      },
+      "required": ["actions"],
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional JSON Schema reference. Editors use it to enable validation and autocompletion."
+    },
+    "output": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "description": "Path to write the formatted OpenAPI document."
+    },
+    "sortFile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "description": "Path to a JSON/YAML file with custom field ordering. Inline 'sortSet' overrides values from this file."
+    },
+    "filterFile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "description": "Path to a JSON/YAML file with custom filter rules. Inline 'filterSet' overrides values from this file."
+    },
+    "casingFile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "description": "Path to a JSON/YAML file with custom casing rules. Inline 'casingSet' overrides values from this file."
+    },
+    "generateFile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "description": "Path to a JSON/YAML file with custom generate rules. Inline 'generateSet' overrides values from this file."
+    },
+    "overlayFile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "description": "Path to an OpenAPI Overlay document."
+    },
+    "configFile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "description": "Path to a configuration file. Not typically set inside a config file; this entry documents the option for completeness."
+    },
+    "sortComponentsFile": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "description": "Path to a JSON/YAML file listing component groups that should be alphabetized."
+    },
+    "sort": {
+      "type": "boolean",
+      "description": "When true, sorts the OpenAPI document using 'sortSet' (or defaultSort.json).",
+      "default": true
+    },
+    "no-sort": {
+      "type": "boolean",
+      "description": "Legacy alias for 'sort: false'. Prefer 'sort: false' in new configs.",
+      "default": false
+    },
+    "keepComments": {
+      "type": "boolean",
+      "description": "Preserve comments when reading/writing YAML.",
+      "default": false
+    },
+    "sortComponentsProps": {
+      "type": "boolean",
+      "description": "Alphabetize properties inside schema components.",
+      "default": false
+    },
+    "bundle": {
+      "type": "boolean",
+      "description": "Bundle local and remote $ref entries.",
+      "default": true
+    },
+    "no-bundle": {
+      "type": "boolean",
+      "description": "Legacy alias for 'bundle: false'. Prefer 'bundle: false' in new configs.",
+      "default": false
+    },
+    "split": {
+      "type": "boolean",
+      "description": "Split the formatted OpenAPI document into a multi-file structure under 'output'.",
+      "default": false
+    },
+    "json": {
+      "type": "boolean",
+      "description": "Print the result to stdout as JSON.",
+      "default": false
+    },
+    "yaml": {
+      "type": "boolean",
+      "description": "Print the result to stdout as YAML.",
+      "default": false
+    },
+    "playground": {
+      "type": "boolean",
+      "description": "Share the current configuration with the online playground.",
+      "default": false
+    },
+    "verbose": {
+      "type": "integer",
+      "description": "Verbosity level. Higher values print more diagnostic output. Levels 4+ behave identically to level 2 (debug), so the schema caps the meaningful range at 3.",
+      "minimum": 0,
+      "maximum": 3,
+      "default": 0
+    },
+    "yamlQuoteStyle": {
+      "type": "string",
+      "description": "Preferred YAML quote style for output.",
+      "enum": ["single", "double", "detect"],
+      "default": "detect"
+    },
+    "lineWidth": {
+      "type": "integer",
+      "description": "Maximum line width of YAML output. Use -1 for unlimited (default).",
+      "minimum": -1,
+      "default": -1
+    },
+    "rename": {
+      "type": "string",
+      "description": "Overwrite the title in the OpenAPI document."
+    },
+    "convertTo": {
+      "type": "string",
+      "description": "Target OpenAPI version. '3.0' is accepted for parity with the CLI parser, but the converter currently produces 3.1 and 3.2 output.",
+      "enum": ["3.0", "3.1", "3.2"]
+    },
+    "sortSet": {"$ref": "#/$defs/SortSet"},
+    "sortComponentsSet": {"$ref": "#/$defs/StringList"},
+    "filterSet": {"$ref": "#/$defs/FilterSet"},
+    "defaultFilter": {"$ref": "#/$defs/FilterSet"},
+    "unusedDepth": {
+      "type": "integer",
+      "description": "Maximum recursion depth when collecting unused components.",
+      "minimum": 0,
+      "default": 5
+    },
+    "casingSet": {"$ref": "#/$defs/CasingSet"},
+    "generateSet": {"$ref": "#/$defs/GenerateSet"},
+    "overlaySet": {"$ref": "#/$defs/OverlaySet"}
+  },
+  "additionalProperties": true
+}

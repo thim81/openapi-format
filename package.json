@@ -70,6 +70,7 @@
     "defaultFilter.json",
     "defaultSort.json",
     "defaultSortComponents.json",
+    "schemas/openapi-format.schema.json",
     "types/openapi-format.d.ts",
     "package-lock.json"
   ],

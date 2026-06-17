@@ -1604,6 +1604,25 @@ Example of a .openapiformatrc file:
 }
 ```
 
+### JSON Schema for the configuration file
+
+An official JSON Schema is shipped with openapi-format so editors can validate the configuration and offer autocompletion. The schema is available in the repository at [`schemas/openapi-format.schema.json`](https://github.com/thim81/openapi-format/blob/main/schemas/openapi-format.schema.json) and is also published with the npm package at `node_modules/openapi-format/schemas/openapi-format.schema.json`.
+
+Reference it from your config via the `$schema` key:
+
+```json
+{
+  "$schema": "https://openapi-format.com/schema/v1.json",
+  "sort": true,
+  "casingSet": {
+    "operationId": "PascalCase",
+    "properties": "camelCase"
+  }
+}
+```
+
+Extra keys are allowed at every level so user-defined extensions (e.g. `sortSet.paths.order`) keep working.
+
 ## Programmatic usage
 
 The CLI is the primary interface, but all formatting utilities are exposed as module functions as well:
