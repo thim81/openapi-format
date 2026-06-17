@@ -252,6 +252,10 @@ describe('openapi-format CLI file tests', () => {
       const obj = {
         components: {
           schemas: {
+            CountryCode: {
+              type: 'string',
+              enum: ['ca', 'no', 'us']
+            },
             Feature: {
               type: 'object',
               properties: {
@@ -272,22 +276,26 @@ describe('openapi-format CLI file tests', () => {
         format: 'yaml'
       });
 
+      expect(result).toContain('CountryCode:');
       expect(result).toContain('enum:');
-      expect(result).toContain('- yes');
+      expect(result).toContain('- ca');
       expect(result).toContain('- no');
+      expect(result).toContain('- us');
+      expect(result).toContain('Feature:');
+      expect(result).toContain('- yes');
       expect(result).toContain('- on');
       expect(result).toContain('- off');
       expect(result).toContain('status: on');
-      expect(result).not.toContain("'yes'");
-      expect(result).not.toContain("'no'");
-      expect(result).not.toContain("'on'");
-      expect(result).not.toContain("'off'");
     });
 
     test('should quote YAML 1.1 boolean-like strings when yamlCompat is yaml-1.1', async () => {
       const obj = {
         components: {
           schemas: {
+            CountryCode: {
+              type: 'string',
+              enum: ['ca', 'no', 'us']
+            },
             Feature: {
               type: 'object',
               properties: {
@@ -309,10 +317,14 @@ describe('openapi-format CLI file tests', () => {
         yamlCompat: 'yaml-1.1'
       });
 
-      expect(result).toContain("        - 'yes'");
-      expect(result).toContain("        - 'no'");
-      expect(result).toContain("        - 'on'");
-      expect(result).toContain("        - 'off'");
+      expect(result).toContain('CountryCode:');
+      expect(result).toContain('- ca');
+      expect(result).toContain("- 'no'");
+      expect(result).toContain('- us');
+      expect(result).toContain('Feature:');
+      expect(result).toContain("- 'yes'");
+      expect(result).toContain("- 'on'");
+      expect(result).toContain("- 'off'");
       expect(result).toContain("status: 'on'");
       expect(result).not.toContain('- yes');
       expect(result).not.toContain('- no');

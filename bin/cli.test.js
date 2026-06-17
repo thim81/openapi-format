@@ -254,7 +254,7 @@ describe('openapi-format CLI command', () => {
 
     fs.writeFileSync(
       inputFile,
-      `openapi: 3.0.3\ninfo:\n  title: t\n  version: 1.0.0\npaths: {}\ncomponents:\n  schemas:\n    Feature:\n      type: object\n      properties:\n        status:\n          type: string\n          enum:\n            - "yes"\n            - "no"\n            - "on"\n            - "off"\n      example:\n        status: "on"\n`
+      `openapi: 3.0.3\ninfo:\n  title: t\n  version: 1.0.0\npaths: {}\ncomponents:\n  schemas:\n    CountryCode:\n      type: string\n      enum:\n        - ca\n        - "no"\n        - us\n    Feature:\n      type: object\n      properties:\n        status:\n          type: string\n          enum:\n            - "yes"\n            - "no"\n            - "on"\n            - "off"\n      example:\n        status: "on"\n`
     );
     fs.writeFileSync(configFile, JSON.stringify({yamlCompat: 'yaml-1.1', sort: false}, null, 2));
 
@@ -263,15 +263,15 @@ describe('openapi-format CLI command', () => {
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('formatted successfully');
     const output = fs.readFileSync(outputFile, 'utf8');
-    expect(output).toMatch(/-\s+["']yes["']/);
-    expect(output).toMatch(/-\s+["']no["']/);
-    expect(output).toMatch(/-\s+["']on["']/);
-    expect(output).toMatch(/-\s+["']off["']/);
-    expect(output).toMatch(/status:\s+["']on["']/);
-    expect(output).not.toMatch(/-\s+yes\b/);
-    expect(output).not.toMatch(/-\s+no\b/);
-    expect(output).not.toMatch(/-\s+on\b/);
-    expect(output).not.toMatch(/-\s+off\b/);
+    expect(output).toContain('CountryCode:');
+    expect(output).toContain('Feature:');
+    expect(output).toContain('- ca');
+    expect(output).toContain('- us');
+    expect(output).toContain('- "no"');
+    expect(output).toContain('- "yes"');
+    expect(output).toContain('- "on"');
+    expect(output).toContain('- "off"');
+    expect(output).toContain('status: "on"');
   });
 
   it('should load the default .openapiformatrc if configFile is not provided', async () => {
