@@ -7,9 +7,10 @@
   "$defs": {
     "CaseType": {
       "type": "string",
-      "description": "Target casing style for casingSet entries. The runtime normalizes the input (e.g. 'pascalCase', 'PascalCase', 'PASCAL_CASE' all map to the same style), so the enum lists the canonical forms documented in the README. Any of those spellings are accepted.",
+      "description": "Target casing style for casingSet entries. The runtime normalizes the input (e.g. 'pascalCase', 'PascalCase', 'PASCAL_CASE' all map to the same style), so the enum lists the spellings accepted by the implementation.",
       "enum": [
         "camelCase",
+        "pascalCase",
         "PascalCase",
         "upperCamelCase",
         "kebab-case",
@@ -17,17 +18,28 @@
         "kebapCase",
         "Train-Case",
         "trainCase",
+        "capitalKebabCase",
+        "capitalKebapCase",
         "Capital-Kebab-Case",
         "Capital-Kebap-Case",
         "snake_case",
+        "snakeCase",
         "Ada_Case",
+        "adaCase",
         "CONSTANT_CASE",
+        "constantCase",
         "COBOL-CASE",
+        "cobolCase",
         "dot.notation",
+        "dotNotation",
         "Space case",
+        "spaceCase",
         "Capital Case",
+        "capitalCase",
         "lower case",
-        "UPPER CASE"
+        "lowerCase",
+        "UPPER CASE",
+        "upperCase"
       ]
     },
     "KeepChars": {
@@ -63,6 +75,7 @@
       "properties": {
         "root": {"$ref": "#/$defs/RootFields"},
         "get": {"$ref": "#/$defs/OperationFields"},
+        "query": {"$ref": "#/$defs/OperationFields"},
         "post": {"$ref": "#/$defs/OperationFields"},
         "put": {"$ref": "#/$defs/OperationFields"},
         "patch": {"$ref": "#/$defs/OperationFields"},
@@ -417,8 +430,8 @@
     },
     "convertTo": {
       "type": "string",
-      "description": "Target OpenAPI version. '3.0' is accepted for parity with the CLI parser, but the converter currently produces 3.1 and 3.2 output.",
-      "enum": ["3.0", "3.1", "3.2"]
+      "description": "Target OpenAPI version. The converter currently produces 3.1 and 3.2 output.",
+      "enum": ["3.1", "3.2"]
     },
     "sortSet": {"$ref": "#/$defs/SortSet"},
     "sortComponentsSet": {"$ref": "#/$defs/StringList"},
