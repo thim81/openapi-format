@@ -169,6 +169,7 @@ Options:
   --no-sort             Don't sort the OpenAPI file                          [boolean]
   --keepComments        Don't remove the comments from the OpenAPI YAML file [boolean]
   --yamlQuoteStyle      Preferred YAML quote style: single, double, detect    [string]
+  --yamlCompat          YAML compatibility schema for stringifying           [string]
   --sortComponentsFile  The file with components to sort alphabetically         [path]
   --sortComponentsProps Sort properties within schema components alphabetically [boolean]
 
@@ -206,6 +207,7 @@ Options:
 | --no-sort             |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                      | optional |
 | --keepComments        |               | don't remove the comments from the OpenAPI YAML file                        | boolean      | FALSE                      | optional |
 | --yamlQuoteStyle      |               | preferred YAML quote style for YAML output (`single`, `double`, `detect`)   | string       | detect                     | optional |
+| --yamlCompat          |               | compatibility schema for YAML stringification (`yaml-1.1`)                  | string       |                            | optional |
 | --sortComponentsFile  |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json | optional |
 | --sortComponentsProps |               | sort properties within schema components alphabetically                     | boolean      | FALSE                      | optional |
 | --no-bundle           |               | don't bundle the local and remote $ref in the OpenAPI document              | boolean      | FALSE                      | optional |

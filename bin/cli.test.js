@@ -246,6 +246,34 @@ describe('openapi-format CLI command', () => {
     expect(sanitize(result.stderr)).toStrictEqual(sanitize(output));
   });
 
+  it('should apply yamlCompat from config files', async () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openapi-format-yaml-compat-'));
+    const inputFile = path.join(tempDir, 'input.yaml');
+    const configFile = path.join(tempDir, 'options.json');
+    const outputFile = path.join(tempDir, 'output.yaml');
+
+    fs.writeFileSync(
+      inputFile,
+      `openapi: 3.0.3\ninfo:\n  title: t\n  version: 1.0.0\npaths: {}\ncomponents:\n  schemas:\n    Feature:\n      type: object\n      properties:\n        status:\n          type: string\n          enum:\n            - "yes"\n            - "no"\n            - "on"\n            - "off"\n      example:\n        status: "on"\n`
+    );
+    fs.writeFileSync(configFile, JSON.stringify({yamlCompat: 'yaml-1.1', sort: false}, null, 2));
+
+    const result = await testUtils.cli(['input.yaml', '--configFile options.json', `--output ${outputFile}`], tempDir);
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain('formatted successfully');
+    const output = fs.readFileSync(outputFile, 'utf8');
+    expect(output).toMatch(/-\s+["']yes["']/);
+    expect(output).toMatch(/-\s+["']no["']/);
+    expect(output).toMatch(/-\s+["']on["']/);
+    expect(output).toMatch(/-\s+["']off["']/);
+    expect(output).toMatch(/status:\s+["']on["']/);
+    expect(output).not.toMatch(/-\s+yes\b/);
+    expect(output).not.toMatch(/-\s+no\b/);
+    expect(output).not.toMatch(/-\s+on\b/);
+    expect(output).not.toMatch(/-\s+off\b/);
+  });
+
   it('should load the default .openapiformatrc if configFile is not provided', async () => {
     // Mock the existence of the .openapiformatrc file
     const defaultConfigPath = '.openapiformatrc';

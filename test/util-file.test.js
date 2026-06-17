@@ -248,6 +248,78 @@ describe('openapi-format CLI file tests', () => {
       expect(result).not.toContain('name: "John"');
     });
 
+    test('should leave YAML 1.2 boolean-like strings unquoted by default', async () => {
+      const obj = {
+        components: {
+          schemas: {
+            Feature: {
+              type: 'object',
+              properties: {
+                status: {
+                  type: 'string',
+                  enum: ['yes', 'no', 'on', 'off']
+                }
+              },
+              example: {
+                status: 'on'
+              }
+            }
+          }
+        }
+      };
+
+      const result = await stringify(obj, {
+        format: 'yaml'
+      });
+
+      expect(result).toContain('enum:');
+      expect(result).toContain('- yes');
+      expect(result).toContain('- no');
+      expect(result).toContain('- on');
+      expect(result).toContain('- off');
+      expect(result).toContain('status: on');
+      expect(result).not.toContain("'yes'");
+      expect(result).not.toContain("'no'");
+      expect(result).not.toContain("'on'");
+      expect(result).not.toContain("'off'");
+    });
+
+    test('should quote YAML 1.1 boolean-like strings when yamlCompat is yaml-1.1', async () => {
+      const obj = {
+        components: {
+          schemas: {
+            Feature: {
+              type: 'object',
+              properties: {
+                status: {
+                  type: 'string',
+                  enum: ['yes', 'no', 'on', 'off']
+                }
+              },
+              example: {
+                status: 'on'
+              }
+            }
+          }
+        }
+      };
+
+      const result = await stringify(obj, {
+        format: 'yaml',
+        yamlCompat: 'yaml-1.1'
+      });
+
+      expect(result).toContain("        - 'yes'");
+      expect(result).toContain("        - 'no'");
+      expect(result).toContain("        - 'on'");
+      expect(result).toContain("        - 'off'");
+      expect(result).toContain("status: 'on'");
+      expect(result).not.toContain('- yes');
+      expect(result).not.toContain('- no');
+      expect(result).not.toContain('- on');
+      expect(result).not.toContain('- off');
+    });
+
     test('should preserve comments while honoring the resolved quote style', async () => {
       const parsed = yaml.parseDocument('name: "Hello: world" # person\ncity: London\n');
       const options = {
@@ -286,6 +358,14 @@ describe('openapi-format CLI file tests', () => {
       const obj = {name: 'John'};
 
       const result = await stringify(obj, {format: 'json', yamlQuoteStyle: 'double'});
+
+      expect(result).toEqual(JSON.stringify(obj, null, 2));
+    });
+
+    test('should leave JSON output unchanged when yamlCompat is set', async () => {
+      const obj = {name: 'John'};
+
+      const result = await stringify(obj, {format: 'json', yamlCompat: 'yaml-1.1'});
 
       expect(result).toEqual(JSON.stringify(obj, null, 2));
     });
