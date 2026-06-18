@@ -402,6 +402,29 @@ describe('openapi-format CLI sorting tests', () => {
       fromEntriesSpy.mockRestore();
     });
 
+    it('sortPathsByAlphabet - should order a path before its trailing-slash variant regardless of input order', () => {
+      // A path and its trailing-slash variant differ only by an empty
+      // segment. The comparator must return the same result no matter which
+      // order they appear in the input, otherwise they swap between runs.
+      const expected = ['/pets', '/pets/'];
+
+      const sortedA = sortPathsByAlphabet({'/pets/': {get: {}}, '/pets': {get: {}}});
+      const sortedB = sortPathsByAlphabet({'/pets': {get: {}}, '/pets/': {get: {}}});
+
+      expect(Object.keys(sortedA)).toEqual(expected);
+      expect(Object.keys(sortedB)).toEqual(expected);
+    });
+
+    it('sortPathsByAlphabet - should keep a shorter path before its trailing-slash variant and deeper children', () => {
+      const sorted = sortPathsByAlphabet({
+        '/pets/{id}': {get: {}},
+        '/pets/': {get: {}},
+        '/pets': {get: {}}
+      });
+
+      expect(Object.keys(sorted)).toEqual(['/pets', '/pets/', '/pets/{id}']);
+    });
+
     it('pathToRegExp and matchPath - should support named params in strict matching', () => {
       const regex = pathToRegExp('/messages/:id');
       expect(regex).toBeInstanceOf(RegExp);

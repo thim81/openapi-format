@@ -99,8 +99,15 @@ function sortPathsByAlphabet(paths) {
     const pathB = b[0].split('/');
 
     for (let i = 1; i < Math.max(pathA.length, pathB.length); i++) {
-      if (!pathA[i]) return -1;
-      if (!pathB[i]) return 1;
+      // Use a strict `undefined` check so a missing segment (the path has
+      // ended) is treated differently from an empty segment produced by a
+      // trailing slash. A truthy `!segment` test conflates the two, which
+      // makes the comparator inconsistent for paths that differ only by a
+      // trailing slash (e.g. `/pets` vs `/pets/`): both `compare(a, b)` and
+      // `compare(b, a)` would return -1, so their order depends on the input
+      // order and flips between runs.
+      if (pathA[i] === undefined) return -1;
+      if (pathB[i] === undefined) return 1;
       if (pathA[i] < pathB[i]) return -1;
       if (pathA[i] > pathB[i]) return 1;
     }
