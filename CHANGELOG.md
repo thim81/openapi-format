@@ -2,6 +2,10 @@
 
 - CLI: add yamlCompat option for YAML 1.1
 
+## [1.33.3] - 2026-06-18
+
+- Sort: Keep stable sorting for trailing-slash paths (#228)
+
 ## [1.33.2] - 2026-06-17
 
 - Config: Ship a JSON Schema for the configuration file (`schemas/openapi-format.schema.json`) (#223)
