@@ -1,5 +1,7 @@
 ## unreleased
 
+- CLI: add yamlCompat option for YAML 1.1
+
 ## [1.33.3] - 2026-06-18
 
 - Sort: Keep stable sorting for trailing-slash paths (#228)
@@ -24,7 +26,7 @@
 
 ## [1.32.0] - 2026-05-23
 
-- Casing - Configure characters to keep
+- Casing: Configure characters to keep
 - CLI: Fix YAML output to preserve x-version number formatting
 
 ## [1.31.0] - 2026-04-12

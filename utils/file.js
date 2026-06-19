@@ -169,14 +169,20 @@ function resolveYamlQuoteStyle(options = {}) {
  * Build YAML stringify/toString options, including quote-style control.
  * @param {number} lineWidth
  * @param {object} [options]
- * @returns {{lineWidth: number, singleQuote: boolean}}
+ * @returns {{lineWidth: number, singleQuote: boolean, compat?: 'yaml-1.1'}}
  */
 function buildYamlStringifyOptions(lineWidth, options = {}) {
   const style = resolveYamlQuoteStyle(options);
-  return {
+  const yamlStringifyOptions = {
     lineWidth,
     singleQuote: style !== YAML_QUOTE_STYLE.DOUBLE
   };
+
+  if (options.yamlCompat === 'yaml-1.1') {
+    yamlStringifyOptions.compat = 'yaml-1.1';
+  }
+
+  return yamlStringifyOptions;
 }
 
 /**

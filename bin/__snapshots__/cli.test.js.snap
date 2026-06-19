@@ -117,6 +117,7 @@ Options:
   --no-sort                                  don't sort the OpenAPI file
   --keepComments                             don't remove the comments from the OpenAPI YAML file (default: false)
   --yamlQuoteStyle <yamlQuoteStyle>          YAML quote style: single, double, or detect
+  --yamlCompat <yamlCompat>                  YAML compatibility schema for older OpenAPI tools (yaml-1.1)
   --sortComponentsFile <sortComponentsFile>  the file with components to sort alphabetically
   --sortComponentsProps                      sort properties within schema components alphabetically (default: false)
   --lineWidth <lineWidth>                    max line width of YAML output (default: -1)

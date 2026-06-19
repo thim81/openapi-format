@@ -418,6 +418,11 @@
       "enum": ["single", "double", "detect"],
       "default": "detect"
     },
+    "yamlCompat": {
+      "type": "string",
+      "description": "Compatibility schema to use when stringifying YAML. Enables YAML 1.1-safe quoting for compatibility with older parsers.",
+      "enum": ["yaml-1.1"]
+    },
     "lineWidth": {
       "type": "integer",
       "description": "Maximum line width of YAML output. Use -1 for unlimited (default).",

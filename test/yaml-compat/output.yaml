@@ -1,0 +1,25 @@
+openapi: 3.0.3
+info:
+  title: t
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    CountryCode:
+      type: string
+      enum:
+        - ca
+        - "no"
+        - us
+    Feature:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - "yes"
+            - "no"
+            - "on"
+            - "off"
+      example:
+        status: "on"
