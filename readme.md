@@ -158,39 +158,39 @@ Arguments:
 
 Options:
 
-  --output, -o          Save the formatted OpenAPI file as JSON/YAML            [path]
+  --output, -o          Save the formatted OpenAPI file as JSON/YAML                  [path]
 
-  --sortFile            The file to specify custom OpenAPI fields ordering      [path]
-  --casingFile          The file to specify casing rules                        [path]
-  --generateFile        The file to specify generate rules                      [path]  
-  --filterFile          The file to specify filter rules                        [path]
-  --overlayFile         The file to specify OpenAPI overlay actions             [path]
+  --sortFile            The file to specify custom OpenAPI fields ordering            [path]
+  --casingFile          The file to specify casing rules                              [path]
+  --generateFile        The file to specify generate rules                            [path]  
+  --filterFile          The file to specify filter rules                              [path]
+  --overlayFile         The file to specify OpenAPI overlay actions                   [path]
 
-  --no-sort             Don't sort the OpenAPI file                          [boolean]
-  --keepComments        Don't remove the comments from the OpenAPI YAML file [boolean]
-  --yamlQuoteStyle      Preferred YAML quote style: single, double, detect    [string]
-  --yamlCompat          YAML compatibility schema for stringifying           [string]
-  --sortComponentsFile  The file with components to sort alphabetically         [path]
-  --sortComponentsProps Sort properties within schema components alphabetically [boolean]
+  --no-sort             Don't sort the OpenAPI file                                [boolean]
+  --keepComments        Don't remove the comments from the OpenAPI YAML file       [boolean]
+  --yamlQuoteStyle      Preferred YAML quote style: single, double, detect          [string]
+  --yamlCompat          YAML compatibility schema for older OpenAPI tools           [string]
+  --sortComponentsFile  The file with components to sort alphabetically               [path]
+  --sortComponentsProps Sort properties within schema components alphabetically    [boolean]
 
-  --no-bundle           Don't bundle the local and remote $ref               [boolean]
-  --split               Split OpenAPI document into a multi-file structure   [boolean]
+  --no-bundle           Don't bundle the local and remote $ref                     [boolean]
+  --split               Split OpenAPI document into a multi-file structure         [boolean]
 
-  --rename              Rename the OpenAPI title                              [string]
+  --rename              Rename the OpenAPI title                                    [string]
 
-  --convertTo           convert the OpenAPI document to OpenAPI version 3.1 or 3.2   [string]
+  --convertTo           convert the OpenAPI document to OpenAPI version 3.1 or 3.2  [string]
 
-  --configFile          The file with the OpenAPI-format CLI options            [path]
+  --configFile          The file with the OpenAPI-format CLI options                  [path]
 
-  --lineWidth           Max line width of YAML output                         [number]
+  --lineWidth           Max line width of YAML output                               [number]
 
-  --json                Prints the file to stdout as JSON                    [boolean]
-  --yaml                Prints the file to stdout as YAML                    [boolean]
+  --json                Prints the file to stdout as JSON                          [boolean]
+  --yaml                Prints the file to stdout as YAML                          [boolean]
 
   --playground, -p      Open config in online playground
-  --help                Show help                                            [boolean]
+  --help                Show help                                                  [boolean]
   --version             Output the version number                            
-  --verbose             Output more details of the filter process              [count]
+  --verbose             Output more details of the filter process                    [count]
 ```
 
 ## OpenAPI format CLI options
@@ -207,7 +207,7 @@ Options:
 | --no-sort             |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                      | optional |
 | --keepComments        |               | don't remove the comments from the OpenAPI YAML file                        | boolean      | FALSE                      | optional |
 | --yamlQuoteStyle      |               | preferred YAML quote style for YAML output (`single`, `double`, `detect`)   | string       | detect                     | optional |
-| --yamlCompat          |               | compatibility schema for YAML stringification (`yaml-1.1`)                  | string       |                            | optional |
+| --yamlCompat          |               | YAML compatibility schema for older OpenAPI tools (`yaml-1.1`)              | string       |                            | optional |
 | --sortComponentsFile  |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json | optional |
 | --sortComponentsProps |               | sort properties within schema components alphabetically                     | boolean      | FALSE                      | optional |
 | --no-bundle           |               | don't bundle the local and remote $ref in the OpenAPI document              | boolean      | FALSE                      | optional |

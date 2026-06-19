@@ -27,7 +27,7 @@ program
   .option('--no-sort', `don't sort the OpenAPI file`)
   .option('--keepComments', `don't remove the comments from the OpenAPI YAML file`, false)
   .option('--yamlQuoteStyle <yamlQuoteStyle>', 'YAML quote style: single, double, or detect')
-  .option('--yamlCompat <yamlCompat>', 'YAML compatibility schema for stringifying (yaml-1.1)')
+  .option('--yamlCompat <yamlCompat>', 'YAML compatibility schema for older OpenAPI tools (yaml-1.1)')
   .option('--sortComponentsFile <sortComponentsFile>', 'the file with components to sort alphabetically')
   .option('--sortComponentsProps', 'sort properties within schema components alphabetically', false)
   .option('--lineWidth <lineWidth>', 'max line width of YAML output', -1)
