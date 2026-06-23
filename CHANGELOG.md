@@ -1,5 +1,7 @@
 ## unreleased
 
+- CLI: Fix YAML output to keep quotes for $ref values (#230)
+
 ## [1.33.4] - 2026-06-19
 
 - CLI: add yamlCompat option for YAML 1.1

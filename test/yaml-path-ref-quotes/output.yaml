@@ -1,0 +1,14 @@
+openapi: 3.0.3
+info:
+  title: API
+  version: 1.0.0
+paths:
+  /some/path:
+    get:
+      operationId: someOperation
+      tags:
+        - some-rest-controller
+      parameters:
+        - $ref: './util/headers.yaml#/components/parameters/requestId'
+        - $ref: './util/headers.yaml#/components/parameters/correlationId'
+        - $ref: './util/headers.yaml#/components/parameters/authorization'

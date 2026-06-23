@@ -396,6 +396,9 @@ async function stringify(obj, options = {}) {
         output = newDoc.toString(yamlStringifyOptions);
       }
 
+      // Preserve quotes around $ref values so external references stay editor-friendly.
+      output = addQuotesToRefInString(output);
+
       // Decode large number YAML values safely before writing output
       output = decodeLargeNumbers(output);
     } else {

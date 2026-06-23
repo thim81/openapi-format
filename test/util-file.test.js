@@ -772,6 +772,28 @@ describe('openapi-format CLI file tests', () => {
 
       expect(result).toContain("$ref: '#/components/schemas/Example'");
     });
+
+    test('should stringify external $ref values with quotes in YAML output', async () => {
+      const obj = {
+        paths: {
+          '/some/path': {
+            get: {
+              parameters: [
+                {
+                  $ref: './util/headers.yaml#/components/parameters/requestId'
+                }
+              ]
+            }
+          }
+        }
+      };
+
+      const result = await stringify(obj, {format: 'yaml'});
+
+      expect(result).toContain(
+        "$ref: './util/headers.yaml#/components/parameters/requestId'"
+      );
+    });
   });
 
   describe('analyzeOpenApi function', () => {
