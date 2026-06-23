@@ -790,9 +790,7 @@ describe('openapi-format CLI file tests', () => {
 
       const result = await stringify(obj, {format: 'yaml'});
 
-      expect(result).toContain(
-        "$ref: './util/headers.yaml#/components/parameters/requestId'"
-      );
+      expect(result).toContain("$ref: './util/headers.yaml#/components/parameters/requestId'");
     });
 
     test('should stringify external $ref values with the configured double quote style', async () => {
@@ -815,9 +813,7 @@ describe('openapi-format CLI file tests', () => {
         yamlQuoteStyle: 'double'
       });
 
-      expect(result).toContain(
-        '$ref: "./util/headers.yaml#/components/parameters/requestId"'
-      );
+      expect(result).toContain('$ref: "./util/headers.yaml#/components/parameters/requestId"');
     });
   });
 
