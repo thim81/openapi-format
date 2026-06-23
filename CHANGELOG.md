@@ -1,5 +1,7 @@
 ## unreleased
 
+## [1.33.5] - 2026-06-23
+
 - CLI: Fix YAML output to keep quotes for $ref values (#230)
 
 ## [1.33.4] - 2026-06-19
