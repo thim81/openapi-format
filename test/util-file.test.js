@@ -794,6 +794,31 @@ describe('openapi-format CLI file tests', () => {
         "$ref: './util/headers.yaml#/components/parameters/requestId'"
       );
     });
+
+    test('should stringify external $ref values with the configured double quote style', async () => {
+      const obj = {
+        paths: {
+          '/some/path': {
+            get: {
+              parameters: [
+                {
+                  $ref: './util/headers.yaml#/components/parameters/requestId'
+                }
+              ]
+            }
+          }
+        }
+      };
+
+      const result = await stringify(obj, {
+        format: 'yaml',
+        yamlQuoteStyle: 'double'
+      });
+
+      expect(result).toContain(
+        '$ref: "./util/headers.yaml#/components/parameters/requestId"'
+      );
+    });
   });
 
   describe('analyzeOpenApi function', () => {
