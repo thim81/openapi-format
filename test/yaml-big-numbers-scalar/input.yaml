@@ -1,0 +1,17 @@
+openapi: 3.1.0
+info:
+  title: openapi-format schema-drop reproduction
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Before:
+      type: object
+      description: This schema contains an escaped JSON example with a high-precision number.
+      example: "{\n  \"score\": 0.8189693396524255,\n}"
+    CreateResponse:
+      type: object
+      description: This schema should remain in the formatted document.
+      properties:
+        id:
+          type: string

@@ -218,16 +218,18 @@ async function parseString(str, options = {}) {
     return str;
   }
 
-  // Convert large number values safely before parsing
-  let encodedContent = encodeLargeNumbers(str);
-  encodedContent = addQuotesToRefInString(encodedContent);
-
   // Default to YAML format unless specified as JSON
   const toYaml = options.format !== 'json' && (!options.hasOwnProperty('json') || options.json !== true);
 
   if (toYaml) {
     try {
-      const doc = yaml.parseDocument(encodedContent);
+      const doc = yaml.parseDocument(addQuotesToRefInString(str));
+      if (doc.errors.length > 0) {
+        return new SyntaxError(doc.errors[0].message);
+      }
+
+      // Convert large number scalar values safely after parsing, without touching strings.
+      encodeLargeNumberScalars(doc);
       applyYamlParseMetadata(doc, options);
       const obj = doc.toJS();
       if (typeof obj === 'object') {
@@ -241,7 +243,7 @@ async function parseString(str, options = {}) {
   } else {
     try {
       // Try parsing as JSON
-      return JSON.parse(encodedContent);
+      return JSON.parse(encodeLargeNumbers(str));
     } catch (jsonError) {
       return jsonError;
     }
@@ -330,8 +332,7 @@ async function parseFile(filePath, options = {}) {
     let rawContent = await readFile(filePath, options);
 
     if (options.format === 'yaml') {
-      const encodedContent = addQuotesToRefInString(encodeLargeNumbers(rawContent));
-      const doc = yaml.parseDocument(encodedContent);
+      const doc = yaml.parseDocument(addQuotesToRefInString(rawContent));
       applyYamlParseMetadata(doc, options);
     }
 
@@ -512,6 +513,32 @@ function encodeLargeNumbers(inputContent) {
       return `: "${number}==="${endChar}`;
     } else {
       return `: ${number}${endChar}`;
+    }
+  });
+}
+
+/**
+ * Convert large number scalar values safely after YAML parsing.
+ * @param {import('yaml').Document} doc
+ */
+function encodeLargeNumberScalars(doc) {
+  yaml.visit(doc, {
+    Pair(_, pair) {
+      const value = pair.value;
+      if (
+        !yaml.isScalar(value) ||
+        typeof value.value !== 'number' ||
+        typeof value.source !== 'string'
+      ) {
+        return;
+      }
+
+      const source = value.source;
+      const digitCount = source.replace(/[^0-9]/g, '').length;
+      if (Number(source).toString().includes('e') || digitCount > 15) {
+        value.value = `${source}===`;
+        value.type = 'QUOTE_DOUBLE';
+      }
     }
   });
 }

@@ -1,5 +1,7 @@
 ## unreleased
 
+- CLI: Prevent YAML data loss when quoted scalars contain high-precision numbers (#233)
+
 ## [1.33.5] - 2026-06-23
 
 - CLI: Fix YAML output to keep quotes for $ref values (#230)

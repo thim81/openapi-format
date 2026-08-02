@@ -402,6 +402,36 @@ describe('openapi-format CLI file tests', () => {
       expect(result).toEqual({name: 'John', age: 30});
     });
 
+    it('should preserve quoted JSON examples with high-precision numbers and following schemas', async () => {
+      const yamlString = `openapi: 3.1.0
+info:
+  title: openapi-format schema-drop reproduction
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Before:
+      type: object
+      description: This schema contains an escaped JSON example with a high-precision number.
+      example: "{\\n  \\"score\\": 0.8189693396524255,\\n}"
+    CreateResponse:
+      type: object
+      description: This schema should remain in the formatted document.
+      properties:
+        id:
+          type: string
+`;
+
+      const result = await parseString(yamlString, {format: 'yaml'});
+
+      expect(result).not.toBeInstanceOf(Error);
+      expect(Object.keys(result.components.schemas)).toEqual(['Before', 'CreateResponse']);
+      expect(result.components.schemas.Before.example).toBe(
+        '{\n  "score": 0.8189693396524255,\n}'
+      );
+      expect(result.components.schemas.CreateResponse.properties.id.type).toBe('string');
+    });
+
     it('should detect dominant double quotes from YAML input', async () => {
       const yamlString = 'name: "John"\ncity: "London"\ncountry: \'UK\'\n';
       const options = {yamlQuoteStyle: 'detect'};
@@ -447,6 +477,13 @@ describe('openapi-format CLI file tests', () => {
       const invalidString = '#name 1John\nage 30#'; // Invalid YAML
       const result = await parseString(invalidString, {format: 'yaml'});
       expect(result).toBeInstanceOf(SyntaxError);
+    });
+
+    it('should return a YAML parsing error instead of recovering a partial document', async () => {
+      const invalidString = 'foo: "unterminated\nbar: value\n';
+      const result = await parseString(invalidString, {format: 'yaml'});
+
+      expect(result).toBeInstanceOf(Error);
     });
 
     it('should quote unquoted $ref value starting with #', async () => {
