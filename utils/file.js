@@ -223,6 +223,7 @@ async function parseString(str, options = {}) {
 
   if (toYaml) {
     try {
+      // Parse YAML before encoding large numbers so quoted strings remain untouched.
       const doc = yaml.parseDocument(addQuotesToRefInString(str));
       if (doc.errors.length > 0) {
         return new SyntaxError(doc.errors[0].message);
@@ -242,7 +243,7 @@ async function parseString(str, options = {}) {
     }
   } else {
     try {
-      // Try parsing as JSON
+      // Encode large JSON numbers before parsing so their precision is preserved.
       return JSON.parse(encodeLargeNumbers(str));
     } catch (jsonError) {
       return jsonError;
