@@ -498,12 +498,12 @@ async function getRemoteFile(filePath) {
 }
 
 /**
- * Check whether a numeric literal survives a round-trip through a JS number.
- * Literals with 15 digits or fewer always fit in a double, anything longer is
- * only unsafe when parsing it back changes the value or its notation.
+ * Check whether a numeric literal survives a round-trip through `Number(...)` and
+ * `Number#toString()`.
+ * Short literals (<= 15 digits) are treated as safe; longer ones are considered unsafe
+ * when parsing/stringifying changes the literal or produces exponential notation.
  * @param {string} source - The raw numeric literal.
- * @returns {boolean} True when the literal cannot be represented exactly.
- */
+ * @returns {boolean} True when the literal would not round-trip as the same string.
 function isUnsafeNumberLiteral(source) {
   const parsed = Number(source).toString();
   if (parsed.includes('e')) return true;
