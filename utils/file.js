@@ -498,6 +498,23 @@ async function getRemoteFile(filePath) {
 }
 
 /**
+ * Check whether a numeric literal survives a round-trip through a JS number.
+ * Literals with 15 digits or fewer always fit in a double, anything longer is
+ * only unsafe when parsing it back changes the value or its notation.
+ * @param {string} source - The raw numeric literal.
+ * @returns {boolean} True when the literal cannot be represented exactly.
+ */
+function isUnsafeNumberLiteral(source) {
+  const parsed = Number(source).toString();
+  if (parsed.includes('e')) return true;
+
+  const digitCount = source.replace(/[^0-9]/g, '').length;
+  if (digitCount <= 15) return false;
+
+  return parsed !== source;
+}
+
+/**
  * Convert large number value safely before parsing
  * @param inputContent Input content.
  * @returns {*} Encoded content.
@@ -510,7 +527,7 @@ function encodeLargeNumbers(inputContent) {
     const rgx = new RegExp(endChar, 'g');
     const number = rawInput.replace(/: /g, '').replace(rgx, '');
     // Handle large numbers safely in javascript
-    if (Number(number).toString().includes('e') || number.replace('.', '').length > 15) {
+    if (isUnsafeNumberLiteral(number)) {
       return `: "${number}==="${endChar}`;
     } else {
       return `: ${number}${endChar}`;
@@ -535,8 +552,7 @@ function encodeLargeNumberScalars(doc) {
       }
 
       const source = value.source;
-      const digitCount = source.replace(/[^0-9]/g, '').length;
-      if (Number(source).toString().includes('e') || digitCount > 15) {
+      if (isUnsafeNumberLiteral(source)) {
         value.value = `${source}===`;
         value.type = 'QUOTE_DOUBLE';
       }
