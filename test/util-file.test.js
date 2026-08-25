@@ -402,6 +402,21 @@ describe('openapi-format CLI file tests', () => {
       expect(result).toEqual({name: 'John', age: 30});
     });
 
+    it('should keep Number.MAX_SAFE_INTEGER as a number in YAML', async () => {
+      const result = await parseString(`value: ${Number.MAX_SAFE_INTEGER}`);
+      expect(result).toEqual({value: Number.MAX_SAFE_INTEGER});
+    });
+
+    it('should keep Number.MIN_SAFE_INTEGER as a number in YAML', async () => {
+      const result = await parseString(`value: ${Number.MIN_SAFE_INTEGER}`);
+      expect(result).toEqual({value: Number.MIN_SAFE_INTEGER});
+    });
+
+    it('should encode YAML integers beyond the safe integer range', async () => {
+      const result = await parseString('positive: 9007199254740993\nnegative: -9007199254740993');
+      expect(result).toEqual({positive: '9007199254740993===', negative: '-9007199254740993==='});
+    });
+
     it('should preserve quoted JSON examples with high-precision numbers and following schemas', async () => {
       const yamlString = `openapi: 3.1.0
 info:
@@ -748,6 +763,30 @@ components:
       const input = 'location: 10.12345678912345, 10.12345678912345';
       const output = encodeLargeNumbers(input);
       expect(output).toBe(input);
+    });
+
+    test('should not encode Number.MAX_SAFE_INTEGER', () => {
+      const input = `key: ${Number.MAX_SAFE_INTEGER}\n`;
+      const output = encodeLargeNumbers(input);
+      expect(output).toBe('key: 9007199254740991\n');
+    });
+
+    test('should not encode Number.MIN_SAFE_INTEGER', () => {
+      const input = `key: ${Number.MIN_SAFE_INTEGER}\n`;
+      const output = encodeLargeNumbers(input);
+      expect(output).toBe('key: -9007199254740991\n');
+    });
+
+    test('should not encode a 16 digit integer that fits in a double', () => {
+      const input = 'key: 1234567890123456\n';
+      const output = encodeLargeNumbers(input);
+      expect(output).toBe('key: 1234567890123456\n');
+    });
+
+    test('should encode an integer beyond Number.MAX_SAFE_INTEGER', () => {
+      const input = 'key: 9007199254740993\n';
+      const output = encodeLargeNumbers(input);
+      expect(output).toBe('key: "9007199254740993==="\n');
     });
   });
 
