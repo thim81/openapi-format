@@ -504,6 +504,7 @@ async function getRemoteFile(filePath) {
  * when parsing/stringifying changes the literal or produces exponential notation.
  * @param {string} source - The raw numeric literal.
  * @returns {boolean} True when the literal would not round-trip as the same string.
+ */
 function isUnsafeNumberLiteral(source) {
   const parsed = Number(source).toString();
   if (parsed.includes('e')) return true;
