@@ -544,11 +544,7 @@ function encodeLargeNumberScalars(doc) {
   yaml.visit(doc, {
     Pair(_, pair) {
       const value = pair.value;
-      if (
-        !yaml.isScalar(value) ||
-        typeof value.value !== 'number' ||
-        typeof value.source !== 'string'
-      ) {
+      if (!yaml.isScalar(value) || typeof value.value !== 'number' || typeof value.source !== 'string') {
         return;
       }
 

@@ -441,9 +441,7 @@ components:
 
       expect(result).not.toBeInstanceOf(Error);
       expect(Object.keys(result.components.schemas)).toEqual(['Before', 'CreateResponse']);
-      expect(result.components.schemas.Before.example).toBe(
-        '{\n  "score": 0.8189693396524255,\n}'
-      );
+      expect(result.components.schemas.Before.example).toBe('{\n  "score": 0.8189693396524255,\n}');
       expect(result.components.schemas.CreateResponse.properties.id.type).toBe('string');
     });
 
