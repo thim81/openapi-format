@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.33.7] - 2026-08-28
+
+- CLI: Fix to don't encode safe integers (#235)
+
 ## [1.33.6] - 2026-08-02
 
 - CLI: Prevent YAML data loss when quoted scalars contain high-precision numbers (#233)
