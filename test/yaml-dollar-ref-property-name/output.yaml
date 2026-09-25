@@ -1,0 +1,58 @@
+openapi: 3.0.3
+info:
+  title: SCIM API
+  version: 1.0.0
+paths:
+  /groups/{group_id}:
+    get:
+      operationId: get-scim-group
+      summary: Get a SCIM Group resource
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/group_details"
+components:
+  schemas:
+    group_details:
+      type: object
+      properties:
+        displayName:
+          description: The display name of the SCIM Group resource.
+          type: string
+        members:
+          description: The direct members of the SCIM Group resource.
+          type: array
+          items:
+            type: object
+            required:
+              - value
+            properties:
+              value:
+                description: The unique identifier of the member resource.
+                type: string
+                example: bd97ef8d-7986-43e3-9ee0-c25dda33e4b0
+              display:
+                description: The display name of the member resource.
+                type: string
+                example: john.smith@example.com
+              type:
+                description: The SCIM resource type of the member.
+                type: string
+                example: User
+                enum:
+                  - User
+                  - Group
+              $ref:
+                description: The URI of the member resource.
+                type: string
+                format: uri
+                example: https://example.com/scim/v2/Users/bd97ef8d-7986-43e3-9ee0-c25dda33e4b0

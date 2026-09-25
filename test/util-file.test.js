@@ -813,6 +813,12 @@ components:
       expect(output).toBe(input);
     });
 
+    test('should not modify $ref used as a YAML property name', () => {
+      const input = '            properties:\n              $ref:\n                type: string';
+      const output = addQuotesToRefInString(input);
+      expect(output).toBe(input);
+    });
+
     test('should parse unquoted local $ref values that start with #', async () => {
       const yamlString = 'schema:\n  $ref: #/components/schemas/Example';
       const result = await parseString(yamlString);
@@ -833,6 +839,32 @@ components:
           $ref: './common.yaml#/components/schemas/Example'
         }
       });
+    });
+
+    test('should parse YAML with $ref used as a property name without error', async () => {
+      const yamlString = [
+        'openapi: 3.0.3',
+        'info:',
+        '  title: SCIM API',
+        '  version: 1.0.0',
+        'paths: {}',
+        'components:',
+        '  schemas:',
+        '    member:',
+        '      type: object',
+        '      properties:',
+        '        value:',
+        '          type: string',
+        '        "$ref":',
+        '          type: string',
+        '          format: uri',
+        ''
+      ].join('\n');
+      const result = await parseString(yamlString);
+
+      expect(result).not.toBeInstanceOf(Error);
+      expect(result.components.schemas.member.properties.$ref.type).toBe('string');
+      expect(result.components.schemas.member.properties.$ref.format).toBe('uri');
     });
 
     test('should stringify $ref values with quotes in YAML output', async () => {

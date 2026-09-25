@@ -1,0 +1,4 @@
+verbose: true
+lineWidth: 120
+output: output.yaml
+bundle: false
