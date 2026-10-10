@@ -838,6 +838,22 @@ components:
       expect(output).toBe(input);
     });
 
+    test.each(['|', '|-', '|+', '|2-'])('should not modify $ref with %s literal block scalar', indicator => {
+      const input = `schema:\n  $ref: ${indicator}\n    #/components/schemas/Example\n`;
+
+      expect(addQuotesToRefInString(input)).toBe(input);
+    });
+
+    test.each(['|', '|-', '|+', '|2-'])(
+      'should preserve $ref with %s literal block scalar when parsing',
+      async indicator => {
+        const input = `schema:\n  $ref: ${indicator}\n    #/components/schemas/Example\n`;
+        const result = await parseString(input);
+
+        expect(result).toEqual(yaml.parse(input));
+      }
+    );
+
     test('should not modify $ref used as a YAML property name', () => {
       const input = '            properties:\n              $ref:\n                type: string';
       const output = addQuotesToRefInString(input);
