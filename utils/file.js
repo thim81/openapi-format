@@ -332,9 +332,10 @@ async function parseFile(filePath, options = {}) {
     // Read local or remote file content and get format JSON or YAML
     let rawContent = await readFile(filePath, options);
 
-    if (options.format === 'yaml') {
-      const doc = yaml.parseDocument(addQuotesToRefInString(rawContent));
-      applyYamlParseMetadata(doc, options);
+    // Validate the root before bundling, which may suppress resolver errors.
+    const parsedContent = await parseString(rawContent, options);
+    if (parsedContent instanceof Error) {
+      throw parsedContent;
     }
 
     if (rawContent.includes('$ref') && options.bundle === true) {
@@ -344,7 +345,7 @@ async function parseFile(filePath, options = {}) {
         const refOptions = {...options, yamlValueFormats: {}};
         const parsedRefContent = await parseString(refContent, refOptions);
         if (parsedRefContent instanceof Error) {
-          return parsedRefContent;
+          throw parsedRefContent;
         }
 
         return applyYamlValueFormatsMetadata(parsedRefContent, refOptions.yamlValueFormats || {});
@@ -360,8 +361,7 @@ async function parseFile(filePath, options = {}) {
       return bundled;
     }
 
-    // Parse file content as JSON/YAML
-    return await parseString(rawContent, options);
+    return parsedContent;
   } catch (err) {
     throw err;
   }
@@ -792,7 +792,7 @@ function decodeLargeNumbers(output, isJson = false) {
  * @returns {string} YAML string with quotes.
  */
 function addQuotesToRefInString(yamlString, quoteChar = "'") {
-  return yamlString.replace(/(\$ref:[ \t]*)([^"'\s>]+)/g, `$1${quoteChar}$2${quoteChar}`);
+  return yamlString.replace(/(\$ref:[ \t]*)(?![\[{])([^"'\s>]+)/g, `$1${quoteChar}$2${quoteChar}`);
 }
 
 /**

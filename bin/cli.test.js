@@ -75,6 +75,41 @@ describe('openapi-format CLI command', () => {
     expect(result.stdout).toMatchSnapshot();
   });
 
+  it('should stop and report malformed YAML instead of formatting it successfully', async () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openapi-format-invalid-yaml-'));
+    const inputFile = path.join(tempDir, 'input.yaml');
+    const outputFile = path.join(tempDir, 'output.yaml');
+
+    try {
+      fs.writeFileSync(inputFile, 'openapi: 3.0.3\ninfo: [unterminated\n');
+      const result = await testUtils.cli(['input.yaml', '--no-bundle', '--output output.yaml'], tempDir);
+
+      expect(result.code).toBe(1);
+      expect(result.stdout).toContain('Input file error');
+      expect(result.stdout).not.toContain('formatted successfully');
+      expect(fs.existsSync(outputFile)).toBe(false);
+    } finally {
+      fs.rmSync(tempDir, {recursive: true, force: true});
+    }
+  });
+
+  it('should preserve an existing output file when the input YAML is malformed', async () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openapi-format-invalid-yaml-'));
+    const inputFile = path.join(tempDir, 'input.yaml');
+    const outputFile = path.join(tempDir, 'output.yaml');
+    const existingOutput = 'openapi: 3.0.3\ninfo:\n  title: Existing API\n  version: 1.0.0\npaths: {}\n';
+
+    try {
+      fs.writeFileSync(inputFile, 'openapi: 3.0.3\ninfo: [unterminated\n');
+      fs.writeFileSync(outputFile, existingOutput);
+      await testUtils.cli(['input.yaml', '--no-bundle', '--output output.yaml'], tempDir);
+
+      expect(fs.readFileSync(outputFile, 'utf8')).toBe(existingOutput);
+    } finally {
+      fs.rmSync(tempDir, {recursive: true, force: true});
+    }
+  });
+
   it('should stop and show error about remote file', async () => {
     const inputFile = `https://raw.githubusercontent.com/thim81/openapi-format/main/test/yaml-default/foo.yaml`;
 
