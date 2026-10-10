@@ -1,0 +1,9 @@
+openapi: 3.0.3
+info:
+  title: t
+  version: "1"
+  description: |-
+    - item
+        nested word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word
+    - short
+paths: {}
