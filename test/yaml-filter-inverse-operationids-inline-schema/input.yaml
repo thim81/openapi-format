@@ -1,0 +1,25 @@
+openapi: 3.0.3
+info:
+  title: t
+  version: '1'
+paths:
+  /pulls:
+    post:
+      operationId: createPull
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - head
+              properties:
+                head:
+                  type: string
+                base:
+                  type: string
+                get:
+                  type: string
+      responses:
+        '201':
+          description: Created
