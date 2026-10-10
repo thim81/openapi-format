@@ -369,6 +369,7 @@ async function openapiFilter(oaObj, options) {
       node !== null &&
       inverseFilterProps.length > 0 &&
       this.path[0] === 'paths' &&
+      this.path.length === 3 &&
       node.operationId === undefined &&
       httpVerbs.includes(this.key)
     ) {
