@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.33.10] - 2026-10-08
+
+- CLI: convert 3.1 preserve nullability when converting allOf schemas
+
 ## [1.33.9] - 2026-10-08
 
 - Filter: preserve inline properties that match HTTP verbs (#238)

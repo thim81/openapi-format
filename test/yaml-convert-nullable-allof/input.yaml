@@ -1,0 +1,24 @@
+openapi: 3.0.3
+info:
+  title: Nullable allOf conversion
+  version: '1'
+paths: {}
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        login:
+          type: string
+    Label:
+      type: object
+      properties:
+        archived_by:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/User'
+        milestone:
+          nullable: true
+          oneOf:
+            - type: string
+            - type: integer
