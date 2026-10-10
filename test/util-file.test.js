@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const {
   parseFile,
   writeFile,
@@ -61,6 +62,30 @@ describe('openapi-format CLI file tests', () => {
     test('should throw an error for invalid YAML content', async () => {
       const inputFilePath = path.join(__dirname, 'test-files', 'invalid.yaml');
       await expect(parseFile(inputFilePath)).rejects.toThrow(/ENOENT/);
+    });
+
+    test('should reject malformed YAML instead of returning an Error as document data', async () => {
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openapi-format-invalid-yaml-'));
+      const inputFilePath = path.join(tempDir, 'input.yaml');
+
+      try {
+        fs.writeFileSync(inputFilePath, 'openapi: 3.0.3\ninfo: [unterminated\n');
+        await expect(parseFile(inputFilePath, {bundle: false})).rejects.toThrow();
+      } finally {
+        fs.rmSync(tempDir, {recursive: true, force: true});
+      }
+    });
+
+    test('should reject a scalar YAML root when bundling is enabled', async () => {
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openapi-format-invalid-root-'));
+      const inputFilePath = path.join(tempDir, 'input.yaml');
+
+      try {
+        fs.writeFileSync(inputFilePath, '$ref\n');
+        await expect(parseFile(inputFilePath, {bundle: true})).rejects.toThrow('Invalid YAML');
+      } finally {
+        fs.rmSync(tempDir, {recursive: true, force: true});
+      }
     });
 
     test('should throw an error for invalid JSON content', async () => {
@@ -813,10 +838,54 @@ components:
       expect(output).toBe(input);
     });
 
+    test.each(['|', '|-', '|+', '|2-'])('should not modify $ref with %s literal block scalar', indicator => {
+      const input = `schema:\n  $ref: ${indicator}\n    #/components/schemas/Example\n`;
+
+      expect(addQuotesToRefInString(input)).toBe(input);
+    });
+
+    test.each(['|', '|-', '|+', '|2-'])(
+      'should preserve $ref with %s literal block scalar when parsing',
+      async indicator => {
+        const input = `schema:\n  $ref: ${indicator}\n    #/components/schemas/Example\n`;
+        const result = await parseString(input);
+
+        expect(result).toEqual(yaml.parse(input));
+      }
+    );
+
     test('should not modify $ref used as a YAML property name', () => {
       const input = '            properties:\n              $ref:\n                type: string';
       const output = addQuotesToRefInString(input);
       expect(output).toBe(input);
+    });
+
+    test.each([
+      ['block mapping', 'properties:\n  $ref: { type: string, format: uri }'],
+      ['flow mapping', 'properties: { $ref: { type: string, format: uri } }']
+    ])('should not modify a $ref property with a flow schema in a %s', (_, input) => {
+      expect(addQuotesToRefInString(input)).toBe(input);
+    });
+
+    test.each([
+      ['block mapping', 'properties:\n  $ref: { type: string, format: uri }'],
+      ['flow mapping', 'properties: { $ref: { type: string, format: uri } }']
+    ])('should parse a $ref property with a flow schema in a %s', async (_, input) => {
+      const result = await parseString(input);
+
+      expect(result).toEqual({properties: {$ref: {type: 'string', format: 'uri'}}});
+    });
+
+    test('should treat a next-line unquoted local $ref fragment as a YAML comment', async () => {
+      const input = 'schema:\n  $ref:\n    #/components/schemas/Example';
+
+      expect(await parseString(input)).toEqual({schema: {$ref: null}});
+    });
+
+    test('should parse a next-line quoted local $ref fragment', async () => {
+      const input = "schema:\n  $ref:\n    '#/components/schemas/Example'";
+
+      expect(await parseString(input)).toEqual({schema: {$ref: '#/components/schemas/Example'}});
     });
 
     test('should parse unquoted local $ref values that start with #', async () => {
@@ -855,7 +924,7 @@ components:
         '      properties:',
         '        value:',
         '          type: string',
-        '        "$ref":',
+        '        $ref:',
         '          type: string',
         '          format: uri',
         ''
