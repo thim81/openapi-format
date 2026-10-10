@@ -1,9 +1,13 @@
 ## unreleased
 
+## [1.33.9] - 2026-10-08
+
+- Filter: preserve inline properties that match HTTP verbs (#238)
+
 ## [1.33.8] - 2026-10-08
 
 - CLI: prevent $ref property names from corrupting YAML output(#237)
-- CLI: fix: preserve YAML $ref schemas and reject malformed input safely (#241)
+- CLI: preserve YAML $ref schemas and reject malformed input safely (#241)
 
 ## [1.33.7] - 2026-08-28
 
