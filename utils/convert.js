@@ -45,6 +45,7 @@ function setInObject(obj, key, value, index) {
  *   `type: 'thing', nullable: true` -> `type: ['thing', 'null']`
  *   `anyOf: ['thing'], nullable: true` -> `anyOf: ['thing', {type: 'null'}]`
  *   `oneOf: ['thing'], nullable: true` -> `oneOf: ['thing', {type: 'null'}]`
+ *   `allOf: ['thing'], nullable: true` -> `anyOf: [{allOf: ['thing']}, {type: 'null'}]`
  *
  * @param {object} obj
  * @returns {*}
@@ -67,6 +68,10 @@ function convertNullable(obj) {
   } else if (dto.nullable === true && Array.isArray(dto.anyOf)) {
     const withNullType = dto.anyOf.concat({type: 'null'});
     dto = setInObject(dto, 'anyOf', withNullType, 'anyOf');
+  } else if (dto.nullable === true && Array.isArray(dto.allOf)) {
+    const withNullType = [{allOf: dto.allOf}, {type: 'null'}];
+    dto = setInObject(dto, 'anyOf', withNullType, 'allOf');
+    delete dto.allOf;
   }
   // Remove 3.0 prop
   delete dto.nullable;
