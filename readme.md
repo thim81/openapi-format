@@ -226,20 +226,6 @@ Options:
 | --verbose             | -v, -vv, -vvv | verbosity that can be increased, which will show more output of the process |              |                            | optional |
 | --help                | h             | display help for command                                                    |              |                            | optional |
 
-YAML block styles default to `preserve`: original literal (`|`) and folded (`>`) styles are restored for unchanged strings
-at their original paths, including bundled references. Literal blocks are not folded to fit `lineWidth`. Source
-indentation and folded line breaks may change.
-
-Set `yamlBlockStyle` in configuration or pass `--yamlBlockStyle` with one of these values:
-
-- `preserve`: retain original block styles (default).
-- `auto`: let the YAML library select styles, matching previous releases.
-- `literal`: prefer literal (`|`) blocks when emitting block strings.
-- `folded`: prefer folded (`>`) blocks when emitting block strings.
-
-The preferred styles preserve parsed string values. Single-line strings may be emitted as plain or quoted scalars, and
-strings unsuitable for block syntax may be quoted. Chomping indicators (`-` or `+`) are determined by trailing newlines.
-
 ## OpenAPI sort configuration options
 
 The CLI will sort the OpenAPI document in the defined order liked defined per OpenAPI key/field/property/element. The fields that are
