@@ -4,6 +4,7 @@ info:
     Maitains new line
     Maitains new line
 
-  description: Strips new line
+  description: |-
+    Strips new line
   version: |
     Example

@@ -370,6 +370,12 @@
       "description": "Preserve comments when reading/writing YAML.",
       "default": false
     },
+    "yamlBlockStyle": {
+      "type": "string",
+      "enum": ["preserve", "auto", "literal", "folded"],
+      "description": "Preserve original YAML block scalar styles, select styles automatically, or prefer literal/folded blocks.",
+      "default": "preserve"
+    },
     "sortComponentsProps": {
       "type": "boolean",
       "description": "Alphabetize properties inside schema components.",

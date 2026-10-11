@@ -13,6 +13,7 @@ const COMMENT_TYPE = /** @type {const} */ ({
 });
 
 const YAML_VALUE_FORMATS_PROP = '__openapiFormatYamlValueFormats';
+const YAML_BLOCK_STYLES_PROP = '__openapiFormatYamlBlockStyles';
 const YAML_QUOTE_STYLE = /** @type {const} */ ({
   SINGLE: 'single',
   DOUBLE: 'double',
@@ -178,6 +179,14 @@ function buildYamlStringifyOptions(lineWidth, options = {}) {
     singleQuote: style !== YAML_QUOTE_STYLE.DOUBLE
   };
 
+  const blockStyle = options.yamlBlockStyle ?? 'preserve';
+  if (!['auto', 'preserve', 'literal', 'folded'].includes(blockStyle)) {
+    throw new Error(`Invalid yamlBlockStyle: ${blockStyle}. Expected auto, preserve, literal, or folded.`);
+  }
+  if (blockStyle === 'literal' || blockStyle === 'folded') {
+    yamlStringifyOptions.blockQuote = blockStyle;
+  }
+
   if (options.yamlCompat === 'yaml-1.1') {
     yamlStringifyOptions.compat = 'yaml-1.1';
   }
@@ -198,6 +207,7 @@ function applyYamlParseMetadata(doc, options = {}) {
   }
 
   options.yamlValueFormats = extractYamlValueFormats(doc);
+  options.yamlBlockStyles = (options.yamlBlockStyle ?? 'preserve') === 'preserve' ? extractYamlBlockStyles(doc) : {};
 
   if (configuredQuoteStyle === YAML_QUOTE_STYLE.DETECT) {
     const detectedQuoteStyle = detectYamlQuoteStyle(doc);
@@ -342,12 +352,13 @@ async function parseFile(filePath, options = {}) {
       // Handler to Resolve references
       const resolver = async sourcePath => {
         let refContent = await readFile(sourcePath, options);
-        const refOptions = {...options, yamlValueFormats: {}};
+        const refOptions = {...options, yamlValueFormats: {}, yamlBlockStyles: {}};
         const parsedRefContent = await parseString(refContent, refOptions);
         if (parsedRefContent instanceof Error) {
           throw parsedRefContent;
         }
 
+        applyYamlValueFormatsMetadata(parsedRefContent, refOptions.yamlBlockStyles || {}, YAML_BLOCK_STYLES_PROP);
         return applyYamlValueFormatsMetadata(parsedRefContent, refOptions.yamlValueFormats || {});
       };
 
@@ -358,6 +369,13 @@ async function parseFile(filePath, options = {}) {
       // Use the bundler to resolve external refs and bundle the document
       const bundled = await bundler.bundle(filePath, resolver, {ignoreSibling: false, hooks: {onError: onErrorHook}});
       options.yamlValueFormats = collectYamlValueFormatsFromBundledTree(bundled);
+      options.yamlBlockStyles = collectYamlValueFormatsFromBundledTree(
+        bundled,
+        {},
+        [],
+        new WeakSet(),
+        YAML_BLOCK_STYLES_PROP
+      );
       return bundled;
     }
 
@@ -388,10 +406,15 @@ async function stringify(obj, options = {}) {
 
       if (
         (options?.yamlComments?.length > 0 && options?.keepComments === true) ||
-        (options?.yamlValueFormats && Object.keys(options.yamlValueFormats).length > 0)
+        (options?.yamlValueFormats && Object.keys(options.yamlValueFormats).length > 0) ||
+        ((options.yamlBlockStyle ?? 'preserve') === 'preserve' &&
+          options?.yamlBlockStyles && Object.keys(options.yamlBlockStyles).length > 0)
       ) {
         const newDoc = yaml.parseDocument(output);
         applyYamlValueFormats(newDoc, options.yamlValueFormats || {});
+        if ((options.yamlBlockStyle ?? 'preserve') === 'preserve') {
+          applyYamlBlockStyles(newDoc, options.yamlBlockStyles || {});
+        }
         if (options?.yamlComments?.length > 0 && options?.keepComments === true) {
           injectComments(newDoc, options.yamlComments);
         }
@@ -590,17 +613,18 @@ function extractYamlValueFormats(doc) {
 /**
  * Attach YAML scalar-format metadata to a parsed node and its descendants.
  * @param {unknown} node
- * @param {Record<string, number>} valueFormats
+ * @param {Record<string, unknown>} valueFormats
+ * @param {string} [metadataProp] Internal marker for path-based metadata.
  * @returns {unknown}
  */
-function applyYamlValueFormatsMetadata(node, valueFormats) {
+function applyYamlValueFormatsMetadata(node, valueFormats, metadataProp = YAML_VALUE_FORMATS_PROP) {
   if (!node || typeof node !== 'object') {
     return node;
   }
 
   const localValueFormats = valueFormats || {};
   if (Object.keys(localValueFormats).length > 0) {
-    Object.defineProperty(node, YAML_VALUE_FORMATS_PROP, {
+    Object.defineProperty(node, metadataProp, {
       value: localValueFormats,
       enumerable: true,
       configurable: true,
@@ -610,12 +634,12 @@ function applyYamlValueFormatsMetadata(node, valueFormats) {
 
   if (Array.isArray(node)) {
     node.forEach((item, index) => {
-      applyYamlValueFormatsMetadata(item, prefixYamlValueFormats(localValueFormats, String(index)));
+      applyYamlValueFormatsMetadata(item, prefixYamlValueFormats(localValueFormats, String(index)), metadataProp);
     });
   } else {
     Object.keys(node).forEach(key => {
-      if (key === YAML_VALUE_FORMATS_PROP) return;
-      applyYamlValueFormatsMetadata(node[key], prefixYamlValueFormats(localValueFormats, key));
+      if (key === YAML_VALUE_FORMATS_PROP || key === YAML_BLOCK_STYLES_PROP) return;
+      applyYamlValueFormatsMetadata(node[key], prefixYamlValueFormats(localValueFormats, key), metadataProp);
     });
   }
 
@@ -625,36 +649,43 @@ function applyYamlValueFormatsMetadata(node, valueFormats) {
 /**
  * Flatten YAML scalar-format metadata from a bundled tree and remove internal markers.
  * @param {unknown} node
- * @param {Record<string, number>} valueFormats
+ * @param {Record<string, unknown>} valueFormats
  * @param {Array<string>} path
  * @param {WeakSet<object>} seen
- * @returns {Record<string, number>}
+ * @param {string} [metadataProp] Internal marker for path-based metadata.
+ * @returns {Record<string, unknown>}
  */
-function collectYamlValueFormatsFromBundledTree(node, valueFormats = {}, path = [], seen = new WeakSet()) {
+function collectYamlValueFormatsFromBundledTree(
+  node,
+  valueFormats = {},
+  path = [],
+  seen = new WeakSet(),
+  metadataProp = YAML_VALUE_FORMATS_PROP
+) {
   if (!node || typeof node !== 'object' || seen.has(node)) {
     return valueFormats;
   }
 
   seen.add(node);
 
-  const localValueFormats = node[YAML_VALUE_FORMATS_PROP];
+  const localValueFormats = node[metadataProp];
   if (localValueFormats && typeof localValueFormats === 'object') {
     for (const [jsonPath, fractionDigits] of Object.entries(localValueFormats)) {
       const localPath = JSON.parse(jsonPath);
       const fullPath = [...path, ...localPath];
       valueFormats[JSON.stringify(fullPath)] = fractionDigits;
     }
-    delete node[YAML_VALUE_FORMATS_PROP];
+    delete node[metadataProp];
   }
 
   if (Array.isArray(node)) {
     node.forEach((item, index) => {
-      collectYamlValueFormatsFromBundledTree(item, valueFormats, [...path, String(index)], seen);
+      collectYamlValueFormatsFromBundledTree(item, valueFormats, [...path, String(index)], seen, metadataProp);
     });
   } else {
     Object.keys(node).forEach(key => {
-      if (key === YAML_VALUE_FORMATS_PROP) return;
-      collectYamlValueFormatsFromBundledTree(node[key], valueFormats, [...path, key], seen);
+      if (key === YAML_VALUE_FORMATS_PROP || key === YAML_BLOCK_STYLES_PROP) return;
+      collectYamlValueFormatsFromBundledTree(node[key], valueFormats, [...path, key], seen, metadataProp);
     });
   }
 
@@ -722,10 +753,11 @@ function getFractionDigits(rawSource) {
 /**
  * Build a stable YAML path that includes object keys and array indices.
  * @param {Array<unknown>} path
- * @param {string} leafKey
+ * @param {string} [leafKey]
+ * @param {unknown} [leafNode] Scalar child when the final ancestor is a sequence.
  * @returns {string[]}
  */
-function buildYamlValueFormatPath(path, leafKey) {
+function buildYamlValueFormatPath(path, leafKey, leafNode) {
   const keyPath = [];
 
   for (let index = 0; index < path.length; index += 1) {
@@ -737,7 +769,7 @@ function buildYamlValueFormatPath(path, leafKey) {
     }
 
     if (yaml.isSeq(ancestor)) {
-      const childNode = path[index + 1];
+      const childNode = path[index + 1] || leafNode;
       const itemIndex = ancestor.items.indexOf(childNode);
       if (itemIndex !== -1) {
         keyPath.push(String(itemIndex));
@@ -745,8 +777,34 @@ function buildYamlValueFormatPath(path, leafKey) {
     }
   }
 
-  keyPath.push(leafKey);
+  if (leafKey !== undefined) keyPath.push(leafKey);
   return keyPath;
+}
+
+/** Capture literal and folded string styles by YAML path. */
+function extractYamlBlockStyles(doc) {
+  const styles = {};
+  yaml.visit(doc, {
+    Scalar(_, scalar, path) {
+      if (scalar.type !== 'BLOCK_LITERAL' && scalar.type !== 'BLOCK_FOLDED') return;
+      if (typeof scalar.value !== 'string') return;
+      const parent = path[path.length - 1];
+      if (yaml.isPair(parent) && parent.key === scalar) return;
+      const keyPath = buildYamlValueFormatPath(path, undefined, scalar);
+      styles[JSON.stringify(keyPath)] = {type: scalar.type, value: scalar.value};
+    }
+  });
+  return styles;
+}
+
+/** Restore styles only where the original string still occupies its YAML path. */
+function applyYamlBlockStyles(doc, styles) {
+  for (const [jsonPath, style] of Object.entries(styles)) {
+    const scalar = doc.getIn(JSON.parse(jsonPath), true);
+    if (yaml.isScalar(scalar) && typeof scalar.value === 'string' && scalar.value === style.value) {
+      scalar.type = style.type;
+    }
+  }
 }
 
 /**
