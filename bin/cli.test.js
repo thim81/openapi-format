@@ -7,23 +7,26 @@ const {getLocalFile} = require('../utils/file');
 const yaml = require('yaml');
 
 describe('openapi-format CLI command', () => {
-  it.each([undefined, 'preserve', 'auto', 'literal', 'folded'])('should use yamlBlockStyle=%s from the CLI', async yamlBlockStyle => {
-    const fixturePath = path.resolve('test/yaml-literal-block-linewidth');
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openapi-format-block-option-'));
-    const outputPath = path.join(tempDir, 'output.yaml');
-    try {
-      const args = ['input.yaml', '--no-sort', '--no-bundle', '--lineWidth 120', `--output ${outputPath}`];
-      if (yamlBlockStyle) args.push(`--yamlBlockStyle ${yamlBlockStyle}`);
-      const result = await testUtils.cli(args, fixturePath);
-      expect(result.code).toBe(0);
-      const doc = yaml.parseDocument(fs.readFileSync(outputPath, 'utf8'));
-      expect(doc.getIn(['info', 'description'], true).type).toBe(
-        yamlBlockStyle === 'auto' || yamlBlockStyle === 'folded' ? 'BLOCK_FOLDED' : 'BLOCK_LITERAL'
-      );
-    } finally {
-      fs.rmSync(tempDir, {recursive: true, force: true});
+  it.each([undefined, 'preserve', 'auto', 'literal', 'folded'])(
+    'should use yamlBlockStyle=%s from the CLI',
+    async yamlBlockStyle => {
+      const fixturePath = path.resolve('test/yaml-literal-block-linewidth');
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openapi-format-block-option-'));
+      const outputPath = path.join(tempDir, 'output.yaml');
+      try {
+        const args = ['input.yaml', '--no-sort', '--no-bundle', '--lineWidth 120', `--output ${outputPath}`];
+        if (yamlBlockStyle) args.push(`--yamlBlockStyle ${yamlBlockStyle}`);
+        const result = await testUtils.cli(args, fixturePath);
+        expect(result.code).toBe(0);
+        const doc = yaml.parseDocument(fs.readFileSync(outputPath, 'utf8'));
+        expect(doc.getIn(['info', 'description'], true).type).toBe(
+          yamlBlockStyle === 'auto' || yamlBlockStyle === 'folded' ? 'BLOCK_FOLDED' : 'BLOCK_LITERAL'
+        );
+      } finally {
+        fs.rmSync(tempDir, {recursive: true, force: true});
+      }
     }
-  });
+  );
 
   it('should preserve literal block scalars when a line exceeds lineWidth', async () => {
     const fixturePath = path.resolve('test/yaml-literal-block-linewidth');

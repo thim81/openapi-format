@@ -408,7 +408,8 @@ async function stringify(obj, options = {}) {
         (options?.yamlComments?.length > 0 && options?.keepComments === true) ||
         (options?.yamlValueFormats && Object.keys(options.yamlValueFormats).length > 0) ||
         ((options.yamlBlockStyle ?? 'preserve') === 'preserve' &&
-          options?.yamlBlockStyles && Object.keys(options.yamlBlockStyles).length > 0)
+          options?.yamlBlockStyles &&
+          Object.keys(options.yamlBlockStyles).length > 0)
       ) {
         const newDoc = yaml.parseDocument(output);
         applyYamlValueFormats(newDoc, options.yamlValueFormats || {});

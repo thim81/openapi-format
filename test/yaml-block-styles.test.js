@@ -16,7 +16,9 @@ describe('YAML block scalar style preservation', () => {
   });
 
   test('rejects unsupported block styles', async () => {
-    await expect(stringify({description: 'text'}, {yamlBlockStyle: 'invalid'})).rejects.toThrow('Invalid yamlBlockStyle');
+    await expect(stringify({description: 'text'}, {yamlBlockStyle: 'invalid'})).rejects.toThrow(
+      'Invalid yamlBlockStyle'
+    );
   });
 
   test.each(['literal', 'folded'])('enforces %s block style without changing string values', async yamlBlockStyle => {
@@ -52,7 +54,8 @@ describe('YAML block scalar style preservation', () => {
   });
 
   test('preserves mixed styles, including scalar values in sequences', async () => {
-    const input = 'description: |-\n  literal\nsummary: >-\n  intentionally folded\nexamples:\n  - |-\n    literal example\n  - >-\n    folded example\n';
+    const input =
+      'description: |-\n  literal\nsummary: >-\n  intentionally folded\nexamples:\n  - |-\n    literal example\n  - >-\n    folded example\n';
     const options = {lineWidth: 120, yamlBlockStyle: 'preserve'};
     const data = await parseString(input, options);
     const output = await stringify(data, options);
@@ -79,8 +82,14 @@ describe('YAML block scalar style preservation', () => {
   test('preserves styles from root and externally bundled schemas', async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'openapi-format-block-styles-'));
     try {
-      fs.writeFileSync(path.join(dir, 'input.yaml'), 'openapi: 3.0.3\ninfo:\n  title: t\n  version: "1"\n  description: >-\n    intentionally folded\npaths: {}\ncomponents:\n  schemas:\n    Example:\n      $ref: ./schema.yaml\n');
-      fs.writeFileSync(path.join(dir, 'schema.yaml'), `type: object\ndescription: |-\n  ${'word '.repeat(35).trim()}\nproperties:\n  name:\n    type: string\n    description: >-\n      folded property\n`);
+      fs.writeFileSync(
+        path.join(dir, 'input.yaml'),
+        'openapi: 3.0.3\ninfo:\n  title: t\n  version: "1"\n  description: >-\n    intentionally folded\npaths: {}\ncomponents:\n  schemas:\n    Example:\n      $ref: ./schema.yaml\n'
+      );
+      fs.writeFileSync(
+        path.join(dir, 'schema.yaml'),
+        `type: object\ndescription: |-\n  ${'word '.repeat(35).trim()}\nproperties:\n  name:\n    type: string\n    description: >-\n      folded property\n`
+      );
       const options = {bundle: true, lineWidth: 40, yamlBlockStyle: 'preserve'};
       const data = await parseFile(path.join(dir, 'input.yaml'), options);
       const output = await stringify(data, options);
@@ -89,7 +98,9 @@ describe('YAML block scalar style preservation', () => {
       expect(yaml.parse(output)).toEqual(data);
       expect(doc.getIn(['info', 'description'], true).type).toBe('BLOCK_FOLDED');
       expect(doc.getIn(['components', 'schemas', 'Example', 'description'], true).type).toBe('BLOCK_LITERAL');
-      expect(doc.getIn(['components', 'schemas', 'Example', 'properties', 'name', 'description'], true).type).toBe('BLOCK_FOLDED');
+      expect(doc.getIn(['components', 'schemas', 'Example', 'properties', 'name', 'description'], true).type).toBe(
+        'BLOCK_FOLDED'
+      );
       expect(JSON.stringify(data)).not.toContain('__openapiFormatYamlBlockStyles');
     } finally {
       fs.rmSync(dir, {recursive: true, force: true});
