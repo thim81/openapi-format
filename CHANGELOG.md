@@ -1,5 +1,9 @@
 ## unreleased
 
+## [1.34.0] - 2026-10-09
+
+- CLI: configurable YAML block scalar styles (#240)
+
 ## [1.33.10] - 2026-10-08
 
 - CLI: convert 3.1 preserve nullability when converting allOf schemas

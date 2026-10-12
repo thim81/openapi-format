@@ -4,8 +4,49 @@ const os = require('os');
 const path = require('path');
 const {describe, it, expect} = require('@jest/globals');
 const {getLocalFile} = require('../utils/file');
+const yaml = require('yaml');
 
 describe('openapi-format CLI command', () => {
+  it.each([undefined, 'preserve', 'auto', 'literal', 'folded'])('should use yamlBlockStyle=%s from the CLI', async yamlBlockStyle => {
+    const fixturePath = path.resolve('test/yaml-literal-block-linewidth');
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openapi-format-block-option-'));
+    const outputPath = path.join(tempDir, 'output.yaml');
+    try {
+      const args = ['input.yaml', '--no-sort', '--no-bundle', '--lineWidth 120', `--output ${outputPath}`];
+      if (yamlBlockStyle) args.push(`--yamlBlockStyle ${yamlBlockStyle}`);
+      const result = await testUtils.cli(args, fixturePath);
+      expect(result.code).toBe(0);
+      const doc = yaml.parseDocument(fs.readFileSync(outputPath, 'utf8'));
+      expect(doc.getIn(['info', 'description'], true).type).toBe(
+        yamlBlockStyle === 'auto' || yamlBlockStyle === 'folded' ? 'BLOCK_FOLDED' : 'BLOCK_LITERAL'
+      );
+    } finally {
+      fs.rmSync(tempDir, {recursive: true, force: true});
+    }
+  });
+
+  it('should preserve literal block scalars when a line exceeds lineWidth', async () => {
+    const fixturePath = path.resolve('test/yaml-literal-block-linewidth');
+    const expected = fs.readFileSync(path.join(fixturePath, 'output.yaml'), 'utf8');
+    const input = fs.readFileSync(path.join(fixturePath, 'input.yaml'), 'utf8');
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openapi-format-literal-block-'));
+    const outputPath = path.join(tempDir, 'output.yaml');
+
+    try {
+      const result = await testUtils.cli(
+        ['input.yaml', '--configFile options.yaml', `--output ${outputPath}`],
+        fixturePath
+      );
+      expect(result.code).toBe(0);
+      const output = fs.readFileSync(outputPath, 'utf8');
+      expect(yaml.parse(output).info.description).toBe(yaml.parse(input).info.description);
+      // Compare raw YAML: parsing and reserializing expected output would hide the style change.
+      expect(output).toBe(expected);
+    } finally {
+      fs.rmSync(tempDir, {recursive: true, force: true});
+    }
+  });
+
   it('should output the help', async () => {
     let result = await testUtils.cli([`--help`], '.');
     // console.log('result', result)

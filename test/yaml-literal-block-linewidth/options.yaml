@@ -1,0 +1,6 @@
+verbose: true
+output: output.yaml
+no-sort: true
+no-bundle: true
+lineWidth: 120
+yamlBlockStyle: preserve

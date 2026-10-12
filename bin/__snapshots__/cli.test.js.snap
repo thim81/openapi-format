@@ -18,16 +18,17 @@ OpenAPI-Format CLI settings:
 ================================================================================
 
 OpenAPI-Format CLI options:
-|---------------------|-------|
-| sort                | false |
-| keepComments        | false |
-| sortComponentsProps | false |
-| lineWidth           | -1    |
-| bundle              | true  |
-| split               | false |
-| convertTo           | 3.2   |
-| verbose             | 3     |
-|---------------------|-------|
+|---------------------|----------|
+| sort                | false    |
+| keepComments        | false    |
+| yamlBlockStyle      | preserve |
+| sortComponentsProps | false    |
+| lineWidth           | -1       |
+| bundle              | true     |
+| split               | false    |
+| convertTo           | 3.2      |
+| verbose             | 3        |
+|---------------------|----------|
 
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m
@@ -46,6 +47,7 @@ OpenAPI-Format CLI options:
 |---------------------|---------------------------------------------------|
 | sort                | false                                             |
 | keepComments        | true                                              |
+| yamlBlockStyle      | preserve                                          |
 | sortComponentsProps | false                                             |
 | lineWidth           | -1                                                |
 | bundle              | true                                              |
@@ -116,6 +118,7 @@ Options:
   -c, --configFile <configFile>              the file with the OpenAPI-format CLI options
   --no-sort                                  don't sort the OpenAPI file
   --keepComments                             don't remove the comments from the OpenAPI YAML file (default: false)
+  --yamlBlockStyle <yamlBlockStyle>          YAML block style: preserve, auto, literal, or folded (default: preserve)
   --yamlQuoteStyle <yamlQuoteStyle>          YAML quote style: single, double, or detect
   --yamlCompat <yamlCompat>                  YAML compatibility schema for older OpenAPI tools (yaml-1.1)
   --sortComponentsFile <sortComponentsFile>  the file with components to sort alphabetically
@@ -267,16 +270,17 @@ OpenAPI-Format CLI settings:
 ================================================================================
 
 OpenAPI-Format CLI options:
-|---------------------|-------|
-| sort                | false |
-| keepComments        | false |
-| sortComponentsProps | false |
-| lineWidth           | -1    |
-| bundle              | true  |
-| split               | false |
-| convertTo           | 3.1   |
-| verbose             | 3     |
-|---------------------|-------|
+|---------------------|----------|
+| sort                | false    |
+| keepComments        | false    |
+| yamlBlockStyle      | preserve |
+| sortComponentsProps | false    |
+| lineWidth           | -1       |
+| bundle              | true     |
+| split               | false    |
+| convertTo           | 3.1      |
+| verbose             | 3        |
+|---------------------|----------|
 
 [32m================================================================================[0m
 [32m✅  OpenAPI formatted successfully[0m

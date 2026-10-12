@@ -169,6 +169,7 @@ Options:
 
   --no-sort             Don't sort the OpenAPI file                                [boolean]
   --keepComments        Don't remove the comments from the OpenAPI YAML file       [boolean]
+  --yamlBlockStyle      YAML block style: preserve, auto, literal, folded           [string]
   --yamlQuoteStyle      Preferred YAML quote style: single, double, detect          [string]
   --yamlCompat          YAML compatibility schema for older OpenAPI tools           [string]
   --sortComponentsFile  The file with components to sort alphabetically               [path]
@@ -207,6 +208,7 @@ Options:
 | --overlayFile         | -l            | the file to specify OpenAPI overlay actions                                 | path to file |                            | optional |
 | --no-sort             |               | don't sort the OpenAPI file                                                 | boolean      | FALSE                      | optional |
 | --keepComments        |               | don't remove the comments from the OpenAPI YAML file                        | boolean      | FALSE                      | optional |
+| --yamlBlockStyle      |               | YAML block style (`preserve`, `auto`, `literal`, `folded`)                  | string       | preserve                   | optional |
 | --yamlQuoteStyle      |               | preferred YAML quote style for YAML output (`single`, `double`, `detect`)   | string       | detect                     | optional |
 | --yamlCompat          |               | YAML compatibility schema for older OpenAPI tools (`yaml-1.1`)              | string       |                            | optional |
 | --sortComponentsFile  |               | sort the items of the components (schemas, parameters, ...) by alphabet     | path to file | defaultSortComponents.json | optional |

@@ -26,6 +26,7 @@ program
   .option('-c, --configFile <configFile>', 'the file with the OpenAPI-format CLI options')
   .option('--no-sort', `don't sort the OpenAPI file`)
   .option('--keepComments', `don't remove the comments from the OpenAPI YAML file`, false)
+  .option('--yamlBlockStyle <yamlBlockStyle>', 'YAML block style: preserve, auto, literal, or folded', 'preserve')
   .option('--yamlQuoteStyle <yamlQuoteStyle>', 'YAML quote style: single, double, or detect')
   .option('--yamlCompat <yamlCompat>', 'YAML compatibility schema for older OpenAPI tools (yaml-1.1)')
   .option('--sortComponentsFile <sortComponentsFile>', 'the file with components to sort alphabetically')
@@ -98,6 +99,7 @@ async function run(oaFile, options) {
   options.sort = configOptions?.sort ?? options.sort;
   options.bundle = configOptions?.bundle ?? options.bundle;
   options.keepComments = configOptions?.keepComments ?? options.keepComments;
+  options.yamlBlockStyle = configOptions?.yamlBlockStyle ?? options.yamlBlockStyle;
   options.sortComponentsProps = configOptions?.sortComponentsProps ?? options.sortComponentsProps;
   options.split = configOptions?.split ?? options.split;
 
@@ -249,6 +251,7 @@ async function run(oaFile, options) {
   let input = {};
   let fileOptions = {
     keepComments: options.keepComments ?? false,
+    yamlBlockStyle: options.yamlBlockStyle ?? 'preserve',
     bundle: options.bundle ?? true,
     yamlQuoteStyle: options.yamlQuoteStyle
   };
@@ -353,6 +356,7 @@ async function run(oaFile, options) {
 
   options.yamlComments = fileOptions.yamlComments || {};
   options.yamlValueFormats = fileOptions.yamlValueFormats || {};
+  options.yamlBlockStyles = fileOptions.yamlBlockStyles || {};
   options.detectedYamlQuoteStyle = fileOptions.detectedYamlQuoteStyle;
   options.detectedYamlQuoteStyleHasQuotedScalars = fileOptions.detectedYamlQuoteStyleHasQuotedScalars;
   if (options.output) {
