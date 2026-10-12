@@ -4,15 +4,15 @@
 
 - CLI: configurable YAML block scalar styles (#240)
 
-## [1.33.10] - 2026-10-08
+## [1.33.10] - 2026-10-12
 
 - CLI: convert 3.1 preserve nullability when converting allOf schemas
 
-## [1.33.9] - 2026-10-08
+## [1.33.9] - 2026-10-10
 
 - Filter: preserve inline properties that match HTTP verbs (#238)
 
-## [1.33.8] - 2026-10-08
+## [1.33.8] - 2026-10-10
 
 - CLI: prevent $ref property names from corrupting YAML output(#237)
 - CLI: preserve YAML $ref schemas and reject malformed input safely (#241)
